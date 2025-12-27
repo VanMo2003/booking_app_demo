@@ -4,6 +4,8 @@ import '../../domain/entity/room_type.dart';
 import '../../domain/repositories/room_type_repository.dart';
 import '../datasource/remote/room_type_api_service.dart';
 import '../models/response/room_type_response.dart';
+import '../models/request/room_type_create_dto.dart';
+import '../models/request/room_type_update_dto.dart';
 import '../../../../features/share/data/models/api_response.dart';
 
 @LazySingleton(as: RoomTypeRepository)
@@ -24,7 +26,10 @@ class RoomTypeRepositoryImpl implements RoomTypeRepository {
 
   @override
   Future<RoomType> createRoomType(RoomType roomType) async {
-    final body = roomType.toJson();
+    final body = RoomTypeCreateDto(
+      name: roomType.name,
+      description: roomType.description,
+    );
     final response = await apiService.createRoomType(body);
     return RoomTypeResponse.fromJson(response.data).toEntity();
   }
@@ -32,7 +37,11 @@ class RoomTypeRepositoryImpl implements RoomTypeRepository {
   @override
   Future<RoomType> updateRoomType(RoomType roomType) async {
     final id = roomType.id!;
-    final body = {'name': roomType.name, 'description': roomType.description};
+    final body = RoomTypeUpdateDto(
+      id: id,
+      name: roomType.name,
+      description: roomType.description,
+    );
     final response = await apiService.updateRoomType(id, body);
     return RoomTypeResponse.fromJson(response.data).toEntity();
   }

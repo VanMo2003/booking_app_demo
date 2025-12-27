@@ -4,8 +4,8 @@ import '../../features/position/presentation/screen/position_screen.dart';
 import '../../features/admin/presentation/screen/admin_home_screen.dart';
 import '../../features/admin/presentation/screen/staff_screen.dart';
 import '../../features/room_type/presentation/screen/room_type_screen.dart';
-import '../../features/admin/presentation/screen/room_screen.dart';
-import '../../features/admin/presentation/screen/service_screen.dart';
+import '../../features/room/presentation/screen/room_screen.dart';
+import '../../features/service/presentation/screen/service_screen.dart';
 import '../../features/admin/presentation/screen/booking_screen.dart';
 
 part 'app_routes.gr.dart';

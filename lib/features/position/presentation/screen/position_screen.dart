@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/position_cubit.dart';
-import '../cubit/position_state.dart';
 import 'package:booking_app_mobile/core/di/injector.dart';
 
 @RoutePage()
@@ -99,32 +98,34 @@ class PositionScreen extends StatelessWidget {
         )..fetchPositions(),
         child: BlocConsumer<PositionCubit, PositionState>(
           listener: (context, state) {
-            if (state is PositionError) {
+            if (state.errorMessage != null) {
               ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.message)));
+                  .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
             }
           },
           builder: (context, state) {
-            if (state is PositionLoading || state is PositionInitial) {
+            if (state.status.isInitial || state.status.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (state is PositionError) {
-              return Center(child: Text('Có lỗi xảy ra: ${state.message}'));
+            if (state.status.isFailure) {
+              return Center(
+                  child: Text('Có lỗi xảy ra: ${state.errorMessage}'));
             }
 
-            if (state is PositionLoaded) {
+            if (state.status.isSuccess) {
               final items = state.positions;
-              if (items.isEmpty) {
+              if (items == null || items.isEmpty) {
                 return const Center(child: Text('Không có chức vụ nào'));
               }
 
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  FloatingActionButton(
-                    child: const Icon(Icons.add),
-                    onPressed: () => _showEditDialog(context, null),
-                  ),
+                  TextButton.icon(
+                      onPressed: () => _showEditDialog(context, null),
+                      label: const Text('Thêm chức vụ'),
+                      icon: const Icon(Icons.add)),
                   Expanded(
                     child: ListView.separated(
                       itemCount: items.length,
@@ -169,6 +170,7 @@ class PositionScreen extends StatelessWidget {
                                     await context
                                         .read<PositionCubit>()
                                         .removePosition(p.id!);
+                                    if (!context.mounted) return;
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
                                             content: Text('Xóa thành công')));

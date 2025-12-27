@@ -30,20 +30,15 @@ class PositionRepositoryImpl implements PositionRepository {
 
   @override
   Future<Position> createPosition(PositionCreateDto position) async {
-    final body = position.toJson();
-    final response = await apiService.createPosition(body);
+    final response = await apiService.createPosition(position);
     final data = response.data;
     return PositionMapper.toEntity(PositionResponse.fromJson(data));
   }
 
   @override
   Future<Position> updatePosition(PositionUpdateDto position) async {
-    final id = position.id!;
-    final body = {
-      'name': position.name,
-      'description': position.description,
-    };
-    final response = await apiService.updatePosition(id, body);
+    final response =
+        await apiService.updatePosition(position.id ?? 0, position);
     final data = response.data;
     return PositionMapper.toEntity(PositionResponse.fromJson(data));
   }

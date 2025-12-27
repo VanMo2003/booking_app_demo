@@ -45,12 +45,12 @@ class _PositionApiService implements PositionApiService {
   }
 
   @override
-  Future<ApiResponse> createPosition(Map<String, dynamic> body) async {
+  Future<ApiResponse> createPosition(PositionCreateDto body) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(body);
+    _data.addAll(body.toJson());
     final _options = _setStreamType<ApiResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -73,12 +73,12 @@ class _PositionApiService implements PositionApiService {
   }
 
   @override
-  Future<ApiResponse> updatePosition(int id, Map<String, dynamic> body) async {
+  Future<ApiResponse> updatePosition(int id, PositionUpdateDto body) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(body);
+    _data.addAll(body.toJson());
     final _options = _setStreamType<ApiResponse>(
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(

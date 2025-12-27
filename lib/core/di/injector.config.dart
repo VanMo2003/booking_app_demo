@@ -26,6 +26,20 @@ import 'package:booking_app_mobile/features/position/domain/usecases/get_positio
     as _i194;
 import 'package:booking_app_mobile/features/position/domain/usecases/update_position.dart'
     as _i111;
+import 'package:booking_app_mobile/features/room/data/datasource/remote/room_api_service.dart'
+    as _i192;
+import 'package:booking_app_mobile/features/room/data/repository/room_repository_impl.dart'
+    as _i84;
+import 'package:booking_app_mobile/features/room/domain/repositories/room_repository.dart'
+    as _i77;
+import 'package:booking_app_mobile/features/room/domain/usecases/create_room.dart'
+    as _i41;
+import 'package:booking_app_mobile/features/room/domain/usecases/delete_room.dart'
+    as _i480;
+import 'package:booking_app_mobile/features/room/domain/usecases/get_rooms.dart'
+    as _i503;
+import 'package:booking_app_mobile/features/room/domain/usecases/update_room.dart'
+    as _i737;
 import 'package:booking_app_mobile/features/room_type/data/datasource/remote/room_type_api_service.dart'
     as _i244;
 import 'package:booking_app_mobile/features/room_type/data/repository/room_type_repository_impl.dart'
@@ -40,6 +54,20 @@ import 'package:booking_app_mobile/features/room_type/domain/usecases/get_room_t
     as _i592;
 import 'package:booking_app_mobile/features/room_type/domain/usecases/update_room_type.dart'
     as _i771;
+import 'package:booking_app_mobile/features/service/data/datasource/remote/service_api_service.dart'
+    as _i267;
+import 'package:booking_app_mobile/features/service/data/repository/service_repository_impl.dart'
+    as _i704;
+import 'package:booking_app_mobile/features/service/domain/repositories/service_repository.dart'
+    as _i820;
+import 'package:booking_app_mobile/features/service/domain/usecases/create_service.dart'
+    as _i171;
+import 'package:booking_app_mobile/features/service/domain/usecases/delete_service.dart'
+    as _i161;
+import 'package:booking_app_mobile/features/service/domain/usecases/get_services.dart'
+    as _i329;
+import 'package:booking_app_mobile/features/service/domain/usecases/update_service.dart'
+    as _i482;
 import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -62,6 +90,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => networkModule.providePositionApiService(gh<_i361.Dio>()));
     gh.lazySingleton<_i244.RoomTypeApiService>(
         () => networkModule.provideRoomTypeApiService(gh<_i361.Dio>()));
+    gh.lazySingleton<_i192.RoomApiService>(
+        () => networkModule.provideRoomApiService(gh<_i361.Dio>()));
+    gh.lazySingleton<_i267.ServiceApiService>(
+        () => networkModule.provideServiceApiService(gh<_i361.Dio>()));
     gh.lazySingleton<_i555.PositionRepository>(
         () => _i548.PositionRepositoryImpl(gh<_i277.PositionApiService>()));
     gh.factory<_i930.CreatePosition>(
@@ -72,6 +104,18 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i194.GetPositions(gh<_i555.PositionRepository>()));
     gh.factory<_i111.UpdatePosition>(
         () => _i111.UpdatePosition(gh<_i555.PositionRepository>()));
+    gh.lazySingleton<_i820.ServiceRepository>(
+        () => _i704.ServiceRepositoryImpl(gh<_i267.ServiceApiService>()));
+    gh.factory<_i171.CreateService>(
+        () => _i171.CreateService(gh<_i820.ServiceRepository>()));
+    gh.factory<_i161.DeleteService>(
+        () => _i161.DeleteService(gh<_i820.ServiceRepository>()));
+    gh.factory<_i329.GetServices>(
+        () => _i329.GetServices(gh<_i820.ServiceRepository>()));
+    gh.factory<_i482.UpdateService>(
+        () => _i482.UpdateService(gh<_i820.ServiceRepository>()));
+    gh.lazySingleton<_i77.RoomRepository>(
+        () => _i84.RoomRepositoryImpl(gh<_i192.RoomApiService>()));
     gh.lazySingleton<_i18.RoomTypeRepository>(
         () => _i559.RoomTypeRepositoryImpl(gh<_i244.RoomTypeApiService>()));
     gh.factory<_i526.CreateRoomType>(
@@ -82,6 +126,13 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i592.GetRoomTypes(gh<_i18.RoomTypeRepository>()));
     gh.factory<_i771.UpdateRoomType>(
         () => _i771.UpdateRoomType(gh<_i18.RoomTypeRepository>()));
+    gh.factory<_i41.CreateRoom>(
+        () => _i41.CreateRoom(gh<_i77.RoomRepository>()));
+    gh.factory<_i480.DeleteRoom>(
+        () => _i480.DeleteRoom(gh<_i77.RoomRepository>()));
+    gh.factory<_i503.GetRooms>(() => _i503.GetRooms(gh<_i77.RoomRepository>()));
+    gh.factory<_i737.UpdateRoom>(
+        () => _i737.UpdateRoom(gh<_i77.RoomRepository>()));
     return this;
   }
 }

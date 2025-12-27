@@ -45,12 +45,12 @@ class _RoomTypeApiService implements RoomTypeApiService {
   }
 
   @override
-  Future<ApiResponse> createRoomType(Map<String, dynamic> body) async {
+  Future<ApiResponse> createRoomType(RoomTypeCreateDto body) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(body);
+    _data.addAll(body.toJson());
     final _options = _setStreamType<ApiResponse>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
@@ -73,12 +73,12 @@ class _RoomTypeApiService implements RoomTypeApiService {
   }
 
   @override
-  Future<ApiResponse> updateRoomType(int id, Map<String, dynamic> body) async {
+  Future<ApiResponse> updateRoomType(int id, RoomTypeUpdateDto body) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(body);
+    _data.addAll(body.toJson());
     final _options = _setStreamType<ApiResponse>(
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(

@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:booking_app_mobile/features/room_type/domain/entity/room_type.dart';
 import 'package:booking_app_mobile/features/room_type/presentation/cubit/room_type_cubit.dart';
-import 'package:booking_app_mobile/features/room_type/presentation/cubit/room_type_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -19,13 +18,13 @@ class RoomTypeScreen extends StatelessWidget {
     final nameController = TextEditingController(text: item?.name ?? '');
     final descController = TextEditingController(text: item?.description ?? '');
     final formKey = GlobalKey<FormState>();
-
     final cubit = context.read<RoomTypeCubit>();
 
     await showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(item == null ? 'Add Room type' : 'Edit Room type'),
+        title:
+            Text(item == null ? 'Thêm loại phòng mới' : 'Chỉnh sửa loại phòng'),
         content: Form(
           key: formKey,
           child: Column(
@@ -33,12 +32,14 @@ class RoomTypeScreen extends StatelessWidget {
             children: [
               TextFormField(
                 controller: nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
-                validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+                decoration: const InputDecoration(labelText: 'Tên loại phòng'),
+                validator: (v) =>
+                    (v == null || v.isEmpty) ? 'Vui lòng nhập thông tin' : null,
               ),
+              SizedBox(height: 16),
               TextFormField(
                 controller: descController,
-                decoration: const InputDecoration(labelText: 'Description'),
+                decoration: const InputDecoration(labelText: 'Chi tiết'),
                 minLines: 1,
                 maxLines: 3,
               ),
@@ -48,7 +49,7 @@ class RoomTypeScreen extends StatelessWidget {
         actions: [
           TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancel')),
+              child: const Text('Hủy')),
           ElevatedButton(
             onPressed: () async {
               if (!formKey.currentState!.validate()) return;
@@ -62,11 +63,11 @@ class RoomTypeScreen extends StatelessWidget {
                 if (item == null) {
                   await cubit.add(rt);
                   ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Room type added')));
+                      const SnackBar(content: Text('Thêm loại phòng mới')));
                 } else {
                   await cubit.edit(rt);
                   ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Room type updated')));
+                      const SnackBar(content: Text('Cập nhật loại phòng')));
                 }
                 Navigator.of(context).pop();
               } catch (e) {
@@ -74,7 +75,7 @@ class RoomTypeScreen extends StatelessWidget {
                     .showSnackBar(SnackBar(content: Text('Error: $e')));
               }
             },
-            child: const Text('Save'),
+            child: const Text('Lưu thay đổi'),
           ),
         ],
       ),
@@ -84,7 +85,7 @@ class RoomTypeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Room type')),
+      appBar: AppBar(title: const Text('Loại phòng')),
       body: BlocProvider(
         create: (context) => RoomTypeCubit(
           getRoomTypes: getIt<GetRoomTypes>(),
@@ -94,24 +95,25 @@ class RoomTypeScreen extends StatelessWidget {
         )..fetch(),
         child: BlocConsumer<RoomTypeCubit, RoomTypeState>(
           listener: (context, state) {
-            if (state is RoomTypeError) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(state.message)));
+            if (state.status.isFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(state.errorMessage ?? 'Có lỗi xảy ra')));
             }
           },
           builder: (context, state) {
-            if (state is RoomTypeLoading || state is RoomTypeInitial) {
+            if (state.status.isLoading || state.status.isInitial) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (state is RoomTypeError) {
-              return Center(child: Text('Error: ${state.message}'));
+            if (state.status.isFailure) {
+              return Center(
+                  child: Text('Error: ${state.errorMessage ?? 'Unknown'}'));
             }
 
-            if (state is RoomTypeLoaded) {
-              final items = state.items;
+            if (state.status.isSuccess) {
+              final items = state.items ?? [];
               if (items.isEmpty) {
-                return const Center(child: Text('No room types found'));
+                return const Center(child: Text('Không có loại phòng nào'));
               }
 
               return Column(
@@ -144,19 +146,19 @@ class RoomTypeScreen extends StatelessWidget {
                                   final confirm = await showDialog<bool>(
                                     context: context,
                                     builder: (context) => AlertDialog(
-                                      title: const Text('Confirm delete'),
+                                      title: const Text('Xác nhận xóa'),
                                       content: const Text(
-                                          'Are you sure you want to delete this room type?'),
+                                          'Bạn có chắc chắn muốn xóa loại phòng này không?'),
                                       actions: [
                                         TextButton(
                                             onPressed: () =>
                                                 Navigator.of(context)
                                                     .pop(false),
-                                            child: const Text('Cancel')),
+                                            child: const Text('Hủy')),
                                         ElevatedButton(
                                             onPressed: () =>
                                                 Navigator.of(context).pop(true),
-                                            child: const Text('Delete')),
+                                            child: const Text('Xác nhận')),
                                       ],
                                     ),
                                   );
@@ -164,10 +166,10 @@ class RoomTypeScreen extends StatelessWidget {
                                     await context
                                         .read<RoomTypeCubit>()
                                         .remove(r.id!);
+                                    if (!context.mounted) return;
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
-                                            content:
-                                                Text('Room type deleted')));
+                                            content: Text('Xóa thành công')));
                                   }
                                 },
                               ),

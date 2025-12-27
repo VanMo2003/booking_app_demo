@@ -1,0 +1,44 @@
+import '../../../domain/entity/service.dart';
+
+class ServiceResponse {
+  int? id;
+  String? name;
+  int? unitPrice;
+  String? description;
+  int? hotelId;
+  String? hotelName;
+  String? onCreate;
+  String? onUpdate;
+
+  ServiceResponse(
+      {this.id,
+      this.name,
+      this.unitPrice,
+      this.description,
+      this.hotelId,
+      this.hotelName,
+      this.onCreate,
+      this.onUpdate});
+
+  ServiceResponse.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    unitPrice = json['unitPrice'];
+    description = json['description'];
+    hotelId = json['hotelId'];
+    hotelName = json['hotelName'];
+    onCreate = json['onCreate'];
+    onUpdate = json['onUpdate'];
+  }
+
+  ServiceEntity toEntity() => ServiceEntity(
+        id: id,
+        name: name,
+        unitPrice: unitPrice,
+        description: description,
+        hotelId: hotelId,
+        hotelName: hotelName,
+        onCreate: onCreate,
+        onUpdate: onUpdate,
+      );
+}

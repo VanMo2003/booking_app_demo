@@ -1,19 +1,19 @@
-import '../../domain/entity/room_type.dart';
+part of "room_type_cubit.dart";
 
-abstract class RoomTypeState {}
+enum RoomTypeStatus { initial, loading, success, failure }
 
-class RoomTypeInitial extends RoomTypeState {}
-
-class RoomTypeLoading extends RoomTypeState {}
-
-class RoomTypeLoaded extends RoomTypeState {
-  final List<RoomType> items;
-
-  RoomTypeLoaded(this.items);
+extension RoomTypeStatusX on RoomTypeStatus {
+  bool get isLoading => this == RoomTypeStatus.loading;
+  bool get isSuccess => this == RoomTypeStatus.success;
+  bool get isFailure => this == RoomTypeStatus.failure;
+  bool get isInitial => this == RoomTypeStatus.initial;
 }
 
-class RoomTypeError extends RoomTypeState {
-  final String message;
-
-  RoomTypeError(this.message);
+@freezed
+class RoomTypeState with _$RoomTypeState {
+  const factory RoomTypeState({
+    @Default(RoomTypeStatus.initial) RoomTypeStatus status,
+    List<RoomType>? items,
+    String? errorMessage,
+  }) = _RoomTypeState;
 }
