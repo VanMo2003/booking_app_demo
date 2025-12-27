@@ -7,8 +7,6 @@ import '../../domain/usecases/create_room_type.dart';
 import '../../domain/usecases/update_room_type.dart';
 import '../../domain/usecases/delete_room_type.dart';
 
-import 'package:booking_app_mobile/features/room_type/data/mapper/room_type_mapper.dart';
-
 part 'room_type_state.dart';
 part 'room_type_cubit.freezed.dart';
 

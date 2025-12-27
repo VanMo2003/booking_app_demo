@@ -13,6 +13,7 @@ class RoomResponse {
   String? roomTypeName;
   String? onCreate;
   String? onUpdate;
+  List<String>? images;
 
   RoomResponse({
     this.id,
@@ -27,6 +28,7 @@ class RoomResponse {
     this.roomTypeName,
     this.onCreate,
     this.onUpdate,
+    this.images,
   });
 
   RoomResponse.fromJson(Map<String, dynamic> json) {
@@ -42,6 +44,7 @@ class RoomResponse {
     roomTypeName = json['roomTypeName'];
     onCreate = json['onCreate'];
     onUpdate = json['onUpdate'];
+    images = json['images'] != null ? List<String>.from(json['images']) : null;
   }
 
   Room toEntity() => Room(
@@ -57,5 +60,6 @@ class RoomResponse {
         roomTypeName: roomTypeName,
         onCreate: onCreate,
         onUpdate: onUpdate,
+        images: images,
       );
 }

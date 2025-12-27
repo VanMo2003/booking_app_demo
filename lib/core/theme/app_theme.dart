@@ -8,7 +8,12 @@ class AppTheme {
       brightness: Brightness.light,
     );
     return base.copyWith(
-      appBarTheme: const AppBarTheme(centerTitle: true),
+      appBarTheme: const AppBarTheme(
+        iconTheme: IconThemeData(color: Colors.white),
+        centerTitle: true,
+        titleTextStyle: TextStyle(
+            color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+      ),
       inputDecorationTheme: const InputDecorationTheme(
         border: OutlineInputBorder(),
       ),

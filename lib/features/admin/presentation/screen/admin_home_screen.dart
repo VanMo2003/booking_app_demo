@@ -34,7 +34,12 @@ class AdminHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Admin')),
+      appBar: AppBar(
+          title: const Text(
+        'Admin',
+        style: TextStyle(
+            fontWeight: FontWeight.bold, color: Colors.black, fontSize: 24),
+      )),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: GridView.count(

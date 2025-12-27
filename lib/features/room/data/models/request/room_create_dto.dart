@@ -5,6 +5,7 @@ class RoomCreateDto {
   int? capacity;
   int? hotelId;
   int? roomTypeId;
+  List<String>? images;
 
   RoomCreateDto(
       {this.roomNumber,
@@ -12,7 +13,8 @@ class RoomCreateDto {
       this.description,
       this.capacity,
       this.hotelId,
-      this.roomTypeId});
+      this.roomTypeId,
+      this.images});
 
   RoomCreateDto.fromJson(Map<String, dynamic> json) {
     roomNumber = json['roomNumber'];
@@ -21,6 +23,7 @@ class RoomCreateDto {
     capacity = json['capacity'];
     hotelId = json['hotelId'];
     roomTypeId = json['roomTypeId'];
+    images = json['images'] != null ? List<String>.from(json['images']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -31,6 +34,7 @@ class RoomCreateDto {
     data['capacity'] = capacity;
     data['hotelId'] = hotelId;
     data['roomTypeId'] = roomTypeId;
+    if (images != null) data['images'] = images;
     return data;
   }
 }

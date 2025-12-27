@@ -11,6 +11,7 @@ class Room {
   String? roomTypeName;
   String? onCreate;
   String? onUpdate;
+  List<String>? images; // optional image URLs
 
   Room({
     this.id,
@@ -25,6 +26,7 @@ class Room {
     this.roomTypeName,
     this.onCreate,
     this.onUpdate,
+    this.images,
   });
 
   Room.fromJson(Map<String, dynamic> json) {
@@ -40,6 +42,7 @@ class Room {
     roomTypeName = json['roomTypeName'];
     onCreate = json['onCreate'];
     onUpdate = json['onUpdate'];
+    images = json['images'] != null ? List<String>.from(json['images']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -56,6 +59,7 @@ class Room {
     data['roomTypeName'] = roomTypeName;
     data['onCreate'] = onCreate;
     data['onUpdate'] = onUpdate;
+    if (images != null) data['images'] = images;
     return data;
   }
 }

@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:booking_app_mobile/core/di/injector.dart';
+import 'package:booking_app_mobile/core/widgets/app_scaffold.dart';
 import 'package:booking_app_mobile/features/service/domain/entity/service.dart';
 import 'package:booking_app_mobile/features/service/presentation/cubit/service_cubit.dart';
 import 'package:booking_app_mobile/features/service/domain/usecases/get_services.dart';
@@ -64,10 +65,11 @@ class ServiceScreen extends StatelessWidget {
                 );
 
                 try {
-                  if (item == null)
+                  if (item == null) {
                     await cubit.add(s);
-                  else
+                  } else {
                     await cubit.edit(s);
+                  }
                   Navigator.of(ctx).pop();
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text(item == null
@@ -93,64 +95,96 @@ class ServiceScreen extends StatelessWidget {
         updateService: getIt<UpdateService>(),
         deleteService: getIt<DeleteService>(),
       )..fetch(hotelId: 1),
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Service')),
+      child: AppScaffold(
+        title: 'Service',
         floatingActionButton: FloatingActionButton(
           onPressed: () => _showEditDialog(context, null, hotelId: 1),
           child: const Icon(Icons.add),
         ),
         body: BlocConsumer<ServiceCubit, ServiceState>(
           listener: (context, state) {
-            if (state.status.isFailure)
+            if (state.status.isFailure) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(state.errorMessage ?? 'Có lỗi xảy ra')));
+            }
           },
           builder: (context, state) {
-            if (state.status.isLoading || state.status.isInitial)
-              return const Center(child: CircularProgressIndicator());
-            if (state.status.isFailure)
-              return Center(child: Text(state.errorMessage ?? 'Error'));
-            if (state.status.isSuccess) {
-              final items = state.items ?? [];
-              if (items.isEmpty)
-                return const Center(child: Text('Không có dịch vụ nào'));
-              return ListView.separated(
-                itemCount: items.length,
-                separatorBuilder: (_, __) => const Divider(),
-                itemBuilder: (ctx, i) {
-                  final it = items[i];
-                  return ListTile(
-                    title: Text(it.name ?? '-'),
-                    subtitle:
-                        Text('${it.description ?? ''} • ${it.unitPrice ?? 0}'),
-                    trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                      IconButton(
-                          icon: const Icon(Icons.edit),
-                          onPressed: () => _showEditDialog(context, it,
-                              hotelId: it.hotelId ?? 1)),
-                      IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () async {
-                            final cubit = context.read<ServiceCubit>();
-                            try {
-                              await cubit.remove(it.id!);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Xóa thành công')));
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error: $e')));
-                            }
-                          }),
-                    ]),
-                  );
-                },
-              );
-            }
-            return const SizedBox.shrink();
+            return _buildContent(context, state: state);
           },
         ),
       ),
     );
+  }
+
+  Widget _buildContent(BuildContext context, {required ServiceState state}) {
+    if (state.status.isLoading || state.status.isInitial) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (state.status.isFailure) {
+      return Center(child: Text(state.errorMessage ?? 'Error'));
+    }
+    if (state.status.isSuccess) {
+      final items = state.items ?? [];
+      if (items.isEmpty) {
+        return const Center(child: Text('Không có dịch vụ nào'));
+      }
+      return ListView.separated(
+        itemCount: items.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 8),
+        itemBuilder: (ctx, i) {
+          final it = items[i];
+          return Card(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            elevation: 2,
+            child: ListTile(
+              title: Text(it.name ?? '-'),
+              subtitle: Text('${it.description ?? ''} • ${it.unitPrice ?? 0}'),
+              trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () =>
+                        _showEditDialog(context, it, hotelId: it.hotelId ?? 1)),
+                IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () async {
+                      final cubit = context.read<ServiceCubit>();
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Xác nhận xóa'),
+                          content: const Text(
+                              'Bạn có chắc chắn muốn xóa dịch vụ này không?'),
+                          actions: [
+                            TextButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop(false),
+                                child: const Text('Hủy')),
+                            ElevatedButton(
+                                onPressed: () =>
+                                    Navigator.of(context).pop(true),
+                                child: const Text('Xác nhận')),
+                          ],
+                        ),
+                      );
+                      if (confirm == true && it.id != null) {
+                        try {
+                          await cubit.remove(it.id!);
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Xóa thành công')));
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error: $e')));
+                        }
+                      }
+                    }),
+              ]),
+            ),
+          );
+        },
+      );
+    }
+    return const SizedBox.shrink();
   }
 }

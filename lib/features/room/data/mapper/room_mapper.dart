@@ -12,6 +12,7 @@ class RoomMapper {
         capacity: r.capacity,
         hotelId: r.hotelId,
         roomTypeId: r.roomTypeId,
+        images: r.images,
       );
 
   static RoomUpdateDto toUpdate(Room r) => RoomUpdateDto(
@@ -21,5 +22,6 @@ class RoomMapper {
         capacity: r.capacity,
         roomTypeId: r.roomTypeId,
         status: r.status,
+        images: r.images,
       );
 }
