@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import '../di/injector.dart';
 import 'app_config.dart';
 import '../storage/app_prefs.dart';
+import 'auth_interceptor.dart';
 
 @injectable
 class DioClient {
@@ -40,35 +42,12 @@ class DioClient {
   void _setupInterceptors() {
     _dio.interceptors.clear();
 
-    // Add headers and auth
-    _dio.interceptors
-        .add(InterceptorsWrapper(onRequest: (options, handler) async {
-      final token = await AppPrefs.getToken();
-      if (token.isNotEmpty) {
-        options.headers['Authorization'] = 'Bearer $token';
-      }
-      // Merge standard headers from config (do not overwrite existing headers)
-      _config.standardHeaders.forEach((k, v) {
-        options.headers.putIfAbsent(k, () => v);
-      });
-      handler.next(options);
-    }, onError: (err, handler) {
-      // Global error handling: log and rethrow
-      try {
-        // ignore: avoid_print
-        print('Dio request error: ${err.type} ${err.message}');
-        if (err.response != null) {
-          // ignore: avoid_print
-          print(
-              'Error response status: ${err.response?.statusCode} - ${err.response?.data}');
-        }
-      } catch (e) {}
-      handler.next(err);
-    }, onResponse: (response, handler) {
-      // ignore: avoid_print
-      print('Dio response: ${response.statusCode}');
-      handler.next(response);
-    }));
+    final secureStorage = FlutterSecureStorage();
+
+    // 🔐 Auth + Refresh token interceptor
+    _dio.interceptors.add(
+      AuthInterceptor(_dio, secureStorage),
+    );
 
     // Logging (simple)
     _dio.interceptors.add(LogInterceptor(

@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
-import '../../../../login/data/models/request/login_request.dart';
 import '../../../../share/data/models/api_response.dart';
+import '../../models/request/login_request.dart';
 
 part 'login_api_service.g.dart';
 

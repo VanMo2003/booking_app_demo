@@ -10,8 +10,14 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:booking_app_mobile/core/di/network_module.dart' as _i186;
-import 'package:booking_app_mobile/features/auth/data/datasource/remote/login_api_service.dart'
-    as _i10;
+import 'package:booking_app_mobile/features/login/data/datasource/remote/login_api_service.dart'
+    as _i651;
+import 'package:booking_app_mobile/features/login/data/repository/login_repository_impl.dart'
+    as _i290;
+import 'package:booking_app_mobile/features/login/domain/repositories/auth_repository.dart'
+    as _i510;
+import 'package:booking_app_mobile/features/login/domain/usecases/login_use_case.dart'
+    as _i624;
 import 'package:booking_app_mobile/features/position/data/datasource/remote/position_api_service.dart'
     as _i277;
 import 'package:booking_app_mobile/features/position/data/repository/position_repository_impl.dart'
@@ -84,7 +90,7 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     final networkModule = _$NetworkModule();
-    gh.lazySingleton<_i10.LoginApiService>(
+    gh.lazySingleton<_i651.LoginApiService>(
         () => networkModule.provideLoanPackageApiService(gh<_i361.Dio>()));
     gh.lazySingleton<_i277.PositionApiService>(
         () => networkModule.providePositionApiService(gh<_i361.Dio>()));
@@ -106,6 +112,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i111.UpdatePosition(gh<_i555.PositionRepository>()));
     gh.lazySingleton<_i820.ServiceRepository>(
         () => _i704.ServiceRepositoryImpl(gh<_i267.ServiceApiService>()));
+    gh.lazySingleton<_i510.AuthRepository>(
+        () => _i290.AuthRepositoryImpl(gh<_i651.LoginApiService>()));
     gh.factory<_i171.CreateService>(
         () => _i171.CreateService(gh<_i820.ServiceRepository>()));
     gh.factory<_i161.DeleteService>(
@@ -114,6 +122,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i329.GetServices(gh<_i820.ServiceRepository>()));
     gh.factory<_i482.UpdateService>(
         () => _i482.UpdateService(gh<_i820.ServiceRepository>()));
+    gh.factory<_i624.LoginUseCase>(
+        () => _i624.LoginUseCase(gh<_i510.AuthRepository>()));
     gh.lazySingleton<_i77.RoomRepository>(
         () => _i84.RoomRepositoryImpl(gh<_i192.RoomApiService>()));
     gh.lazySingleton<_i18.RoomTypeRepository>(

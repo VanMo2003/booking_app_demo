@@ -7,6 +7,7 @@ import '../../features/room_type/presentation/screen/room_type_screen.dart';
 import '../../features/room/presentation/screen/room_screen.dart';
 import '../../features/service/presentation/screen/service_screen.dart';
 import '../../features/admin/presentation/screen/booking_screen.dart';
+import '../../features/login/presentation/screen/login_screen.dart';
 
 part 'app_routes.gr.dart';
 
@@ -19,7 +20,12 @@ class AppRoutes extends RootStackRouter {
   @override
   List<AutoRoute> get routes => [
         AutoRoute(
-          path: '/admin',
+          path: '/${LoginRoute.name}',
+          page: LoginRoute.page,
+          initial: !includeAuthRoutes,
+        ),
+        AutoRoute(
+          path: '/${AdminHomeRoute.name}',
           page: AdminHomeRoute.page,
           initial: includeAuthRoutes,
         ),
