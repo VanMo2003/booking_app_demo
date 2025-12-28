@@ -1,5 +1,7 @@
+import 'package:booking_app_mobile/core/api/dio_client.dart';
 import 'package:booking_app_mobile/features/position/data/mapper/position_mapper.dart';
 import 'package:booking_app_mobile/features/position/data/models/request/position_create_dto.dart';
+import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../domain/entity/position.dart';
@@ -11,40 +13,57 @@ import '../models/response/position_response.dart';
 @LazySingleton(as: PositionRepository)
 class PositionRepositoryImpl implements PositionRepository {
   final PositionApiService apiService;
+  final DioClient dioClient;
 
-  PositionRepositoryImpl(this.apiService);
+  PositionRepositoryImpl(this.apiService, this.dioClient);
 
   @override
   Future<List<Position>> getPositions() async {
-    final response = await apiService.getPosition();
+    try {
+      final response = await apiService.getPosition();
 
-    List<Position>? items;
-    items ??= [];
+      List<Position>? items;
+      items ??= [];
 
-    for (var item in response.data) {
-      items.add(PositionMapper.toEntity(PositionResponse.fromJson(item)));
+      for (var item in response.data) {
+        items.add(PositionMapper.toEntity(PositionResponse.fromJson(item)));
+      }
+
+      return items;
+    } catch (e) {
+      throw dioClient.handleDioError(e as DioException);
     }
-
-    return items;
   }
 
   @override
   Future<Position> createPosition(PositionCreateDto position) async {
-    final response = await apiService.createPosition(position);
-    final data = response.data;
-    return PositionMapper.toEntity(PositionResponse.fromJson(data));
+    try {
+      final response = await apiService.createPosition(position);
+      final data = response.data;
+      return PositionMapper.toEntity(PositionResponse.fromJson(data));
+    } catch (e) {
+      throw dioClient.handleDioError(e as DioException);
+    }
   }
 
   @override
   Future<Position> updatePosition(PositionUpdateDto position) async {
-    final response =
-        await apiService.updatePosition(position.id ?? 0, position);
-    final data = response.data;
-    return PositionMapper.toEntity(PositionResponse.fromJson(data));
+    try {
+      final response =
+          await apiService.updatePosition(position.id ?? 0, position);
+      final data = response.data;
+      return PositionMapper.toEntity(PositionResponse.fromJson(data));
+    } catch (e) {
+      throw dioClient.handleDioError(e as DioException);
+    }
   }
 
   @override
   Future<void> deletePosition(int id) async {
-    await apiService.deletePosition(id);
+    try {
+      await apiService.deletePosition(id);
+    } catch (e) {
+      throw dioClient.handleDioError(e as DioException);
+    }
   }
 }

@@ -1,4 +1,3 @@
-
 part of "position_cubit.dart";
 
 enum PositionStatus { initial, loading, success, failure }

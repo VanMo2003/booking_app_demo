@@ -1,5 +1,8 @@
+import 'package:booking_app_mobile/features/share/data/models/api_response.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import '../constants/key_constant.dart';
 
 class AuthInterceptor extends Interceptor {
   final Dio dio;
@@ -10,7 +13,7 @@ class AuthInterceptor extends Interceptor {
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    final token = await storage.read(key: 'access_token');
+    final token = await storage.read(key: KeyConstant.accessToken);
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
     }
@@ -19,10 +22,11 @@ class AuthInterceptor extends Interceptor {
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    if (err.response?.statusCode == 401) {
+    if (err.response?.statusCode == 401 &&
+        !err.requestOptions.path.contains('/auth/refreshToken')) {
       final refreshed = await _refreshToken();
       if (refreshed) {
-        final access = await storage.read(key: 'access_token');
+        final access = await storage.read(key: KeyConstant.accessToken);
         err.requestOptions.headers['Authorization'] = 'Bearer $access';
         return handler.resolve(await dio.fetch(err.requestOptions));
       }
@@ -31,26 +35,32 @@ class AuthInterceptor extends Interceptor {
   }
 
   Future<bool> _refreshToken() async {
-    final refreshToken = await storage.read(key: 'refresh_token');
+    final refreshToken = await storage.read(key: KeyConstant.refreshToken);
     if (refreshToken == null) return false;
 
     try {
       final refreshDio = Dio(
-        BaseOptions(baseUrl: dio.options.baseUrl),
+        BaseOptions(
+          baseUrl: dio.options.baseUrl,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
       );
       final response = await refreshDio.post(
-        '/auth/refresh',
+        '/auth/refreshToken',
         data: {'token': refreshToken},
-        options: Options(headers: {'Authorization': null}),
       );
 
-      final newAccess = response.data['access_token'];
-      final newRefresh = response.data['refresh_token'];
+      var res = ApiResponse.fromJson(response.data);
 
-      await storage.write(key: 'access_token', value: newAccess);
-      await storage.write(key: 'refresh_token', value: newRefresh);
+      final newAccess = res.data['accessToken'];
+      final newRefresh = res.data['refreshToken'];
+
+      await storage.write(key: KeyConstant.accessToken, value: newAccess);
+      await storage.write(key: KeyConstant.refreshToken, value: newRefresh);
       return true;
-    } catch (_) {
+    } catch (e) {
       await storage.deleteAll();
       return false;
     }

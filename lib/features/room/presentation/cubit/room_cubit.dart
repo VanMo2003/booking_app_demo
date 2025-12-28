@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../../core/errors/app_exception.dart';
 import '../../domain/entity/room.dart';
 import '../../domain/repositories/room_repository.dart';
 import '../../domain/usecases/get_rooms.dart';
@@ -31,8 +32,8 @@ class RoomCubit extends Cubit<RoomState> {
       final data =
           await getRooms.call(hotelId: hotelId, page: page, size: size);
       emit(state.copyWith(status: RoomStatus.success, data: data));
-    } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on AppException catch (e) {
+      emit(state.copyWith(errorMessage: e.message));
     }
   }
 
@@ -52,8 +53,8 @@ class RoomCubit extends Cubit<RoomState> {
           totalElements: rl.totalElements + 1,
           totalPages: rl.totalPages);
       emit(state.copyWith(status: RoomStatus.success, data: newData));
-    } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on AppException catch (e) {
+      emit(state.copyWith(errorMessage: e.message));
     }
   }
 
@@ -75,8 +76,8 @@ class RoomCubit extends Cubit<RoomState> {
       } else {
         emit(state.copyWith(status: RoomStatus.success));
       }
-    } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on AppException catch (e) {
+      emit(state.copyWith(errorMessage: e.message));
     }
   }
 
@@ -97,8 +98,8 @@ class RoomCubit extends Cubit<RoomState> {
       } else {
         emit(state.copyWith(status: RoomStatus.success));
       }
-    } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on AppException catch (e) {
+      emit(state.copyWith(errorMessage: e.message));
     }
   }
 }

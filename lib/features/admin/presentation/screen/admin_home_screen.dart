@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/navigation/app_routes.dart';
+import 'package:booking_app_mobile/core/di/injector.dart';
+import 'package:booking_app_mobile/features/auth/domain/repositories/auth_repository.dart';
 
 @RoutePage()
 class AdminHomeScreen extends StatelessWidget {
   const AdminHomeScreen({super.key});
 
-  // Hàm định dạng tiền tệ VNĐ
   String _formatCurrency(double amount) {
     return NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(amount);
   }
 
-  // Hàm xử lý hiển thị Dialog xác nhận đăng xuất
   void _handleLogout(BuildContext context) {
     showDialog(
       context: context,
@@ -34,9 +34,25 @@ class AdminHomeScreen extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8)),
             ),
-            onPressed: () {
-              // Xóa toàn bộ stack và đẩy về màn hình Login
-              context.router.replaceAll([const LoginRoute()]);
+            onPressed: () async {
+              Navigator.pop(ctx);
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (_) =>
+                    const Center(child: CircularProgressIndicator()),
+              );
+              try {
+                await getIt<AuthRepository>().logout();
+                Navigator.pop(context);
+                context.router.replaceAll([const LoginRoute()]);
+              } catch (e) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text('Đăng xuất thất bại: ${e.toString()}')),
+                );
+              }
             },
             child: const Text('Đăng xuất'),
           ),
@@ -141,14 +157,14 @@ class AdminHomeScreen extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [primaryColor, primaryColor.withOpacity(0.8)],
+          colors: [primaryColor, primaryColor.withValues(alpha: 0.8)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: primaryColor.withOpacity(0.3),
+            color: primaryColor.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 8),
           )
@@ -164,7 +180,8 @@ class AdminHomeScreen extends StatelessWidget {
                 'Doanh thu tháng này',
                 style: TextStyle(color: Colors.white70, fontSize: 16),
               ),
-              Icon(Icons.trending_up, color: Colors.white.withOpacity(0.8)),
+              Icon(Icons.trending_up,
+                  color: Colors.white.withValues(alpha: 0.8)),
             ],
           ),
           const SizedBox(height: 10),
@@ -177,7 +194,7 @@ class AdminHomeScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Text(
@@ -204,7 +221,7 @@ class AdminHomeScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-                color: Colors.black.withOpacity(0.03),
+                color: Colors.black.withValues(alpha: 0.03),
                 blurRadius: 10,
                 offset: const Offset(0, 4))
           ],
@@ -215,7 +232,7 @@ class AdminHomeScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(icon, color: color, size: 24),
@@ -259,7 +276,7 @@ class AdminHomeScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withOpacity(0.1),
+                color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child:

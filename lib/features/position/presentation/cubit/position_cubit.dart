@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:booking_app_mobile/features/position/data/mapper/position_mapper.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../../core/errors/app_exception.dart';
 import '../../domain/entity/position.dart';
 import '../../domain/usecases/get_positions.dart';
 import '../../domain/usecases/create_position.dart';
@@ -30,8 +31,8 @@ class PositionCubit extends Cubit<PositionState> {
       final List<Position> positions = await getPositions.call();
       emit(
           state.copyWith(status: PositionStatus.success, positions: positions));
-    } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on AppException catch (e) {
+      emit(state.copyWith(errorMessage: e.message));
     }
   }
 
@@ -44,8 +45,8 @@ class PositionCubit extends Cubit<PositionState> {
       positions.add(positionRes);
       emit(
           state.copyWith(status: PositionStatus.success, positions: positions));
-    } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on AppException catch (e) {
+      emit(state.copyWith(errorMessage: e.message));
     }
   }
 
@@ -63,8 +64,8 @@ class PositionCubit extends Cubit<PositionState> {
       }).toList();
       emit(
           state.copyWith(status: PositionStatus.success, positions: positions));
-    } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on AppException catch (e) {
+      emit(state.copyWith(errorMessage: e.message));
     }
   }
 
@@ -77,8 +78,8 @@ class PositionCubit extends Cubit<PositionState> {
       positions?.removeWhere((position) => position.id == id);
       emit(
           state.copyWith(status: PositionStatus.success, positions: positions));
-    } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on AppException catch (e) {
+      emit(state.copyWith(errorMessage: e.message));
     }
   }
 }

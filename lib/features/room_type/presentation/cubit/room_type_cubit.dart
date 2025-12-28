@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../../core/errors/app_exception.dart';
 import '../../domain/entity/room_type.dart';
 import '../../domain/usecases/get_room_types.dart';
 import '../../domain/usecases/create_room_type.dart';
@@ -28,8 +29,8 @@ class RoomTypeCubit extends Cubit<RoomTypeState> {
       emit(state.copyWith(status: RoomTypeStatus.loading));
       final items = await getRoomTypes.call();
       emit(state.copyWith(status: RoomTypeStatus.success, items: items));
-    } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on AppException catch (e) {
+      emit(state.copyWith(errorMessage: e.message));
     }
   }
 
@@ -40,8 +41,8 @@ class RoomTypeCubit extends Cubit<RoomTypeState> {
       final List<RoomType> current = state.items?.toList() ?? [];
       current.add(created);
       emit(state.copyWith(status: RoomTypeStatus.success, items: current));
-    } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on AppException catch (e) {
+      emit(state.copyWith(errorMessage: e.message));
     }
   }
 
@@ -54,8 +55,8 @@ class RoomTypeCubit extends Cubit<RoomTypeState> {
         return rt;
       }).toList();
       emit(state.copyWith(status: RoomTypeStatus.success, items: current));
-    } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on AppException catch (e) {
+      emit(state.copyWith(errorMessage: e.message));
     }
   }
 
@@ -66,8 +67,8 @@ class RoomTypeCubit extends Cubit<RoomTypeState> {
       final List<RoomType>? current = state.items?.toList();
       current?.removeWhere((rt) => rt.id == id);
       emit(state.copyWith(status: RoomTypeStatus.success, items: current));
-    } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on AppException catch (e) {
+      emit(state.copyWith(errorMessage: e.message));
     }
   }
 }

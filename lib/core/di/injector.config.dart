@@ -9,15 +9,18 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:booking_app_mobile/core/api/dio_client.dart' as _i764;
 import 'package:booking_app_mobile/core/di/network_module.dart' as _i186;
-import 'package:booking_app_mobile/features/login/data/datasource/remote/login_api_service.dart'
-    as _i651;
-import 'package:booking_app_mobile/features/login/data/repository/login_repository_impl.dart'
-    as _i290;
-import 'package:booking_app_mobile/features/login/domain/repositories/auth_repository.dart'
-    as _i510;
-import 'package:booking_app_mobile/features/login/domain/usecases/login_use_case.dart'
-    as _i624;
+import 'package:booking_app_mobile/features/auth/data/datasource/remote/auth_api_service.dart'
+    as _i608;
+import 'package:booking_app_mobile/features/auth/data/repository/auth_repository_impl.dart'
+    as _i443;
+import 'package:booking_app_mobile/features/auth/domain/repositories/auth_repository.dart'
+    as _i619;
+import 'package:booking_app_mobile/features/auth/domain/usecases/login_use_case.dart'
+    as _i15;
+import 'package:booking_app_mobile/features/auth/domain/usecases/logout_use_case.dart'
+    as _i941;
 import 'package:booking_app_mobile/features/position/data/datasource/remote/position_api_service.dart'
     as _i277;
 import 'package:booking_app_mobile/features/position/data/repository/position_repository_impl.dart'
@@ -75,6 +78,7 @@ import 'package:booking_app_mobile/features/service/domain/usecases/get_services
 import 'package:booking_app_mobile/features/service/domain/usecases/update_service.dart'
     as _i482;
 import 'package:dio/dio.dart' as _i361;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
@@ -90,8 +94,14 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     final networkModule = _$NetworkModule();
-    gh.lazySingleton<_i651.LoginApiService>(
-        () => networkModule.provideLoanPackageApiService(gh<_i361.Dio>()));
+    gh.lazySingleton<_i558.FlutterSecureStorage>(
+        () => networkModule.provideSecureStorage());
+    gh.lazySingleton<_i361.Dio>(
+        () => networkModule.provideDio(gh<_i558.FlutterSecureStorage>()));
+    gh.lazySingleton<_i764.DioClient>(
+        () => networkModule.provideDioClient(gh<_i361.Dio>()));
+    gh.lazySingleton<_i608.AuthApiService>(
+        () => networkModule.provideAuthApiService(gh<_i361.Dio>()));
     gh.lazySingleton<_i277.PositionApiService>(
         () => networkModule.providePositionApiService(gh<_i361.Dio>()));
     gh.lazySingleton<_i244.RoomTypeApiService>(
@@ -100,8 +110,16 @@ extension GetItInjectableX on _i174.GetIt {
         () => networkModule.provideRoomApiService(gh<_i361.Dio>()));
     gh.lazySingleton<_i267.ServiceApiService>(
         () => networkModule.provideServiceApiService(gh<_i361.Dio>()));
+    gh.lazySingleton<_i619.AuthRepository>(() => _i443.AuthRepositoryImpl(
+          gh<_i608.AuthApiService>(),
+          gh<_i764.DioClient>(),
+          gh<_i558.FlutterSecureStorage>(),
+        ));
     gh.lazySingleton<_i555.PositionRepository>(
-        () => _i548.PositionRepositoryImpl(gh<_i277.PositionApiService>()));
+        () => _i548.PositionRepositoryImpl(
+              gh<_i277.PositionApiService>(),
+              gh<_i764.DioClient>(),
+            ));
     gh.factory<_i930.CreatePosition>(
         () => _i930.CreatePosition(gh<_i555.PositionRepository>()));
     gh.factory<_i352.DeletePosition>(
@@ -110,10 +128,23 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i194.GetPositions(gh<_i555.PositionRepository>()));
     gh.factory<_i111.UpdatePosition>(
         () => _i111.UpdatePosition(gh<_i555.PositionRepository>()));
-    gh.lazySingleton<_i820.ServiceRepository>(
-        () => _i704.ServiceRepositoryImpl(gh<_i267.ServiceApiService>()));
-    gh.lazySingleton<_i510.AuthRepository>(
-        () => _i290.AuthRepositoryImpl(gh<_i651.LoginApiService>()));
+    gh.lazySingleton<_i820.ServiceRepository>(() => _i704.ServiceRepositoryImpl(
+          gh<_i267.ServiceApiService>(),
+          gh<_i764.DioClient>(),
+        ));
+    gh.lazySingleton<_i18.RoomTypeRepository>(
+        () => _i559.RoomTypeRepositoryImpl(
+              gh<_i244.RoomTypeApiService>(),
+              gh<_i764.DioClient>(),
+            ));
+    gh.lazySingleton<_i77.RoomRepository>(() => _i84.RoomRepositoryImpl(
+          gh<_i192.RoomApiService>(),
+          gh<_i764.DioClient>(),
+        ));
+    gh.factory<_i15.LoginUseCase>(
+        () => _i15.LoginUseCase(gh<_i619.AuthRepository>()));
+    gh.factory<_i941.LogoutUseCase>(
+        () => _i941.LogoutUseCase(gh<_i619.AuthRepository>()));
     gh.factory<_i171.CreateService>(
         () => _i171.CreateService(gh<_i820.ServiceRepository>()));
     gh.factory<_i161.DeleteService>(
@@ -122,12 +153,6 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i329.GetServices(gh<_i820.ServiceRepository>()));
     gh.factory<_i482.UpdateService>(
         () => _i482.UpdateService(gh<_i820.ServiceRepository>()));
-    gh.factory<_i624.LoginUseCase>(
-        () => _i624.LoginUseCase(gh<_i510.AuthRepository>()));
-    gh.lazySingleton<_i77.RoomRepository>(
-        () => _i84.RoomRepositoryImpl(gh<_i192.RoomApiService>()));
-    gh.lazySingleton<_i18.RoomTypeRepository>(
-        () => _i559.RoomTypeRepositoryImpl(gh<_i244.RoomTypeApiService>()));
     gh.factory<_i526.CreateRoomType>(
         () => _i526.CreateRoomType(gh<_i18.RoomTypeRepository>()));
     gh.factory<_i117.DeleteRoomType>(

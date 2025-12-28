@@ -1,11 +1,11 @@
-import 'package:booking_app_mobile/features/login/data/models/request/login_request.dart';
+import 'package:booking_app_mobile/features/auth/data/models/request/login_request.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/di/injector.dart';
-import '../../../../core/navigation/app_routes.dart';
+import '../../../../../core/di/injector.dart';
+import '../../../../../core/navigation/app_routes.dart';
 import '../cubit/login_cubit.dart';
 import 'package:auto_route/auto_route.dart';
-import '../../domain/usecases/login_use_case.dart';
+import '../../../domain/usecases/login_use_case.dart';
 
 @RoutePage()
 class LoginScreen extends StatefulWidget {
@@ -57,8 +57,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           height: 150,
                           width: 150,
                           decoration: BoxDecoration(
-                            color:
-                                Theme.of(context).primaryColor.withOpacity(0.1),
+                            color: Theme.of(context)
+                                .primaryColor
+                                .withValues(alpha: 0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(Icons.hotel,

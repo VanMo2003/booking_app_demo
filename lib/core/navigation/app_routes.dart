@@ -7,7 +7,7 @@ import '../../features/room_type/presentation/screen/room_type_screen.dart';
 import '../../features/room/presentation/screen/room_screen.dart';
 import '../../features/service/presentation/screen/service_screen.dart';
 import '../../features/admin/presentation/screen/booking_screen.dart';
-import '../../features/login/presentation/screen/login_screen.dart';
+import '../../features/auth/presentation/login/screen/login_screen.dart';
 
 part 'app_routes.gr.dart';
 

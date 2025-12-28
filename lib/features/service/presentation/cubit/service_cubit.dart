@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../../core/errors/app_exception.dart';
 import '../../domain/entity/service.dart';
 import '../../domain/usecases/get_services.dart';
 import '../../domain/usecases/create_service.dart';
@@ -28,8 +29,8 @@ class ServiceCubit extends Cubit<ServiceState> {
       emit(state.copyWith(status: ServiceStatus.loading));
       final items = await getServices.call(hotelId: hotelId);
       emit(state.copyWith(status: ServiceStatus.success, items: items));
-    } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on AppException catch (e) {
+      emit(state.copyWith(errorMessage: e.message));
     }
   }
 
@@ -40,8 +41,8 @@ class ServiceCubit extends Cubit<ServiceState> {
       final current = state.items?.toList() ?? [];
       current.add(created);
       emit(state.copyWith(status: ServiceStatus.success, items: current));
-    } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on AppException catch (e) {
+      emit(state.copyWith(errorMessage: e.message));
     }
   }
 
@@ -52,8 +53,8 @@ class ServiceCubit extends Cubit<ServiceState> {
       final current =
           state.items?.map((it) => it.id == updated.id ? updated : it).toList();
       emit(state.copyWith(status: ServiceStatus.success, items: current));
-    } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on AppException catch (e) {
+      emit(state.copyWith(errorMessage: e.message));
     }
   }
 
@@ -63,8 +64,8 @@ class ServiceCubit extends Cubit<ServiceState> {
       await deleteService.call(id);
       final current = state.items?.where((it) => it.id != id).toList();
       emit(state.copyWith(status: ServiceStatus.success, items: current));
-    } catch (e) {
-      emit(state.copyWith(errorMessage: e.toString()));
+    } on AppException catch (e) {
+      emit(state.copyWith(errorMessage: e.message));
     }
   }
 }
