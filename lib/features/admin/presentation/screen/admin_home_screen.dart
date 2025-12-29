@@ -7,8 +7,8 @@ import 'package:booking_app_mobile/core/di/injector.dart';
 import 'package:booking_app_mobile/features/auth/domain/repositories/auth_repository.dart';
 
 @RoutePage()
-class AdminHomeScreen extends StatelessWidget {
-  const AdminHomeScreen({super.key});
+class HotelManagerScreen extends StatelessWidget {
+  const HotelManagerScreen({super.key});
 
   String _formatCurrency(double amount) {
     return NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(amount);
@@ -72,7 +72,7 @@ class AdminHomeScreen extends StatelessWidget {
         elevation: 0,
         centerTitle: false,
         title: const Text(
-          'Admin Dashboard',
+          'Bảng quản lý',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black,
@@ -136,8 +136,9 @@ class AdminHomeScreen extends StatelessWidget {
                     () => context.router.push(const StaffRoute())),
                 _buildTile(context, Icons.category, 'Loại phòng',
                     () => context.router.push(const RoomTypeRoute())),
+                // TODO : lấy hotelId qua api
                 _buildTile(context, Icons.meeting_room, 'Phòng',
-                    () => context.router.push(const RoomRoute())),
+                    () => context.router.push(RoomRoute(hotelId: 1))),
                 _buildTile(context, Icons.room_service, 'Dịch vụ',
                     () => context.router.push(const ServiceRoute())),
                 _buildTile(context, Icons.assignment, 'Booking',

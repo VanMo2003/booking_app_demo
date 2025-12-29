@@ -8,8 +8,9 @@ class StaffScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Staff')),
-      body: const Center(child: Text('Staff management placeholder')),
+      appBar: AppBar(title: const Text('Quản lý nhân viên')),
+      body: const Center(
+          child: Text('Chức năng quản lý nhân viên (chưa triển khai)')),
     );
   }
 }

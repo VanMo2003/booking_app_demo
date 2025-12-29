@@ -11,17 +11,17 @@
 part of 'app_routes.dart';
 
 /// generated route for
-/// [AdminHomeScreen]
-class AdminHomeRoute extends PageRouteInfo<void> {
-  const AdminHomeRoute({List<PageRouteInfo>? children})
-      : super(AdminHomeRoute.name, initialChildren: children);
+/// [HotelManagerScreen]
+class HotelManagerRoute extends PageRouteInfo<void> {
+  const HotelManagerRoute({List<PageRouteInfo>? children})
+      : super(HotelManagerRoute.name, initialChildren: children);
 
-  static const String name = 'AdminHomeRoute';
+  static const String name = 'HotelManagerRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const AdminHomeScreen();
+      return const HotelManagerScreen();
     },
   );
 }
@@ -75,19 +75,79 @@ class PositionRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [CustomerScreen]
+class CustomerRoute extends PageRouteInfo<void> {
+  const CustomerRoute({List<PageRouteInfo>? children})
+      : super(CustomerRoute.name, initialChildren: children);
+
+  static const String name = 'CustomerRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const CustomerScreen();
+    },
+  );
+}
+
+/// generated route for
+/// [RegisterScreen]
+class RegisterRoute extends PageRouteInfo<void> {
+  const RegisterRoute({List<PageRouteInfo>? children})
+      : super(RegisterRoute.name, initialChildren: children);
+
+  static const String name = 'RegisterRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const RegisterScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [RoomScreen]
-class RoomRoute extends PageRouteInfo<void> {
-  const RoomRoute({List<PageRouteInfo>? children})
-      : super(RoomRoute.name, initialChildren: children);
+class RoomRoute extends PageRouteInfo<RoomRouteArgs> {
+  RoomRoute({Key? key, required int hotelId, List<PageRouteInfo>? children})
+      : super(
+          RoomRoute.name,
+          args: RoomRouteArgs(key: key, hotelId: hotelId),
+          initialChildren: children,
+        );
 
   static const String name = 'RoomRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const RoomScreen();
+      final args = data.argsAs<RoomRouteArgs>();
+      return RoomScreen(key: args.key, hotelId: args.hotelId);
     },
   );
+}
+
+class RoomRouteArgs {
+  const RoomRouteArgs({this.key, required this.hotelId});
+
+  final Key? key;
+
+  final int hotelId;
+
+  @override
+  String toString() {
+    return 'RoomRouteArgs{key: $key, hotelId: $hotelId}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! RoomRouteArgs) return false;
+    return key == other.key && hotelId == other.hotelId;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ hotelId.hashCode;
 }
 
 /// generated route for

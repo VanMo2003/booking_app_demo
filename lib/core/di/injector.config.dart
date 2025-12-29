@@ -21,6 +21,8 @@ import 'package:booking_app_mobile/features/auth/domain/usecases/login_use_case.
     as _i15;
 import 'package:booking_app_mobile/features/auth/domain/usecases/logout_use_case.dart'
     as _i941;
+import 'package:booking_app_mobile/features/auth/domain/usecases/register_use_case.dart'
+    as _i417;
 import 'package:booking_app_mobile/features/position/data/datasource/remote/position_api_service.dart'
     as _i277;
 import 'package:booking_app_mobile/features/position/data/repository/position_repository_impl.dart'
@@ -145,6 +147,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i15.LoginUseCase(gh<_i619.AuthRepository>()));
     gh.factory<_i941.LogoutUseCase>(
         () => _i941.LogoutUseCase(gh<_i619.AuthRepository>()));
+    gh.factory<_i417.RegisterUseCase>(
+        () => _i417.RegisterUseCase(gh<_i619.AuthRepository>()));
     gh.factory<_i171.CreateService>(
         () => _i171.CreateService(gh<_i820.ServiceRepository>()));
     gh.factory<_i161.DeleteService>(

@@ -7,6 +7,7 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/constants/key_constant.dart';
 import '../models/response/login_response.dart';
 import '../models/request/login_request.dart';
+import '../models/request/register_request.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/entity/auth.dart';
 
@@ -19,7 +20,7 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this.apiService, this.dioClient, this.secureStorage);
 
   @override
-  Future<AuthToken> login(LoginRequest request) async {
+  Future<AuthResponse> login(LoginRequest request) async {
     try {
       final apiResp = await apiService.login(request);
 
@@ -31,10 +32,14 @@ class AuthRepositoryImpl implements AuthRepository {
       await secureStorage.write(
           key: KeyConstant.refreshToken, value: loginResp.refreshToken);
 
-      return AuthToken(
+      return AuthResponse(
         authenticated: loginResp.authenticated,
         accessToken: loginResp.accessToken,
         refreshToken: loginResp.refreshToken,
+        role: loginResp.role,
+        hotel: loginResp.hotel,
+        customer: loginResp.customer,
+        employee: loginResp.employee,
       );
     } on DioException catch (e) {
       throw dioClient.handleDioError(e);
@@ -47,6 +52,15 @@ class AuthRepositoryImpl implements AuthRepository {
       await apiService.logout();
       await secureStorage.delete(key: KeyConstant.accessToken);
       await secureStorage.delete(key: KeyConstant.refreshToken);
+    } on DioException catch (e) {
+      throw dioClient.handleDioError(e);
+    }
+  }
+
+  @override
+  Future<void> register(RegisterRequest request) async {
+    try {
+      await apiService.register(request);
     } on DioException catch (e) {
       throw dioClient.handleDioError(e);
     }

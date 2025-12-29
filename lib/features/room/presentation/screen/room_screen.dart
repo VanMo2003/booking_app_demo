@@ -15,7 +15,9 @@ import 'package:intl/intl.dart';
 
 @RoutePage()
 class RoomScreen extends StatelessWidget {
-  const RoomScreen({Key? key}) : super(key: key);
+  const RoomScreen({super.key, required this.hotelId});
+
+  final int hotelId;
 
   String _formatCurrency(num? amount) {
     if (amount == null) return '0 đ';
@@ -66,7 +68,6 @@ class RoomScreen extends StatelessWidget {
         TextEditingController(text: item?.capacity?.toString());
     String status = item?.status ?? 'AVAILABLE';
 
-    // Show loading indicator while fetching room types
     showDialog(
         context: context,
         barrierDismissible: false,
@@ -85,7 +86,6 @@ class RoomScreen extends StatelessWidget {
       return;
     }
 
-    // Default selection logic
     int? selectedRoomTypeId = item?.roomTypeId;
     if (roomTypes.isNotEmpty && selectedRoomTypeId == null) {
       selectedRoomTypeId = roomTypes.first.id;
@@ -221,7 +221,7 @@ class RoomScreen extends StatelessWidget {
                         price: int.tryParse(priceCtrl.text) ?? 0,
                         description: descCtrl.text,
                         capacity: int.tryParse(capacityCtrl.text) ?? 1,
-                        hotelId: item?.hotelId ?? hotelId,
+                        hotelId: hotelId,
                         roomTypeId: selectedRoomTypeId,
                         status: status,
                       );
@@ -240,7 +240,10 @@ class RoomScreen extends StatelessWidget {
                                   : 'Cập nhật thành công')));
                         }
                       } catch (e) {
-                        // Error handled in BlocListener usually, but safety here
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(item == null
+                                ? 'Đã có lỗi xảy ra'
+                                : 'Cập nhật thành công')));
                       }
                     },
                     child: const Text('Lưu thông tin',
@@ -277,7 +280,7 @@ class RoomScreen extends StatelessWidget {
             title: 'Quản lý phòng',
             body: _buildContent(context, state: state),
             floatingActionButton: FloatingActionButton(
-              onPressed: () => _showEditDialog(context, null, hotelId: 1),
+              onPressed: () => _showEditDialog(context, null, hotelId: hotelId),
               backgroundColor: Theme.of(context).primaryColor,
               child: const Icon(Icons.add, color: Colors.white),
             ),
@@ -325,8 +328,7 @@ class RoomScreen extends StatelessWidget {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
-              onTap: () =>
-                  _showEditDialog(context, it, hotelId: it.hotelId ?? 1),
+              onTap: () => _showEditDialog(context, it, hotelId: hotelId),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
@@ -353,7 +355,7 @@ class RoomScreen extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: Text(
-                                  '${it.roomNumber}',
+                                  'Phòng ${it.roomNumber}',
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16),

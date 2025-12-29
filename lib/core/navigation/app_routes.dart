@@ -1,13 +1,16 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/material.dart';
 
 import '../../features/position/presentation/screen/position_screen.dart';
-import '../../features/admin/presentation/screen/admin_home_screen.dart';
+import '../../features/admin/presentation/screen/admin_home_screen.dart'; // renamed class inside to HotelManagerScreen
 import '../../features/admin/presentation/screen/staff_screen.dart';
 import '../../features/room_type/presentation/screen/room_type_screen.dart';
 import '../../features/room/presentation/screen/room_screen.dart';
 import '../../features/service/presentation/screen/service_screen.dart';
 import '../../features/admin/presentation/screen/booking_screen.dart';
 import '../../features/auth/presentation/login/screen/login_screen.dart';
+import '../../features/auth/presentation/register/screen/register_screen.dart';
+import '../../features/customer/presentation/screen/customer_screen.dart';
 
 part 'app_routes.gr.dart';
 
@@ -25,13 +28,21 @@ class AppRoutes extends RootStackRouter {
           initial: !includeAuthRoutes,
         ),
         AutoRoute(
-          path: '/${AdminHomeRoute.name}',
-          page: AdminHomeRoute.page,
+          path: '/${RegisterRoute.name}',
+          page: RegisterRoute.page,
+        ),
+        AutoRoute(
+          path: '/${HotelManagerRoute.name}',
+          page: HotelManagerRoute.page,
           initial: includeAuthRoutes,
         ),
         AutoRoute(
           path: '/${PositionRoute.name}',
           page: PositionRoute.page,
+        ),
+        AutoRoute(
+          path: '/${CustomerRoute.name}',
+          page: CustomerRoute.page,
         ),
         AutoRoute(
           path: '/${StaffRoute.name}',

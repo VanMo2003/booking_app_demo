@@ -1,11 +1,22 @@
-class AuthToken {
-  final bool authenticated;
-  final String accessToken;
-  final String refreshToken;
+import 'package:booking_app_mobile/features/auth/data/models/response/customer_response.dart';
+import 'package:booking_app_mobile/features/auth/data/models/response/employee_response.dart';
+import 'package:booking_app_mobile/features/auth/data/models/response/hotel_response.dart';
 
-  AuthToken({
-    required this.authenticated,
-    required this.accessToken,
-    required this.refreshToken,
-  });
+class AuthResponse {
+  bool? authenticated;
+  String? accessToken;
+  String? refreshToken;
+  String? role;
+  HotelResponse? hotel;
+  CustomerResponse? customer;
+  EmployeeResponse? employee;
+
+  AuthResponse(
+      {this.authenticated,
+      this.accessToken,
+      this.refreshToken,
+      this.role,
+      this.employee,
+      this.hotel,
+      this.customer});
 }

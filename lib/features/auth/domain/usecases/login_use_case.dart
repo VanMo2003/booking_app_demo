@@ -8,7 +8,7 @@ class LoginUseCase {
   final AuthRepository repository;
   LoginUseCase(this.repository);
 
-  Future<AuthToken> call(LoginRequest request) async {
+  Future<AuthResponse> call(LoginRequest request) async {
     return await repository.login(request);
   }
 }

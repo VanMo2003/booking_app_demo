@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
-import '../../models/request/login_request.dart';
 import '../../../../share/data/models/api_response.dart';
+import '../../models/request/login_request.dart';
+import '../../models/request/register_request.dart';
 
 part 'auth_api_service.g.dart';
 
@@ -15,4 +16,7 @@ abstract class AuthApiService {
 
   @POST('/auth/logout')
   Future<ApiResponse> logout();
+
+  @POST('/accounts')
+  Future<ApiResponse> register(@Body() RegisterRequest body);
 }
