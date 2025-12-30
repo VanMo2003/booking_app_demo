@@ -11,22 +11,6 @@
 part of 'app_routes.dart';
 
 /// generated route for
-/// [HotelManagerScreen]
-class HotelManagerRoute extends PageRouteInfo<void> {
-  const HotelManagerRoute({List<PageRouteInfo>? children})
-      : super(HotelManagerRoute.name, initialChildren: children);
-
-  static const String name = 'HotelManagerRoute';
-
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) {
-      return const HotelManagerScreen();
-    },
-  );
-}
-
-/// generated route for
 /// [BookingScreen]
 class BookingRoute extends PageRouteInfo<void> {
   const BookingRoute({List<PageRouteInfo>? children})
@@ -38,6 +22,91 @@ class BookingRoute extends PageRouteInfo<void> {
     name,
     builder: (data) {
       return const BookingScreen();
+    },
+  );
+}
+
+/// generated route for
+/// [CreateCustomerScreen]
+class CreateCustomerRoute extends PageRouteInfo<CreateCustomerRouteArgs> {
+  CreateCustomerRoute({
+    required String accountId,
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CreateCustomerRoute.name,
+          args: CreateCustomerRouteArgs(accountId: accountId, key: key),
+          rawPathParams: {'accountId': accountId},
+          initialChildren: children,
+        );
+
+  static const String name = 'CreateCustomerRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final pathParams = data.inheritedPathParams;
+      final args = data.argsAs<CreateCustomerRouteArgs>(
+        orElse: () => CreateCustomerRouteArgs(
+          accountId: pathParams.getString('accountId'),
+        ),
+      );
+      return CreateCustomerScreen(accountId: args.accountId, key: args.key);
+    },
+  );
+}
+
+class CreateCustomerRouteArgs {
+  const CreateCustomerRouteArgs({required this.accountId, this.key});
+
+  final String accountId;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'CreateCustomerRouteArgs{accountId: $accountId, key: $key}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! CreateCustomerRouteArgs) return false;
+    return accountId == other.accountId && key == other.key;
+  }
+
+  @override
+  int get hashCode => accountId.hashCode ^ key.hashCode;
+}
+
+/// generated route for
+/// [CustomerScreen]
+class CustomerRoute extends PageRouteInfo<void> {
+  const CustomerRoute({List<PageRouteInfo>? children})
+      : super(CustomerRoute.name, initialChildren: children);
+
+  static const String name = 'CustomerRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const CustomerScreen();
+    },
+  );
+}
+
+/// generated route for
+/// [HotelManagerScreen]
+class HotelManagerRoute extends PageRouteInfo<void> {
+  const HotelManagerRoute({List<PageRouteInfo>? children})
+      : super(HotelManagerRoute.name, initialChildren: children);
+
+  static const String name = 'HotelManagerRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const HotelManagerScreen();
     },
   );
 }
@@ -75,17 +144,17 @@ class PositionRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [CustomerScreen]
-class CustomerRoute extends PageRouteInfo<void> {
-  const CustomerRoute({List<PageRouteInfo>? children})
-      : super(CustomerRoute.name, initialChildren: children);
+/// [ProfileScreen]
+class ProfileRoute extends PageRouteInfo<void> {
+  const ProfileRoute({List<PageRouteInfo>? children})
+      : super(ProfileRoute.name, initialChildren: children);
 
-  static const String name = 'CustomerRoute';
+  static const String name = 'ProfileRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const CustomerScreen();
+      return const ProfileScreen();
     },
   );
 }
@@ -178,6 +247,22 @@ class ServiceRoute extends PageRouteInfo<void> {
     name,
     builder: (data) {
       return const ServiceScreen();
+    },
+  );
+}
+
+/// generated route for
+/// [SplashScreen]
+class SplashRoute extends PageRouteInfo<void> {
+  const SplashRoute({List<PageRouteInfo>? children})
+      : super(SplashRoute.name, initialChildren: children);
+
+  static const String name = 'SplashRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SplashScreen();
     },
   );
 }

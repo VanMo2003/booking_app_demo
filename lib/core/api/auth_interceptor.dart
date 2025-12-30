@@ -2,7 +2,7 @@ import 'package:booking_app_mobile/features/share/data/models/api_response.dart'
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../constants/key_constant.dart';
+import '../constants/constant.dart';
 
 class AuthInterceptor extends Interceptor {
   final Dio dio;
@@ -13,7 +13,7 @@ class AuthInterceptor extends Interceptor {
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    final token = await storage.read(key: KeyConstant.accessToken);
+    final token = await storage.read(key: Constants.accessToken);
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
     }
@@ -26,7 +26,7 @@ class AuthInterceptor extends Interceptor {
         !err.requestOptions.path.contains('/auth/refreshToken')) {
       final refreshed = await _refreshToken();
       if (refreshed) {
-        final access = await storage.read(key: KeyConstant.accessToken);
+        final access = await storage.read(key: Constants.accessToken);
         err.requestOptions.headers['Authorization'] = 'Bearer $access';
         return handler.resolve(await dio.fetch(err.requestOptions));
       }
@@ -35,7 +35,7 @@ class AuthInterceptor extends Interceptor {
   }
 
   Future<bool> _refreshToken() async {
-    final refreshToken = await storage.read(key: KeyConstant.refreshToken);
+    final refreshToken = await storage.read(key: Constants.refreshToken);
     if (refreshToken == null) return false;
 
     try {
@@ -57,8 +57,8 @@ class AuthInterceptor extends Interceptor {
       final newAccess = res.data['accessToken'];
       final newRefresh = res.data['refreshToken'];
 
-      await storage.write(key: KeyConstant.accessToken, value: newAccess);
-      await storage.write(key: KeyConstant.refreshToken, value: newRefresh);
+      await storage.write(key: Constants.accessToken, value: newAccess);
+      await storage.write(key: Constants.refreshToken, value: newRefresh);
       return true;
     } catch (e) {
       await storage.deleteAll();

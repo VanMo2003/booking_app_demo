@@ -40,7 +40,16 @@ class _LoginScreenState extends State<LoginScreen> {
               final role = state.authResponse?.role ?? '';
               switch (role) {
                 case 'CUSTOMER':
-                  context.router.replace(const CustomerRoute());
+                  // If customer object is null but accountId exists, require the user to fill info
+                  final accId = state.authResponse?.accountId;
+                  final customer = state.authResponse?.customer;
+                  if ((customer == null) &&
+                      (accId != null && accId.isNotEmpty)) {
+                    context.router
+                        .replace(CreateCustomerRoute(accountId: accId));
+                  } else {
+                    context.router.replace(const CustomerRoute());
+                  }
                   break;
                 case 'HOTEL_MANAGER':
                   context.router.replace(const HotelManagerRoute());

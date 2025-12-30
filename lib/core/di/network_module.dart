@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../features/auth/data/datasource/remote/auth_api_service.dart';
+import '../../features/customer/data/datasource/remote/customer_api_service.dart';
 import '../api/app_config.dart';
 import '../api/auth_interceptor.dart';
 import '../api/dio_client.dart';
@@ -64,4 +65,8 @@ abstract class NetworkModule {
 
   @lazySingleton
   ServiceApiService provideServiceApiService(Dio dio) => ServiceApiService(dio);
+
+  @lazySingleton
+  CustomerApiService provideCustomerApiService(Dio dio) =>
+      CustomerApiService(dio);
 }

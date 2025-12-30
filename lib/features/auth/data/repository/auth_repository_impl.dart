@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../core/constants/key_constant.dart';
+import '../../../../core/constants/constant.dart';
 import '../models/response/login_response.dart';
 import '../models/request/login_request.dart';
 import '../models/request/register_request.dart';
@@ -28,15 +28,17 @@ class AuthRepositoryImpl implements AuthRepository {
       final loginResp = LoginResponse.fromJson(data);
 
       await secureStorage.write(
-          key: KeyConstant.accessToken, value: loginResp.accessToken);
+          key: Constants.accessToken, value: loginResp.accessToken);
       await secureStorage.write(
-          key: KeyConstant.refreshToken, value: loginResp.refreshToken);
+          key: Constants.refreshToken, value: loginResp.refreshToken);
+      await secureStorage.write(key: Constants.role, value: loginResp.role);
 
       return AuthResponse(
         authenticated: loginResp.authenticated,
         accessToken: loginResp.accessToken,
         refreshToken: loginResp.refreshToken,
         role: loginResp.role,
+        accountId: loginResp.accountId,
         hotel: loginResp.hotel,
         customer: loginResp.customer,
         employee: loginResp.employee,
@@ -50,8 +52,8 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> logout() async {
     try {
       await apiService.logout();
-      await secureStorage.delete(key: KeyConstant.accessToken);
-      await secureStorage.delete(key: KeyConstant.refreshToken);
+      await secureStorage.delete(key: Constants.accessToken);
+      await secureStorage.delete(key: Constants.refreshToken);
     } on DioException catch (e) {
       throw dioClient.handleDioError(e);
     }

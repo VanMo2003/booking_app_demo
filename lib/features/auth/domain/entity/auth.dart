@@ -7,6 +7,7 @@ class AuthResponse {
   String? accessToken;
   String? refreshToken;
   String? role;
+  String? accountId;
   HotelResponse? hotel;
   CustomerResponse? customer;
   EmployeeResponse? employee;
@@ -16,6 +17,7 @@ class AuthResponse {
       this.accessToken,
       this.refreshToken,
       this.role,
+      this.accountId,
       this.employee,
       this.hotel,
       this.customer});

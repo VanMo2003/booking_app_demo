@@ -23,6 +23,14 @@ import 'package:booking_app_mobile/features/auth/domain/usecases/logout_use_case
     as _i941;
 import 'package:booking_app_mobile/features/auth/domain/usecases/register_use_case.dart'
     as _i417;
+import 'package:booking_app_mobile/features/customer/data/datasource/remote/customer_api_service.dart'
+    as _i361;
+import 'package:booking_app_mobile/features/customer/data/repository/customer_repository_impl.dart'
+    as _i223;
+import 'package:booking_app_mobile/features/customer/domain/repositories/customer_repository.dart'
+    as _i939;
+import 'package:booking_app_mobile/features/customer/domain/usecases/create_customer_use_case.dart'
+    as _i215;
 import 'package:booking_app_mobile/features/position/data/datasource/remote/position_api_service.dart'
     as _i277;
 import 'package:booking_app_mobile/features/position/data/repository/position_repository_impl.dart'
@@ -85,7 +93,6 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
 extension GetItInjectableX on _i174.GetIt {
-// initializes the registration of main-scope dependencies inside of GetIt
   _i174.GetIt init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
@@ -112,6 +119,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => networkModule.provideRoomApiService(gh<_i361.Dio>()));
     gh.lazySingleton<_i267.ServiceApiService>(
         () => networkModule.provideServiceApiService(gh<_i361.Dio>()));
+    gh.lazySingleton<_i361.CustomerApiService>(
+        () => networkModule.provideCustomerApiService(gh<_i361.Dio>()));
     gh.lazySingleton<_i619.AuthRepository>(() => _i443.AuthRepositoryImpl(
           gh<_i608.AuthApiService>(),
           gh<_i764.DioClient>(),
@@ -143,6 +152,8 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i192.RoomApiService>(),
           gh<_i764.DioClient>(),
         ));
+    gh.lazySingleton<_i939.CustomerRepository>(
+        () => _i223.CustomerRepositoryImpl(gh<_i361.CustomerApiService>()));
     gh.factory<_i15.LoginUseCase>(
         () => _i15.LoginUseCase(gh<_i619.AuthRepository>()));
     gh.factory<_i941.LogoutUseCase>(
@@ -165,6 +176,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i592.GetRoomTypes(gh<_i18.RoomTypeRepository>()));
     gh.factory<_i771.UpdateRoomType>(
         () => _i771.UpdateRoomType(gh<_i18.RoomTypeRepository>()));
+    gh.factory<_i215.CreateCustomerUseCase>(
+        () => _i215.CreateCustomerUseCase(gh<_i939.CustomerRepository>()));
     gh.factory<_i41.CreateRoom>(
         () => _i41.CreateRoom(gh<_i77.RoomRepository>()));
     gh.factory<_i480.DeleteRoom>(

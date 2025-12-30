@@ -7,6 +7,7 @@ class LoginResponse {
   String? accessToken;
   String? refreshToken;
   String? role;
+  String? accountId;
   HotelResponse? hotel;
   CustomerResponse? customer;
   EmployeeResponse? employee;
@@ -16,6 +17,7 @@ class LoginResponse {
       this.accessToken,
       this.refreshToken,
       this.role,
+      this.accountId,
       this.employee,
       this.hotel,
       this.customer});
@@ -25,6 +27,7 @@ class LoginResponse {
     accessToken = json['accessToken'];
     refreshToken = json['refreshToken'];
     role = json['role'];
+    accountId = json['accountId'];
     hotel =
         json['hotel'] != null ? HotelResponse.fromJson(json['hotel']) : null;
     customer = json['customer'] != null
@@ -41,6 +44,7 @@ class LoginResponse {
     data['accessToken'] = accessToken;
     data['refreshToken'] = refreshToken;
     data['role'] = role;
+    data['accountId'] = accountId;
     if (employee != null) {
       data['employee'] = employee!.toJson();
     }
