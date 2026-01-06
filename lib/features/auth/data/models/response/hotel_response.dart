@@ -1,20 +1,22 @@
-class HotelResponse {
+import 'dart:developer';
+
+class HotelInfoResponse {
   int? id;
   String? name;
   String? address;
   String? phone;
   String? description;
   String? category;
-  double? rating;
+  int? rating;
   String? pathImage;
   bool? active;
   String? accountId;
   Null? amenities;
-  Null? services;
+  List<Service>? services;
   String? onCreate;
   String? onUpdate;
 
-  HotelResponse(
+  HotelInfoResponse(
       {this.id,
       this.name,
       this.address,
@@ -30,7 +32,7 @@ class HotelResponse {
       this.onCreate,
       this.onUpdate});
 
-  HotelResponse.fromJson(Map<String, dynamic> json) {
+  HotelInfoResponse.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     address = json['address'];

@@ -1,6 +1,7 @@
+
 class AppConfig {
   bool isProduction = true;
-  String baseURL = 'http://192.168.35.7:8080/booking-app/api/v1';
+  String baseURL = 'http://192.168.35.3:8080/booking-app/api/v1';
   // String baseURL = 'http://10.0.2.2:8080/booking-app/api/v1';
   int connectTimeout = 60000;
   int receiveTimeout = 60000;
@@ -19,4 +20,42 @@ class AppConfig {
   factory AppConfig() {
     return _instance;
   }
+
+  // Future<void> init() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final cached = prefs.getString("baseURL");
+  //   if (cached != null) {
+  //     baseURL = cached;
+  //     return;
+  //   }
+  //
+  //   // 2) Nếu không có thì tự tìm server LAN
+  //   final found = await findServer();
+  //   baseURL = found ?? "http://10.0.2.2:8080/booking-app/api/v1";
+  //
+  //   await prefs.setString("baseURL", baseURL);
+  // }
+  //
+  // Future<String?> findServer() async {
+  //   final info = NetworkInfo();
+  //   final ip = await info.getWifiIP(); // e.g. 192.168.35.15
+  //   if (ip == null) return null;
+  //
+  //   final prefix = ip.substring(0, ip.lastIndexOf('.') + 1); // 192.168.35.
+  //
+  //   for (int i = 1; i < 255; i++) {
+  //     final candidate = "$prefix$i";
+  //     final url = "http://$candidate:8080/booking-app/api/v1/health";
+  //
+  //     try {
+  //       final res = await Dio().get(url, options: Options(
+  //         sendTimeout: Duration(milliseconds: 500),
+  //         receiveTimeout: Duration(milliseconds: 500),
+  //       ));
+  //       if (res.statusCode == 200) return "http://$candidate:8080/booking-app/api/v1";
+  //     } catch (_) {}
+  //   }
+  //   return null;
+  // }
 }
+

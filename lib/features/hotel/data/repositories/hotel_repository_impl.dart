@@ -1,0 +1,42 @@
+import 'package:booking_app_mobile/features/auth/data/models/response/hotel_response.dart';
+import 'package:booking_app_mobile/features/hotel/data/mapper/hotel_mapper.dart';
+import 'package:booking_app_mobile/features/hotel/data/models/hotel_response.dart';
+import 'package:injectable/injectable.dart';
+
+import '../../../share/data/models/api_response.dart';
+import '../../../share/data/models/paged.dart';
+import '../../domain/entities/hotel.dart';
+import '../../domain/repositories/hotel_repository.dart';
+import '../datasoure/remote/hotel_api_service.dart';
+
+@LazySingleton(as: HotelRepository)
+class HotelRepositoryImpl implements HotelRepository {
+  final HotelApiService api;
+  HotelRepositoryImpl(this.api);
+
+  @override
+  Future<Paged<Hotel>> getHotels({required int page, required int size}) async {
+    final ApiResponse res = await api.getHotels(page, size);
+    final data = res.data;
+
+    if (data is! Map<String, dynamic>) {
+      throw Exception('Unexpected data format for hotels');
+    }
+
+    final rawContent = data['content'];
+    final hotels = (rawContent is List)
+        ? rawContent.map((e) {
+            var hotelRes = HotelResponse.fromJson(e as Map<String, dynamic>);
+            return HotelMapper.toEntity(hotelRes);
+          }).toList()
+        : <Hotel>[];
+
+    return Paged<Hotel>(
+      content: hotels,
+      page: (data['page'] ?? page) as int,
+      size: (data['size'] ?? size) as int,
+      totalElements: data['totalElements'] is int ? data['totalElements'] as int : null,
+      totalPages: data['totalPages'] is int ? data['totalPages'] as int : null,
+    );
+  }
+}

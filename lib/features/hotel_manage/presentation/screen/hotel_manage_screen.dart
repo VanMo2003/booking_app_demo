@@ -7,8 +7,8 @@ import 'package:booking_app_mobile/core/di/injector.dart';
 import 'package:booking_app_mobile/features/auth/domain/repositories/auth_repository.dart';
 
 @RoutePage()
-class HotelManagerScreen extends StatelessWidget {
-  const HotelManagerScreen({super.key});
+class HotelManageScreen extends StatelessWidget {
+  const HotelManageScreen({super.key});
 
   String _formatCurrency(double amount) {
     return NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(amount);
@@ -20,8 +20,7 @@ class HotelManagerScreen extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Xác nhận đăng xuất'),
-        content: const Text(
-            'Bạn có chắc chắn muốn thoát khỏi hệ thống quản trị không?'),
+        content: const Text('Bạn có chắc chắn muốn thoát khỏi hệ thống quản trị không?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -31,16 +30,14 @@ class HotelManagerScreen extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.redAccent,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () async {
               Navigator.pop(ctx);
               showDialog(
                 context: context,
                 barrierDismissible: false,
-                builder: (_) =>
-                    const Center(child: CircularProgressIndicator()),
+                builder: (_) => const Center(child: CircularProgressIndicator()),
               );
               try {
                 await getIt<AuthRepository>().logout();
@@ -49,8 +46,7 @@ class HotelManagerScreen extends StatelessWidget {
               } catch (e) {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: Text('Đăng xuất thất bại: ${e.toString()}')),
+                  SnackBar(content: Text('Đăng xuất thất bại: ${e.toString()}')),
                 );
               }
             },
@@ -106,11 +102,9 @@ class HotelManagerScreen extends StatelessWidget {
             const SizedBox(height: 12),
             Row(
               children: [
-                _buildStatItem(
-                    context, 'Đặt phòng', '12', Icons.book_online, Colors.blue),
+                _buildStatItem(context, 'Đặt phòng', '12', Icons.book_online, Colors.blue),
                 const SizedBox(width: 12),
-                _buildStatItem(
-                    context, 'Phòng trống', '08', Icons.bed, Colors.green),
+                _buildStatItem(context, 'Phòng trống', '08', Icons.bed, Colors.green),
               ],
             ),
 
@@ -130,19 +124,14 @@ class HotelManagerScreen extends StatelessWidget {
               mainAxisSpacing: 12,
               childAspectRatio: 1.3,
               children: [
-                _buildTile(context, Icons.work, 'Chức vụ',
-                    () => context.router.push(const PositionRoute())),
-                _buildTile(context, Icons.people, 'Nhân viên',
-                    () => context.router.push(const StaffRoute())),
-                _buildTile(context, Icons.category, 'Loại phòng',
-                    () => context.router.push(const RoomTypeRoute())),
+                _buildTile(context, Icons.work, 'Chức vụ', () => context.router.push(const PositionRoute())),
+                _buildTile(context, Icons.people, 'Nhân viên', () => context.router.push(StaffAdminRoute(hotelId: 1))),
+                _buildTile(context, Icons.category, 'Loại phòng', () => context.router.push(const RoomTypeRoute())),
                 // TODO : lấy hotelId qua api
-                _buildTile(context, Icons.meeting_room, 'Phòng',
-                    () => context.router.push(RoomRoute(hotelId: 1))),
-                _buildTile(context, Icons.room_service, 'Dịch vụ',
-                    () => context.router.push(const ServiceRoute())),
-                _buildTile(context, Icons.assignment, 'Booking',
-                    () => context.router.push(const BookingRoute())),
+                _buildTile(context, Icons.meeting_room, 'Phòng', () => context.router.push(RoomRoute(hotelId: 1))),
+                _buildTile(context, Icons.room_service, 'Dịch vụ', () => context.router.push(const ServiceRoute())),
+                _buildTile(context, Icons.assignment, 'Booking', () => context.router.push(const BookingRoute())),
+                _buildTile(context, Icons.pool, 'Tiện ích', () => context.router.push(AmenityRoute(hotelId: 1))),
               ],
             ),
           ],
@@ -181,15 +170,13 @@ class HotelManagerScreen extends StatelessWidget {
                 'Doanh thu tháng này',
                 style: TextStyle(color: Colors.white70, fontSize: 16),
               ),
-              Icon(Icons.trending_up,
-                  color: Colors.white.withValues(alpha: 0.8)),
+              Icon(Icons.trending_up, color: Colors.white.withValues(alpha: 0.8)),
             ],
           ),
           const SizedBox(height: 10),
           Text(
             _formatCurrency(25450000),
-            style: const TextStyle(
-                color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
+            style: const TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           Container(
@@ -200,10 +187,7 @@ class HotelManagerScreen extends StatelessWidget {
             ),
             child: const Text(
               '↑ 12.5% so với tháng trước',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500),
+              style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
             ),
           )
         ],
@@ -211,9 +195,7 @@ class HotelManagerScreen extends StatelessWidget {
     );
   }
 
-  // Widget hiển thị con số thống kê
-  Widget _buildStatItem(BuildContext context, String label, String value,
-      IconData icon, Color color) {
+  Widget _buildStatItem(BuildContext context, String label, String value, IconData icon, Color color) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -221,10 +203,7 @@ class HotelManagerScreen extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
-            BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
-                blurRadius: 10,
-                offset: const Offset(0, 4))
+            BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))
           ],
           border: Border.all(color: Colors.grey.shade100),
         ),
@@ -243,12 +222,8 @@ class HotelManagerScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(value,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text(label,
-                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                      overflow: TextOverflow.ellipsis),
+                  Text(value, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 12), overflow: TextOverflow.ellipsis),
                 ],
               ),
             )
@@ -259,8 +234,7 @@ class HotelManagerScreen extends StatelessWidget {
   }
 
   // Widget cho các nút chức năng trong Grid
-  Widget _buildTile(BuildContext context, IconData icon, String label,
-      void Function() onTap) {
+  Widget _buildTile(BuildContext context, IconData icon, String label, void Function() onTap) {
     return Card(
       elevation: 0,
       color: Colors.white,
@@ -280,15 +254,10 @@ class HotelManagerScreen extends StatelessWidget {
                 color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child:
-                  Icon(icon, size: 26, color: Theme.of(context).primaryColor),
+              child: Icon(icon, size: 26, color: Theme.of(context).primaryColor),
             ),
             const SizedBox(height: 12),
-            Text(label,
-                style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87)),
+            Text(label, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.black87)),
           ],
         ),
       ),

@@ -16,7 +16,6 @@ import 'package:booking_app_mobile/core/widgets/app_scaffold.dart';
 class PositionScreen extends StatelessWidget {
   const PositionScreen({super.key});
 
-  // Thay Dialog bằng BottomSheet
   Future<void> _showEditSheet(BuildContext context, Position? position) async {
     final nameController = TextEditingController(text: position?.name ?? '');
     final descController =
@@ -26,7 +25,7 @@ class PositionScreen extends StatelessWidget {
 
     await showModalBottomSheet(
       context: context,
-      isScrollControlled: true, // Để đẩy lên khi có bàn phím
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -223,7 +222,6 @@ class PositionScreen extends StatelessWidget {
   }
 
   Future<void> _confirmDelete(BuildContext context, Position p) async {
-    // Logic xóa cũ, giữ nguyên
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(

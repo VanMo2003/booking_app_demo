@@ -8,7 +8,7 @@ class AuthResponse {
   String? refreshToken;
   String? role;
   String? accountId;
-  HotelResponse? hotel;
+  HotelInfoResponse? hotel;
   CustomerResponse? customer;
   EmployeeResponse? employee;
 

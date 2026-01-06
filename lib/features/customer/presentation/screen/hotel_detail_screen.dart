@@ -1,9 +1,10 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:booking_app_mobile/features/hotel/domain/entities/hotel.dart';
 import 'package:flutter/material.dart';
 
 @RoutePage()
 class HotelDetailScreen extends StatelessWidget {
-  final Map<String, dynamic> hotel;
+  final Hotel hotel;
 
   const HotelDetailScreen({super.key, required this.hotel});
 
@@ -11,6 +12,9 @@ class HotelDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final primaryBlue = theme.primaryColor;
+    final imageUrl = (hotel.pathImage.isNotEmpty)
+        ? hotel.pathImage
+        : 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1000&auto=format&fit=crop';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -21,7 +25,7 @@ class HotelDetailScreen extends StatelessWidget {
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
               background: Image.network(
-                hotel['pathImage'],
+                imageUrl,
                 fit: BoxFit.cover,
               ),
             ),
@@ -45,17 +49,13 @@ class HotelDetailScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          hotel['name'],
-                          style: const TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.bold),
+                          hotel.name,
+                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                         ),
                       ),
                       Text(
-                        hotel['price'],
-                        style: TextStyle(
-                            color: primaryBlue,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),
+                        "2000000",
+                        style: TextStyle(color: primaryBlue, fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -68,7 +68,7 @@ class HotelDetailScreen extends StatelessWidget {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          hotel['address'],
+                          hotel.address,
                           style: const TextStyle(color: Colors.grey),
                         ),
                       ),
@@ -104,13 +104,10 @@ class HotelDetailScreen extends StatelessWidget {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
-                  _buildServiceItem("Thuê xe máy/ô tô", "180.000đ/ngày",
-                      Icons.directions_car),
-                  _buildServiceItem("Giặt ủi lấy ngay", "50.000đ/kg",
-                      Icons.local_laundry_service),
+                  _buildServiceItem("Thuê xe máy/ô tô", "180.000đ/ngày", Icons.directions_car),
+                  _buildServiceItem("Giặt ủi lấy ngay", "50.000đ/kg", Icons.local_laundry_service),
 
-                  const SizedBox(
-                      height: 100), // Khoảng trống để không bị đè bởi nút đặt
+                  const SizedBox(height: 100), // Khoảng trống để không bị đè bởi nút đặt
                 ],
               ),
             ),
@@ -121,10 +118,7 @@ class HotelDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black12, blurRadius: 10, offset: Offset(0, -2))
-          ],
+          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, -2))],
         ),
         child: ElevatedButton(
           onPressed: () {},
@@ -132,11 +126,9 @@ class HotelDetailScreen extends StatelessWidget {
             backgroundColor: primaryBlue,
             foregroundColor: Colors.white,
             minimumSize: const Size(double.infinity, 50),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
-          child: const Text("ĐẶT PHÒNG NGAY",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          child: const Text("ĐẶT PHÒNG NGAY", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         ),
       ),
     );
@@ -179,9 +171,7 @@ class HotelDetailScreen extends StatelessWidget {
           const SizedBox(width: 12),
           Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
           const Spacer(),
-          Text(price,
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold, color: Colors.orange)),
+          Text(price, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.orange)),
         ],
       ),
     );

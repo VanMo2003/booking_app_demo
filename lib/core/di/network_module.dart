@@ -1,3 +1,6 @@
+import 'package:booking_app_mobile/features/amenity/data/datasource/remote/amenity_api_service.dart';
+import 'package:booking_app_mobile/features/employee/data/datasource/remote/employee_api_service.dart';
+import 'package:booking_app_mobile/features/hotel/data/datasoure/remote/hotel_api_service.dart';
 import 'package:booking_app_mobile/features/position/data/datasource/remote/position_api_service.dart';
 import 'package:booking_app_mobile/features/room_type/data/datasource/remote/room_type_api_service.dart';
 import 'package:booking_app_mobile/features/room/data/datasource/remote/room_api_service.dart';
@@ -53,12 +56,10 @@ abstract class NetworkModule {
   AuthApiService provideAuthApiService(Dio dio) => AuthApiService(dio);
 
   @lazySingleton
-  PositionApiService providePositionApiService(Dio dio) =>
-      PositionApiService(dio);
+  PositionApiService providePositionApiService(Dio dio) => PositionApiService(dio);
 
   @lazySingleton
-  RoomTypeApiService provideRoomTypeApiService(Dio dio) =>
-      RoomTypeApiService(dio);
+  RoomTypeApiService provideRoomTypeApiService(Dio dio) => RoomTypeApiService(dio);
 
   @lazySingleton
   RoomApiService provideRoomApiService(Dio dio) => RoomApiService(dio);
@@ -67,6 +68,14 @@ abstract class NetworkModule {
   ServiceApiService provideServiceApiService(Dio dio) => ServiceApiService(dio);
 
   @lazySingleton
-  CustomerApiService provideCustomerApiService(Dio dio) =>
-      CustomerApiService(dio);
+  CustomerApiService provideCustomerApiService(Dio dio) => CustomerApiService(dio);
+
+  @lazySingleton
+  EmployeeApiService provideEmployeeApiService(Dio dio) => EmployeeApiService(dio);
+
+  @lazySingleton
+  HotelApiService provideHotelApiService(Dio dio) => HotelApiService(dio);
+
+  @lazySingleton
+  AmenityApiService provideAmenityApiService(Dio dio) => AmenityApiService(dio);
 }

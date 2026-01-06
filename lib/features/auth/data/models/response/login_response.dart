@@ -8,7 +8,7 @@ class LoginResponse {
   String? refreshToken;
   String? role;
   String? accountId;
-  HotelResponse? hotel;
+  HotelInfoResponse? hotel;
   CustomerResponse? customer;
   EmployeeResponse? employee;
 
@@ -29,7 +29,7 @@ class LoginResponse {
     role = json['role'];
     accountId = json['accountId'];
     hotel =
-        json['hotel'] != null ? HotelResponse.fromJson(json['hotel']) : null;
+        json['hotel'] != null ? HotelInfoResponse.fromJson(json['hotel']) : null;
     customer = json['customer'] != null
         ? CustomerResponse.fromJson(json['customer'])
         : null;

@@ -16,25 +16,23 @@ class ProfileScreen extends StatelessWidget {
         title: const Text('Xác nhận'),
         content: const Text('Bạn có muốn đăng xuất khỏi ứng dụng?'),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx), child: const Text('Hủy')),
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Hủy')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.redAccent,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () async {
               try {
                 await getIt<AuthRepository>().logout();
+                Navigator.pop(context);
                 context.router.replaceAll([const LoginRoute()]);
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Lỗi: ${e.toString()}')),
                 );
               }
-              Navigator.pop(ctx);
             },
             child: const Text('Đăng xuất'),
           ),
@@ -53,9 +51,7 @@ class ProfileScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: const AutoLeadingButton(color: Colors.black87),
-        title: const Text('Cài đặt tài khoản',
-            style:
-                TextStyle(color: Colors.black87, fontWeight: FontWeight.bold)),
+        title: const Text('Cài đặt tài khoản', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -64,25 +60,20 @@ class ProfileScreen extends StatelessWidget {
             // USER INFO CARD
             Container(
               padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
               child: Row(
                 children: [
                   const CircleAvatar(
                     radius: 30,
-                    backgroundImage:
-                        NetworkImage('https://i.pravatar.cc/150?img=68'),
+                    backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=68'),
                   ),
                   const SizedBox(width: 16),
                   const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Nguyễn Văn A',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                        Text('Thành viên Mường Thanh Gold',
-                            style: TextStyle(color: brandGold, fontSize: 13)),
+                        Text('Nguyễn Văn A', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        Text('Thành viên Mường Thanh Gold', style: TextStyle(color: brandGold, fontSize: 13)),
                       ],
                     ),
                   ),
@@ -92,37 +83,28 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Container(
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
               child: Column(
                 children: [
-                  _buildMenuItem(
-                      Icons.help_outline_rounded, 'Hướng dẫn dùng app'),
+                  _buildMenuItem(Icons.help_outline_rounded, 'Hướng dẫn dùng app'),
                   _buildDivider(),
                   _buildMenuItem(Icons.hotel_outlined, 'Thông tin khách sạn'),
                   _buildDivider(),
-                  _buildMenuItem(
-                      Icons.loyalty_outlined, 'Gói ưu đãi đang dùng'),
+                  _buildMenuItem(Icons.loyalty_outlined, 'Gói ưu đãi đang dùng'),
                   _buildDivider(),
-                  _buildMenuItem(
-                      Icons.manage_accounts_outlined, 'Thiết lập tài khoản'),
+                  _buildMenuItem(Icons.manage_accounts_outlined, 'Thiết lập tài khoản'),
                   _buildDivider(),
-                  _buildMenuItem(
-                      Icons.color_lens_outlined, 'Thay đổi giao diện'),
+                  _buildMenuItem(Icons.color_lens_outlined, 'Thay đổi giao diện'),
                 ],
               ),
             ),
             const SizedBox(height: 24),
             Container(
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
               child: ListTile(
                 onTap: () => _handleLogout(context),
-                leading: const Icon(Icons.power_settings_new_rounded,
-                    color: Colors.redAccent),
-                title: const Text('Đăng xuất',
-                    style: TextStyle(
-                        color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                leading: const Icon(Icons.power_settings_new_rounded, color: Colors.redAccent),
+                title: const Text('Đăng xuất', style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                 trailing: const Icon(Icons.chevron_right, color: Colors.grey),
               ),
             ),
