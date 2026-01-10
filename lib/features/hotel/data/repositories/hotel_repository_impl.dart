@@ -1,4 +1,3 @@
-import 'package:booking_app_mobile/features/auth/data/models/response/hotel_response.dart';
 import 'package:booking_app_mobile/features/hotel/data/mapper/hotel_mapper.dart';
 import 'package:booking_app_mobile/features/hotel/data/models/hotel_response.dart';
 import 'package:injectable/injectable.dart';
@@ -35,8 +34,22 @@ class HotelRepositoryImpl implements HotelRepository {
       content: hotels,
       page: (data['page'] ?? page) as int,
       size: (data['size'] ?? size) as int,
-      totalElements: data['totalElements'] is int ? data['totalElements'] as int : null,
+      totalElements:
+          data['totalElements'] is int ? data['totalElements'] as int : null,
       totalPages: data['totalPages'] is int ? data['totalPages'] as int : null,
     );
+  }
+
+  @override
+  Future<Hotel> getHotelById({required int id}) async {
+    final ApiResponse res = await api.getHotelById(id);
+    final data = res.data;
+
+    if (data is! Map<String, dynamic>) {
+      throw Exception('Unexpected data format for hotel detail');
+    }
+
+    final hotelRes = HotelResponse.fromJson(data);
+    return HotelMapper.toEntity(hotelRes);
   }
 }

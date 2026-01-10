@@ -19,7 +19,7 @@ import '../../features/service/presentation/screen/service_screen.dart';
 import '../../features/auth/presentation/login/screen/login_screen.dart';
 import '../../features/auth/presentation/register/screen/register_screen.dart';
 import '../../features/customer/presentation/screen/customer_screen.dart';
-import '../../features/start/start_screen.dart';
+import '../../features/splash/splash_screen.dart';
 
 part 'app_routes.gr.dart';
 

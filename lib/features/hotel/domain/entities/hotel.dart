@@ -1,42 +1,99 @@
-import 'package:equatable/equatable.dart';
-import 'service.dart';
+class Hotel {
+  int id;
+  String name;
+  String address;
+  String phone;
+  String description;
+  String category;
+  int rating;
+  String pathImage;
+  bool active;
+  String accountId;
+  List<HotelRoom> rooms;
+  List<HotelAmenity> amenities;
+  List<HotelService> services;
+  String onCreate;
+  String onUpdate;
 
-class Hotel extends Equatable {
-  final int id;
-  final String name;
-  final String address;
-  final String phone;
-  final String description;
-  final String category;
-  final int rating;
-  final String pathImage;
-  final bool active;
-  final String accountId;
-  final List<dynamic> amenities;
-  final List<HotelService> services;
-  final DateTime? onCreate;
-  final DateTime? onUpdate;
+  Hotel(
+      {required this.id,
+      required this.name,
+      required this.address,
+      required this.phone,
+      required this.description,
+      required this.category,
+      required this.rating,
+      required this.pathImage,
+      required this.active,
+      required this.accountId,
+      required this.rooms,
+      required this.amenities,
+      required this.services,
+      required this.onCreate,
+      required this.onUpdate});
+}
 
-  const Hotel({
-    required this.id,
-    required this.name,
-    required this.address,
-    required this.phone,
-    required this.description,
-    required this.category,
-    required this.rating,
-    required this.pathImage,
-    required this.active,
-    required this.accountId,
-    required this.amenities,
-    required this.services,
-    this.onCreate,
-    this.onUpdate,
-  });
+class HotelRoom {
+  int id;
+  String roomNumber;
+  int price;
+  String description;
+  int capacity;
+  String status;
+  int hotelId;
+  String hotelName;
+  int roomTypeId;
+  String roomTypeName;
+  String onCreate;
+  String onUpdate;
 
-  @override
-  List<Object?> get props => [
-        id, name, address, phone, description, category, rating, pathImage,
-        active, accountId, amenities, services, onCreate, onUpdate
-      ];
+  HotelRoom(
+      {required this.id,
+      required this.roomNumber,
+      required this.price,
+      required this.description,
+      required this.capacity,
+      required this.status,
+      required this.hotelId,
+      required this.hotelName,
+      required this.roomTypeId,
+      required this.roomTypeName,
+      required this.onCreate,
+      required this.onUpdate});
+}
+
+class HotelAmenity {
+  int id;
+  String name;
+  String description;
+  bool common;
+  bool active;
+  String onCreate;
+  String onUpdate;
+
+  HotelAmenity(
+      {required this.id,
+      required this.name,
+      required this.description,
+      required this.common,
+      required this.active,
+      required this.onCreate,
+      required this.onUpdate});
+}
+
+class HotelService {
+  int id;
+  String name;
+  int unitPrice;
+  String description;
+  String onCreate;
+  String onUpdate;
+
+  HotelService(
+      {required this.id,
+      required this.name,
+      required this.unitPrice,
+      required this.description,
+      required this.onCreate,
+      required this.onUpdate});
 }

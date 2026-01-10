@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:booking_app_mobile/features/hotel/domain/repositories/hotel_repository.dart';
+import 'package:booking_app_mobile/core/api/app_config.dart';
 import 'package:booking_app_mobile/features/hotel/domain/use_case/get_hotel_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,14 +25,13 @@ class _CustomerScreenState extends State<CustomerScreen> {
   @override
   void initState() {
     super.initState();
-    _scroll.addListener(_onScroll);
+    // _scroll.addListener(_onScroll);
   }
 
   void _onScroll() {
-    final bloc = context.read<HotelBloc>();
-    final st = bloc.state;
-
     if (_scroll.position.pixels > _scroll.position.maxScrollExtent - 200) {
+      final bloc = context.read<HotelBloc>();
+      final st = bloc.state;
       if (!st.hasMore || st.status == HotelStatus.loading) return;
       bloc.add(HotelsFetched(page: st.page, size: st.size));
     }
@@ -50,14 +49,16 @@ class _CustomerScreenState extends State<CustomerScreen> {
     final theme = Theme.of(context);
 
     return BlocProvider<HotelBloc>(
-      create: (context) =>
-          HotelBloc(getHotelUseCase: getIt<GetHotelUseCase>())..add(HotelsFetched(page: 0, size: 10, refresh: true)),
+      create: (context) => HotelBloc(getHotelUseCase: getIt<GetHotelUseCase>())
+        ..add(HotelsFetched(page: 0, size: 10, refresh: true)),
       child: Scaffold(
         backgroundColor: Colors.grey[50],
         body: BlocConsumer<HotelBloc, HotelState>(
-          listenWhen: (p, c) => p.status != c.status || p.errorMessage != c.errorMessage,
+          listenWhen: (p, c) =>
+              p.status != c.status || p.errorMessage != c.errorMessage,
           listener: (context, state) {
-            if (state.status == HotelStatus.failure && state.errorMessage != null) {
+            if (state.status == HotelStatus.failure &&
+                state.errorMessage != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(state.errorMessage!)),
               );
@@ -92,17 +93,23 @@ class _CustomerScreenState extends State<CustomerScreen> {
                           ),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.only(left: 20, right: 20, top: 60),
+                          padding: const EdgeInsets.only(
+                              left: 20, right: 20, top: 60),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text('Chào mừng bạn,', style: TextStyle(color: Colors.white70, fontSize: 16)),
+                                      Text('Chào mừng bạn,',
+                                          style: TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 16)),
                                       Text(
                                         'Khám phá ngay! 👋',
                                         style: TextStyle(
@@ -114,15 +121,18 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                     ],
                                   ),
                                   GestureDetector(
-                                    onTap: () => context.router.push(const ProfileRoute()),
+                                    onTap: () => context.router
+                                        .push(const ProfileRoute()),
                                     child: Container(
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        border: Border.all(color: Colors.white, width: 2),
+                                        border: Border.all(
+                                            color: Colors.white, width: 2),
                                       ),
                                       child: const CircleAvatar(
                                         radius: 24,
-                                        backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=68'),
+                                        backgroundImage: NetworkImage(
+                                            'https://i.pravatar.cc/150?img=68'),
                                       ),
                                     ),
                                   ),
@@ -130,17 +140,22 @@ class _CustomerScreenState extends State<CustomerScreen> {
                               ),
                               const SizedBox(height: 20),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 12),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(12),
-                                  boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
+                                  boxShadow: const [
+                                    BoxShadow(
+                                        color: Colors.black12, blurRadius: 10)
+                                  ],
                                 ),
                                 child: const Row(
                                   children: [
                                     Icon(Icons.search, color: Colors.grey),
                                     SizedBox(width: 10),
-                                    Text('Bạn muốn đi đâu?', style: TextStyle(color: Colors.grey)),
+                                    Text('Bạn muốn đi đâu?',
+                                        style: TextStyle(color: Colors.grey)),
                                   ],
                                 ),
                               ),
@@ -150,7 +165,6 @@ class _CustomerScreenState extends State<CustomerScreen> {
                       ),
                     ),
                   ),
-
                   SliverPadding(
                     padding: const EdgeInsets.all(20),
                     sliver: SliverList(
@@ -158,10 +172,12 @@ class _CustomerScreenState extends State<CustomerScreen> {
                         (context, index) {
                           // footer loading / end
                           if (index == state.items.length) {
-                            if (state.status == HotelStatus.loading && state.items.isNotEmpty) {
+                            if (state.status == HotelStatus.loading &&
+                                state.items.isNotEmpty) {
                               return const Padding(
                                 padding: EdgeInsets.symmetric(vertical: 16),
-                                child: Center(child: CircularProgressIndicator()),
+                                child:
+                                    Center(child: CircularProgressIndicator()),
                               );
                             }
                             if (!state.hasMore && state.items.isNotEmpty) {
@@ -180,7 +196,6 @@ class _CustomerScreenState extends State<CustomerScreen> {
                       ),
                     ),
                   ),
-
                   if (state.items.isEmpty)
                     SliverToBoxAdapter(
                       child: Padding(
@@ -203,7 +218,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
 
   Widget _buildHotelCard(BuildContext context, Hotel hotel) {
     final imageUrl = (hotel.pathImage.isNotEmpty)
-        ? hotel.pathImage
+        ? '${AppConfig().baseURL}${hotel.pathImage}'
         : 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1000&auto=format&fit=crop';
 
     return GestureDetector(
@@ -227,7 +242,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(16)),
               child: Stack(
                 children: [
                   Image.network(
@@ -238,14 +254,16 @@ class _CustomerScreenState extends State<CustomerScreen> {
                     errorBuilder: (context, error, stackTrace) => Container(
                       height: 180,
                       color: Colors.grey[200],
-                      child: const Icon(Icons.hotel, size: 50, color: Colors.grey),
+                      child:
+                          const Icon(Icons.hotel, size: 50, color: Colors.grey),
                     ),
                   ),
                   Positioned(
                     top: 12,
                     right: 12,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
@@ -256,7 +274,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
                           const SizedBox(width: 4),
                           Text(
                             hotel.rating.toStringAsFixed(1),
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 12),
                           ),
                         ],
                       ),
@@ -272,19 +291,22 @@ class _CustomerScreenState extends State<CustomerScreen> {
                 children: [
                   Text(
                     hotel.name,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.location_on, size: 14, color: Colors.grey),
+                      const Icon(Icons.location_on,
+                          size: 14, color: Colors.grey),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           hotel.address,
-                          style: const TextStyle(color: Colors.grey, fontSize: 13),
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 13),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -307,7 +329,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
                       ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8)),
                         ),
                         child: const Text('Đặt phòng'),
                       ),

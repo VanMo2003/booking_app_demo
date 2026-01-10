@@ -196,7 +196,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   if (!_formKey.currentState!.validate()) {
                                     return;
                                   }
-
                                   context.read<RegisterCubit>().register(
                                         RegisterRequest(
                                           username:

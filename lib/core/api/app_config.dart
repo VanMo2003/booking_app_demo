@@ -1,4 +1,3 @@
-
 class AppConfig {
   bool isProduction = true;
   String baseURL = 'http://192.168.35.3:8080/booking-app/api/v1';
@@ -58,4 +57,3 @@ class AppConfig {
   //   return null;
   // }
 }
-

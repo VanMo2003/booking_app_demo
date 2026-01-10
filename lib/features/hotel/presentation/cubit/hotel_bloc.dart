@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:booking_app_mobile/features/hotel/domain/use_case/get_hotel_use_case.dart';
 
 import '../../domain/entities/hotel.dart';
-import '../../domain/repositories/hotel_repository.dart';
 import 'hotel_event.dart';
 import 'hotel_state.dart';
 

@@ -3,4 +3,5 @@ import '../entities/hotel.dart';
 
 abstract class HotelRepository {
   Future<Paged<Hotel>> getHotels({required int page, required int size});
+  Future<Hotel> getHotelById({required int id});
 }

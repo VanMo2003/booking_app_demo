@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/navigation/app_routes.dart';
 import '../../domain/entities/hotel.dart';
 import '../cubit/hotel_bloc.dart';
 import '../cubit/hotel_event.dart';
@@ -111,6 +112,7 @@ class _HotelTile extends StatelessWidget {
       subtitle: Text('${hotel.address}\n${hotel.phone} • ${hotel.category}'),
       isThreeLine: true,
       trailing: Text(hotel.active ? 'Active' : 'Inactive'),
+      onTap: () => context.router.push(HotelDetailRoute(hotel: hotel)),
     );
   }
 }

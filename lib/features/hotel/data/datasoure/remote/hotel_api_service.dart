@@ -15,4 +15,9 @@ abstract class HotelApiService {
     @Query('page') int page,
     @Query('size') int size,
   );
+
+  @GET('/hotels/{id}')
+  Future<ApiResponse> getHotelById(
+    @Path('id') int id,
+  );
 }
