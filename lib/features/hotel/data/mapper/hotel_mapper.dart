@@ -18,6 +18,7 @@ class HotelMapper {
       category: dto.category ?? "",
       rating: dto.rating ?? 0,
       pathImage: dto.pathImage ?? "",
+      images: dto.images ?? [],
       active: dto.active ?? false,
       accountId: dto.accountId ?? "",
       rooms: dto.rooms != null

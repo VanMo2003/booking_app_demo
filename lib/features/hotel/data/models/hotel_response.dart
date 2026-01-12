@@ -7,6 +7,7 @@ class HotelResponse {
   String? category;
   int? rating;
   String? pathImage;
+  List<String>? images;
   bool? active;
   String? accountId;
   List<HotelRoomResponse>? rooms;
@@ -24,6 +25,7 @@ class HotelResponse {
       this.category,
       this.rating,
       this.pathImage,
+      this.images,
       this.active,
       this.accountId,
       this.rooms,
@@ -41,6 +43,7 @@ class HotelResponse {
     category = json['category'];
     rating = json['rating'];
     pathImage = json['pathImage'];
+    images = json['images'] != null ? List<String>.from(json['images']) : null;
     active = json['active'];
     accountId = json['accountId'];
     if (json['rooms'] != null) {
@@ -75,6 +78,7 @@ class HotelResponse {
     data['category'] = this.category;
     data['rating'] = this.rating;
     data['pathImage'] = this.pathImage;
+    if (images != null) data['images'] = images;
     data['active'] = this.active;
     data['accountId'] = this.accountId;
     if (this.rooms != null) {

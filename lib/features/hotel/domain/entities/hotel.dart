@@ -7,6 +7,7 @@ class Hotel {
   String category;
   int rating;
   String pathImage;
+  List<String> images;
   bool active;
   String accountId;
   List<HotelRoom> rooms;
@@ -24,6 +25,7 @@ class Hotel {
       required this.category,
       required this.rating,
       required this.pathImage,
+      required this.images,
       required this.active,
       required this.accountId,
       required this.rooms,

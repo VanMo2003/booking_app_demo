@@ -22,6 +22,7 @@ class HotelDetailScreen extends StatefulWidget {
 }
 
 class _HotelDetailScreenState extends State<HotelDetailScreen> {
+  int _currentImageIndex = 0;
   late final HotelDetailCubit _cubit;
   final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
 
@@ -48,9 +49,11 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
       child: BlocBuilder<HotelDetailCubit, HotelDetailState>(
         builder: (context, state) {
           final hotel = state.hotel ?? widget.hotel;
-          final imageUrl = (hotel.pathImage.isNotEmpty)
-              ? "${AppConfig().baseURL}${hotel.pathImage}"
-              : 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1000&auto=format&fit=crop';
+          const fallbackImageUrl =
+              'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1000&auto=format&fit=crop';
+          final imageUrls = _getHotelImageUrls(hotel, fallbackImageUrl);
+          final currentIndex =
+              _currentImageIndex.clamp(0, imageUrls.length - 1);
 
           return Scaffold(
             backgroundColor: Colors.white,
@@ -60,7 +63,45 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                   expandedHeight: 250,
                   pinned: true,
                   flexibleSpace: FlexibleSpaceBar(
-                    background: Image.network(imageUrl, fit: BoxFit.cover),
+                    background: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        PageView.builder(
+                          itemCount: imageUrls.length,
+                          onPageChanged: (index) {
+                            setState(() => _currentImageIndex = index);
+                          },
+                          itemBuilder: (context, index) {
+                            final url = imageUrls[index];
+                            return Image.network(url, fit: BoxFit.cover);
+                          },
+                        ),
+                        if (imageUrls.length > 1)
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            bottom: 12,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(imageUrls.length, (i) {
+                                final isActive = i == currentIndex;
+                                return Container(
+                                  width: isActive ? 18 : 8,
+                                  height: 8,
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 4),
+                                  decoration: BoxDecoration(
+                                    color: isActive
+                                        ? Colors.white
+                                        : Colors.white70,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                );
+                              }),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                   leading: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -159,6 +200,23 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
         },
       ),
     );
+  }
+
+
+  List<String> _getHotelImageUrls(Hotel hotel, String fallback) {
+    final rawImages = hotel.images.isNotEmpty
+        ? hotel.images
+        : (hotel.pathImage.isNotEmpty ? [hotel.pathImage] : <String>[]);
+    if (rawImages.isEmpty) return [fallback];
+    return rawImages.map((path) => _resolveImageUrl(path, fallback)).toList();
+  }
+
+  String _resolveImageUrl(String path, String fallback) {
+    if (path.isEmpty) return fallback;
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+    return "${AppConfig().baseURL}$path";
   }
 
   // Widget hiển thị Tiện ích dạng Chip/Wrap
