@@ -5,6 +5,7 @@ import 'package:booking_app_mobile/features/room/domain/repositories/room_reposi
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:file_picker/file_picker.dart';
 
 import '../cubit/room_detail/room_detail_cubit.dart';
 import '../cubit/room_detail/room_detail_state.dart';
@@ -12,8 +13,10 @@ import '../cubit/room_detail/room_detail_state.dart';
 @RoutePage()
 class RoomDetailScreen extends StatefulWidget {
   final int roomId;
+  final bool isHotelManager;
 
-  const RoomDetailScreen({super.key, required this.roomId});
+  const RoomDetailScreen(
+      {super.key, required this.roomId, this.isHotelManager = false});
 
   @override
   State<RoomDetailScreen> createState() => _RoomDetailScreenState();
@@ -52,9 +55,9 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
           final mainImagePath = room?.pathImage?.isNotEmpty == true
               ? room?.pathImage
               : (room?.images?.isNotEmpty == true ? room?.images?.first : null);
-          final imageUrl = mainImagePath != null && mainImagePath.isNotEmpty
-              ? "${AppConfig().baseURL}$mainImagePath"
-              : 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=1000&auto=format&fit=crop';
+          final fallbackImageUrl =
+              'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=1000&auto=format&fit=crop';
+          final imageUrl = _resolveImageUrl(mainImagePath, fallbackImageUrl);
 
           return Scaffold(
             backgroundColor: Colors.white,
@@ -196,6 +199,52 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                   const SizedBox(height: 24),
                                 ],
 
+                                if (widget.isHotelManager) ...[
+                                  const Text(
+                                    "Add room images",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    "Pick multiple images to upload.",
+                                    style: TextStyle(
+                                        color: Colors.grey[600], fontSize: 13),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: OutlinedButton.icon(
+                                      onPressed: (state.isUploadingImages ||
+                                              room.id == null)
+                                          ? null
+                                          : () => _pickAndUploadImages(
+                                              context, room.id!),
+                                      icon: const Icon(
+                                          Icons.photo_library_outlined),
+                                      label: Text(state.isUploadingImages
+                                          ? "Uploading..."
+                                          : "Select images"),
+                                    ),
+                                  ),
+                                ],
+
+                                if (state.isUploadingImages)
+                                  const Padding(
+                                    padding: EdgeInsets.only(top: 12),
+                                    child: LinearProgressIndicator(),
+                                  ),
+                                if (state.uploadErrorMessage != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8),
+                                    child: Text(
+                                      state.uploadErrorMessage!,
+                                      style: const TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                const SizedBox(height: 24),
+
                                 // --- HÌNH ẢNH KHÁC ---
                                 if (room.images?.isNotEmpty == true) ...[
                                   const Text(
@@ -214,9 +263,8 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                           const SizedBox(width: 12),
                                       itemBuilder: (context, index) {
                                         final path = room.images![index];
-                                        final url = path.isNotEmpty
-                                            ? "${AppConfig().baseURL}$path"
-                                            : imageUrl;
+                                        final url =
+                                            _resolveImageUrl(path, imageUrl);
                                         return ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(12),
@@ -271,6 +319,37 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
   }
 
   // Helper widget để hiển thị amenities giống màn HotelDetail
+
+  String _resolveImageUrl(String? path, String fallback) {
+    final value = path?.trim() ?? "";
+    if (value.isEmpty) return fallback;
+    if (value.startsWith('http://') || value.startsWith('https://')) {
+      return value;
+    }
+    return "${AppConfig().baseURL}$value";
+  }
+
+  Future<void> _pickAndUploadImages(BuildContext context, int roomId) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: true,
+    );
+    if (result == null || result.files.isEmpty) return;
+
+    final paths =
+        result.files.map((file) => file.path).whereType<String>().toList();
+    if (paths.isEmpty) return;
+
+    final cubit = context.read<RoomDetailCubit>();
+    final success = await cubit.uploadImages(roomId: roomId, filePaths: paths);
+    if (!context.mounted) return;
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Images uploaded"),
+      ));
+    }
+  }
+
   Widget _buildAmenitiesList(List<dynamic> amenities, Color color) {
     return Wrap(
       spacing: 8,

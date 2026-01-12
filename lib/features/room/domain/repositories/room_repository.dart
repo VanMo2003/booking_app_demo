@@ -22,5 +22,7 @@ abstract class RoomRepository {
   Future<Room> getRoomById({required int id});
   Future<Room> createRoom(Room room);
   Future<Room> updateRoom(Room room);
+  Future<List<String>> uploadRoomImages(
+      {required int roomId, required List<String> filePaths});
   Future<void> deleteRoom(int id);
 }

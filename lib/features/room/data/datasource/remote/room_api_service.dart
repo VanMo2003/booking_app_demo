@@ -29,4 +29,11 @@ abstract class RoomApiService {
 
   @DELETE('/rooms/{id}')
   Future<ApiResponse> deleteRoom(@Path('id') int id);
+
+  @MultiPart()
+  @POST('/rooms/{id}/images')
+  Future<ApiResponse> uploadRoomImages(
+    @Path('id') int id,
+    @Part(name: 'files') List<MultipartFile> files,
+  );
 }

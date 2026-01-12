@@ -313,6 +313,70 @@ class RegisterRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [RoomDetailScreen]
+class RoomDetailRoute extends PageRouteInfo<RoomDetailRouteArgs> {
+  RoomDetailRoute({
+    Key? key,
+    required int roomId,
+    bool isHotelManager = false,
+    List<PageRouteInfo>? children,
+  }) : super(
+          RoomDetailRoute.name,
+          args: RoomDetailRouteArgs(
+            key: key,
+            roomId: roomId,
+            isHotelManager: isHotelManager,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'RoomDetailRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<RoomDetailRouteArgs>();
+      return RoomDetailScreen(
+        key: args.key,
+        roomId: args.roomId,
+        isHotelManager: args.isHotelManager,
+      );
+    },
+  );
+}
+
+class RoomDetailRouteArgs {
+  const RoomDetailRouteArgs({
+    this.key,
+    required this.roomId,
+    this.isHotelManager = false,
+  });
+
+  final Key? key;
+
+  final int roomId;
+
+  final bool isHotelManager;
+
+  @override
+  String toString() {
+    return 'RoomDetailRouteArgs{key: $key, roomId: $roomId, isHotelManager: $isHotelManager}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! RoomDetailRouteArgs) return false;
+    return key == other.key &&
+        roomId == other.roomId &&
+        isHotelManager == other.isHotelManager;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ roomId.hashCode ^ isHotelManager.hashCode;
+}
+
+/// generated route for
 /// [RoomScreen]
 class RoomRoute extends PageRouteInfo<RoomRouteArgs> {
   RoomRoute({Key? key, required int hotelId, List<PageRouteInfo>? children})
@@ -354,50 +418,6 @@ class RoomRouteArgs {
 
   @override
   int get hashCode => key.hashCode ^ hotelId.hashCode;
-}
-
-/// generated route for
-/// [RoomDetailScreen]
-class RoomDetailRoute extends PageRouteInfo<RoomDetailRouteArgs> {
-  RoomDetailRoute({Key? key, required int roomId, List<PageRouteInfo>? children})
-      : super(
-          RoomDetailRoute.name,
-          args: RoomDetailRouteArgs(key: key, roomId: roomId),
-          initialChildren: children,
-        );
-
-  static const String name = 'RoomDetailRoute';
-
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) {
-      final args = data.argsAs<RoomDetailRouteArgs>();
-      return RoomDetailScreen(key: args.key, roomId: args.roomId);
-    },
-  );
-}
-
-class RoomDetailRouteArgs {
-  const RoomDetailRouteArgs({this.key, required this.roomId});
-
-  final Key? key;
-
-  final int roomId;
-
-  @override
-  String toString() {
-    return 'RoomDetailRouteArgs{key: $key, roomId: $roomId}';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! RoomDetailRouteArgs) return false;
-    return key == other.key && roomId == other.roomId;
-  }
-
-  @override
-  int get hashCode => key.hashCode ^ roomId.hashCode;
 }
 
 /// generated route for

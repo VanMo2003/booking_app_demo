@@ -1,7 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:booking_app_mobile/core/api/app_config.dart';
 import 'package:booking_app_mobile/core/di/injector.dart';
+import 'package:booking_app_mobile/core/navigation/app_routes.dart';
 import 'package:booking_app_mobile/core/widgets/app_scaffold.dart';
 import 'package:booking_app_mobile/features/room/domain/entity/room.dart';
 import 'package:booking_app_mobile/features/room/presentation/cubit/room_cubit.dart';
@@ -53,14 +55,33 @@ class RoomScreen extends StatelessWidget {
       ),
       child: Text(
         label,
-        style:
-            TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: color,
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
 
-  Future<void> _showEditDialog(BuildContext context, Room? item,
-      {required int hotelId}) async {
+  String _resolveRoomImageUrl(Room room) {
+    const fallbackUrl =
+        'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=1000&auto=format&fit=crop';
+    final path = (room.pathImage?.isNotEmpty == true)
+        ? room.pathImage!
+        : (room.images?.isNotEmpty == true ? room.images!.first : "");
+    if (path.isEmpty) return fallbackUrl;
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return path;
+    }
+    return "${AppConfig().baseURL}$path";
+  }
+
+  Future<void> _showEditDialog(
+    BuildContext context,
+    Room? item, {
+    required int hotelId,
+  }) async {
     final roomNumberCtrl = TextEditingController(text: item?.roomNumber);
     final priceCtrl = TextEditingController(text: item?.price?.toString());
     final descCtrl = TextEditingController(text: item?.description);
@@ -69,9 +90,10 @@ class RoomScreen extends StatelessWidget {
     String status = item?.status ?? 'AVAILABLE';
 
     showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const Center(child: CircularProgressIndicator()));
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
 
     List<RoomType> roomTypes = [];
     try {
@@ -80,8 +102,9 @@ class RoomScreen extends StatelessWidget {
     } catch (e) {
       if (context.mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Không tải được danh sách loại phòng')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Không tải được danh sách loại phòng')),
+        );
       }
       return;
     }
@@ -123,41 +146,47 @@ class RoomScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
-                    controller: roomNumberCtrl,
-                    decoration: InputDecoration(
-                      labelText: 'Số phòng (VD: 101)',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                      prefixIcon: const Icon(Icons.meeting_room),
+                  controller: roomNumberCtrl,
+                  decoration: InputDecoration(
+                    labelText: 'Số phòng (VD: 101)',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    validator: (v) =>
-                        v?.isEmpty ?? true ? 'Vui lòng nhập số phòng' : null),
+                    prefixIcon: const Icon(Icons.meeting_room),
+                  ),
+                  validator: (v) =>
+                      v?.isEmpty ?? true ? 'Vui lòng nhập số phòng' : null,
+                ),
                 const SizedBox(height: 12),
                 Row(
                   children: [
                     Expanded(
                       child: TextFormField(
-                          controller: priceCtrl,
-                          decoration: InputDecoration(
-                            labelText: 'Giá theo đêm',
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12)),
-                            suffixText: 'VNĐ',
+                        controller: priceCtrl,
+                        decoration: InputDecoration(
+                          labelText: 'Giá theo đêm',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          keyboardType: TextInputType.number,
-                          validator: (v) =>
-                              v?.isEmpty ?? true ? 'Nhập giá' : null),
+                          suffixText: 'VNĐ',
+                        ),
+                        keyboardType: TextInputType.number,
+                        validator: (v) =>
+                            v?.isEmpty ?? true ? 'Nhập giá' : null,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: TextFormField(
-                          controller: capacityCtrl,
-                          decoration: InputDecoration(
-                            labelText: 'Sức chứa',
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12)),
+                        controller: capacityCtrl,
+                        decoration: InputDecoration(
+                          labelText: 'Sức chứa',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          keyboardType: TextInputType.number),
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
                     ),
                   ],
                 ),
@@ -167,11 +196,16 @@ class RoomScreen extends StatelessWidget {
                   decoration: InputDecoration(
                     labelText: 'Loại phòng',
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   items: roomTypes
-                      .map((rt) => DropdownMenuItem<int>(
-                          value: rt.id, child: Text(rt.name ?? 'Unknown')))
+                      .map(
+                        (rt) => DropdownMenuItem<int>(
+                          value: rt.id,
+                          child: Text(rt.name ?? 'Unknown'),
+                        ),
+                      )
                       .toList(),
                   onChanged: (v) => selectedRoomTypeId = v,
                   validator: (v) => v == null ? 'Chọn loại phòng' : null,
@@ -182,25 +216,30 @@ class RoomScreen extends StatelessWidget {
                   decoration: InputDecoration(
                     labelText: 'Trạng thái',
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   items: const [
                     DropdownMenuItem(value: 'AVAILABLE', child: Text('Trống')),
                     DropdownMenuItem(value: 'OCCUPIED', child: Text('Đã thuê')),
                     DropdownMenuItem(
-                        value: 'MAINTENANCE', child: Text('Bảo trì')),
+                      value: 'MAINTENANCE',
+                      child: Text('Bảo trì'),
+                    ),
                   ],
                   onChanged: (v) => status = v!,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
-                    controller: descCtrl,
-                    maxLines: 2,
-                    decoration: InputDecoration(
-                      labelText: 'Mô tả thêm',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                    )),
+                  controller: descCtrl,
+                  maxLines: 2,
+                  decoration: InputDecoration(
+                    labelText: 'Mô tả thêm',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,
@@ -208,7 +247,8 @@ class RoomScreen extends StatelessWidget {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                       backgroundColor: Theme.of(context).primaryColor,
                       foregroundColor: Colors.white,
                     ),
@@ -232,22 +272,31 @@ class RoomScreen extends StatelessWidget {
                         } else {
                           await cubit.edit(r);
                         }
+
                         if (context.mounted) {
                           Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text(item == null
-                                  ? 'Thêm phòng thành công'
-                                  : 'Cập nhật thành công')));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                item == null
+                                    ? 'Thêm phòng thành công'
+                                    : 'Cập nhật thành công',
+                              ),
+                            ),
+                          );
                         }
                       } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(item == null
-                                ? 'Đã có lỗi xảy ra'
-                                : 'Cập nhật thành công')));
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Đã có lỗi xảy ra')),
+                          );
+                        }
                       }
                     },
-                    child: const Text('Lưu thông tin',
-                        style: TextStyle(fontSize: 16)),
+                    child: const Text(
+                      'Lưu thông tin',
+                      style: TextStyle(fontSize: 16),
+                    ),
                   ),
                 ),
               ],
@@ -266,13 +315,16 @@ class RoomScreen extends StatelessWidget {
         createRoom: getIt<CreateRoom>(),
         updateRoom: getIt<UpdateRoom>(),
         deleteRoom: getIt<DeleteRoom>(),
-      )..fetch(hotelId: 1, page: 0, size: 20),
+      )..fetch(hotelId: hotelId, page: 0, size: 20),
       child: BlocConsumer<RoomCubit, RoomState>(
         listener: (context, state) {
           if (state.status.isFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
                 content: Text(state.errorMessage ?? 'Có lỗi xảy ra'),
-                backgroundColor: Colors.red));
+                backgroundColor: Colors.red,
+              ),
+            );
           }
         },
         builder: (context, state) {
@@ -314,7 +366,7 @@ class RoomScreen extends StatelessWidget {
 
     return RefreshIndicator(
       onRefresh: () async {
-        context.read<RoomCubit>().fetch(hotelId: 1, page: 0, size: 20);
+        context.read<RoomCubit>().fetch(hotelId: hotelId, page: 0, size: 20);
       },
       child: ListView.separated(
         padding: const EdgeInsets.all(16),
@@ -322,28 +374,33 @@ class RoomScreen extends StatelessWidget {
         separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (ctx, i) {
           final it = items[i];
+          final imageUrl = _resolveRoomImageUrl(it);
+
           return Card(
             elevation: 2,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
-              onTap: () => _showEditDialog(context, it, hotelId: hotelId),
+              onTap: () {
+                if (it.id != null) {
+                  context.router.push(
+                      RoomDetailRoute(roomId: it.id!, isHotelManager: true));
+                }
+              },
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
                   children: [
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context)
-                            .primaryColor
-                            .withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        imageUrl,
+                        width: 72,
+                        height: 72,
+                        fit: BoxFit.cover,
                       ),
-                      child: Icon(Icons.bed,
-                          color: Theme.of(context).primaryColor, size: 30),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -357,8 +414,9 @@ class RoomScreen extends StatelessWidget {
                                 child: Text(
                                   'Phòng ${it.roomNumber}',
                                   style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -369,50 +427,65 @@ class RoomScreen extends StatelessWidget {
                           Text(
                             it.roomTypeName ?? 'Loại phòng chưa đặt',
                             style: const TextStyle(
-                                color: Colors.grey, fontSize: 13),
+                              color: Colors.grey,
+                              fontSize: 13,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             _formatCurrency(it.price),
                             style: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14),
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.delete_outline, color: Colors.red),
-                      onPressed: () async {
-                        final confirm = await showDialog<bool>(
-                          context: context,
-                          builder: (ctx) => AlertDialog(
-                            title: const Text('Xác nhận xóa'),
-                            content: Text(
-                                'Bạn có chắc muốn xóa phòng ${it.roomNumber}?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(ctx, false),
-                                child: const Text('Hủy'),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit_outlined,
+                              color: Colors.blue),
+                          onPressed: () =>
+                              _showEditDialog(context, it, hotelId: hotelId),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete_outline,
+                              color: Colors.red),
+                          onPressed: () async {
+                            final confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (ctx) => AlertDialog(
+                                title: const Text('Xác nhận xóa'),
+                                content: Text('Xóa phòng ${it.roomNumber}?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(ctx, false),
+                                    child: const Text('Hủy'),
+                                  ),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white,
+                                    ),
+                                    onPressed: () => Navigator.pop(ctx, true),
+                                    child: const Text('Xóa'),
+                                  ),
+                                ],
                               ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                    foregroundColor: Colors.white),
-                                onPressed: () => Navigator.pop(ctx, true),
-                                child: const Text('Xóa'),
-                              ),
-                            ],
-                          ),
-                        );
+                            );
 
-                        if (confirm == true && it.id != null) {
-                          if (context.mounted) {
-                            context.read<RoomCubit>().remove(it.id!);
-                          }
-                        }
-                      },
+                            if (confirm == true && it.id != null) {
+                              if (context.mounted) {
+                                context.read<RoomCubit>().remove(it.id!);
+                              }
+                            }
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),

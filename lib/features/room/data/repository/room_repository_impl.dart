@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:injectable/injectable.dart';
 import 'package:dio/dio.dart';
 import 'package:booking_app_mobile/core/api/dio_client.dart';
@@ -89,6 +91,27 @@ class RoomRepositoryImpl implements RoomRepository {
     try {
       final ApiResponse response = await apiService.getRoomById(id);
       return RoomResponse.fromJson(response.data).toEntity();
+    } catch (e) {
+      throw dioClient.handleDioError(e as DioException);
+    }
+  }
+
+  @override
+  Future<List<String>> uploadRoomImages(
+      {required int roomId, required List<String> filePaths}) async {
+    try {
+      final files = await Future.wait(
+        filePaths.map(
+          (path) => MultipartFile.fromFile(
+            path,
+            filename: path.split(Platform.pathSeparator).last,
+          ),
+        ),
+      );
+      final ApiResponse response =
+          await apiService.uploadRoomImages(roomId, files);
+      final data = response.data as List<dynamic>;
+      return data.map((e) => e.toString()).toList();
     } catch (e) {
       throw dioClient.handleDioError(e as DioException);
     }
