@@ -8,6 +8,7 @@ class HotelRoomMapper {
   static HotelRoom toEntity(HotelRoomResponse dto) {
     return HotelRoom(
       id: dto.id ?? 0,
+      pathImage: dto.pathImage ?? "",
       capacity: dto.capacity ?? 0,
       price: dto.price ?? 0,
       roomNumber: dto.roomNumber ?? "",

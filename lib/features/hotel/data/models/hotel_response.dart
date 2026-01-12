@@ -94,6 +94,7 @@ class HotelResponse {
 
 class HotelRoomResponse {
   int? id;
+  String? pathImage;
   String? roomNumber;
   int? price;
   String? description;
@@ -108,6 +109,7 @@ class HotelRoomResponse {
 
   HotelRoomResponse(
       {this.id,
+      this.pathImage,
       this.roomNumber,
       this.price,
       this.description,
@@ -122,6 +124,7 @@ class HotelRoomResponse {
 
   HotelRoomResponse.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    pathImage = json['pathImage'];
     roomNumber = json['roomNumber'];
     price = json['price'];
     description = json['description'];
@@ -138,6 +141,7 @@ class HotelRoomResponse {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['pathImage'] = this.pathImage;
     data['roomNumber'] = this.roomNumber;
     data['price'] = this.price;
     data['description'] = this.description;

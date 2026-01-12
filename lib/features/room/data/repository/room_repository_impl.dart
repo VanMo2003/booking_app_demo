@@ -83,4 +83,14 @@ class RoomRepositoryImpl implements RoomRepository {
       throw dioClient.handleDioError(e as DioException);
     }
   }
+
+  @override
+  Future<Room> getRoomById({required int id}) async {
+    try {
+      final ApiResponse response = await apiService.getRoomById(id);
+      return RoomResponse.fromJson(response.data).toEntity();
+    } catch (e) {
+      throw dioClient.handleDioError(e as DioException);
+    }
+  }
 }

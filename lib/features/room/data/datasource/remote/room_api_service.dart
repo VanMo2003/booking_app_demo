@@ -17,6 +17,9 @@ abstract class RoomApiService {
     @Query('size') int size,
   );
 
+  @GET('/rooms/{id}')
+  Future<ApiResponse> getRoomById(@Path('id') int id);
+
   @POST('/rooms')
   Future<ApiResponse> createRoom(@Body() RoomCreateDto body);
 

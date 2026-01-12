@@ -344,18 +344,4 @@ class _CustomerScreenState extends State<CustomerScreen> {
       ),
     );
   }
-
-  Map<String, dynamic> _hotelToMap(Hotel h) {
-    return {
-      "id": h.id,
-      "name": h.name,
-      "address": h.address,
-      "description": h.description,
-      "rating": h.rating,
-      "pathImage": h.pathImage,
-      "category": h.category,
-      "phone": h.phone,
-      "active": h.active,
-    };
-  }
 }

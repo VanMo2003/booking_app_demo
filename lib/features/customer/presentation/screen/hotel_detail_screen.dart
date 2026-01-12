@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:booking_app_mobile/core/api/app_config.dart';
 import 'package:booking_app_mobile/core/di/injector.dart';
+import 'package:booking_app_mobile/core/navigation/app_routes.dart';
 import 'package:booking_app_mobile/features/hotel/domain/entities/hotel.dart';
 import 'package:booking_app_mobile/features/hotel/domain/repositories/hotel_repository.dart';
 import 'package:flutter/material.dart';
@@ -191,7 +192,10 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
   }
 
   // Widget Card cho từng Phòng
-  Widget _buildRoomCard(dynamic room, Color primaryBlue) {
+  Widget _buildRoomCard(HotelRoom room, Color primaryBlue) {
+    final imageUrl = room.pathImage.isNotEmpty
+        ? "${AppConfig().baseURL}${room.pathImage}"
+        : 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=1000&auto=format&fit=crop';
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -206,9 +210,23 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
               offset: const Offset(0, 4))
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: InkWell(
+        onTap: room.status == "AVAILABLE"
+            ? () => context.router.push(RoomDetailRoute(roomId: room.id))
+            : null,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.network(
+              imageUrl,
+              height: 140,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -263,7 +281,9 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: room.status == "AVAILABLE" ? () {} : null,
+              onPressed: room.status == "AVAILABLE"
+                  ? () => context.router.push(RoomDetailRoute(roomId: room.id))
+                  : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryBlue,
                 foregroundColor: Colors.white,
@@ -275,6 +295,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
             ),
           )
         ],
+      ),
       ),
     );
   }

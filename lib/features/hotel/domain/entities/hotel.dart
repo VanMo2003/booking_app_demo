@@ -35,6 +35,7 @@ class Hotel {
 
 class HotelRoom {
   int id;
+  String pathImage;
   String roomNumber;
   int price;
   String description;
@@ -49,6 +50,7 @@ class HotelRoom {
 
   HotelRoom(
       {required this.id,
+      required this.pathImage,
       required this.roomNumber,
       required this.price,
       required this.description,
