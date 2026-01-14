@@ -201,14 +201,14 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
 
                                 if (widget.isHotelManager) ...[
                                   const Text(
-                                    "Add room images",
+                                    "Thêm ảnh phòng",
                                     style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    "Pick multiple images to upload.",
+                                    "Bạn có thể chọn nhiều ảnh.",
                                     style: TextStyle(
                                         color: Colors.grey[600], fontSize: 13),
                                   ),
@@ -224,8 +224,8 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                       icon: const Icon(
                                           Icons.photo_library_outlined),
                                       label: Text(state.isUploadingImages
-                                          ? "Uploading..."
-                                          : "Select images"),
+                                          ? "Đang tải..."
+                                          : "Chọn ảnh"),
                                     ),
                                   ),
                                 ],

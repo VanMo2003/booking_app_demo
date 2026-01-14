@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:booking_app_mobile/features/hotel/data/mapper/hotel_mapper.dart';
 import 'package:booking_app_mobile/features/hotel/data/models/hotel_response.dart';
+import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../share/data/models/api_response.dart';
@@ -51,5 +54,21 @@ class HotelRepositoryImpl implements HotelRepository {
 
     final hotelRes = HotelResponse.fromJson(data);
     return HotelMapper.toEntity(hotelRes);
+  }
+
+  @override
+  Future<List<String>> uploadHotelImages(
+      {required int hotelId, required List<String> filePaths}) async {
+    final files = await Future.wait(
+      filePaths.map(
+        (path) => MultipartFile.fromFile(
+          path,
+          filename: path.split(Platform.pathSeparator).last,
+        ),
+      ),
+    );
+    final ApiResponse res = await api.uploadHotelImages(hotelId, files);
+    final data = res.data as List<dynamic>;
+    return data.map((e) => e.toString()).toList();
   }
 }

@@ -9,7 +9,7 @@ class BookingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Booking')),
-      body: const Center(child: Text('Booking management placeholder')),
+      body: const Center(child: Text('Hiện chưa có đơn hàng nào')),
     );
   }
 }

@@ -20,4 +20,11 @@ abstract class HotelApiService {
   Future<ApiResponse> getHotelById(
     @Path('id') int id,
   );
+
+  @MultiPart()
+  @POST('/hotels/{id}/images')
+  Future<ApiResponse> uploadHotelImages(
+    @Path('id') int id,
+    @Part(name: 'files') List<MultipartFile> files,
+  );
 }
