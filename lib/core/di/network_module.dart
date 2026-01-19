@@ -1,4 +1,5 @@
 import 'package:booking_app_mobile/features/amenity/data/datasource/remote/amenity_api_service.dart';
+import 'package:booking_app_mobile/features/booking/data/datasource/remote/booking_api_service.dart';
 import 'package:booking_app_mobile/features/employee/data/datasource/remote/employee_api_service.dart';
 import 'package:booking_app_mobile/features/hotel/data/datasoure/remote/hotel_api_service.dart';
 import 'package:booking_app_mobile/features/position/data/datasource/remote/position_api_service.dart';
@@ -82,4 +83,7 @@ abstract class NetworkModule {
 
   @lazySingleton
   AmenityApiService provideAmenityApiService(Dio dio) => AmenityApiService(dio);
+
+  @lazySingleton
+  BookingApiService provideBookingApiService(Dio dio) => BookingApiService(dio);
 }

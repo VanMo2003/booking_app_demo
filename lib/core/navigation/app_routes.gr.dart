@@ -69,19 +69,65 @@ class AmenityRouteArgs {
 }
 
 /// generated route for
-/// [BookingScreen]
-class BookingRoute extends PageRouteInfo<void> {
-  const BookingRoute({List<PageRouteInfo>? children})
-      : super(BookingRoute.name, initialChildren: children);
+/// [BookingAdminScreen]
+class BookingAdminRoute extends PageRouteInfo<BookingAdminRouteArgs> {
+  BookingAdminRoute({
+    Key? key,
+    int? customerId,
+    int? hotelId,
+    List<PageRouteInfo>? children,
+  }) : super(
+          BookingAdminRoute.name,
+          args: BookingAdminRouteArgs(
+            key: key,
+            customerId: customerId,
+            hotelId: hotelId,
+          ),
+          initialChildren: children,
+        );
 
-  static const String name = 'BookingRoute';
+  static const String name = 'BookingAdminRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const BookingScreen();
+      final args = data.argsAs<BookingAdminRouteArgs>(
+        orElse: () => const BookingAdminRouteArgs(),
+      );
+      return BookingAdminScreen(
+        key: args.key,
+        customerId: args.customerId,
+        hotelId: args.hotelId,
+      );
     },
   );
+}
+
+class BookingAdminRouteArgs {
+  const BookingAdminRouteArgs({this.key, this.customerId, this.hotelId});
+
+  final Key? key;
+
+  final int? customerId;
+
+  final int? hotelId;
+
+  @override
+  String toString() {
+    return 'BookingAdminRouteArgs{key: $key, customerId: $customerId, hotelId: $hotelId}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! BookingAdminRouteArgs) return false;
+    return key == other.key &&
+        customerId == other.customerId &&
+        hotelId == other.hotelId;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ customerId.hashCode ^ hotelId.hashCode;
 }
 
 /// generated route for

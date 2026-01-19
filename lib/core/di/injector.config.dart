@@ -39,6 +39,22 @@ import 'package:booking_app_mobile/features/auth/domain/usecases/logout_use_case
     as _i941;
 import 'package:booking_app_mobile/features/auth/domain/usecases/register_use_case.dart'
     as _i417;
+import 'package:booking_app_mobile/features/booking/data/datasource/remote/booking_api_service.dart'
+    as _i1055;
+import 'package:booking_app_mobile/features/booking/data/repositoy_impl/booking_repository_impl.dart'
+    as _i400;
+import 'package:booking_app_mobile/features/booking/domain/repositories/booking_repository.dart'
+    as _i299;
+import 'package:booking_app_mobile/features/booking/domain/usecases/cancel_booking_use_case.dart'
+    as _i715;
+import 'package:booking_app_mobile/features/booking/domain/usecases/complete_booking_use_case.dart'
+    as _i1065;
+import 'package:booking_app_mobile/features/booking/domain/usecases/confirm_booking_use_case.dart'
+    as _i671;
+import 'package:booking_app_mobile/features/booking/domain/usecases/create_booking_use_case.dart'
+    as _i653;
+import 'package:booking_app_mobile/features/booking/domain/usecases/get_booking_use_case.dart'
+    as _i114;
 import 'package:booking_app_mobile/features/customer/data/datasource/remote/customer_api_service.dart'
     as _i361;
 import 'package:booking_app_mobile/features/customer/data/repository/customer_repository_impl.dart'
@@ -166,8 +182,14 @@ extension GetItInjectableX on _i174.GetIt {
         () => networkModule.provideHotelApiService(gh<_i361.Dio>()));
     gh.lazySingleton<_i31.AmenityApiService>(
         () => networkModule.provideAmenityApiService(gh<_i361.Dio>()));
+    gh.lazySingleton<_i1055.BookingApiService>(
+        () => networkModule.provideBookingApiService(gh<_i361.Dio>()));
     gh.lazySingleton<_i273.AmenityRepository>(
         () => _i480.AmenityRepositoryImpl(gh<_i31.AmenityApiService>()));
+    gh.lazySingleton<_i299.BookingRepository>(() => _i400.BookingRepositoryImpl(
+          gh<_i1055.BookingApiService>(),
+          gh<_i764.DioClient>(),
+        ));
     gh.lazySingleton<_i619.AuthRepository>(() => _i443.AuthRepositoryImpl(
           gh<_i608.AuthApiService>(),
           gh<_i764.DioClient>(),
@@ -190,6 +212,16 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i267.ServiceApiService>(),
           gh<_i764.DioClient>(),
         ));
+    gh.factory<_i715.CancelBooking>(
+        () => _i715.CancelBooking(gh<_i299.BookingRepository>()));
+    gh.factory<_i1065.CompleteBooking>(
+        () => _i1065.CompleteBooking(gh<_i299.BookingRepository>()));
+    gh.factory<_i671.ConfirmBooking>(
+        () => _i671.ConfirmBooking(gh<_i299.BookingRepository>()));
+    gh.factory<_i653.CreateBooking>(
+        () => _i653.CreateBooking(gh<_i299.BookingRepository>()));
+    gh.factory<_i114.GetBookings>(
+        () => _i114.GetBookings(gh<_i299.BookingRepository>()));
     gh.lazySingleton<_i18.RoomTypeRepository>(
         () => _i559.RoomTypeRepositoryImpl(
               gh<_i244.RoomTypeApiService>(),

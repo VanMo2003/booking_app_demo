@@ -164,8 +164,12 @@ class HotelManageScreen extends StatelessWidget {
                           () => context.router.push(RoomRoute(hotelId: 1))),
                       _buildTile(context, Icons.room_service, 'Dịch vụ',
                           () => context.router.push(const ServiceRoute())),
-                      _buildTile(context, Icons.assignment, 'Đơn đặt phòng',
-                          () => context.router.push(const BookingRoute())),
+                      _buildTile(
+                          context,
+                          Icons.assignment,
+                          'Đơn đặt phòng',
+                          () => context.router
+                              .push(BookingAdminRoute(hotelId: 1))),
                       _buildTile(context, Icons.pool, 'Tiện ích',
                           () => context.router.push(AmenityRoute(hotelId: 1))),
                     ],

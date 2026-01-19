@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:booking_app_mobile/features/amenity/presentation/screen/amenity_screen.dart';
 import 'package:booking_app_mobile/features/hotel/domain/entities/hotel.dart';
+import 'package:booking_app_mobile/features/booking/presentation/screen/booking_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:collection/equality.dart';
 
 import '../../features/customer/presentation/screen/create_customer_screen.dart';
 import '../../features/customer/presentation/screen/hotel_detail_screen.dart';
@@ -10,7 +10,6 @@ import '../../features/customer/presentation/screen/profile_screen.dart';
 import '../../features/employee/presentation/screen/employee_screen.dart';
 import '../../features/hotel/presentation/screen/hotel_list_screen.dart';
 import '../../features/hotel_manage/presentation/screen/hotel_manage_screen.dart';
-import '../../features/hotel_manage/presentation/screen/booking_screen.dart';
 import '../../features/hotel_manage/presentation/screen/staff_admin_screen.dart';
 import '../../features/position/presentation/screen/position_screen.dart';
 import '../../features/room_type/presentation/screen/room_type_screen.dart';
@@ -30,7 +29,10 @@ class AppRoutes extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
-        AutoRoute(path: '/${SplashRoute.name}', page: SplashRoute.page, initial: true),
+        AutoRoute(
+            path: '/${SplashRoute.name}',
+            page: SplashRoute.page,
+            initial: true),
         AutoRoute(
           path: '/${StaffAdminRoute.name}',
           page: StaffAdminRoute.page,
@@ -92,12 +94,12 @@ class AppRoutes extends RootStackRouter {
           page: ServiceRoute.page,
         ),
         AutoRoute(
-          path: '/${BookingRoute.name}',
-          page: BookingRoute.page,
-        ),
-        AutoRoute(
           path: '/${HotelListRoute.name}',
           page: HotelListRoute.page,
+        ),
+        AutoRoute(
+          path: '/${BookingAdminRoute.name}',
+          page: BookingAdminRoute.page,
         ),
       ];
 }
