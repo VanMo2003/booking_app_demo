@@ -1,10 +1,7 @@
-// booking_detail_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
-// Import lại các dependencies cần thiết như màn hình Admin
 import '../../../../core/di/injector.dart';
 import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/api/app_config.dart';
@@ -16,8 +13,8 @@ class BookingDetailScreen extends StatelessWidget {
 
   const BookingDetailScreen({super.key, required this.booking});
 
-  // Copy các helper functions (formatCurrency, formatDate, resolveAvatar)
-  // hoặc move chúng vào class Utils chung.
+  // --- HELPER FUNCTIONS ---
+
   String _formatCurrency(num? amount) {
     if (amount == null) return '0 đ';
     return NumberFormat.currency(locale: 'vi_VN', symbol: 'đ').format(amount);
@@ -33,17 +30,21 @@ class BookingDetailScreen extends StatelessWidget {
     }
   }
 
-  String _resolveAvatarUrl(String? path) {
-    const fallbackUrl =
-        'https://ui-avatars.com/api/?background=random&name=User';
-    if (path == null || path.isEmpty) return fallbackUrl;
+  // Hàm xử lý link ảnh (dùng chung cho Avatar và Room)
+  String _resolveImageUrl(String? path, {bool isAvatar = false}) {
+    if (path == null || path.isEmpty) {
+      return isAvatar
+          ? 'https://ui-avatars.com/api/?background=random&name=User'
+          : 'https://placehold.co/600x400/png?text=No+Image'; // Ảnh fallback cho phòng
+    }
     if (path.startsWith('http')) return path;
     return "${AppConfig().baseURL}$path";
   }
 
+  // --- MAIN BUILD ---
+
   @override
   Widget build(BuildContext context) {
-    // Cần BlocProvider riêng ở đây để handle các action Confirm/Cancel
     return BlocProvider(
       create: (_) => BookingCubit(
         getBookings: getIt(),
@@ -60,7 +61,7 @@ class BookingDetailScreen extends StatelessWidget {
                   content: Text('Thao tác thành công'),
                   backgroundColor: Colors.green),
             );
-            Navigator.pop(context, true); // Pop và báo cần refresh
+            Navigator.pop(context, true);
           } else if (state.status.isFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -95,8 +96,9 @@ class BookingDetailScreen extends StatelessWidget {
                           contentPadding: const EdgeInsets.all(12),
                           leading: CircleAvatar(
                             radius: 28,
-                            backgroundImage: NetworkImage(
-                                _resolveAvatarUrl(booking.customer?.pathImage)),
+                            backgroundImage: NetworkImage(_resolveImageUrl(
+                                booking.customer?.pathImage,
+                                isAvatar: true)),
                           ),
                           title: Text(booking.customer?.fullName ?? 'N/A',
                               style:
@@ -137,11 +139,16 @@ class BookingDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
 
-                      // 4. Rooms List
+                      // 4. Rooms List (Đã chỉnh sửa hiển thị ảnh)
                       _buildSectionTitle(
                           'Phòng đã đặt (${booking.bookingRooms?.length ?? 0})'),
                       if (booking.bookingRooms != null)
-                        ...booking.bookingRooms!.map((bookingRoom) => Card(
+                        ...booking.bookingRooms!.map(
+                          (bookingRoom) {
+                            final imageUrl = _resolveImageUrl(
+                                bookingRoom.roomInfo?.pathImage);
+
+                            return Card(
                               margin: const EdgeInsets.only(bottom: 8),
                               elevation: 0,
                               shape: RoundedRectangleBorder(
@@ -149,28 +156,56 @@ class BookingDetailScreen extends StatelessWidget {
                                 side: BorderSide(color: Colors.grey.shade200),
                               ),
                               child: ListTile(
-                                leading: Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .primaryColor
-                                          .withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(8),
-                                      image: DecorationImage(
-                                          image: NetworkImage(
-                                              "${AppConfig().baseURL}${bookingRoom.roomInfo?.pathImage}"))),
-                                  // child: Icon(Icons.meeting_room,
-                                  //     color: Theme.of(context).primaryColor),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
+                                leading: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Container(
+                                    width: 60,
+                                    height: 60,
+                                    color: Colors.grey.shade100,
+                                    child: Image.network(
+                                      imageUrl,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Icon(Icons.meeting_room,
+                                            color: Theme.of(context)
+                                                .primaryColor
+                                                .withOpacity(0.5));
+                                      },
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                        if (loadingProgress == null)
+                                          return child;
+                                        return const Center(
+                                            child: SizedBox(
+                                                width: 20,
+                                                height: 20,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                        strokeWidth: 2)));
+                                      },
+                                    ),
+                                  ),
                                 ),
                                 title: Text(
-                                    'Phòng ${bookingRoom.roomInfo?.roomNumber ?? "N/A"}',
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold)),
-                                subtitle: Text(
-                                    bookingRoom.roomInfo?.roomTypeName ??
+                                  'Phòng ${bookingRoom.roomInfo?.roomNumber ?? "N/A"}',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const SizedBox(height: 4),
+                                    Text(bookingRoom.roomInfo?.roomTypeName ??
                                         "Loại phòng thường"),
+                                  ],
+                                ),
                               ),
-                            )),
+                            );
+                          },
+                        ),
 
                       const SizedBox(height: 20),
 
@@ -223,13 +258,13 @@ class BookingDetailScreen extends StatelessWidget {
                     right: 0,
                     child: Container(
                       padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Colors.white,
                         boxShadow: [
                           BoxShadow(
                               color: Colors.black12,
                               blurRadius: 10,
-                              offset: const Offset(0, -2))
+                              offset: Offset(0, -2))
                         ],
                       ),
                       child: _buildActionButtons(context, booking.id!),
@@ -249,6 +284,8 @@ class BookingDetailScreen extends StatelessWidget {
       ),
     );
   }
+
+  // --- SUB WIDGETS ---
 
   Widget _buildActionButtons(BuildContext context, int bookingId) {
     final cubit = context.read<BookingCubit>();
@@ -306,8 +343,6 @@ class BookingDetailScreen extends StatelessWidget {
 
     return const SizedBox.shrink();
   }
-
-  // --- Widget Helpers ---
 
   Widget _buildSectionTitle(String title) {
     return Padding(
