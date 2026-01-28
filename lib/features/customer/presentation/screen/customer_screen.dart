@@ -560,7 +560,12 @@ class _CustomerScreenState extends State<CustomerScreen> {
                       onPressed: () {
                         if (hotel.status == "AVAILABLE") {
                           context.router.push(
-                            HotelDetailRoute(hotel: hotel),
+                            HotelDetailRoute(
+                                hotel: hotel,
+                                checkinDate:
+                                    _apiDateFormat.format(_checkinDate!),
+                                checkoutDate:
+                                    _apiDateFormat.format(_checkoutDate!)),
                           );
                         }
                       },

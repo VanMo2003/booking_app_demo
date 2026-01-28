@@ -15,9 +15,11 @@ abstract class HotelApiService {
     @Query('checkoutDate') String checkoutDate,
   );
 
-  @GET('/hotels/{id}')
+  @GET('/hotels/detail/{id}')
   Future<ApiResponse> getHotelById(
     @Path('id') int id,
+    @Query('checkinDate') String? checkinDate,
+    @Query('checkoutDate') String? checkoutDate,
   );
 
   @MultiPart()

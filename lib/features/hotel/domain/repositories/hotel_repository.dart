@@ -8,7 +8,11 @@ abstract class HotelRepository {
     required String checkinDate,
     required String checkoutDate,
   });
-  Future<Hotel> getHotelById({required int id});
+  Future<Hotel> getHotelById({
+    required int id,
+    String? checkinDate,
+    String? checkoutDate,
+  });
   Future<List<String>> uploadHotelImages(
       {required int hotelId, required List<String> filePaths});
 }

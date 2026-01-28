@@ -221,10 +221,17 @@ class HotelDetailRoute extends PageRouteInfo<HotelDetailRouteArgs> {
   HotelDetailRoute({
     Key? key,
     required Hotel hotel,
+    String? checkinDate,
+    String? checkoutDate,
     List<PageRouteInfo>? children,
   }) : super(
           HotelDetailRoute.name,
-          args: HotelDetailRouteArgs(key: key, hotel: hotel),
+          args: HotelDetailRouteArgs(
+            key: key,
+            hotel: hotel,
+            checkinDate: checkinDate,
+            checkoutDate: checkoutDate,
+          ),
           initialChildren: children,
         );
 
@@ -234,32 +241,53 @@ class HotelDetailRoute extends PageRouteInfo<HotelDetailRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<HotelDetailRouteArgs>();
-      return HotelDetailScreen(key: args.key, hotel: args.hotel);
+      return HotelDetailScreen(
+        key: args.key,
+        hotel: args.hotel,
+        checkinDate: args.checkinDate,
+        checkoutDate: args.checkoutDate,
+      );
     },
   );
 }
 
 class HotelDetailRouteArgs {
-  const HotelDetailRouteArgs({this.key, required this.hotel});
+  const HotelDetailRouteArgs({
+    this.key,
+    required this.hotel,
+    this.checkinDate,
+    this.checkoutDate,
+  });
 
   final Key? key;
 
   final Hotel hotel;
 
+  final String? checkinDate;
+
+  final String? checkoutDate;
+
   @override
   String toString() {
-    return 'HotelDetailRouteArgs{key: $key, hotel: $hotel}';
+    return 'HotelDetailRouteArgs{key: $key, hotel: $hotel, checkinDate: $checkinDate, checkoutDate: $checkoutDate}';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     if (other is! HotelDetailRouteArgs) return false;
-    return key == other.key && hotel == other.hotel;
+    return key == other.key &&
+        hotel == other.hotel &&
+        checkinDate == other.checkinDate &&
+        checkoutDate == other.checkoutDate;
   }
 
   @override
-  int get hashCode => key.hashCode ^ hotel.hashCode;
+  int get hashCode =>
+      key.hashCode ^
+      hotel.hashCode ^
+      checkinDate.hashCode ^
+      checkoutDate.hashCode;
 }
 
 /// generated route for

@@ -14,8 +14,11 @@ import '../../../hotel/presentation/cubit/hotel_detail/hotel_detail_state.dart';
 @RoutePage()
 class HotelDetailScreen extends StatefulWidget {
   final Hotel hotel;
+  String? checkinDate;
+  String? checkoutDate;
 
-  const HotelDetailScreen({super.key, required this.hotel});
+  HotelDetailScreen(
+      {super.key, required this.hotel, this.checkinDate, this.checkoutDate});
 
   @override
   State<HotelDetailScreen> createState() => _HotelDetailScreenState();
@@ -30,7 +33,8 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
   void initState() {
     super.initState();
     _cubit = HotelDetailCubit(getIt<HotelRepository>());
-    _cubit.fetch(widget.hotel.id);
+    _cubit.fetch(widget.hotel.id,
+        checkinDate: widget.checkinDate, checkoutDate: widget.checkoutDate);
   }
 
   @override
@@ -48,6 +52,24 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
       value: _cubit,
       child: BlocBuilder<HotelDetailCubit, HotelDetailState>(
         builder: (context, state) {
+          if (state.status == HotelDetailStatus.loading ||
+              state.status == HotelDetailStatus.initial) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          if (state.status == HotelDetailStatus.failure) {
+            return Scaffold(
+              appBar: AppBar(),
+              body: Center(
+                child: Text(
+                  'Lỗi tải thông tin khách sạn:\n${state.errorMessage}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+            );
+          }
           final hotel = state.hotel ?? widget.hotel;
           const fallbackImageUrl =
               'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1000&auto=format&fit=crop';
@@ -340,8 +362,8 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: room.status == "AVAILABLE"
-                    ? () =>
-                        context.router.push(RoomDetailRoute(roomId: room.id))
+                    ? () => context.router.push(RoomDetailRoute(
+                        roomId: room.id, statusRoom: room.status))
                     : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryBlue,

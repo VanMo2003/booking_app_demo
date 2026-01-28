@@ -9,10 +9,14 @@ class HotelDetailCubit extends Cubit<HotelDetailState> {
 
   HotelDetailCubit(this.repository) : super(HotelDetailState.initial());
 
-  Future<void> fetch(int id) async {
+  Future<void> fetch(int id,
+      {String? checkinDate, String? checkoutDate}) async {
     emit(state.copyWith(status: HotelDetailStatus.loading, errorMessage: null));
     try {
-      final hotel = await repository.getHotelById(id: id);
+      final hotel = await repository.getHotelById(
+          id: id,
+          checkinDate: checkinDate ?? "",
+          checkoutDate: checkoutDate ?? "");
       emit(state.copyWith(status: HotelDetailStatus.success, hotel: hotel));
     } catch (e) {
       emit(state.copyWith(

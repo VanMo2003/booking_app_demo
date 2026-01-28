@@ -66,8 +66,13 @@ class HotelRepositoryImpl implements HotelRepository {
   }
 
   @override
-  Future<Hotel> getHotelById({required int id}) async {
-    final ApiResponse res = await api.getHotelById(id);
+  Future<Hotel> getHotelById({
+    required int id,
+    String? checkinDate,
+    String? checkoutDate,
+  }) async {
+    final ApiResponse res =
+        await api.getHotelById(id, checkinDate, checkoutDate);
     final data = res.data;
 
     if (data is! Map<String, dynamic>) {

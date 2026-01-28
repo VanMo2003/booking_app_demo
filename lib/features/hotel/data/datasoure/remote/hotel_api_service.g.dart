@@ -18,10 +18,7 @@ class _HotelApiService implements HotelApiService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<ApiResponse> getHotels(
-    String checkinDate,
-    String checkoutDate,
-  ) async {
+  Future<ApiResponse> getHotels(String checkinDate, String checkoutDate) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'checkinDate': checkinDate,
@@ -51,16 +48,24 @@ class _HotelApiService implements HotelApiService {
   }
 
   @override
-  Future<ApiResponse> getHotelById(int id) async {
+  Future<ApiResponse> getHotelById(
+    int id,
+    String? checkinDate,
+    String? checkoutDate,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'checkinDate': checkinDate,
+      r'checkoutDate': checkoutDate,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/hotels/${id}',
+            '/hotels/detail/${id}',
             queryParameters: queryParameters,
             data: _data,
           )
