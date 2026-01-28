@@ -14,9 +14,13 @@ import '../cubit/room_detail/room_detail_state.dart';
 class RoomDetailScreen extends StatefulWidget {
   final int roomId;
   final bool isHotelManager;
+  final String? statusRoom;
 
   const RoomDetailScreen(
-      {super.key, required this.roomId, this.isHotelManager = false});
+      {super.key,
+      required this.roomId,
+      this.statusRoom,
+      this.isHotelManager = false});
 
   @override
   State<RoomDetailScreen> createState() => _RoomDetailScreenState();
@@ -38,6 +42,44 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
   void dispose() {
     _cubit.close();
     super.dispose();
+  }
+
+  Widget _buildStatusChip(String status) {
+    Color color;
+    String label;
+    switch (status) {
+      case 'AVAILABLE':
+        color = Colors.green;
+        label = 'Trống';
+        break;
+      case 'BOOKED':
+        color = Colors.red;
+        label = 'Đã được đặt';
+        break;
+      case 'MAINTENANCE':
+        color = Colors.orange;
+        label = 'Bảo trì';
+        break;
+      default:
+        color = Colors.grey;
+        label = status;
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
   }
 
   @override
@@ -115,26 +157,8 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                       ),
                                     ),
                                     const SizedBox(width: 8),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 6),
-                                      decoration: BoxDecoration(
-                                        color: room.status == "AVAILABLE"
-                                            ? Colors.green.withOpacity(0.1)
-                                            : Colors.red.withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Text(
-                                        room.status == "AVAILABLE"
-                                            ? "Sẵn sàng"
-                                            : "Hết phòng",
-                                        style: TextStyle(
-                                            color: room.status == "AVAILABLE"
-                                                ? Colors.green
-                                                : Colors.red,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold),
-                                      ),
+                                    _buildStatusChip(
+                                      widget.statusRoom ?? "AVAILABLE",
                                     ),
                                   ],
                                 ),
@@ -286,20 +310,23 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                   width: double.infinity,
                                   height: 50,
                                   child: ElevatedButton(
-                                    onPressed: room.status == "AVAILABLE"
+                                    onPressed: widget.statusRoom == "AVAILABLE"
                                         ? () {
                                             // TODO: Xử lý logic đặt phòng tại đây
                                           }
                                         : null,
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: primaryBlue,
+                                      backgroundColor:
+                                          widget.statusRoom == "AVAILABLE"
+                                              ? primaryBlue
+                                              : Colors.grey,
                                       foregroundColor: Colors.white,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(12)),
                                       elevation: 0,
                                     ),
-                                    child: const Text("Đặt phòng ngay",
+                                    child: Text("Đặt phòng ngay",
                                         style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold)),

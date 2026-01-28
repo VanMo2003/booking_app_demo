@@ -17,9 +17,31 @@ class HotelRepositoryImpl implements HotelRepository {
   HotelRepositoryImpl(this.api);
 
   @override
-  Future<Paged<Hotel>> getHotels({required int page, required int size}) async {
-    final ApiResponse res = await api.getHotels(page, size);
+  Future<Paged<Hotel>> getHotels({
+    required int page,
+    required int size,
+    required String checkinDate,
+    required String checkoutDate,
+  }) async {
+    final ApiResponse res = await api.getHotels(
+      checkinDate,
+      checkoutDate,
+    );
     final data = res.data;
+
+    if (data is List) {
+      final hotels = data.map((e) {
+        var hotelRes = HotelResponse.fromJson(e as Map<String, dynamic>);
+        return HotelMapper.toEntity(hotelRes);
+      }).toList();
+      return Paged<Hotel>(
+        content: hotels,
+        page: 0,
+        size: hotels.length,
+        totalElements: hotels.length,
+        totalPages: 1,
+      );
+    }
 
     if (data is! Map<String, dynamic>) {
       throw Exception('Unexpected data format for hotels');

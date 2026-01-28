@@ -51,22 +51,22 @@ class HotelDetailCubit extends Cubit<HotelDetailState> {
     final existing = hotel.images;
     final merged = [...existing, ...newImages];
     return Hotel(
-      id: hotel.id,
-      name: hotel.name,
-      address: hotel.address,
-      phone: hotel.phone,
-      description: hotel.description,
-      category: hotel.category,
-      rating: hotel.rating,
-      pathImage: hotel.pathImage,
-      images: merged,
-      active: hotel.active,
-      accountId: hotel.accountId,
-      rooms: hotel.rooms,
-      amenities: hotel.amenities,
-      services: hotel.services,
-      onCreate: hotel.onCreate,
-      onUpdate: hotel.onUpdate,
-    );
+        id: hotel.id,
+        name: hotel.name,
+        address: hotel.address,
+        phone: hotel.phone,
+        description: hotel.description,
+        category: hotel.category,
+        rating: hotel.rating,
+        pathImage: hotel.pathImage,
+        images: merged,
+        active: hotel.active,
+        accountId: hotel.accountId,
+        rooms: hotel.rooms,
+        amenities: hotel.amenities,
+        services: hotel.services,
+        onCreate: hotel.onCreate,
+        onUpdate: hotel.onUpdate,
+        status: hotel.status);
   }
 }

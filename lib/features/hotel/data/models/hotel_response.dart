@@ -13,6 +13,7 @@ class HotelResponse {
   List<HotelRoomResponse>? rooms;
   List<HotelAmenitieResponse>? amenities;
   List<HotelServicesResponse>? services;
+  String? status;
   String? onCreate;
   String? onUpdate;
 
@@ -31,6 +32,7 @@ class HotelResponse {
       this.rooms,
       this.amenities,
       this.services,
+      this.status,
       this.onCreate,
       this.onUpdate});
 
@@ -49,49 +51,51 @@ class HotelResponse {
     if (json['rooms'] != null) {
       rooms = <HotelRoomResponse>[];
       json['rooms'].forEach((v) {
-        rooms!.add(new HotelRoomResponse.fromJson(v));
+        rooms!.add(HotelRoomResponse.fromJson(v));
       });
     }
     if (json['amenities'] != null) {
       amenities = <HotelAmenitieResponse>[];
       json['amenities'].forEach((v) {
-        amenities!.add(new HotelAmenitieResponse.fromJson(v));
+        amenities!.add(HotelAmenitieResponse.fromJson(v));
       });
     }
     if (json['services'] != null) {
       services = <HotelServicesResponse>[];
       json['services'].forEach((v) {
-        services!.add(new HotelServicesResponse.fromJson(v));
+        services!.add(HotelServicesResponse.fromJson(v));
       });
     }
+    status = json['status'];
     onCreate = json['onCreate'];
     onUpdate = json['onUpdate'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['address'] = this.address;
-    data['phone'] = this.phone;
-    data['description'] = this.description;
-    data['category'] = this.category;
-    data['rating'] = this.rating;
-    data['pathImage'] = this.pathImage;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['address'] = address;
+    data['phone'] = phone;
+    data['description'] = description;
+    data['category'] = category;
+    data['rating'] = rating;
+    data['pathImage'] = pathImage;
     if (images != null) data['images'] = images;
-    data['active'] = this.active;
-    data['accountId'] = this.accountId;
-    if (this.rooms != null) {
-      data['rooms'] = this.rooms!.map((v) => v.toJson()).toList();
+    data['active'] = active;
+    data['accountId'] = accountId;
+    if (rooms != null) {
+      data['rooms'] = rooms!.map((v) => v.toJson()).toList();
     }
-    if (this.amenities != null) {
-      data['amenities'] = this.amenities!.map((v) => v.toJson()).toList();
+    if (amenities != null) {
+      data['amenities'] = amenities!.map((v) => v.toJson()).toList();
     }
-    if (this.services != null) {
-      data['services'] = this.services!.map((v) => v.toJson()).toList();
+    if (services != null) {
+      data['services'] = services!.map((v) => v.toJson()).toList();
     }
-    data['onCreate'] = this.onCreate;
-    data['onUpdate'] = this.onUpdate;
+    data['status'] = status;
+    data['onCreate'] = onCreate;
+    data['onUpdate'] = onUpdate;
     return data;
   }
 }
@@ -143,20 +147,20 @@ class HotelRoomResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['pathImage'] = this.pathImage;
-    data['roomNumber'] = this.roomNumber;
-    data['price'] = this.price;
-    data['description'] = this.description;
-    data['capacity'] = this.capacity;
-    data['status'] = this.status;
-    data['hotelId'] = this.hotelId;
-    data['hotelName'] = this.hotelName;
-    data['roomTypeId'] = this.roomTypeId;
-    data['roomTypeName'] = this.roomTypeName;
-    data['onCreate'] = this.onCreate;
-    data['onUpdate'] = this.onUpdate;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['id'] = id;
+    data['pathImage'] = pathImage;
+    data['roomNumber'] = roomNumber;
+    data['price'] = price;
+    data['description'] = description;
+    data['capacity'] = capacity;
+    data['status'] = status;
+    data['hotelId'] = hotelId;
+    data['hotelName'] = hotelName;
+    data['roomTypeId'] = roomTypeId;
+    data['roomTypeName'] = roomTypeName;
+    data['onCreate'] = onCreate;
+    data['onUpdate'] = onUpdate;
     return data;
   }
 }
@@ -190,14 +194,14 @@ class HotelAmenitieResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['description'] = this.description;
-    data['common'] = this.common;
-    data['active'] = this.active;
-    data['onCreate'] = this.onCreate;
-    data['onUpdate'] = this.onUpdate;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['id'] = id;
+    data['name'] = name;
+    data['description'] = description;
+    data['common'] = common;
+    data['active'] = active;
+    data['onCreate'] = onCreate;
+    data['onUpdate'] = onUpdate;
     return data;
   }
 }
@@ -228,13 +232,13 @@ class HotelServicesResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['unitPrice'] = this.unitPrice;
-    data['description'] = this.description;
-    data['onCreate'] = this.onCreate;
-    data['onUpdate'] = this.onUpdate;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['id'] = id;
+    data['name'] = name;
+    data['unitPrice'] = unitPrice;
+    data['description'] = description;
+    data['onCreate'] = onCreate;
+    data['onUpdate'] = onUpdate;
     return data;
   }
 }

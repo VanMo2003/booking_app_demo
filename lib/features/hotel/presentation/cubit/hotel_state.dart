@@ -10,6 +10,8 @@ class HotelState extends Equatable {
   final int size;
   final bool hasMore;
   final String? errorMessage;
+  final String? checkinDate;
+  final String? checkoutDate;
 
   const HotelState({
     required this.status,
@@ -18,6 +20,8 @@ class HotelState extends Equatable {
     required this.size,
     required this.hasMore,
     this.errorMessage,
+    this.checkinDate,
+    this.checkoutDate,
   });
 
   factory HotelState.initial() => const HotelState(
@@ -35,6 +39,8 @@ class HotelState extends Equatable {
     int? size,
     bool? hasMore,
     String? errorMessage,
+    String? checkinDate,
+    String? checkoutDate,
   }) {
     return HotelState(
       status: status ?? this.status,
@@ -43,9 +49,20 @@ class HotelState extends Equatable {
       size: size ?? this.size,
       hasMore: hasMore ?? this.hasMore,
       errorMessage: errorMessage,
+      checkinDate: checkinDate ?? this.checkinDate,
+      checkoutDate: checkoutDate ?? this.checkoutDate,
     );
   }
 
   @override
-  List<Object?> get props => [status, items, page, size, hasMore, errorMessage];
+  List<Object?> get props => [
+        status,
+        items,
+        page,
+        size,
+        hasMore,
+        errorMessage,
+        checkinDate,
+        checkoutDate,
+      ];
 }

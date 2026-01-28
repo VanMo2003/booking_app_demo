@@ -10,7 +10,17 @@ class GetHotelUseCase {
 
   GetHotelUseCase(this.repository);
 
-  Future<Paged<Hotel>> call({required int page, required int size}) async {
-    return await repository.getHotels(page: page, size: size);
+  Future<Paged<Hotel>> call({
+    required int page,
+    required int size,
+    required String checkinDate,
+    required String checkoutDate,
+  }) async {
+    return await repository.getHotels(
+      page: page,
+      size: size,
+      checkinDate: checkinDate,
+      checkoutDate: checkoutDate,
+    );
   }
 }

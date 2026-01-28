@@ -18,16 +18,22 @@ class _HotelApiService implements HotelApiService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<ApiResponse> getHotels(int page, int size) async {
+  Future<ApiResponse> getHotels(
+    String checkinDate,
+    String checkoutDate,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'page': page, r'size': size};
+    final queryParameters = <String, dynamic>{
+      r'checkinDate': checkinDate,
+      r'checkoutDate': checkoutDate,
+    };
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/hotels',
+            '/hotels/search',
             queryParameters: queryParameters,
             data: _data,
           )

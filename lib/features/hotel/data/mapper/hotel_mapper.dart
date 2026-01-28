@@ -21,6 +21,7 @@ class HotelMapper {
       images: dto.images ?? [],
       active: dto.active ?? false,
       accountId: dto.accountId ?? "",
+      status: dto.status ?? "",
       rooms: dto.rooms != null
           ? dto.rooms!
               .map(

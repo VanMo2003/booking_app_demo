@@ -364,6 +364,7 @@ class RoomDetailRoute extends PageRouteInfo<RoomDetailRouteArgs> {
   RoomDetailRoute({
     Key? key,
     required int roomId,
+    String? statusRoom,
     bool isHotelManager = false,
     List<PageRouteInfo>? children,
   }) : super(
@@ -371,6 +372,7 @@ class RoomDetailRoute extends PageRouteInfo<RoomDetailRouteArgs> {
           args: RoomDetailRouteArgs(
             key: key,
             roomId: roomId,
+            statusRoom: statusRoom,
             isHotelManager: isHotelManager,
           ),
           initialChildren: children,
@@ -385,6 +387,7 @@ class RoomDetailRoute extends PageRouteInfo<RoomDetailRouteArgs> {
       return RoomDetailScreen(
         key: args.key,
         roomId: args.roomId,
+        statusRoom: args.statusRoom,
         isHotelManager: args.isHotelManager,
       );
     },
@@ -395,6 +398,7 @@ class RoomDetailRouteArgs {
   const RoomDetailRouteArgs({
     this.key,
     required this.roomId,
+    this.statusRoom,
     this.isHotelManager = false,
   });
 
@@ -402,11 +406,13 @@ class RoomDetailRouteArgs {
 
   final int roomId;
 
+  final String? statusRoom;
+
   final bool isHotelManager;
 
   @override
   String toString() {
-    return 'RoomDetailRouteArgs{key: $key, roomId: $roomId, isHotelManager: $isHotelManager}';
+    return 'RoomDetailRouteArgs{key: $key, roomId: $roomId, statusRoom: $statusRoom, isHotelManager: $isHotelManager}';
   }
 
   @override
@@ -415,11 +421,16 @@ class RoomDetailRouteArgs {
     if (other is! RoomDetailRouteArgs) return false;
     return key == other.key &&
         roomId == other.roomId &&
+        statusRoom == other.statusRoom &&
         isHotelManager == other.isHotelManager;
   }
 
   @override
-  int get hashCode => key.hashCode ^ roomId.hashCode ^ isHotelManager.hashCode;
+  int get hashCode =>
+      key.hashCode ^
+      roomId.hashCode ^
+      statusRoom.hashCode ^
+      isHotelManager.hashCode;
 }
 
 /// generated route for

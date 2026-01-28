@@ -17,11 +17,23 @@ class HotelBloc extends Bloc<HotelEvent, HotelState> {
     if (!event.refresh && !state.hasMore) return;
 
     final nextPage = event.refresh ? 0 : event.page;
+    final now = DateTime.now();
+    final defaultCheckin = _formatDate(DateTime(now.year, now.month, now.day));
+    final defaultCheckout =
+        _formatDate(DateTime(now.year, now.month, now.day).add(const Duration(days: 1)));
+    final checkinDate = event.checkinDate ?? state.checkinDate ?? defaultCheckin;
+    final checkoutDate =
+        event.checkoutDate ?? state.checkoutDate ?? defaultCheckout;
 
     emit(state.copyWith(status: HotelStatus.loading, errorMessage: null));
 
     try {
-      final paged = await getHotelUseCase.call(page: nextPage, size: event.size);
+      final paged = await getHotelUseCase.call(
+        page: nextPage,
+        size: event.size,
+        checkinDate: checkinDate,
+        checkoutDate: checkoutDate,
+      );
 
       final List<Hotel> items = event.refresh ? <Hotel>[] : List<Hotel>.from(state.items);
       items.addAll(paged.content);
@@ -40,9 +52,18 @@ class HotelBloc extends Bloc<HotelEvent, HotelState> {
         size: event.size,
         hasMore: hasMore,
         errorMessage: null,
+        checkinDate: checkinDate,
+        checkoutDate: checkoutDate,
       ));
     } catch (e) {
       emit(state.copyWith(status: HotelStatus.failure, errorMessage: e.toString()));
     }
+  }
+
+  String _formatDate(DateTime date) {
+    final year = date.year.toString().padLeft(4, '0');
+    final month = date.month.toString().padLeft(2, '0');
+    final day = date.day.toString().padLeft(2, '0');
+    return '$year-$month-$day';
   }
 }

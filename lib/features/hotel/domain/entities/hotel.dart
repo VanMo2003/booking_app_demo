@@ -13,6 +13,7 @@ class Hotel {
   List<HotelRoom> rooms;
   List<HotelAmenity> amenities;
   List<HotelService> services;
+  String status;
   String onCreate;
   String onUpdate;
 
@@ -32,7 +33,8 @@ class Hotel {
       required this.amenities,
       required this.services,
       required this.onCreate,
-      required this.onUpdate});
+      required this.onUpdate,
+      required this.status});
 }
 
 class HotelRoom {

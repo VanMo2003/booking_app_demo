@@ -121,7 +121,7 @@ class _RoomScreenState extends State<RoomScreen> {
     List<RoomType> roomTypes = [];
     try {
       roomTypes = await getIt<GetRoomTypes>().call();
-      if (context.mounted) Navigator.pop(context); // Hide loading
+      if (context.mounted) Navigator.pop(context);
     } catch (e) {
       if (context.mounted) {
         Navigator.pop(context);
@@ -244,7 +244,7 @@ class _RoomScreenState extends State<RoomScreen> {
                   ),
                   items: const [
                     DropdownMenuItem(value: 'AVAILABLE', child: Text('Trống')),
-                    DropdownMenuItem(value: 'OCCUPIED', child: Text('Đã thuê')),
+                    DropdownMenuItem(value: 'BOOKED', child: Text('Đã thuê')),
                     DropdownMenuItem(
                       value: 'MAINTENANCE',
                       child: Text('Bảo trì'),
@@ -542,8 +542,8 @@ class _RoomScreenState extends State<RoomScreen> {
                     itemCount: items.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 12),
                     itemBuilder: (ctx, i) {
-                      final it = items[i];
-                      final imageUrl = _resolveRoomImageUrl(it);
+                      final room = items[i];
+                      final imageUrl = _resolveRoomImageUrl(room);
 
                       return Card(
                         elevation: 2,
@@ -553,9 +553,11 @@ class _RoomScreenState extends State<RoomScreen> {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(12),
                           onTap: () {
-                            if (it.id != null) {
+                            if (room.id != null) {
                               context.router.push(RoomDetailRoute(
-                                  roomId: it.id!, isHotelManager: true));
+                                  roomId: room.id!,
+                                  isHotelManager: true,
+                                  statusRoom: room.status));
                             }
                           },
                           child: Padding(
@@ -583,7 +585,7 @@ class _RoomScreenState extends State<RoomScreen> {
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              'Phòng ${it.roomNumber}',
+                                              'Phòng ${room.roomNumber}',
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 16,
@@ -592,12 +594,12 @@ class _RoomScreenState extends State<RoomScreen> {
                                           ),
                                           const SizedBox(width: 8),
                                           _buildStatusChip(
-                                              it.status ?? 'AVAILABLE'),
+                                              room.status ?? 'AVAILABLE'),
                                         ],
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        it.roomTypeName ?? 'Loại phòng',
+                                        room.roomTypeName ?? 'Loại phòng',
                                         style: const TextStyle(
                                           color: Colors.grey,
                                           fontSize: 13,
@@ -605,7 +607,7 @@ class _RoomScreenState extends State<RoomScreen> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        _formatCurrency(it.price),
+                                        _formatCurrency(room.price),
                                         style: TextStyle(
                                           color: Theme.of(context).primaryColor,
                                           fontWeight: FontWeight.bold,
@@ -622,7 +624,7 @@ class _RoomScreenState extends State<RoomScreen> {
                                       icon: const Icon(Icons.edit_outlined,
                                           color: Colors.blue),
                                       onPressed: () => _showEditDialog(
-                                          context, it,
+                                          context, room,
                                           hotelId: widget.hotelId),
                                     ),
                                     IconButton(
@@ -634,7 +636,7 @@ class _RoomScreenState extends State<RoomScreen> {
                                           builder: (ctx) => AlertDialog(
                                             title: const Text('X?c nh?n x?a'),
                                             content: Text(
-                                                'Xóa phòng ${it.roomNumber}?'),
+                                                'Xóa phòng ${room.roomNumber}?'),
                                             actions: [
                                               TextButton(
                                                 onPressed: () =>
@@ -654,11 +656,12 @@ class _RoomScreenState extends State<RoomScreen> {
                                           ),
                                         );
 
-                                        if (confirm == true && it.id != null) {
+                                        if (confirm == true &&
+                                            room.id != null) {
                                           if (context.mounted) {
                                             context
                                                 .read<RoomCubit>()
-                                                .remove(it.id!);
+                                                .remove(room.id!);
                                           }
                                         }
                                       },
