@@ -202,7 +202,6 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
     );
   }
 
-
   List<String> _getHotelImageUrls(Hotel hotel, String fallback) {
     final rawImages = hotel.images.isNotEmpty
         ? hotel.images
@@ -274,86 +273,88 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
             : null,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              imageUrl,
-              height: 140,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Phòng ${room.roomNumber} - ${room.roomTypeName}",
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                imageUrl,
+                height: 140,
+                width: double.infinity,
+                fit: BoxFit.cover,
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: room.status == "AVAILABLE"
-                      ? Colors.green.withOpacity(0.1)
-                      : Colors.red.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Phòng ${room.roomNumber} - ${room.roomTypeName}",
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                child: Text(
-                  room.status == "AVAILABLE" ? "Sẵn sàng" : "Hết phòng",
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: room.status == "AVAILABLE"
+                        ? Colors.green.withOpacity(0.1)
+                        : Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    room.status == "AVAILABLE" ? "Sẵn sàng" : "Hết phòng",
+                    style: TextStyle(
+                        color: room.status == "AVAILABLE"
+                            ? Colors.green
+                            : Colors.red,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(room.description,
+                style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Icon(Icons.people_outline, size: 18, color: Colors.grey[700]),
+                const SizedBox(width: 4),
+                Text("Sức chứa: ${room.capacity} người",
+                    style: const TextStyle(fontSize: 13)),
+                const Spacer(),
+                Text(
+                  currencyFormat.format(room.price),
                   style: TextStyle(
-                      color: room.status == "AVAILABLE"
-                          ? Colors.green
-                          : Colors.red,
-                      fontSize: 12,
+                      color: primaryBlue,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(room.description,
-              style: TextStyle(color: Colors.grey[600], fontSize: 13)),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Icon(Icons.people_outline, size: 18, color: Colors.grey[700]),
-              const SizedBox(width: 4),
-              Text("Sức chứa: ${room.capacity} người",
-                  style: const TextStyle(fontSize: 13)),
-              const Spacer(),
-              Text(
-                currencyFormat.format(room.price),
-                style: TextStyle(
-                    color: primaryBlue,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
-              ),
-              const Text(" /đêm",
-                  style: TextStyle(color: Colors.grey, fontSize: 12)),
-            ],
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: room.status == "AVAILABLE"
-                  ? () => context.router.push(RoomDetailRoute(roomId: room.id))
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryBlue,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-                elevation: 0,
-              ),
-              child: const Text("Chọn phòng này"),
+                const Text(" /đêm",
+                    style: TextStyle(color: Colors.grey, fontSize: 12)),
+              ],
             ),
-          )
-        ],
-      ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: room.status == "AVAILABLE"
+                    ? () =>
+                        context.router.push(RoomDetailRoute(roomId: room.id))
+                    : null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryBlue,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  elevation: 0,
+                ),
+                child: const Text("Chọn phòng này"),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
