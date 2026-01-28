@@ -64,23 +64,21 @@ class RoomRepositoryImpl implements RoomRepository {
     }
   }
 
+
   @override
-  Future<RoomList> getRooms(
-      {required int hotelId, int page = 0, int size = 10}) async {
+  Future<List<Room>> getAvailableRooms({
+    required int hotelId,
+    required String checkinDate,
+    required String checkoutDate,
+  }) async {
     try {
-      final ApiResponse response =
-          await apiService.getRooms(hotelId, page, size);
-      final data = response.data as Map<String, dynamic>;
-      final content = data['content'] as List<dynamic>;
-      final items =
-          content.map((e) => RoomResponse.fromJson(e).toEntity()).toList();
-      return RoomList(
-        content: items,
-        page: data['page'] ?? page,
-        size: data['size'] ?? size,
-        totalElements: data['totalElements'] ?? items.length,
-        totalPages: data['totalPages'] ?? 1,
+      final ApiResponse response = await apiService.getAvailableRooms(
+        hotelId,
+        checkinDate,
+        checkoutDate,
       );
+      final data = response.data as List<dynamic>;
+      return data.map((e) => RoomResponse.fromJson(e).toEntity()).toList();
     } catch (e) {
       throw dioClient.handleDioError(e as DioException);
     }

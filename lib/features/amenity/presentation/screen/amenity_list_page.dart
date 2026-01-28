@@ -1,4 +1,3 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -28,7 +27,8 @@ class _AmenityListPageState extends State<AmenityListPage> {
   void _fetch() {
     final bloc = context.read<AmenityBloc>();
     if (widget.roomId != null) {
-      bloc.add(AmenitiesByRoomFetched(hotelId: widget.hotelId, roomId: widget.roomId!));
+      bloc.add(AmenitiesByRoomFetched(
+          hotelId: widget.hotelId, roomId: widget.roomId!));
     } else {
       bloc.add(AmenitiesByHotelFetched(widget.hotelId));
     }
@@ -37,16 +37,21 @@ class _AmenityListPageState extends State<AmenityListPage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AmenityBloc, AmenityState>(
-      listenWhen: (p, c) => p.status != c.status || p.errorMessage != c.errorMessage,
+      listenWhen: (p, c) =>
+          p.status != c.status || p.errorMessage != c.errorMessage,
       listener: (context, state) {
-        if (state.status == AmenityStatus.failure && state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+        if (state.status == AmenityStatus.failure &&
+            state.errorMessage != null) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
       },
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: Text(widget.roomId != null ? 'Tiện ích phòng' : 'Tiện ích khách sạn'),
+            title: Text(widget.roomId != null
+                ? 'Tiện ích phòng'
+                : 'Tiện ích khách sạn'),
             actions: [
               IconButton(icon: const Icon(Icons.refresh), onPressed: _fetch),
             ],
@@ -56,7 +61,8 @@ class _AmenityListPageState extends State<AmenityListPage> {
               await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => AmenityFormPage(hotelId: widget.hotelId, roomId: widget.roomId),
+                  builder: (_) => AmenityFormPage(
+                      hotelId: widget.hotelId, roomId: widget.roomId),
                 ),
               );
               _fetch();
@@ -96,7 +102,9 @@ class _AmenityTile extends StatelessWidget {
           if (value == 'edit') {
             await Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => AmenityFormPage(hotelId: 0, amenity: amenity)),
+              MaterialPageRoute(
+                  builder: (_) =>
+                      AmenityFormPage(hotelId: 0, amenity: amenity)),
             );
           } else if (value == 'delete') {
             final ok = await showDialog<bool>(
@@ -105,8 +113,12 @@ class _AmenityTile extends StatelessWidget {
                 title: const Text('Xoá tiện ích'),
                 content: Text('Bạn chắc chắn muốn xoá "${amenity.name}"?'),
                 actions: [
-                  TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Huỷ')),
-                  FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Xoá')),
+                  TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('Huỷ')),
+                  FilledButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text('Xoá')),
                 ],
               ),
             );

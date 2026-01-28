@@ -18,21 +18,24 @@ class _RoomApiService implements RoomApiService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<ApiResponse> getRooms(int? hotelId, int page, int size) async {
+  Future<ApiResponse> getAvailableRooms(
+    int hotelId,
+    String checkinDate,
+    String checkoutDate,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'hotelId': hotelId,
-      r'page': page,
-      r'size': size,
+      r'checkinDate': checkinDate,
+      r'checkoutDate': checkoutDate,
     };
-    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/rooms',
+            '/rooms/available',
             queryParameters: queryParameters,
             data: _data,
           )

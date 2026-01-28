@@ -17,8 +17,11 @@ class RoomList {
 }
 
 abstract class RoomRepository {
-  Future<RoomList> getRooms(
-      {required int hotelId, int page = 0, int size = 10});
+  Future<List<Room>> getAvailableRooms({
+    required int hotelId,
+    required String checkinDate,
+    required String checkoutDate,
+  });
   Future<Room> getRoomById({required int id});
   Future<Room> createRoom(Room room);
   Future<Room> updateRoom(Room room);

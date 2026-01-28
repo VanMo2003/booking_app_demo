@@ -8,6 +8,9 @@ class AuthInterceptor extends Interceptor {
   final Dio dio;
   final FlutterSecureStorage storage;
 
+  bool _isRefreshing = false;
+  final List<Function()> _retryQueue = [];
+
   AuthInterceptor(this.dio, this.storage);
 
   @override
@@ -23,12 +26,40 @@ class AuthInterceptor extends Interceptor {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401 &&
+        err.requestOptions.extra['retry'] != true &&
         !err.requestOptions.path.contains('/auth/refreshToken')) {
+      err.requestOptions.extra['retry'] = true;
+
+      if (_isRefreshing) {
+        _retryQueue.add(() async {
+          final access = await storage.read(key: Constants.accessToken);
+          err.requestOptions.headers['Authorization'] = 'Bearer $access';
+          handler.resolve(await dio.fetch(err.requestOptions));
+        });
+        return;
+      }
+
+      _isRefreshing = true;
+
       final refreshed = await _refreshToken();
+
+      _isRefreshing = false;
+
       if (refreshed) {
         final access = await storage.read(key: Constants.accessToken);
         err.requestOptions.headers['Authorization'] = 'Bearer $access';
+
+        // retry các request đang chờ
+        for (final retry in _retryQueue) {
+          retry();
+        }
+        _retryQueue.clear();
+
         return handler.resolve(await dio.fetch(err.requestOptions));
+      } else {
+        _retryQueue.clear();
+        handler.next(err);
+        return;
       }
     }
     handler.next(err);

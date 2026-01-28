@@ -10,11 +10,12 @@ part 'room_api_service.g.dart';
 abstract class RoomApiService {
   factory RoomApiService(Dio dio, {String? baseUrl}) = _RoomApiService;
 
-  @GET('/rooms')
-  Future<ApiResponse> getRooms(
-    @Query('hotelId') int? hotelId,
-    @Query('page') int page,
-    @Query('size') int size,
+
+  @GET('/rooms/available')
+  Future<ApiResponse> getAvailableRooms(
+    @Query('hotelId') int hotelId,
+    @Query('checkinDate') String checkinDate,
+    @Query('checkoutDate') String checkoutDate,
   );
 
   @GET('/rooms/{id}')

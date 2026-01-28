@@ -270,7 +270,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i41.CreateRoom(gh<_i77.RoomRepository>()));
     gh.factory<_i480.DeleteRoom>(
         () => _i480.DeleteRoom(gh<_i77.RoomRepository>()));
-    gh.factory<_i503.GetRooms>(() => _i503.GetRooms(gh<_i77.RoomRepository>()));
+    gh.factory<_i503.GetAvailableRooms>(
+        () => _i503.GetAvailableRooms(gh<_i77.RoomRepository>()));
     gh.factory<_i737.UpdateRoom>(
         () => _i737.UpdateRoom(gh<_i77.RoomRepository>()));
     gh.factory<_i834.CreateAmenity>(

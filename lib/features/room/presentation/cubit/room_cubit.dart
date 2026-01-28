@@ -13,7 +13,7 @@ part 'room_state.dart';
 part 'room_cubit.freezed.dart';
 
 class RoomCubit extends Cubit<RoomState> {
-  final GetRooms getRooms;
+  final GetAvailableRooms getRooms;
   final CreateRoom createRoom;
   final UpdateRoom updateRoom;
   final DeleteRoom deleteRoom;
@@ -25,12 +25,18 @@ class RoomCubit extends Cubit<RoomState> {
     required this.deleteRoom,
   }) : super(const RoomState());
 
-  Future<void> fetch(
-      {required int hotelId, int page = 0, int size = 10}) async {
+  Future<void> fetch({
+    required int hotelId,
+    required String checkinDate,
+    required String checkoutDate,
+  }) async {
     try {
       emit(state.copyWith(status: RoomStatus.loading));
-      final data =
-          await getRooms.call(hotelId: hotelId, page: page, size: size);
+      final data = await getRooms.call(
+        hotelId: hotelId,
+        checkinDate: checkinDate,
+        checkoutDate: checkoutDate,
+      );
       emit(state.copyWith(status: RoomStatus.success, data: data));
     } on AppException catch (e) {
       emit(state.copyWith(errorMessage: e.message));
