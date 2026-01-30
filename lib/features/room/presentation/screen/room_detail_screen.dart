@@ -363,14 +363,14 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                     width: double.infinity,
                                     height: 50,
                                     child: ElevatedButton(
-                                      onPressed:
-                                          widget.statusRoom == "AVAILABLE"
-                                              ? () {
-                                                  if (room == null) return;
-                                                  _openBookingSheet(
-                                                      room, primaryBlue);
-                                                }
-                                              : null,
+                                      onPressed: widget.statusRoom ==
+                                              "AVAILABLE"
+                                          ? () {
+                                              if (room == null) return;
+                                              _openBookingSheet(
+                                                  room, primaryBlue, context);
+                                            }
+                                          : null,
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor:
                                             widget.statusRoom == "AVAILABLE"
@@ -446,7 +446,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
     return roomPrice * nights;
   }
 
-  Future<void> _submitBooking(Room room) async {
+  Future<void> _submitBooking(BuildContext context, Room room) async {
     if (_isSubmittingBooking) return;
     final customerId = int.tryParse(_customerIdController.text.trim());
     if (customerId == null) {
@@ -474,7 +474,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
       paymentMethod: _paymentMethod,
       hotelId: room.hotelId,
       customerId: customerId,
-      rooms: [room.id!],
+      rooms: [room.id ?? 0],
       services: <int>[],
       totalAmount: _calculateTotalAmount(room.price),
       note: _noteController.text.trim().isEmpty
@@ -486,10 +486,12 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
     context.read<BookingCubit>().add(dto);
   }
 
-  Future<void> _openBookingSheet(Room room, Color primaryBlue) async {
+  Future<void> _openBookingSheet(
+      Room room, Color primaryBlue, BuildContext context) async {
     final now = DateTime.now();
     _checkinDate ??= DateTime(now.year, now.month, now.day);
     _checkoutDate ??= _checkinDate!.add(const Duration(days: 1));
+    var cubit = context.read<BookingCubit>();
 
     setState(() => _isBookingSheetOpen = true);
     await showModalBottomSheet(
@@ -501,131 +503,137 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
-            return BlocBuilder<BookingCubit, BookingState>(
-              builder: (context, bookingState) {
-                final totalAmount = _calculateTotalAmount(room.price);
-                final nights = _calculateNights();
-                final isLoading = bookingState.status.isLoading;
-                return Padding(
-                  padding: EdgeInsets.only(
-                    left: 16,
-                    right: 16,
-                    top: 16,
-                    bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Dat phong',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 12),
-                      TextField(
-                        controller: _customerIdController,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
-                          labelText: 'Customer ID',
-                          border: OutlineInputBorder(),
+            return BlocProvider.value(
+              value: cubit,
+              child: BlocBuilder<BookingCubit, BookingState>(
+                builder: (context, bookingState) {
+                  final totalAmount = _calculateTotalAmount(room.price);
+                  final nights = _calculateNights();
+                  final isLoading = bookingState.status.isLoading;
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      left: 16,
+                      right: 16,
+                      top: 16,
+                      bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Dat phong',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton.icon(
-                              onPressed: () => _pickDate(
-                                  isCheckin: true,
-                                  onChanged: () => setModalState(() {})),
-                              icon: const Icon(Icons.calendar_today, size: 16),
-                              label: Text(_formatDateDisplay(_checkinDate)),
+                        const SizedBox(height: 12),
+                        TextField(
+                          controller: _customerIdController,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(
+                            labelText: 'Customer ID',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: () => _pickDate(
+                                    isCheckin: true,
+                                    onChanged: () => setModalState(() {})),
+                                icon:
+                                    const Icon(Icons.calendar_today, size: 16),
+                                label: Text(_formatDateDisplay(_checkinDate)),
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: OutlinedButton.icon(
-                              onPressed: () => _pickDate(
-                                  isCheckin: false,
-                                  onChanged: () => setModalState(() {})),
-                              icon: const Icon(Icons.event_outlined, size: 16),
-                              label: Text(_formatDateDisplay(_checkoutDate)),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: () => _pickDate(
+                                    isCheckin: false,
+                                    onChanged: () => setModalState(() {})),
+                                icon:
+                                    const Icon(Icons.event_outlined, size: 16),
+                                label: Text(_formatDateDisplay(_checkoutDate)),
+                              ),
                             ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text('So dem: $nights'),
+                        const SizedBox(height: 12),
+                        DropdownButtonFormField<String>(
+                          value: _paymentMethod,
+                          decoration: const InputDecoration(
+                            labelText: 'Phuong thuc thanh toan',
+                            border: OutlineInputBorder(),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text('So dem: $nights'),
-                      const SizedBox(height: 12),
-                      DropdownButtonFormField<String>(
-                        value: _paymentMethod,
-                        decoration: const InputDecoration(
-                          labelText: 'Phuong thuc thanh toan',
-                          border: OutlineInputBorder(),
+                          items: const [
+                            DropdownMenuItem(
+                                value: 'CASH', child: Text('Tien mat')),
+                          ],
+                          onChanged: (value) {
+                            if (value == null) return;
+                            setModalState(() {
+                              _paymentMethod = value;
+                            });
+                          },
                         ),
-                        items: const [
-                          DropdownMenuItem(
-                              value: 'CASH', child: Text('Tien mat')),
-                        ],
-                        onChanged: (value) {
-                          if (value == null) return;
-                          setModalState(() {
-                            _paymentMethod = value;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 12),
-                      TextField(
-                        controller: _noteController,
-                        maxLines: 2,
-                        decoration: const InputDecoration(
-                          labelText: 'Ghi chu',
-                          border: OutlineInputBorder(),
+                        const SizedBox(height: 12),
+                        TextField(
+                          controller: _noteController,
+                          maxLines: 2,
+                          decoration: const InputDecoration(
+                            labelText: 'Ghi chu',
+                            border: OutlineInputBorder(),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text('Tong tien',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          Text(
-                            currencyFormat.format(totalAmount),
-                            style: TextStyle(
-                              color: primaryBlue,
-                              fontWeight: FontWeight.bold,
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Tong tien',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            Text(
+                              currencyFormat.format(totalAmount),
+                              style: TextStyle(
+                                color: primaryBlue,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 48,
-                        child: ElevatedButton(
-                          onPressed:
-                              isLoading ? null : () => _submitBooking(room),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryBlue,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                          ),
-                          child: isLoading
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                      strokeWidth: 2, color: Colors.white),
-                                )
-                              : const Text('Dat phong ngay'),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                        const SizedBox(height: 12),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 48,
+                          child: ElevatedButton(
+                            onPressed: isLoading
+                                ? null
+                                : () => _submitBooking(context, room),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primaryBlue,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                            ),
+                            child: isLoading
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                        strokeWidth: 2, color: Colors.white),
+                                  )
+                                : const Text('Dat phong ngay'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             );
           },
         );
