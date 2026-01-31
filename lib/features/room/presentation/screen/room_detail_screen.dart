@@ -1,14 +1,19 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:booking_app_mobile/core/api/app_config.dart';
 import 'package:booking_app_mobile/core/di/injector.dart';
+import 'package:booking_app_mobile/core/navigation/app_routes.dart';
 import 'package:booking_app_mobile/features/booking/data/models/request/booking_create_request.dart';
 import 'package:booking_app_mobile/features/booking/presentation/cubit/booking_cubit.dart';
 import 'package:booking_app_mobile/features/room/domain/entity/room.dart';
 import 'package:booking_app_mobile/features/room/domain/repositories/room_repository.dart';
+import 'package:booking_app_mobile/features/payment/presentation/screen/payment_webview_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:dio/dio.dart';
+import 'package:booking_app_mobile/core/constants/constant.dart';
 
 import '../cubit/room_detail/room_detail_cubit.dart';
 import '../cubit/room_detail/room_detail_state.dart';
@@ -33,11 +38,12 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
   late final RoomDetailCubit _cubit;
   // Đổi locale sang vi_VN và symbol ₫ cho đồng bộ với màn Hotel
   final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
-  final TextEditingController _customerIdController = TextEditingController();
   final TextEditingController _noteController = TextEditingController();
   DateTime? _checkinDate;
   DateTime? _checkoutDate;
   String _paymentMethod = 'CASH';
+  bool _pendingPayment = false;
+  int _pendingPaymentAmount = 0;
   bool _isSubmittingBooking = false;
   bool _isBookingSheetOpen = false;
 
@@ -51,7 +57,6 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
   @override
   void dispose() {
     _cubit.close();
-    _customerIdController.dispose();
     _noteController.dispose();
     super.dispose();
   }
@@ -445,10 +450,12 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
 
   Future<void> _submitBooking(BuildContext context, Room room) async {
     if (_isSubmittingBooking) return;
-    final customerId = int.tryParse(_customerIdController.text.trim());
+    final storage = getIt<FlutterSecureStorage>();
+    final rawCustomerId = await storage.read(key: Constants.customerId);
+    final customerId = int.tryParse(rawCustomerId ?? '');
     if (customerId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui long nhap customerId')),
+        const SnackBar(content: Text('Chua xac dinh thong tin khach hang')),
       );
       return;
     }
@@ -464,6 +471,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
       );
       return;
     }
+    final totalAmount = _calculateTotalAmount(room.price);
 
     final dto = BookingCreateRequest(
       checkinDate: DateFormat('yyyy-MM-dd').format(_checkinDate!),
@@ -473,14 +481,66 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
       customerId: customerId,
       rooms: [room.id ?? 0],
       services: <int>[],
-      totalAmount: _calculateTotalAmount(room.price),
+      totalAmount: totalAmount,
       note: _noteController.text.trim().isEmpty
           ? null
           : _noteController.text.trim(),
     );
 
+    _pendingPayment = _paymentMethod == 'VN_PAY';
+    _pendingPaymentAmount = totalAmount;
     setState(() => _isSubmittingBooking = true);
     context.read<BookingCubit>().add(dto);
+  }
+
+  Future<void> _startPayment(BuildContext context, int amount) async {
+    if (amount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Khong co so tien can thanh toan')),
+      );
+      return;
+    }
+    try {
+      final dio = getIt<Dio>();
+      final resp = await dio.get(
+        '/payment/vn-pay',
+        queryParameters: {
+          'amount': amount,
+          'bankCode': 'NCB',
+        },
+      );
+      final paymentUrl = resp.data?['data']?['paymentUrl']?.toString();
+      if (paymentUrl == null || paymentUrl.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Khong nhan duoc link thanh toan')),
+        );
+        return;
+      }
+
+      final result = await Navigator.push<bool>(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PaymentWebViewScreen(paymentUrl: paymentUrl),
+        ),
+      );
+
+      if (result == true && context.mounted) {
+        context.router.replaceAll([CustomerRoute()]);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Thanh toan thanh cong'),
+              backgroundColor: Colors.green),
+        );
+      } else if (result == false && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Thanh toan that bai')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Loi thanh toan: $e')),
+      );
+    }
   }
 
   Future<void> _openBookingSheet(
@@ -489,6 +549,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
     _checkinDate ??= DateTime(now.year, now.month, now.day);
     _checkoutDate ??= _checkinDate!.add(const Duration(days: 1));
     var cubit = context.read<BookingCubit>();
+    final parentContext = context;
 
     setState(() => _isBookingSheetOpen = true);
     await showModalBottomSheet(
@@ -502,7 +563,38 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
           builder: (context, setModalState) {
             return BlocProvider.value(
               value: cubit,
-              child: BlocBuilder<BookingCubit, BookingState>(
+              child: BlocConsumer<BookingCubit, BookingState>(
+                listener: (context, bookingState) async {
+                  if (bookingState.status.isSuccess) {
+                    final amount = _pendingPaymentAmount;
+                    final shouldPay = _pendingPayment;
+                    _pendingPaymentAmount = 0;
+                    // if (context.mounted) {
+                    //   context.router.replaceAll([CustomerRoute()]);
+                    // }
+                    if (shouldPay) {
+                      await _startPayment(parentContext, amount);
+                      _pendingPayment = false;
+                    } else if (parentContext.mounted) {
+                      context.router.replaceAll([CustomerRoute()]);
+                      ScaffoldMessenger.of(parentContext).showSnackBar(
+                        const SnackBar(
+                            content: Text('Dat phong thanh cong'),
+                            backgroundColor: Colors.green),
+                      );
+                    }
+                  } else if (bookingState.status.isFailure &&
+                      _isSubmittingBooking) {
+                    setState(() => _isSubmittingBooking = false);
+                    if (parentContext.mounted) {
+                      ScaffoldMessenger.of(parentContext).showSnackBar(
+                        SnackBar(
+                            content: Text(bookingState.errorMessage ?? 'Loi'),
+                            backgroundColor: Colors.red),
+                      );
+                    }
+                  }
+                },
                 builder: (context, bookingState) {
                   final totalAmount = _calculateTotalAmount(room.price);
                   final nights = _calculateNights();
@@ -522,15 +614,6 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                           'Dat phong',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 12),
-                        TextField(
-                          controller: _customerIdController,
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            labelText: 'Customer ID',
-                            border: OutlineInputBorder(),
-                          ),
                         ),
                         const SizedBox(height: 12),
                         Row(

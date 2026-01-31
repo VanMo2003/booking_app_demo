@@ -128,15 +128,6 @@ class _CustomerScreenState extends State<CustomerScreen> {
     _fetchHotels(context, size: size);
   }
 
-  void _clearFilter(BuildContext context, {required int size}) {
-    final now = DateTime.now();
-    setState(() {
-      _checkinDate = DateTime(now.year, now.month, now.day);
-      _checkoutDate = _checkinDate!.add(const Duration(days: 1));
-    });
-    _fetchHotels(context, size: size);
-  }
-
   Future<void> _openBookingList(BuildContext context) async {
     await _loadCustomerId();
     if (_customerId == null) {
@@ -274,29 +265,59 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                           ],
                                         ),
                                         const SizedBox(height: 20),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16, vertical: 12),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            boxShadow: const [
-                                              BoxShadow(
-                                                  color: Colors.black12,
-                                                  blurRadius: 10)
-                                            ],
-                                          ),
-                                          child: const Row(
-                                            children: [
-                                              Icon(Icons.search,
-                                                  color: Colors.grey),
-                                              SizedBox(width: 10),
-                                              Text('Bạn muốn đi đâu?',
-                                                  style: TextStyle(
-                                                      color: Colors.grey)),
-                                            ],
-                                          ),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 12),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                  boxShadow: const [
+                                                    BoxShadow(
+                                                        color: Colors.black12,
+                                                        blurRadius: 10)
+                                                  ],
+                                                ),
+                                                child: const Row(
+                                                  children: [
+                                                    Icon(Icons.search,
+                                                        color: Colors.grey),
+                                                    SizedBox(width: 10),
+                                                    Text('Bạn muốn đi đâu?',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.grey)),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 12),
+                                            SizedBox(
+                                              child: ElevatedButton.icon(
+                                                onPressed: () => _applyFilter(
+                                                    context,
+                                                    size: state.size),
+                                                label: const Text('Lọc'),
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.white,
+                                                  foregroundColor:
+                                                      theme.primaryColor,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(vertical: 12),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                         const SizedBox(height: 16),
                                         Row(

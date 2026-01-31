@@ -291,7 +291,8 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
       ),
       child: InkWell(
         onTap: room.status == "AVAILABLE"
-            ? () => context.router.push(RoomDetailRoute(roomId: room.id))
+            ? () => context.router
+                .push(RoomDetailRoute(roomId: room.id, statusRoom: room.status))
             : null,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
