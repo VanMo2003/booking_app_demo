@@ -2,6 +2,8 @@ class Constants {
   static const String accessToken = 'access_token';
   static const String refreshToken = 'refresh_token';
   static const String role = 'role';
+  static const String customerId = 'customer_id';
+  static const String hotelId = 'hotel_id';
 
   static const List<String> provinces = [
     'An Giang',

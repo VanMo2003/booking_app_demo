@@ -32,6 +32,19 @@ class AuthRepositoryImpl implements AuthRepository {
       await secureStorage.write(
           key: Constants.refreshToken, value: loginResp.refreshToken);
       await secureStorage.write(key: Constants.role, value: loginResp.role);
+      if (loginResp.customer?.id != null) {
+        await secureStorage.write(
+            key: Constants.customerId,
+            value: loginResp.customer!.id.toString());
+      } else {
+        await secureStorage.delete(key: Constants.customerId);
+      }
+      if (loginResp.hotel?.id != null) {
+        await secureStorage.write(
+            key: Constants.hotelId, value: loginResp.hotel!.id.toString());
+      } else {
+        await secureStorage.delete(key: Constants.hotelId);
+      }
 
       return AuthResponse(
         authenticated: loginResp.authenticated,
@@ -54,6 +67,8 @@ class AuthRepositoryImpl implements AuthRepository {
       await apiService.logout();
       await secureStorage.delete(key: Constants.accessToken);
       await secureStorage.delete(key: Constants.refreshToken);
+      await secureStorage.delete(key: Constants.customerId);
+      await secureStorage.delete(key: Constants.hotelId);
     } on DioException catch (e) {
       throw dioClient.handleDioError(e);
     }

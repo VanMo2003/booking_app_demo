@@ -10,8 +10,10 @@ import '../cubit/booking_cubit.dart';
 
 class BookingDetailScreen extends StatelessWidget {
   final BookingEntity booking;
+  final bool allowActions;
 
-  const BookingDetailScreen({super.key, required this.booking});
+  const BookingDetailScreen(
+      {super.key, required this.booking, this.allowActions = true});
 
   // --- HELPER FUNCTIONS ---
 
@@ -139,7 +141,7 @@ class BookingDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
 
-                      // 4. Rooms List (Đã chỉnh sửa hiển thị ảnh)
+                      // 4. Rooms List
                       _buildSectionTitle(
                           'Phòng đã đặt (${booking.bookingRooms?.length ?? 0})'),
                       if (booking.bookingRooms != null)
@@ -244,14 +246,15 @@ class BookingDetailScreen extends StatelessWidget {
                         ),
                       ),
 
-                      const SizedBox(height: 80), // Space for bottom buttons
+                      const SizedBox(height: 80),
                     ],
                   ),
                 ),
 
                 // Bottom Buttons (Floating)
-                if (booking.bookingStatus == 'PENDING' ||
-                    booking.bookingStatus == 'CONFIRMED')
+                if (allowActions &&
+                    (booking.bookingStatus == 'PENDING' ||
+                        booking.bookingStatus == 'CONFIRMED'))
                   Positioned(
                     bottom: 0,
                     left: 0,
@@ -271,7 +274,6 @@ class BookingDetailScreen extends StatelessWidget {
                     ),
                   ),
 
-                // Loading Overlay
                 if (isLoading)
                   Container(
                     color: Colors.black12,

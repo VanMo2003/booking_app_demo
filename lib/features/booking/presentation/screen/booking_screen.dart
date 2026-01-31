@@ -64,7 +64,7 @@ class BookingAdminScreen extends StatelessWidget {
         color = Colors.green;
         label = 'Hoàn thành';
         break;
-      case 'CANCELLED': // Lưu ý check đúng enum từ BE (CANCELLED hay CANCELED)
+      case 'CANCELLED':
       case 'CANCELED':
         color = Colors.red;
         label = 'Đã hủy';
@@ -91,8 +91,34 @@ class BookingAdminScreen extends StatelessWidget {
     );
   }
 
+  int _statusPriority(String? status) {
+    switch (status) {
+      case 'PENDING':
+        return 0;
+      case 'CONFIRMED':
+        return 1;
+      case 'COMPLETED':
+        return 2;
+      case 'CANCELED':
+        return 3;
+      default:
+        return 99;
+    }
+  }
+
+  DateTime _parseDate(String? value) {
+    if (value == null || value.isEmpty)
+      return DateTime.fromMillisecondsSinceEpoch(0);
+    try {
+      return DateTime.parse(value);
+    } catch (_) {
+      return DateTime.fromMillisecondsSinceEpoch(0);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isCustomerView = customerId != null && hotelId == null;
     return BlocProvider(
       create: (_) => BookingCubit(
         getBookings: getIt(),
@@ -100,7 +126,7 @@ class BookingAdminScreen extends StatelessWidget {
         confirmBooking: getIt(),
         cancelBooking: getIt(),
         completeBooking: getIt(),
-      )..fetch(hotelId: hotelId), // Load data
+      )..fetch(hotelId: hotelId, customerId: customerId), // Load data
       child: BlocConsumer<BookingCubit, BookingState>(
         listener: (context, state) {
           if (state.status.isFailure) {
@@ -114,7 +140,8 @@ class BookingAdminScreen extends StatelessWidget {
         },
         builder: (context, state) {
           return AppScaffold(
-            title: 'Quản lý Đặt phòng',
+            title:
+                isCustomerView ? 'Don dat phong cua toi' : 'Quan ly Dat phong',
             body: _buildContent(context, state),
           );
         },
@@ -123,11 +150,20 @@ class BookingAdminScreen extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, BookingState state) {
+    final isCustomerView = customerId != null && hotelId == null;
     if (state.status.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final bookings = state.items ?? [];
+    final bookings = [...?state.items];
+    bookings.sort((a, b) {
+      final statusA = _statusPriority(a.bookingStatus);
+      final statusB = _statusPriority(b.bookingStatus);
+      if (statusA != statusB) return statusA.compareTo(statusB);
+      final dateA = _parseDate(a.onCreate ?? a.checkinDate);
+      final dateB = _parseDate(b.onCreate ?? b.checkinDate);
+      return dateB.compareTo(dateA);
+    });
 
     if (bookings.isEmpty) {
       return Center(
@@ -146,7 +182,9 @@ class BookingAdminScreen extends StatelessWidget {
 
     return RefreshIndicator(
       onRefresh: () async {
-        context.read<BookingCubit>().fetch(hotelId: hotelId);
+        context
+            .read<BookingCubit>()
+            .fetch(hotelId: hotelId, customerId: customerId);
       },
       child: ListView.separated(
         padding: const EdgeInsets.all(16),
@@ -162,15 +200,19 @@ class BookingAdminScreen extends StatelessWidget {
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
               onTap: () {
-                // Navigate to Detail Screen
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => BookingDetailScreen(booking: item),
+                    builder: (_) => BookingDetailScreen(
+                      booking: item,
+                      allowActions: !isCustomerView,
+                    ),
                   ),
                 ).then((shouldRefresh) {
                   if (shouldRefresh == true) {
-                    context.read<BookingCubit>().fetch(hotelId: hotelId);
+                    context
+                        .read<BookingCubit>()
+                        .fetch(hotelId: hotelId, customerId: customerId);
                   }
                 });
               },
@@ -178,7 +220,6 @@ class BookingAdminScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(12),
                 child: Column(
                   children: [
-                    // Row 1: ID + Status
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -194,12 +235,9 @@ class BookingAdminScreen extends StatelessWidget {
                       ],
                     ),
                     const Divider(height: 20, thickness: 0.5),
-
-                    // Row 2: Customer Info + Price
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Avatar
                         CircleAvatar(
                           radius: 24,
                           backgroundImage: NetworkImage(
@@ -207,7 +245,6 @@ class BookingAdminScreen extends StatelessWidget {
                           backgroundColor: Colors.grey[200],
                         ),
                         const SizedBox(width: 12),
-                        // Name & Date
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,7 +274,6 @@ class BookingAdminScreen extends StatelessWidget {
                             ],
                           ),
                         ),
-                        // Price
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [

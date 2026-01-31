@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:booking_app_mobile/core/api/app_config.dart';
+import 'package:booking_app_mobile/core/constants/constant.dart';
 import 'package:booking_app_mobile/features/hotel/domain/use_case/get_hotel_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/di/injector.dart';
@@ -26,6 +28,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
   final DateFormat _apiDateFormat = DateFormat('yyyy-MM-dd');
   DateTime? _checkinDate;
   DateTime? _checkoutDate;
+  int? _customerId;
 
   @override
   void initState() {
@@ -50,6 +53,15 @@ class _CustomerScreenState extends State<CustomerScreen> {
         ),
       );
     }
+  }
+
+  Future<void> _loadCustomerId() async {
+    final storage = getIt<FlutterSecureStorage>();
+    final raw = await storage.read(key: Constants.customerId);
+    if (!mounted) return;
+    setState(() {
+      _customerId = int.tryParse(raw ?? '');
+    });
   }
 
   @override
@@ -123,6 +135,17 @@ class _CustomerScreenState extends State<CustomerScreen> {
       _checkoutDate = _checkinDate!.add(const Duration(days: 1));
     });
     _fetchHotels(context, size: size);
+  }
+
+  Future<void> _openBookingList(BuildContext context) async {
+    await _loadCustomerId();
+    if (_customerId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Chua xac dinh thong tin khach hang')),
+      );
+      return;
+    }
+    context.router.push(BookingAdminRoute(customerId: _customerId));
   }
 
   @override
@@ -217,22 +240,36 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                                 ),
                                               ],
                                             ),
-                                            GestureDetector(
-                                              onTap: () => context.router
-                                                  .push(const ProfileRoute()),
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  border: Border.all(
-                                                      color: Colors.white,
-                                                      width: 2),
+                                            Row(
+                                              children: [
+                                                IconButton(
+                                                  onPressed: () =>
+                                                      _openBookingList(context),
+                                                  icon: const Icon(
+                                                    Icons.receipt_long,
+                                                    color: Colors.white,
+                                                  ),
+                                                  tooltip: 'Don dat phong',
                                                 ),
-                                                child: const CircleAvatar(
-                                                  radius: 24,
-                                                  backgroundImage: NetworkImage(
-                                                      'https://i.pravatar.cc/150?img=68'),
+                                                GestureDetector(
+                                                  onTap: () => context.router
+                                                      .push(
+                                                          const ProfileRoute()),
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      border: Border.all(
+                                                          color: Colors.white,
+                                                          width: 2),
+                                                    ),
+                                                    child: const CircleAvatar(
+                                                      radius: 24,
+                                                      backgroundImage: NetworkImage(
+                                                          'https://i.pravatar.cc/150?img=68'),
+                                                    ),
+                                                  ),
                                                 ),
-                                              ),
+                                              ],
                                             ),
                                           ],
                                         ),

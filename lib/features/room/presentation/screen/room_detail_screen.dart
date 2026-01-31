@@ -363,14 +363,11 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                     width: double.infinity,
                                     height: 50,
                                     child: ElevatedButton(
-                                      onPressed: widget.statusRoom ==
-                                              "AVAILABLE"
-                                          ? () {
-                                              if (room == null) return;
-                                              _openBookingSheet(
-                                                  room, primaryBlue, context);
-                                            }
-                                          : null,
+                                      onPressed:
+                                          widget.statusRoom == "AVAILABLE"
+                                              ? () => _openBookingSheet(
+                                                  room, primaryBlue, context)
+                                              : null,
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor:
                                             widget.statusRoom == "AVAILABLE"
