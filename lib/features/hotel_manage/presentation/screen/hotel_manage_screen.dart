@@ -62,14 +62,13 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
   String? _monthlyError;
   List<DailyReport> _daily = [];
   List<MonthlyReport> _monthly = [];
-
   @override
   void initState() {
     super.initState();
   }
 
   String _formatCurrency(double amount) {
-    return NumberFormat.currency(locale: 'vi_VN', symbol: '???').format(amount);
+    return NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ').format(amount);
   }
 
   void _handleLogout(BuildContext context) {
@@ -520,6 +519,67 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
 
   // Card doanh thu v?i Gradient
   Widget _buildRevenueCard(Color primaryColor) {
+    final now = DateTime.now();
+    MonthlyReport? current;
+    MonthlyReport? previous;
+
+    if (_monthly.isNotEmpty) {
+      MonthlyReport? fallback;
+      for (final item in _monthly) {
+        if (fallback == null ||
+            item.year > fallback.year ||
+            (item.year == fallback.year && item.month > fallback.month)) {
+          fallback = item;
+        }
+      }
+
+      if (_year == now.year) {
+        for (final item in _monthly) {
+          if (item.year == now.year && item.month == now.month) {
+            current = item;
+            break;
+          }
+        }
+      }
+      current ??= fallback;
+
+      if (current != null) {
+        var prevMonth = current.month - 1;
+        var prevYear = current.year;
+        if (prevMonth <= 0) {
+          prevMonth = 12;
+          prevYear -= 1;
+        }
+        for (final item in _monthly) {
+          if (item.year == prevYear && item.month == prevMonth) {
+            previous = item;
+            break;
+          }
+        }
+      }
+    }
+
+    final revenue = current?.totalRevenue ?? 0;
+    final booking = current?.totalBooking ?? 0;
+    final title = (current != null &&
+            current.year == now.year &&
+            current.month == now.month)
+        ? 'Doanh thu tháng này'
+        : (current == null
+            ? 'Doanh thu tháng này'
+            : 'Doanh thu tháng ${current.month.toString().padLeft(2, '0')}/${current.year}');
+
+    String deltaText;
+    if (previous == null || previous.totalRevenue == 0) {
+      deltaText = 'Chưa có dữ liệu tháng trước';
+    } else {
+      final delta =
+          ((revenue - previous.totalRevenue) / previous.totalRevenue) * 100;
+      final sign = delta >= 0 ? '+' : '';
+      deltaText =
+          '${delta >= 0 ? "tăng" : "giảm"} ${delta.toStringAsFixed(1)}% so với tháng trước';
+    }
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -544,9 +604,9 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Doanh thu tháng này',
-                style: TextStyle(color: Colors.white70, fontSize: 16),
+              Text(
+                title,
+                style: const TextStyle(color: Colors.white70, fontSize: 16),
               ),
               Icon(Icons.trending_up,
                   color: Colors.white.withValues(alpha: 0.8)),
@@ -554,9 +614,14 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
           ),
           const SizedBox(height: 10),
           Text(
-            _formatCurrency(25450000),
+            _formatCurrency(revenue.toDouble()),
             style: const TextStyle(
                 color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Đơn đặt phòng: $booking',
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
           ),
           const SizedBox(height: 16),
           Container(
@@ -565,9 +630,9 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
               color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Text(
-              '? 12.5% so với tháng trước',
-              style: TextStyle(
+            child: Text(
+              deltaText,
+              style: const TextStyle(
                   color: Colors.white,
                   fontSize: 13,
                   fontWeight: FontWeight.w500),
