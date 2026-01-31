@@ -4,6 +4,7 @@ import 'package:booking_app_mobile/core/di/injector.dart';
 import 'package:booking_app_mobile/features/auth/domain/repositories/auth_repository.dart';
 import 'package:booking_app_mobile/features/hotel/domain/entities/hotel.dart';
 import 'package:booking_app_mobile/features/hotel/domain/repositories/hotel_repository.dart';
+import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,12 +14,63 @@ import '../../../../core/navigation/app_routes.dart';
 import '../../../hotel/presentation/cubit/hotel_detail/hotel_detail_cubit.dart';
 import '../../../hotel/presentation/cubit/hotel_detail/hotel_detail_state.dart';
 
+class DailyReport {
+  final String date;
+  final int totalRevenue;
+  final int totalBooking;
+
+  const DailyReport({
+    required this.date,
+    required this.totalRevenue,
+    required this.totalBooking,
+  });
+}
+
+class MonthlyReport {
+  final int year;
+  final int month;
+  final int totalRevenue;
+  final int totalBooking;
+
+  const MonthlyReport({
+    required this.year,
+    required this.month,
+    required this.totalRevenue,
+    required this.totalBooking,
+  });
+}
+
 @RoutePage()
-class HotelManageScreen extends StatelessWidget {
+class HotelManageScreen extends StatefulWidget {
   const HotelManageScreen({super.key});
 
+  @override
+  State<HotelManageScreen> createState() => _HotelManageScreenState();
+}
+
+class _HotelManageScreenState extends State<HotelManageScreen> {
+  final DateFormat _apiDateFormat = DateFormat('yyyy-MM-dd');
+  final DateFormat _displayDateFormat = DateFormat('dd/MM/yyyy');
+  DateTime _dailyFrom = DateTime.now().subtract(const Duration(days: 6));
+  DateTime _dailyTo = DateTime.now();
+  int _year = DateTime.now().year;
+
+  int? _hotelId;
+  bool _loadingDaily = false;
+  bool _loadingMonthly = false;
+  String? _dailyError;
+  String? _monthlyError;
+  List<DailyReport> _daily = [];
+  List<MonthlyReport> _monthly = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+
   String _formatCurrency(double amount) {
-    return NumberFormat.currency(locale: 'vi_VN', symbol: '₫').format(amount);
+    return NumberFormat.currency(locale: 'vi_VN', symbol: '???').format(amount);
   }
 
   void _handleLogout(BuildContext context) {
@@ -26,13 +78,13 @@ class HotelManageScreen extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Xác nhận đăng xuất'),
+        title: const Text('X?c nh?n ??ng xu?t'),
         content: const Text(
-            'Bạn có chắc chắn muốn thoát khỏi hệ thống quản trị không?'),
+            'B?n c? ch?c ch?n mu?n tho?t kh?i h? th?ng qu?n tr? kh?ng?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Hủy'),
+            child: const Text('H?y'),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -57,15 +109,124 @@ class HotelManageScreen extends StatelessWidget {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                      content: Text('Đăng xuất thất bại: ${e.toString()}')),
+                      content: Text('??ng xu?t th?t b?i: ${e.toString()}')),
                 );
               }
             },
-            child: const Text('Đăng xuất'),
+            child: const Text('??ng xu?t'),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _fetchDaily() async {
+    if (_hotelId == null) return;
+    setState(() {
+      _loadingDaily = true;
+      _dailyError = null;
+    });
+    try {
+      final dio = getIt<Dio>();
+      final resp = await dio.get(
+        '/reports/daily',
+        queryParameters: {
+          'hotelId': _hotelId,
+          'from': _apiDateFormat.format(_dailyFrom),
+          'to': _apiDateFormat.format(_dailyTo),
+        },
+      );
+      final list = (resp.data['data'] as List)
+          .map((e) => DailyReport(
+                date: e['date'] as String,
+                totalRevenue: (e['totalRevenue'] as num).toInt(),
+                totalBooking: (e['totalBooking'] as num).toInt(),
+              ))
+          .toList();
+      if (!mounted) return;
+      setState(() {
+        _daily = list;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _dailyError = e.toString();
+      });
+    } finally {
+      if (!mounted) return;
+      setState(() {
+        _loadingDaily = false;
+      });
+    }
+  }
+
+  Future<void> _fetchMonthly() async {
+    if (_hotelId == null) return;
+    setState(() {
+      _loadingMonthly = true;
+      _monthlyError = null;
+    });
+    try {
+      final dio = getIt<Dio>();
+      final resp = await dio.get(
+        '/reports/monthly',
+        queryParameters: {
+          'hotelId': _hotelId,
+          'year': _year,
+        },
+      );
+      final list = (resp.data['data'] as List)
+          .map((e) => MonthlyReport(
+                year: (e['year'] as num).toInt(),
+                month: (e['month'] as num).toInt(),
+                totalRevenue: (e['totalRevenue'] as num).toInt(),
+                totalBooking: (e['totalBooking'] as num).toInt(),
+              ))
+          .toList();
+      if (!mounted) return;
+      setState(() {
+        _monthly = list;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _monthlyError = e.toString();
+      });
+    } finally {
+      if (!mounted) return;
+      setState(() {
+        _loadingMonthly = false;
+      });
+    }
+  }
+
+  Future<void> _pickDailyFrom() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _dailyFrom,
+      firstDate: DateTime(2020),
+      lastDate: _dailyTo,
+    );
+    if (picked == null) return;
+    setState(() => _dailyFrom = picked);
+    _fetchDaily();
+  }
+
+  Future<void> _pickDailyTo() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _dailyTo,
+      firstDate: _dailyFrom,
+      lastDate: DateTime.now(),
+    );
+    if (picked == null) return;
+    setState(() => _dailyTo = picked);
+    _fetchDaily();
+  }
+
+  void _changeYear(int year) {
+    setState(() => _year = year);
+    _fetchMonthly();
   }
 
   @override
@@ -76,6 +237,15 @@ class HotelManageScreen extends StatelessWidget {
       create: (context) => HotelDetailCubit(getIt<HotelRepository>())..fetch(1),
       child: BlocBuilder<HotelDetailCubit, HotelDetailState>(
         builder: (context, state) {
+          final resolvedHotelId = state.hotel?.id;
+          if (resolvedHotelId != null && resolvedHotelId != _hotelId) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (!mounted) return;
+              setState(() => _hotelId = resolvedHotelId);
+              _fetchDaily();
+              _fetchMonthly();
+            });
+          }
           return Scaffold(
             backgroundColor: Colors.grey[50],
             appBar: AppBar(
@@ -83,7 +253,7 @@ class HotelManageScreen extends StatelessWidget {
               elevation: 0,
               centerTitle: false,
               title: const Text(
-                'Khách sạn Mường Thanh',
+                'Kh?ch s?n M??ng Thanh',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -94,7 +264,7 @@ class HotelManageScreen extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.logout, color: Colors.redAccent),
                   onPressed: () => _handleLogout(context),
-                  tooltip: 'Đăng xuất',
+                  tooltip: '??ng xu?t',
                 ),
                 const SizedBox(width: 8),
               ],
@@ -104,30 +274,31 @@ class HotelManageScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // --- PH???N DOANH THU (OVERVIEW) ---
+                  // --- PH?N DOANH THU (OVERVIEW) ---
                   _buildRevenueCard(primaryColor),
 
                   const SizedBox(height: 24),
 
                   const Text(
-                    "Đơn hôm nay",
+                    'Doanh thu theo ng?y',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      _buildStatItem(context, 'Đặt phòng', '12',
-                          Icons.book_online, Colors.blue),
-                      const SizedBox(width: 12),
-                      _buildStatItem(context, 'Phòng trống', '08', Icons.bed,
-                          Colors.green),
-                    ],
-                  ),
+                  _buildDailySection(primaryColor),
 
                   const SizedBox(height: 28),
 
                   const Text(
-                    "Thông tin khách sạn",
+                    'Doanh thu theo th?ng',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildMonthlySection(primaryColor),
+
+                  const SizedBox(height: 28),
+
+                  const Text(
+                    'Th?ng tin kh?ch s?n',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
@@ -135,9 +306,9 @@ class HotelManageScreen extends StatelessWidget {
 
                   const SizedBox(height: 28),
 
-                  // --- DANH M??§C QU???N LA? ---
+                  // --- DANH M?C QU?N L? ---
                   const Text(
-                    "Đơn hôm nay",
+                    '??n h?m nay',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
@@ -149,28 +320,27 @@ class HotelManageScreen extends StatelessWidget {
                     mainAxisSpacing: 12,
                     childAspectRatio: 1.3,
                     children: [
-                      _buildTile(context, Icons.work, 'Chức vụ',
+                      _buildTile(context, Icons.work, 'Ch?c v?',
                           () => context.router.push(const PositionRoute())),
                       _buildTile(
                           context,
                           Icons.people,
-                          'Nhân viên',
+                          'Nh?n vi?n',
                           () =>
                               context.router.push(StaffAdminRoute(hotelId: 1))),
-                      _buildTile(context, Icons.category, 'Loại phòng',
+                      _buildTile(context, Icons.category, 'Lo?i ph?ng',
                           () => context.router.push(const RoomTypeRoute())),
-                      // TODO : l???y hotelId qua api
-                      _buildTile(context, Icons.meeting_room, 'Phòng',
+                      _buildTile(context, Icons.meeting_room, 'Ph?ng',
                           () => context.router.push(RoomRoute(hotelId: 1))),
-                      _buildTile(context, Icons.room_service, 'Dịch vụ',
+                      _buildTile(context, Icons.room_service, 'D?ch v?',
                           () => context.router.push(const ServiceRoute())),
                       _buildTile(
                           context,
                           Icons.assignment,
-                          'Đơn đặt phòng',
+                          '??n ??t ph?ng',
                           () => context.router
                               .push(BookingAdminRoute(hotelId: 1))),
-                      _buildTile(context, Icons.pool, 'Tiện ích',
+                      _buildTile(context, Icons.pool, 'Ti?n ?ch',
                           () => context.router.push(AmenityRoute(hotelId: 1))),
                     ],
                   ),
@@ -183,7 +353,146 @@ class HotelManageScreen extends StatelessWidget {
     );
   }
 
-  // Card doanh thu với Gradient
+  Widget _buildDailySection(Color primaryColor) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _pickDailyFrom,
+                    icon: const Icon(Icons.calendar_today, size: 16),
+                    label: Text(_displayDateFormat.format(_dailyFrom)),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _pickDailyTo,
+                    icon: const Icon(Icons.event_outlined, size: 16),
+                    label: Text(_displayDateFormat.format(_dailyTo)),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (_loadingDaily)
+              const LinearProgressIndicator(minHeight: 2)
+            else if (_dailyError != null)
+              Text(_dailyError!, style: const TextStyle(color: Colors.red))
+            else if (_daily.isEmpty)
+              const Text('Ch?a c? d? li?u')
+            else
+              _buildBarChart(
+                _daily
+                    .map((e) =>
+                        DateFormat('dd/MM').format(DateTime.parse(e.date)))
+                    .toList(),
+                _daily.map((e) => e.totalRevenue).toList(),
+                primaryColor,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMonthlySection(Color primaryColor) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Text('N?m',
+                    style: TextStyle(fontWeight: FontWeight.w600)),
+                const SizedBox(width: 12),
+                DropdownButton<int>(
+                  value: _year,
+                  items: List.generate(5, (i) {
+                    final y = DateTime.now().year - 2 + i;
+                    return DropdownMenuItem(value: y, child: Text('$y'));
+                  }),
+                  onChanged: (v) {
+                    if (v == null) return;
+                    _changeYear(v);
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            if (_loadingMonthly)
+              const LinearProgressIndicator(minHeight: 2)
+            else if (_monthlyError != null)
+              Text(_monthlyError!, style: const TextStyle(color: Colors.red))
+            else if (_monthly.isEmpty)
+              const Text('Ch?a c? d? li?u')
+            else
+              _buildBarChart(
+                _monthly
+                    .map((e) => 'T${e.month.toString().padLeft(2, '0')}')
+                    .toList(),
+                _monthly.map((e) => e.totalRevenue).toList(),
+                Colors.orange,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBarChart(List<String> labels, List<int> values, Color color) {
+    final maxValue = values.reduce((a, b) => a > b ? a : b);
+    return SizedBox(
+      height: 200,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: List.generate(labels.length, (index) {
+          final value = values[index];
+          final heightFactor = maxValue == 0 ? 0.0 : value / maxValue;
+          final displayValue = NumberFormat.compact().format(value);
+          return Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(displayValue, style: const TextStyle(fontSize: 10)),
+                const SizedBox(height: 6),
+                Tooltip(
+                  message: '${labels[index]}: $value',
+                  child: Container(
+                    height: 130 * heightFactor,
+                    width: 18,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [color.withOpacity(0.6), color],
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(labels[index], style: const TextStyle(fontSize: 10)),
+              ],
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  // Card doanh thu v?i Gradient
   Widget _buildRevenueCard(Color primaryColor) {
     return Container(
       width: double.infinity,
@@ -210,7 +519,7 @@ class HotelManageScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                'Doanh thu tháng này',
+                'Doanh thu th?ng n?y',
                 style: TextStyle(color: Colors.white70, fontSize: 16),
               ),
               Icon(Icons.trending_up,
@@ -231,7 +540,7 @@ class HotelManageScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Text(
-              '↑ 12.5% so với tháng trước',
+              '? 12.5% so v?i th?ng tr??c',
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 13,
@@ -304,14 +613,14 @@ class HotelManageScreen extends StatelessWidget {
             if (state.status == HotelDetailStatus.loading)
               const LinearProgressIndicator(minHeight: 2),
             Text(
-              hotel?.name ?? "Tên khách sạn",
+              hotel?.name ?? 'T?n kh?ch s?n',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 6),
-            Text(hotel?.address ?? "-",
+            Text(hotel?.address ?? '-',
                 style: const TextStyle(color: Colors.grey)),
             const SizedBox(height: 6),
-            Text(hotel?.phone ?? "-",
+            Text(hotel?.phone ?? '-',
                 style: const TextStyle(color: Colors.grey)),
             const SizedBox(height: 12),
             if (imageUrls.isNotEmpty) ...[
@@ -345,7 +654,7 @@ class HotelManageScreen extends StatelessWidget {
                     : () => _pickAndUploadImages(context, hotel!.id),
                 icon: const Icon(Icons.photo_library_outlined),
                 label:
-                    Text(state.isUploadingImages ? "Đang tải..." : "Thêm ảnh"),
+                    Text(state.isUploadingImages ? '?ang t?i...' : 'Th?m ?nh'),
               ),
             ),
             if (state.isUploadingImages)
@@ -383,11 +692,11 @@ class HotelManageScreen extends StatelessWidget {
   }
 
   String _resolveHotelImageUrl(String path) {
-    if (path.isEmpty) return "";
+    if (path.isEmpty) return '';
     if (path.startsWith('http://') || path.startsWith('https://')) {
       return path;
     }
-    return "${AppConfig().baseURL}$path";
+    return '${AppConfig().baseURL}$path';
   }
 
   Future<void> _pickAndUploadImages(BuildContext context, int hotelId) async {
@@ -407,7 +716,7 @@ class HotelManageScreen extends StatelessWidget {
     if (!context.mounted) return;
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Thêm ảnh thành công"),
+        content: Text('Th?m ?nh th?nh c?ng'),
       ));
     }
   }
