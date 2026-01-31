@@ -62,6 +62,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
   String? _monthlyError;
   List<DailyReport> _daily = [];
   List<MonthlyReport> _monthly = [];
+
   @override
   void initState() {
     super.initState();
@@ -100,9 +101,11 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
               );
               try {
                 await getIt<AuthRepository>().logout();
+                if (!context.mounted) return;
                 Navigator.pop(context);
                 context.router.replaceAll([const LoginRoute()]);
               } catch (e) {
+                if (!context.mounted) return;
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -271,7 +274,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // --- PH?N DOANH THU (OVERVIEW) ---
+                  // --- PHẦN DOANH THU (OVERVIEW) ---
                   _buildRevenueCard(primaryColor),
 
                   const SizedBox(height: 24),
@@ -303,7 +306,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
 
                   const SizedBox(height: 28),
 
-                  // --- DANH M?C QU?N L? ---
+                  // --- DANH MỤC QUẢN LÝ ---
                   const Text(
                     'Quản lý',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -337,7 +340,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                           'Đơn đặt phòng',
                           () => context.router
                               .push(BookingAdminRoute(hotelId: 1))),
-                      _buildTile(context, Icons.pool, 'Ti?n ?ch',
+                      _buildTile(context, Icons.pool, 'Tiện ích',
                           () => context.router.push(AmenityRoute(hotelId: 1))),
                     ],
                   ),
@@ -366,6 +369,9 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                     onPressed: _pickDailyFrom,
                     icon: const Icon(Icons.calendar_today, size: 16),
                     label: Text(_displayDateFormat.format(_dailyFrom)),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -374,6 +380,9 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                     onPressed: _pickDailyTo,
                     icon: const Icon(Icons.event_outlined, size: 16),
                     label: Text(_displayDateFormat.format(_dailyTo)),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
                   ),
                 ),
               ],
@@ -384,13 +393,14 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
             else if (_dailyError != null)
               Text(_dailyError!, style: const TextStyle(color: Colors.red))
             else if (_daily.isEmpty)
-              const Text('Chưa có dữ liệu')
+              const Center(
+                  child: Text('Chưa có dữ liệu trong khoảng thời gian này'))
             else ...[
               _buildTotalRow(
                 totalRevenue: _daily.fold<int>(0, (s, e) => s + e.totalRevenue),
                 totalBooking: _daily.fold<int>(0, (s, e) => s + e.totalBooking),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 20),
               _buildBarChart(
                 _daily
                     .map((e) =>
@@ -407,6 +417,28 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
   }
 
   Widget _buildMonthlySection(Color primaryColor) {
+    // Chuẩn bị dữ liệu cho đủ 12 tháng
+    List<String> labels = [];
+    List<int> values = [];
+
+    // Tạo danh sách 12 tháng cố định
+    for (int i = 1; i <= 12; i++) {
+      labels.add('T$i');
+
+      // Tìm dữ liệu của tháng i trong danh sách _monthly
+      // Nếu không có thì trả về object ảo với revenue = 0
+      final report = _monthly.firstWhere(
+        (m) => m.month == i,
+        orElse: () => MonthlyReport(
+            year: _year, month: i, totalRevenue: 0, totalBooking: 0),
+      );
+      values.add(report.totalRevenue);
+    }
+
+    final totalRevenue = values.fold(0, (sum, item) => sum + item);
+    final totalBooking =
+        _monthly.fold(0, (sum, item) => sum + item.totalBooking);
+
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -422,6 +454,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                 const SizedBox(width: 12),
                 DropdownButton<int>(
                   value: _year,
+                  underline: const SizedBox(),
                   items: List.generate(5, (i) {
                     final y = DateTime.now().year - 2 + i;
                     return DropdownMenuItem(value: y, child: Text('$y'));
@@ -438,23 +471,14 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
               const LinearProgressIndicator(minHeight: 2)
             else if (_monthlyError != null)
               Text(_monthlyError!, style: const TextStyle(color: Colors.red))
-            else if (_monthly.isEmpty)
-              const Text('Chưa có dữ liệu')
             else ...[
               _buildTotalRow(
-                totalRevenue:
-                    _monthly.fold<int>(0, (s, e) => s + e.totalRevenue),
-                totalBooking:
-                    _monthly.fold<int>(0, (s, e) => s + e.totalBooking),
+                totalRevenue: totalRevenue,
+                totalBooking: totalBooking,
               ),
-              const SizedBox(height: 12),
-              _buildBarChart(
-                _monthly
-                    .map((e) => 'T${e.month.toString().padLeft(2, '0')}')
-                    .toList(),
-                _monthly.map((e) => e.totalRevenue).toList(),
-                Colors.orange,
-              ),
+              const SizedBox(height: 20),
+              // Truyền đủ 12 tháng vào biểu đồ
+              _buildBarChart(labels, values, Colors.orange),
             ]
           ],
         ),
@@ -467,7 +491,8 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('Tổng doanh thu: ${NumberFormat.compact().format(totalRevenue)}',
+        Text(
+            'Tổng doanh thu: ${NumberFormat.compact(locale: 'vi').format(totalRevenue)}',
             style: const TextStyle(fontWeight: FontWeight.w600)),
         Text('Đơn: $totalBooking',
             style: const TextStyle(fontWeight: FontWeight.w600)),
@@ -475,49 +500,149 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
     );
   }
 
+  // --- HÀM VẼ BIỂU ĐỒ ĐÃ CẬP NHẬT ---
   Widget _buildBarChart(List<String> labels, List<int> values, Color color) {
-    final maxValue = values.reduce((a, b) => a > b ? a : b);
+    if (values.isEmpty) return const SizedBox();
+
+    // Tìm giá trị lớn nhất để chia tỷ lệ
+    final int maxValue = values.fold(0, (max, e) => e > max ? e : max);
+    // Tránh chia cho 0
+    final double safeMax = maxValue == 0 ? 1 : maxValue.toDouble();
+
+    // Số lượng đường kẻ ngang (grid lines)
+    const int steps = 4;
+
     return SizedBox(
-      height: 200,
+      height: 250, // Chiều cao tổng thể của khu vực biểu đồ
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: List.generate(labels.length, (index) {
-          final value = values[index];
-          final heightFactor = maxValue == 0 ? 0.0 : value / maxValue;
-          final displayValue = NumberFormat.compact().format(value);
-          return Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(displayValue, style: const TextStyle(fontSize: 10)),
-                const SizedBox(height: 6),
-                Tooltip(
-                  preferBelow: false,
-                  message: '${labels[index]}: $value',
-                  child: Container(
-                    height: 130 * heightFactor,
-                    width: 18,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                        colors: [color.withOpacity(0.6), color],
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // TRỤC Y (Doanh thu)
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: List.generate(steps + 1, (index) {
+              // Tính giá trị hiển thị cho từng mốc (từ trên xuống dưới)
+              final value = (safeMax / steps) * (steps - index);
+              return Text(
+                NumberFormat.compact(locale: 'en_US')
+                    .format(value), // Ví dụ: 1M, 500k
+                style: TextStyle(
+                  color: Colors.grey[500],
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
                 ),
-                const SizedBox(height: 8),
-                Text(labels[index], style: const TextStyle(fontSize: 10)),
-              ],
+              );
+            }),
+          ),
+          const SizedBox(width: 10), // Khoảng cách giữa trục Y và biểu đồ
+
+          // KHU VỰC CỘT VÀ TRỤC X
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // Dành ra 20px chiều cao ở dưới cùng cho nhãn trục X
+                final double chartAreaHeight = constraints.maxHeight - 20;
+
+                return Column(
+                  children: [
+                    // Phần lưới và cột
+                    SizedBox(
+                      height: chartAreaHeight,
+                      child: Stack(
+                        children: [
+                          // Lớp 1: Vẽ các đường kẻ ngang (Grid lines)
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: List.generate(steps + 1, (index) {
+                              return Container(
+                                height: 1,
+                                color: Colors.grey
+                                    .withValues(alpha: 0.1), // Đường kẻ mờ
+                              );
+                            }),
+                          ),
+                          // Lớp 2: Vẽ các cột
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: List.generate(labels.length, (index) {
+                              final value = values[index];
+                              final heightFactor = value / safeMax;
+
+                              return Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 2.0),
+                                  child: Tooltip(
+                                    preferBelow: false,
+                                    message:
+                                        '${labels[index]}: ${_formatCurrency(value.toDouble())}',
+                                    child: FractionallySizedBox(
+                                      heightFactor: heightFactor == 0
+                                          ? 0.0
+                                          : heightFactor,
+                                      widthFactor: 0.5,
+                                      alignment: Alignment.bottomCenter,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          // Gradient từ nhạt đến đậm
+                                          gradient: LinearGradient(
+                                            begin: Alignment.bottomCenter,
+                                            end: Alignment.topCenter,
+                                            colors: [
+                                              color.withValues(alpha: 0.6),
+                                              color,
+                                            ],
+                                          ),
+                                          // Bo tròn góc trên của cột
+                                          borderRadius:
+                                              const BorderRadius.vertical(
+                                            top: Radius.circular(4),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    // Phần nhãn TRỤC X (Tháng/Ngày)
+                    SizedBox(
+                      height: 14,
+                      child: Row(
+                        children: List.generate(labels.length, (index) {
+                          return Expanded(
+                            child: Center(
+                              child: Text(
+                                labels[index],
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
-          );
-        }),
+          ),
+        ],
       ),
     );
   }
 
-  // Card doanh thu v?i Gradient
+  // Card doanh thu với Gradient
   Widget _buildRevenueCard(Color primaryColor) {
     final now = DateTime.now();
     MonthlyReport? current;
@@ -575,7 +700,6 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
     } else {
       final delta =
           ((revenue - previous.totalRevenue) / previous.totalRevenue) * 100;
-      final sign = delta >= 0 ? '+' : '';
       deltaText =
           '${delta >= 0 ? "tăng" : "giảm"} ${delta.toStringAsFixed(1)}% so với tháng trước';
     }
@@ -639,52 +763,6 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
             ),
           )
         ],
-      ),
-    );
-  }
-
-  Widget _buildStatItem(BuildContext context, String label, String value,
-      IconData icon, Color color) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
-                blurRadius: 10,
-                offset: const Offset(0, 4))
-          ],
-          border: Border.all(color: Colors.grey.shade100),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, color: color, size: 24),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(value,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text(label,
-                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
-                      overflow: TextOverflow.ellipsis),
-                ],
-              ),
-            )
-          ],
-        ),
       ),
     );
   }
@@ -801,6 +879,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
         result.files.map((file) => file.path).whereType<String>().toList();
     if (paths.isEmpty) return;
 
+    if (!context.mounted) return;
     final cubit = context.read<HotelDetailCubit>();
     final success =
         await cubit.uploadImages(hotelId: hotelId, filePaths: paths);
