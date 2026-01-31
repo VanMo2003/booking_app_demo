@@ -68,7 +68,6 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
     super.initState();
   }
 
-
   String _formatCurrency(double amount) {
     return NumberFormat.currency(locale: 'vi_VN', symbol: '???').format(amount);
   }
@@ -78,13 +77,12 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('X?c nh?n ??ng xu?t'),
-        content: const Text(
-            'B?n c? ch?c ch?n mu?n tho?t kh?i h? th?ng qu?n tr? kh?ng?'),
+        title: const Text('Xác nhận đăng xuất'),
+        content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('H?y'),
+            child: const Text('Hủy'),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -109,11 +107,11 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                      content: Text('??ng xu?t th?t b?i: ${e.toString()}')),
+                      content: Text('Đăng xuất thất bại: ${e.toString()}')),
                 );
               }
             },
-            child: const Text('??ng xu?t'),
+            child: const Text('Đăng xuất'),
           ),
         ],
       ),
@@ -253,7 +251,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
               elevation: 0,
               centerTitle: false,
               title: const Text(
-                'Kh?ch s?n M??ng Thanh',
+                'Khách sạn Mường Thanh',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -264,7 +262,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                 IconButton(
                   icon: const Icon(Icons.logout, color: Colors.redAccent),
                   onPressed: () => _handleLogout(context),
-                  tooltip: '??ng xu?t',
+                  tooltip: 'Đăng xuất',
                 ),
                 const SizedBox(width: 8),
               ],
@@ -280,7 +278,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                   const SizedBox(height: 24),
 
                   const Text(
-                    'Doanh thu theo ng?y',
+                    'Doanh thu theo ngày',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
@@ -289,7 +287,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                   const SizedBox(height: 28),
 
                   const Text(
-                    'Doanh thu theo th?ng',
+                    'Doanh thu theo tháng',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
@@ -298,7 +296,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                   const SizedBox(height: 28),
 
                   const Text(
-                    'Th?ng tin kh?ch s?n',
+                    'Thông tin khách sạn',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
@@ -308,7 +306,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
 
                   // --- DANH M?C QU?N L? ---
                   const Text(
-                    '??n h?m nay',
+                    'Quản lý',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
@@ -320,24 +318,24 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                     mainAxisSpacing: 12,
                     childAspectRatio: 1.3,
                     children: [
-                      _buildTile(context, Icons.work, 'Ch?c v?',
+                      _buildTile(context, Icons.work, 'Chức vụ',
                           () => context.router.push(const PositionRoute())),
                       _buildTile(
                           context,
                           Icons.people,
-                          'Nh?n vi?n',
+                          'Nhân viên',
                           () =>
                               context.router.push(StaffAdminRoute(hotelId: 1))),
-                      _buildTile(context, Icons.category, 'Lo?i ph?ng',
+                      _buildTile(context, Icons.category, 'Loại phòng',
                           () => context.router.push(const RoomTypeRoute())),
-                      _buildTile(context, Icons.meeting_room, 'Ph?ng',
+                      _buildTile(context, Icons.meeting_room, 'Phòng',
                           () => context.router.push(RoomRoute(hotelId: 1))),
-                      _buildTile(context, Icons.room_service, 'D?ch v?',
+                      _buildTile(context, Icons.room_service, 'Dịch vụ',
                           () => context.router.push(const ServiceRoute())),
                       _buildTile(
                           context,
                           Icons.assignment,
-                          '??n ??t ph?ng',
+                          'Đơn đặt phòng',
                           () => context.router
                               .push(BookingAdminRoute(hotelId: 1))),
                       _buildTile(context, Icons.pool, 'Ti?n ?ch',
@@ -387,8 +385,13 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
             else if (_dailyError != null)
               Text(_dailyError!, style: const TextStyle(color: Colors.red))
             else if (_daily.isEmpty)
-              const Text('Ch?a c? d? li?u')
-            else
+              const Text('Chưa có dữ liệu')
+            else ...[
+              _buildTotalRow(
+                totalRevenue: _daily.fold<int>(0, (s, e) => s + e.totalRevenue),
+                totalBooking: _daily.fold<int>(0, (s, e) => s + e.totalBooking),
+              ),
+              const SizedBox(height: 12),
               _buildBarChart(
                 _daily
                     .map((e) =>
@@ -397,6 +400,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                 _daily.map((e) => e.totalRevenue).toList(),
                 primaryColor,
               ),
+            ]
           ],
         ),
       ),
@@ -414,7 +418,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
           children: [
             Row(
               children: [
-                const Text('N?m',
+                const Text('Năm',
                     style: TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(width: 12),
                 DropdownButton<int>(
@@ -436,8 +440,15 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
             else if (_monthlyError != null)
               Text(_monthlyError!, style: const TextStyle(color: Colors.red))
             else if (_monthly.isEmpty)
-              const Text('Ch?a c? d? li?u')
-            else
+              const Text('Chưa có dữ liệu')
+            else ...[
+              _buildTotalRow(
+                totalRevenue:
+                    _monthly.fold<int>(0, (s, e) => s + e.totalRevenue),
+                totalBooking:
+                    _monthly.fold<int>(0, (s, e) => s + e.totalBooking),
+              ),
+              const SizedBox(height: 12),
               _buildBarChart(
                 _monthly
                     .map((e) => 'T${e.month.toString().padLeft(2, '0')}')
@@ -445,9 +456,23 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                 _monthly.map((e) => e.totalRevenue).toList(),
                 Colors.orange,
               ),
+            ]
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildTotalRow(
+      {required int totalRevenue, required int totalBooking}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text('Tổng doanh thu: ${NumberFormat.compact().format(totalRevenue)}',
+            style: const TextStyle(fontWeight: FontWeight.w600)),
+        Text('Đơn: $totalBooking',
+            style: const TextStyle(fontWeight: FontWeight.w600)),
+      ],
     );
   }
 
@@ -468,6 +493,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                 Text(displayValue, style: const TextStyle(fontSize: 10)),
                 const SizedBox(height: 6),
                 Tooltip(
+                  preferBelow: false,
                   message: '${labels[index]}: $value',
                   child: Container(
                     height: 130 * heightFactor,
@@ -519,7 +545,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                'Doanh thu th?ng n?y',
+                'Doanh thu tháng này',
                 style: TextStyle(color: Colors.white70, fontSize: 16),
               ),
               Icon(Icons.trending_up,
@@ -540,7 +566,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Text(
-              '? 12.5% so v?i th?ng tr??c',
+              '? 12.5% so với tháng trước',
               style: TextStyle(
                   color: Colors.white,
                   fontSize: 13,
@@ -613,7 +639,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
             if (state.status == HotelDetailStatus.loading)
               const LinearProgressIndicator(minHeight: 2),
             Text(
-              hotel?.name ?? 'T?n kh?ch s?n',
+              hotel?.name ?? 'Tên khách sạn',
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 6),
@@ -654,7 +680,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                     : () => _pickAndUploadImages(context, hotel!.id),
                 icon: const Icon(Icons.photo_library_outlined),
                 label:
-                    Text(state.isUploadingImages ? '?ang t?i...' : 'Th?m ?nh'),
+                    Text(state.isUploadingImages ? 'Đang tải...' : 'Thêm ảnh'),
               ),
             ),
             if (state.isUploadingImages)
@@ -716,7 +742,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
     if (!context.mounted) return;
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Th?m ?nh th?nh c?ng'),
+        content: Text('Thêm ảnh thành công'),
       ));
     }
   }

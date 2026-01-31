@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:booking_app_mobile/core/di/injector.dart';
 import 'package:booking_app_mobile/core/widgets/app_scaffold.dart';
+import 'package:booking_app_mobile/core/constants/constant.dart';
 import 'package:booking_app_mobile/features/service/domain/entity/service.dart';
 import 'package:booking_app_mobile/features/service/presentation/cubit/service_cubit.dart';
 import 'package:booking_app_mobile/features/service/domain/usecases/get_services.dart';
@@ -12,8 +14,37 @@ import 'package:booking_app_mobile/features/service/domain/usecases/delete_servi
 import 'package:intl/intl.dart';
 
 @RoutePage()
-class ServiceScreen extends StatelessWidget {
-  const ServiceScreen({super.key});
+class ServiceScreen extends StatefulWidget {
+  final int? hotelId;
+  const ServiceScreen({super.key, this.hotelId});
+
+  @override
+  State<ServiceScreen> createState() => _ServiceScreenState();
+}
+
+class _ServiceScreenState extends State<ServiceScreen> {
+  int? _hotelId;
+  bool _loadingHotelId = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _initHotelId();
+  }
+
+  Future<void> _initHotelId() async {
+    int? resolvedId = widget.hotelId;
+    if (resolvedId == null) {
+      final storage = const FlutterSecureStorage();
+      final stored = await storage.read(key: Constants.hotelId);
+      resolvedId = int.tryParse(stored ?? '');
+    }
+    if (!mounted) return;
+    setState(() {
+      _hotelId = resolvedId;
+      _loadingHotelId = false;
+    });
+  }
 
   // Định dạng tiền tệ VNĐ
   String _formatPrice(num? price) {
@@ -140,13 +171,19 @@ class ServiceScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (_loadingHotelId) {
+      return const AppScaffold(title: "Quan ly dich vu", body: Center(child: CircularProgressIndicator()));
+    }
+    if (_hotelId == null) {
+      return const AppScaffold(title: "Quan ly dich vu", body: Center(child: Text("Chua xac dinh thong tin khach san")));
+    }
     return BlocProvider(
       create: (context) => ServiceCubit(
         getServices: getIt<GetServices>(),
         createService: getIt<CreateService>(),
         updateService: getIt<UpdateService>(),
         deleteService: getIt<DeleteService>(),
-      )..fetch(hotelId: 1),
+      )..fetch(hotelId: _hotelId!),
       child: Builder(
         // Sử dụng Builder để lấy context nằm dưới BlocProvider
         builder: (newContext) => BlocConsumer<ServiceCubit, ServiceState>(
@@ -164,7 +201,10 @@ class ServiceScreen extends StatelessWidget {
               title: 'Quản lý dịch vụ',
               body: _buildContent(context, state: state),
               floatingActionButton: FloatingActionButton(
-                onPressed: () => _showEditDialog(context, null, hotelId: 1),
+                onPressed: () {
+                if (_hotelId == null) return;
+                _showEditDialog(context, null, hotelId: _hotelId!);
+              },
                 backgroundColor: Theme.of(context).primaryColor,
                 child: const Icon(Icons.add, color: Colors.white),
               ),
@@ -187,7 +227,8 @@ class ServiceScreen extends StatelessWidget {
     }
 
     return RefreshIndicator(
-      onRefresh: () async => context.read<ServiceCubit>().fetch(hotelId: 1),
+      onRefresh: () async =>
+          context.read<ServiceCubit>().fetch(hotelId: _hotelId!),
       child: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: items.length,
@@ -239,7 +280,7 @@ class ServiceScreen extends StatelessWidget {
                   IconButton(
                     icon: const Icon(Icons.edit_outlined, color: Colors.blue),
                     onPressed: () =>
-                        _showEditDialog(context, it, hotelId: it.hotelId ?? 1),
+                        _showEditDialog(context, it, hotelId: it.hotelId ?? _hotelId!),
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete_outline, color: Colors.red),

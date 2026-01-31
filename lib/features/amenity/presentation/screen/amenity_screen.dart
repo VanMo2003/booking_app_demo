@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:booking_app_mobile/core/di/injector.dart';
 import 'package:booking_app_mobile/core/widgets/app_scaffold.dart';
+import 'package:booking_app_mobile/core/constants/constant.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:booking_app_mobile/features/amenity/data/models/request/amenity_create_request.dart';
 import 'package:booking_app_mobile/features/amenity/data/models/request/amenity_update_request.dart';
@@ -18,11 +20,39 @@ import '../../domain/entity/amenity.dart';
 import '../cubit/amenity_state.dart';
 
 @RoutePage()
-class AmenityScreen extends StatelessWidget {
-  const AmenityScreen({super.key, this.hotelId = 1, this.roomId});
+class AmenityScreen extends StatefulWidget {
+  const AmenityScreen({super.key, this.hotelId, this.roomId});
 
-  final int hotelId;
+  final int? hotelId;
   final int? roomId; // Nếu có roomId thì đây là quản lý tiện ích riêng của phòng
+
+  @override
+  State<AmenityScreen> createState() => _AmenityScreenState();
+}
+
+class _AmenityScreenState extends State<AmenityScreen> {
+  int? _hotelId;
+  bool _loadingHotelId = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _initHotelId();
+  }
+
+  Future<void> _initHotelId() async {
+    int? resolvedId = widget.hotelId;
+    if (resolvedId == null) {
+      final storage = const FlutterSecureStorage();
+      final stored = await storage.read(key: Constants.hotelId);
+      resolvedId = int.tryParse(stored ?? '');
+    }
+    if (!mounted) return;
+    setState(() {
+      _hotelId = resolvedId;
+      _loadingHotelId = false;
+    });
+  }
 
   Future<void> _showEditSheet(BuildContext context, Amenity? amenity) async {
     final isEdit = amenity != null;
@@ -113,8 +143,11 @@ class AmenityScreen extends StatelessWidget {
                               name: nameController.text.trim(),
                               description: descController.text.trim(),
                               common: isCommon,
-                              hotelId: hotelId,
-                              roomId: isCommon ? null : roomId, // Gửi roomId nếu không phải tiện ích chung
+                              hotelId: _hotelId!,
+                              roomId: isCommon
+                                  ? null
+                                  : widget
+                                      .roomId, // Gửi roomId nếu không phải tiện ích chung
                             ),
                           ));
                         }
@@ -136,6 +169,20 @@ class AmenityScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).primaryColor;
 
+    if (_loadingHotelId) {
+      return const AppScaffold(
+        title: 'Quan ly Tien ich',
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (_hotelId == null) {
+      return const AppScaffold(
+        title: 'Quan ly Tien ich',
+        body: Center(child: Text('Chua xac dinh thong tin khach san.')),
+      );
+    }
+
     return BlocProvider(
       create: (context) => AmenityBloc(
           createAmenity: getIt<CreateAmenity>(),
@@ -143,7 +190,8 @@ class AmenityScreen extends StatelessWidget {
           updateAmenity: getIt<UpdateAmenity>(),
           getAmenityByRoom: getIt<GetAmenityByRoom>(),
           getAmenityByHotel: getIt<GetAmenityByHotel>())
-        ..add(AmenitiesByHotelFetched(hotelId)), // Bạn có thể truyền hotelId vào đây nếu API yêu cầu lọc
+        ..add(AmenitiesByHotelFetched(
+            _hotelId!)), // Bạn có thể truyền hotelId vào đây nếu API yêu cầu lọc
       child: BlocConsumer<AmenityBloc, AmenityState>(
         listener: (context, state) {
           if (state.errorMessage != null) {

@@ -15,7 +15,7 @@ part of 'app_routes.dart';
 class AmenityRoute extends PageRouteInfo<AmenityRouteArgs> {
   AmenityRoute({
     Key? key,
-    int hotelId = 1,
+    int? hotelId,
     int? roomId,
     List<PageRouteInfo>? children,
   }) : super(
@@ -42,11 +42,11 @@ class AmenityRoute extends PageRouteInfo<AmenityRouteArgs> {
 }
 
 class AmenityRouteArgs {
-  const AmenityRouteArgs({this.key, this.hotelId = 1, this.roomId});
+  const AmenityRouteArgs({this.key, this.hotelId, this.roomId});
 
   final Key? key;
 
-  final int hotelId;
+  final int? hotelId;
 
   final int? roomId;
 
