@@ -570,6 +570,8 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                           items: const [
                             DropdownMenuItem(
                                 value: 'CASH', child: Text('Tien mat')),
+                            DropdownMenuItem(
+                                value: 'VN_PAY', child: Text('VNPay')),
                           ],
                           onChanged: (value) {
                             if (value == null) return;

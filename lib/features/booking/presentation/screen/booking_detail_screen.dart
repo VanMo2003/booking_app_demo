@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:dio/dio.dart';
 
 import '../../../../core/di/injector.dart';
 import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/api/app_config.dart';
+import '../../../payment/presentation/screen/payment_webview_screen.dart';
 import '../../domain/entity/booking_entity.dart';
 import '../cubit/booking_cubit.dart';
 
@@ -41,6 +43,57 @@ class BookingDetailScreen extends StatelessWidget {
     }
     if (path.startsWith('http')) return path;
     return "${AppConfig().baseURL}$path";
+  }
+
+  Future<void> _startPayment(BuildContext context) async {
+    final amount = booking.totalAmount ?? 0;
+    if (amount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Khong co so tien can thanh toan')),
+      );
+      return;
+    }
+
+    try {
+      final dio = getIt<Dio>();
+      final resp = await dio.get(
+        '/payment/vn-pay',
+        queryParameters: {
+          'amount': amount,
+          'bankCode': 'NCB',
+        },
+      );
+      final paymentUrl = resp.data?['data']?['paymentUrl']?.toString();
+      if (paymentUrl == null || paymentUrl.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Khong nhan duoc link thanh toan')),
+        );
+        return;
+      }
+
+      final result = await Navigator.push<bool>(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PaymentWebViewScreen(paymentUrl: paymentUrl),
+        ),
+      );
+
+      if (result == true && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Thanh toan thanh cong'),
+              backgroundColor: Colors.green),
+        );
+      } else if (result == false && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Thanh toan that bai')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Loi thanh toan: $e')),
+      );
+    }
   }
 
   // --- MAIN BUILD ---
@@ -241,6 +294,27 @@ class BookingDetailScreen extends StatelessWidget {
                                   ),
                                 ],
                               ),
+                              if (!allowActions &&
+                                  booking.paymentMethod == 'VN_PAY') ...[
+                                const SizedBox(height: 16),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: () => _startPayment(context),
+                                    style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 14),
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                      foregroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12)),
+                                    ),
+                                    child: const Text('Thanh toan VNPay'),
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ),
