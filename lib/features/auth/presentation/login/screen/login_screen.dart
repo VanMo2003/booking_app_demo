@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   }
                   break;
                 case 'HOTEL_MANAGER':
-                  context.router.replace(const HotelManageRoute());
+                  context.router.replace(const HotelManageListRoute());
                   break;
                 case 'STAFF':
                   context.router.replace(const EmployeeRoute());
@@ -65,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Form(  
+                child: Form(
                   key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

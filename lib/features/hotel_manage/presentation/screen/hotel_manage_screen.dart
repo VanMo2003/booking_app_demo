@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:booking_app_mobile/core/api/app_config.dart';
 import 'package:booking_app_mobile/core/di/injector.dart';
-import 'package:booking_app_mobile/features/auth/domain/repositories/auth_repository.dart';
 import 'package:booking_app_mobile/features/hotel/domain/entities/hotel.dart';
 import 'package:booking_app_mobile/features/hotel/domain/repositories/hotel_repository.dart';
 import 'package:dio/dio.dart';
@@ -42,7 +41,8 @@ class MonthlyReport {
 
 @RoutePage()
 class HotelManageScreen extends StatefulWidget {
-  const HotelManageScreen({super.key});
+  final int hotelId;
+  const HotelManageScreen({super.key, required this.hotelId});
 
   @override
   State<HotelManageScreen> createState() => _HotelManageScreenState();
@@ -66,58 +66,13 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
   @override
   void initState() {
     super.initState();
+    _hotelId = widget.hotelId;
+    _fetchDaily();
+    _fetchMonthly();
   }
 
   String _formatCurrency(double amount) {
     return NumberFormat.currency(locale: 'vi_VN', symbol: 'VNĐ').format(amount);
-  }
-
-  void _handleLogout(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Xác nhận đăng xuất'),
-        content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Hủy'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
-            ),
-            onPressed: () async {
-              Navigator.pop(ctx);
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (_) =>
-                    const Center(child: CircularProgressIndicator()),
-              );
-              try {
-                await getIt<AuthRepository>().logout();
-                if (!context.mounted) return;
-                Navigator.pop(context);
-                context.router.replaceAll([const LoginRoute()]);
-              } catch (e) {
-                if (!context.mounted) return;
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: Text('Đăng xuất thất bại: ${e.toString()}')),
-                );
-              }
-            },
-            child: const Text('Đăng xuất'),
-          ),
-        ],
-      ),
-    );
   }
 
   Future<void> _fetchDaily() async {
@@ -153,10 +108,11 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
         _dailyError = e.toString();
       });
     } finally {
-      if (!mounted) return;
-      setState(() {
-        _loadingDaily = false;
-      });
+      if (mounted) {
+        setState(() {
+          _loadingDaily = false;
+        });
+      }
     }
   }
 
@@ -193,10 +149,11 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
         _monthlyError = e.toString();
       });
     } finally {
-      if (!mounted) return;
-      setState(() {
-        _loadingMonthly = false;
-      });
+      if (mounted) {
+        setState(() {
+          _loadingMonthly = false;
+        });
+      }
     }
   }
 
@@ -234,40 +191,31 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
     final primaryColor = Theme.of(context).primaryColor;
 
     return BlocProvider(
-      create: (context) => HotelDetailCubit(getIt<HotelRepository>())..fetch(1),
+      create: (context) =>
+          HotelDetailCubit(getIt<HotelRepository>())..fetch(widget.hotelId),
       child: BlocBuilder<HotelDetailCubit, HotelDetailState>(
         builder: (context, state) {
-          final resolvedHotelId = state.hotel?.id;
-          if (resolvedHotelId != null && resolvedHotelId != _hotelId) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (!mounted) return;
-              setState(() => _hotelId = resolvedHotelId);
-              _fetchDaily();
-              _fetchMonthly();
-            });
-          }
+          final activeHotelId = state.hotel?.id ?? _hotelId ?? widget.hotelId;
           return Scaffold(
             backgroundColor: Colors.grey[50],
             appBar: AppBar(
               backgroundColor: Colors.white,
               elevation: 0,
               centerTitle: false,
-              title: const Text(
-                'Khách sạn Mường Thanh',
-                style: TextStyle(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios,
+                    color: Colors.black, size: 20),
+                onPressed: () => context.router.maybePop(),
+                tooltip: 'Quay lại',
+              ),
+              title: Text(
+                state.hotel?.name ?? 'Quản lý khách sạn',
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
-                  fontSize: 22,
+                  fontSize: 20,
                 ),
               ),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.logout, color: Colors.redAccent),
-                  onPressed: () => _handleLogout(context),
-                  tooltip: 'Đăng xuất',
-                ),
-                const SizedBox(width: 8),
-              ],
             ),
             body: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
@@ -326,24 +274,37 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                           context,
                           Icons.people,
                           'Nhân viên',
-                          () =>
-                              context.router.push(StaffAdminRoute(hotelId: 1))),
+                          () => context.router
+                              .push(StaffAdminRoute(hotelId: activeHotelId))),
                       _buildTile(context, Icons.category, 'Loại phòng',
                           () => context.router.push(const RoomTypeRoute())),
-                      _buildTile(context, Icons.meeting_room, 'Phòng',
-                          () => context.router.push(RoomRoute(hotelId: 1))),
-                      _buildTile(context, Icons.room_service, 'Dịch vụ',
-                          () => context.router.push(const ServiceRoute())),
+                      _buildTile(
+                          context,
+                          Icons.meeting_room,
+                          'Phòng',
+                          () => context.router
+                              .push(RoomRoute(hotelId: activeHotelId))),
+                      _buildTile(
+                          context,
+                          Icons.room_service,
+                          'Dịch vụ',
+                          () => context.router
+                              .push(ServiceRoute(hotelId: activeHotelId))),
                       _buildTile(
                           context,
                           Icons.assignment,
                           'Đơn đặt phòng',
                           () => context.router
-                              .push(BookingAdminRoute(hotelId: 1))),
-                      _buildTile(context, Icons.pool, 'Tiện ích',
-                          () => context.router.push(AmenityRoute(hotelId: 1))),
+                              .push(BookingAdminRoute(hotelId: activeHotelId))),
+                      _buildTile(
+                          context,
+                          Icons.pool,
+                          'Tiện ích',
+                          () => context.router
+                              .push(AmenityRoute(hotelId: activeHotelId))),
                     ],
                   ),
+                  const SizedBox(height: 40),
                 ],
               ),
             ),
@@ -417,16 +378,11 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
   }
 
   Widget _buildMonthlySection(Color primaryColor) {
-    // Chuẩn bị dữ liệu cho đủ 12 tháng
     List<String> labels = [];
     List<int> values = [];
 
-    // Tạo danh sách 12 tháng cố định
     for (int i = 1; i <= 12; i++) {
       labels.add('T$i');
-
-      // Tìm dữ liệu của tháng i trong danh sách _monthly
-      // Nếu không có thì trả về object ảo với revenue = 0
       final report = _monthly.firstWhere(
         (m) => m.month == i,
         orElse: () => MonthlyReport(
@@ -477,7 +433,6 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                 totalBooking: totalBooking,
               ),
               const SizedBox(height: 20),
-              // Truyền đủ 12 tháng vào biểu đồ
               _buildBarChart(labels, values, Colors.orange),
             ]
           ],
@@ -500,33 +455,25 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
     );
   }
 
-  // --- HÀM VẼ BIỂU ĐỒ ĐÃ CẬP NHẬT ---
   Widget _buildBarChart(List<String> labels, List<int> values, Color color) {
     if (values.isEmpty) return const SizedBox();
 
-    // Tìm giá trị lớn nhất để chia tỷ lệ
     final int maxValue = values.fold(0, (max, e) => e > max ? e : max);
-    // Tránh chia cho 0
     final double safeMax = maxValue == 0 ? 1 : maxValue.toDouble();
-
-    // Số lượng đường kẻ ngang (grid lines)
     const int steps = 4;
 
     return SizedBox(
-      height: 250, // Chiều cao tổng thể của khu vực biểu đồ
+      height: 250,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // TRỤC Y (Doanh thu)
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: List.generate(steps + 1, (index) {
-              // Tính giá trị hiển thị cho từng mốc (từ trên xuống dưới)
               final value = (safeMax / steps) * (steps - index);
               return Text(
-                NumberFormat.compact(locale: 'en_US')
-                    .format(value), // Ví dụ: 1M, 500k
+                NumberFormat.compact(locale: 'en_US').format(value),
                 style: TextStyle(
                   color: Colors.grey[500],
                   fontSize: 10,
@@ -535,40 +482,31 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
               );
             }),
           ),
-          const SizedBox(width: 10), // Khoảng cách giữa trục Y và biểu đồ
-
-          // KHU VỰC CỘT VÀ TRỤC X
+          const SizedBox(width: 10),
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                // Dành ra 20px chiều cao ở dưới cùng cho nhãn trục X
                 final double chartAreaHeight = constraints.maxHeight - 20;
-
                 return Column(
                   children: [
-                    // Phần lưới và cột
                     SizedBox(
                       height: chartAreaHeight,
                       child: Stack(
                         children: [
-                          // Lớp 1: Vẽ các đường kẻ ngang (Grid lines)
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: List.generate(steps + 1, (index) {
                               return Container(
                                 height: 1,
-                                color: Colors.grey
-                                    .withValues(alpha: 0.1), // Đường kẻ mờ
+                                color: Colors.grey.withValues(alpha: 0.1),
                               );
                             }),
                           ),
-                          // Lớp 2: Vẽ các cột
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: List.generate(labels.length, (index) {
                               final value = values[index];
                               final heightFactor = value / safeMax;
-
                               return Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -585,7 +523,6 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                                       alignment: Alignment.bottomCenter,
                                       child: Container(
                                         decoration: BoxDecoration(
-                                          // Gradient từ nhạt đến đậm
                                           gradient: LinearGradient(
                                             begin: Alignment.bottomCenter,
                                             end: Alignment.topCenter,
@@ -594,7 +531,6 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                                               color,
                                             ],
                                           ),
-                                          // Bo tròn góc trên của cột
                                           borderRadius:
                                               const BorderRadius.vertical(
                                             top: Radius.circular(4),
@@ -611,7 +547,6 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    // Phần nhãn TRỤC X (Tháng/Ngày)
                     SizedBox(
                       height: 14,
                       child: Row(
@@ -642,7 +577,6 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
     );
   }
 
-  // Card doanh thu với Gradient
   Widget _buildRevenueCard(Color primaryColor) {
     final now = DateTime.now();
     MonthlyReport? current;
@@ -898,7 +832,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
       color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: BorderSide(color: Colors.grey.shade100),
+        side: BorderSide(color: Colors.grey.shade200),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(20),

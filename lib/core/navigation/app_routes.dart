@@ -10,6 +10,7 @@ import '../../features/customer/presentation/screen/profile_screen.dart';
 import '../../features/employee/presentation/screen/employee_screen.dart';
 import '../../features/hotel/presentation/screen/hotel_list_screen.dart';
 import '../../features/hotel_manage/presentation/screen/hotel_manage_screen.dart';
+import '../../features/hotel_manage/presentation/screen/hotel_manage_list_screen.dart';
 import '../../features/hotel_manage/presentation/screen/staff_admin_screen.dart';
 import '../../features/position/presentation/screen/position_screen.dart';
 import '../../features/room_type/presentation/screen/room_type_screen.dart';
@@ -64,6 +65,10 @@ class AppRoutes extends RootStackRouter {
         AutoRoute(
           path: '/${HotelManageRoute.name}',
           page: HotelManageRoute.page,
+        ),
+        AutoRoute(
+          path: '/${HotelManageListRoute.name}',
+          page: HotelManageListRoute.page,
         ),
         AutoRoute(
           path: '/${PositionRoute.name}',

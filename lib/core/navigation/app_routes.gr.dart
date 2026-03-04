@@ -307,19 +307,66 @@ class HotelListRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [HotelManageListScreen]
+class HotelManageListRoute extends PageRouteInfo<void> {
+  const HotelManageListRoute({List<PageRouteInfo>? children})
+      : super(HotelManageListRoute.name, initialChildren: children);
+
+  static const String name = 'HotelManageListRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const HotelManageListScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [HotelManageScreen]
-class HotelManageRoute extends PageRouteInfo<void> {
-  const HotelManageRoute({List<PageRouteInfo>? children})
-      : super(HotelManageRoute.name, initialChildren: children);
+class HotelManageRoute extends PageRouteInfo<HotelManageRouteArgs> {
+  HotelManageRoute({
+    Key? key,
+    required int hotelId,
+    List<PageRouteInfo>? children,
+  }) : super(
+          HotelManageRoute.name,
+          args: HotelManageRouteArgs(key: key, hotelId: hotelId),
+          initialChildren: children,
+        );
 
   static const String name = 'HotelManageRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const HotelManageScreen();
+      final args = data.argsAs<HotelManageRouteArgs>();
+      return HotelManageScreen(key: args.key, hotelId: args.hotelId);
     },
   );
+}
+
+class HotelManageRouteArgs {
+  const HotelManageRouteArgs({this.key, required this.hotelId});
+
+  final Key? key;
+
+  final int hotelId;
+
+  @override
+  String toString() {
+    return 'HotelManageRouteArgs{key: $key, hotelId: $hotelId}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! HotelManageRouteArgs) return false;
+    return key == other.key && hotelId == other.hotelId;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ hotelId.hashCode;
 }
 
 /// generated route for
@@ -523,18 +570,48 @@ class RoomTypeRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [ServiceScreen]
-class ServiceRoute extends PageRouteInfo<void> {
-  const ServiceRoute({List<PageRouteInfo>? children})
-      : super(ServiceRoute.name, initialChildren: children);
+class ServiceRoute extends PageRouteInfo<ServiceRouteArgs> {
+  ServiceRoute({Key? key, int? hotelId, List<PageRouteInfo>? children})
+      : super(
+          ServiceRoute.name,
+          args: ServiceRouteArgs(key: key, hotelId: hotelId),
+          initialChildren: children,
+        );
 
   static const String name = 'ServiceRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const ServiceScreen();
+      final args = data.argsAs<ServiceRouteArgs>(
+        orElse: () => const ServiceRouteArgs(),
+      );
+      return ServiceScreen(key: args.key, hotelId: args.hotelId);
     },
   );
+}
+
+class ServiceRouteArgs {
+  const ServiceRouteArgs({this.key, this.hotelId});
+
+  final Key? key;
+
+  final int? hotelId;
+
+  @override
+  String toString() {
+    return 'ServiceRouteArgs{key: $key, hotelId: $hotelId}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! ServiceRouteArgs) return false;
+    return key == other.key && hotelId == other.hotelId;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ hotelId.hashCode;
 }
 
 /// generated route for

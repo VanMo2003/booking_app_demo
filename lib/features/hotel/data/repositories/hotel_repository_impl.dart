@@ -66,6 +66,74 @@ class HotelRepositoryImpl implements HotelRepository {
   }
 
   @override
+  Future<Paged<Hotel>> getAllHotels({
+    required int page,
+    required int size,
+  }) async {
+    final ApiResponse res = await api.getAllHotels(page, size);
+    final data = res.data;
+
+    if (data is List) {
+      final hotels = data.map((e) {
+        final hotelRes = HotelResponse.fromJson(e as Map<String, dynamic>);
+        return HotelMapper.toEntity(hotelRes);
+      }).toList();
+      return Paged<Hotel>(
+        content: hotels,
+        page: page,
+        size: size,
+        totalElements: hotels.length,
+        totalPages: 1,
+      );
+    }
+
+    if (data is! Map<String, dynamic>) {
+      throw Exception('Unexpected data format for hotels');
+    }
+
+    final rawContent = data['content'];
+    final hotels = (rawContent is List)
+        ? rawContent.map((e) {
+            final hotelRes = HotelResponse.fromJson(e as Map<String, dynamic>);
+            return HotelMapper.toEntity(hotelRes);
+          }).toList()
+        : <Hotel>[];
+
+    return Paged<Hotel>(
+      content: hotels,
+      page: (data['page'] ?? page) as int,
+      size: (data['size'] ?? size) as int,
+      totalElements:
+          data['totalElements'] is int ? data['totalElements'] as int : null,
+      totalPages: data['totalPages'] is int ? data['totalPages'] as int : null,
+    );
+  }
+
+  @override
+  Future<Hotel> createHotel({
+    required String name,
+    required String address,
+    required String phone,
+    required String description,
+    required String category,
+    required String pathImage,
+  }) async {
+    final ApiResponse res = await api.createHotel({
+      'name': name,
+      'address': address,
+      'phone': phone,
+      'description': description,
+      'category': category,
+      'pathImage': pathImage,
+    });
+    final data = res.data;
+    if (data is! Map<String, dynamic>) {
+      throw Exception('Unexpected data format for created hotel');
+    }
+    return HotelMapper.toEntity(HotelResponse.fromJson(data));
+  }
+
+  @override
   Future<Hotel> getHotelById({
     required int id,
     String? checkinDate,

@@ -15,6 +15,12 @@ abstract class HotelApiService {
     @Query('checkoutDate') String checkoutDate,
   );
 
+  @GET('/hotels')
+  Future<ApiResponse> getAllHotels(
+    @Query('page') int page,
+    @Query('size') int size,
+  );
+
   @GET('/hotels/detail/{id}')
   Future<ApiResponse> getHotelById(
     @Path('id') int id,
@@ -27,5 +33,10 @@ abstract class HotelApiService {
   Future<ApiResponse> uploadHotelImages(
     @Path('id') int id,
     @Part(name: 'files') List<MultipartFile> files,
+  );
+
+  @POST('/hotels')
+  Future<ApiResponse> createHotel(
+    @Body() Map<String, dynamic> body,
   );
 }
