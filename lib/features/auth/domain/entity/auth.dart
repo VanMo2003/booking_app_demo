@@ -2,7 +2,9 @@ import 'package:booking_app_mobile/features/auth/data/models/response/customer_r
 import 'package:booking_app_mobile/features/auth/data/models/response/employee_response.dart';
 import 'package:booking_app_mobile/features/auth/data/models/response/hotel_response.dart';
 
-class AuthResponse {
+class Auth {
+  static Auth? current;
+
   bool? authenticated;
   String? accessToken;
   String? refreshToken;
@@ -12,7 +14,7 @@ class AuthResponse {
   CustomerResponse? customer;
   EmployeeResponse? employee;
 
-  AuthResponse(
+  Auth(
       {this.authenticated,
       this.accessToken,
       this.refreshToken,
@@ -21,4 +23,8 @@ class AuthResponse {
       this.employee,
       this.hotel,
       this.customer});
+
+  static void clearCurrent() {
+    current = null;
+  }
 }

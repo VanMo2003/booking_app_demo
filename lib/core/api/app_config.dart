@@ -3,6 +3,7 @@ class AppConfig {
   String baseURL = 'http://192.168.35.3:8080/booking-app/api/v1';
   // String baseURL = 'http://172.20.10.10:8080/booking-app/api/v1';
   // String baseURL = 'http://10.0.2.2:8080/booking-app/api/v1';
+  // String baseURL = 'https://vanmo.onrender.com/booking-app/api/v1';
   int connectTimeout = 60000;
   int receiveTimeout = 60000;
   int sendTimeout = 60000;

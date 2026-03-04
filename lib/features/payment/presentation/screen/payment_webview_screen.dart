@@ -29,8 +29,7 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
           onPageFinished: (_) => setState(() => _isLoading = false),
           onNavigationRequest: (request) async {
             final uri = Uri.tryParse(request.url);
-            if (uri != null &&
-                uri.path.contains('/payment/vn-pay-callback')) {
+            if (uri != null && uri.path.contains('/payment/vn-pay-callback')) {
               await _handleCallback(uri);
               return NavigationDecision.prevent;
             }
@@ -65,13 +64,15 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Thanh toan VNPay'),
+        title: const Text(
+          'Thanh toán Vnpay',
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       body: Stack(
         children: [
           WebViewWidget(controller: _controller),
-          if (_isLoading)
-            const Center(child: CircularProgressIndicator()),
+          if (_isLoading) const Center(child: CircularProgressIndicator()),
         ],
       ),
     );

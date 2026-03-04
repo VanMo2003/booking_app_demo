@@ -4,7 +4,7 @@ import 'package:booking_app_mobile/features/auth/data/models/request/register_re
 import '../entity/auth.dart';
 
 abstract class AuthRepository {
-  Future<AuthResponse> login(LoginRequest request);
+  Future<Auth> login(LoginRequest request);
 
   Future<void> logout();
 

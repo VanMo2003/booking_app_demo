@@ -141,7 +141,7 @@ class BookingAdminScreen extends StatelessWidget {
         builder: (context, state) {
           return AppScaffold(
             title:
-                isCustomerView ? 'Don dat phong cua toi' : 'Quan ly Dat phong',
+                isCustomerView ? 'Đơn đặt phòng của tôi' : 'Quản lý đặt phòng',
             body: _buildContent(context, state),
           );
         },

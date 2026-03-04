@@ -17,7 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$LoginState {
   LoginStatus get status => throw _privateConstructorUsedError;
-  AuthResponse? get authResponse => throw _privateConstructorUsedError;
+  Auth? get authResponse => throw _privateConstructorUsedError;
   String? get errorMessage => throw _privateConstructorUsedError;
 
   /// Create a copy of LoginState
@@ -33,8 +33,7 @@ abstract class $LoginStateCopyWith<$Res> {
           LoginState value, $Res Function(LoginState) then) =
       _$LoginStateCopyWithImpl<$Res, LoginState>;
   @useResult
-  $Res call(
-      {LoginStatus status, AuthResponse? authResponse, String? errorMessage});
+  $Res call({LoginStatus status, Auth? authResponse, String? errorMessage});
 }
 
 /// @nodoc
@@ -64,7 +63,7 @@ class _$LoginStateCopyWithImpl<$Res, $Val extends LoginState>
       authResponse: freezed == authResponse
           ? _value.authResponse
           : authResponse // ignore: cast_nullable_to_non_nullable
-              as AuthResponse?,
+              as Auth?,
       errorMessage: freezed == errorMessage
           ? _value.errorMessage
           : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -81,8 +80,7 @@ abstract class _$$InitialImplCopyWith<$Res>
       __$$InitialImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {LoginStatus status, AuthResponse? authResponse, String? errorMessage});
+  $Res call({LoginStatus status, Auth? authResponse, String? errorMessage});
 }
 
 /// @nodoc
@@ -110,7 +108,7 @@ class __$$InitialImplCopyWithImpl<$Res>
       authResponse: freezed == authResponse
           ? _value.authResponse
           : authResponse // ignore: cast_nullable_to_non_nullable
-              as AuthResponse?,
+              as Auth?,
       errorMessage: freezed == errorMessage
           ? _value.errorMessage
           : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -131,7 +129,7 @@ class _$InitialImpl implements _Initial {
   @JsonKey()
   final LoginStatus status;
   @override
-  final AuthResponse? authResponse;
+  final Auth? authResponse;
   @override
   final String? errorMessage;
 
@@ -168,13 +166,13 @@ class _$InitialImpl implements _Initial {
 abstract class _Initial implements LoginState {
   const factory _Initial(
       {final LoginStatus status,
-      final AuthResponse? authResponse,
+      final Auth? authResponse,
       final String? errorMessage}) = _$InitialImpl;
 
   @override
   LoginStatus get status;
   @override
-  AuthResponse? get authResponse;
+  Auth? get authResponse;
   @override
   String? get errorMessage;
 

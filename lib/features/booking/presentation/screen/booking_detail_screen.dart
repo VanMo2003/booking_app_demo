@@ -311,7 +311,7 @@ class BookingDetailScreen extends StatelessWidget {
                                           borderRadius:
                                               BorderRadius.circular(12)),
                                     ),
-                                    child: const Text('Thanh toan VNPay'),
+                                    child: const Text('Thanh toán Vnpay'),
                                   ),
                                 ),
                               ],

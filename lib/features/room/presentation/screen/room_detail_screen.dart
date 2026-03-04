@@ -124,7 +124,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
             setState(() => _isSubmittingBooking = false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.errorMessage ?? 'Dat phong that bai'),
+                content: Text(state.errorMessage ?? 'Đặt phòng thất bại'),
                 backgroundColor: Colors.red,
               ),
             );
@@ -136,7 +136,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
             }
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Dat phong thanh cong'),
+                content: Text('Đặt phòng thành công'),
                 backgroundColor: Colors.green,
               ),
             );
@@ -405,7 +405,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
   }
 
   String _formatDateDisplay(DateTime? date) {
-    if (date == null) return 'Chon ngay';
+    if (date == null) return 'Chọn ngày';
     return DateFormat('dd/MM/yyyy').format(date);
   }
 
@@ -455,19 +455,19 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
     final customerId = int.tryParse(rawCustomerId ?? '');
     if (customerId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Chua xac dinh thong tin khach hang')),
+        const SnackBar(content: Text('Chưa xác định được khách hàng')),
       );
       return;
     }
     if (_checkinDate == null || _checkoutDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vui long chon ngay nhan va tra phong')),
+        const SnackBar(content: Text('Vui lòng chọn ngày đến và ngày đi')),
       );
       return;
     }
     if (room.id == null || room.hotelId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Khong xac dinh duoc phong/khach san')),
+        const SnackBar(content: Text('Không xác định được thông tin phòng')),
       );
       return;
     }
@@ -496,7 +496,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
   Future<void> _startPayment(BuildContext context, int amount) async {
     if (amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Khong co so tien can thanh toan')),
+        const SnackBar(content: Text('Không có số tiền để thanh toán')),
       );
       return;
     }
@@ -512,7 +512,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
       final paymentUrl = resp.data?['data']?['paymentUrl']?.toString();
       if (paymentUrl == null || paymentUrl.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Khong nhan duoc link thanh toan')),
+          const SnackBar(content: Text('Không nhận được đường dẫn thanh toán')),
         );
         return;
       }
@@ -528,17 +528,17 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
         context.router.replaceAll([CustomerRoute()]);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('Thanh toan thanh cong'),
+              content: Text('Thanh toán thành công'),
               backgroundColor: Colors.green),
         );
       } else if (result == false && context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Thanh toan that bai')),
+          const SnackBar(content: Text('Thanh toán thất bại')),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Loi thanh toan: $e')),
+        SnackBar(content: Text('Lỗi thanh toán: $e')),
       );
     }
   }
@@ -579,7 +579,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                       context.router.replaceAll([CustomerRoute()]);
                       ScaffoldMessenger.of(parentContext).showSnackBar(
                         const SnackBar(
-                            content: Text('Dat phong thanh cong'),
+                            content: Text('Đặt phòng thành công'),
                             backgroundColor: Colors.green),
                       );
                     }
@@ -611,7 +611,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Dat phong',
+                          'Đặt phòng',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
@@ -647,12 +647,12 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                         DropdownButtonFormField<String>(
                           value: _paymentMethod,
                           decoration: const InputDecoration(
-                            labelText: 'Phuong thuc thanh toan',
+                            labelText: 'Phương thức thanh toán',
                             border: OutlineInputBorder(),
                           ),
                           items: const [
                             DropdownMenuItem(
-                                value: 'CASH', child: Text('Tien mat')),
+                                value: 'CASH', child: Text('Tiền mặt')),
                             DropdownMenuItem(
                                 value: 'VN_PAY', child: Text('VNPay')),
                           ],
@@ -668,7 +668,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                           controller: _noteController,
                           maxLines: 2,
                           decoration: const InputDecoration(
-                            labelText: 'Ghi chu',
+                            labelText: 'Ghi chú',
                             border: OutlineInputBorder(),
                           ),
                         ),
@@ -676,7 +676,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text('Tong tien',
+                            const Text('Tổng tiền',
                                 style: TextStyle(fontWeight: FontWeight.bold)),
                             Text(
                               currencyFormat.format(totalAmount),
@@ -708,7 +708,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                     child: CircularProgressIndicator(
                                         strokeWidth: 2, color: Colors.white),
                                   )
-                                : const Text('Dat phong ngay'),
+                                : const Text('Đặt phòng ngay'),
                           ),
                         ),
                       ],

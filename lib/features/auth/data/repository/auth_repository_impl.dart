@@ -20,7 +20,7 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this.apiService, this.dioClient, this.secureStorage);
 
   @override
-  Future<AuthResponse> login(LoginRequest request) async {
+  Future<Auth> login(LoginRequest request) async {
     try {
       final apiResp = await apiService.login(request);
 
@@ -46,7 +46,7 @@ class AuthRepositoryImpl implements AuthRepository {
         await secureStorage.delete(key: Constants.hotelId);
       }
 
-      return AuthResponse(
+      final auth = Auth(
         authenticated: loginResp.authenticated,
         accessToken: loginResp.accessToken,
         refreshToken: loginResp.refreshToken,
@@ -56,6 +56,8 @@ class AuthRepositoryImpl implements AuthRepository {
         customer: loginResp.customer,
         employee: loginResp.employee,
       );
+      Auth.current = auth;
+      return auth;
     } on DioException catch (e) {
       throw dioClient.handleDioError(e);
     }
@@ -69,6 +71,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await secureStorage.delete(key: Constants.refreshToken);
       await secureStorage.delete(key: Constants.customerId);
       await secureStorage.delete(key: Constants.hotelId);
+      Auth.clearCurrent();
     } on DioException catch (e) {
       throw dioClient.handleDioError(e);
     }

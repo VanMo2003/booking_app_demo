@@ -16,7 +16,7 @@ extension LoginStatusX on LoginStatus {
 class LoginState with _$LoginState {
   const factory LoginState({
     @Default(LoginStatus.initial) LoginStatus status,
-    AuthResponse? authResponse,
+    Auth? authResponse,
     String? errorMessage,
   }) = _Initial;
 }

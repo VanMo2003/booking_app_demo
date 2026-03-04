@@ -542,6 +542,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
                     height: 180,
+                    width: double.infinity,
                     color: Colors.grey[200],
                     child:
                         const Icon(Icons.hotel, size: 50, color: Colors.grey),
