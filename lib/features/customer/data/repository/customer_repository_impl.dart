@@ -18,6 +18,13 @@ class CustomerRepositoryImpl implements CustomerRepository {
   }
 
   @override
+  Future<CustomerResponse> getCustomerById(int id) async {
+    final apiResponse = await apiService.getCustomerById(id);
+    final payload = apiResponse.data as Map<String, dynamic>;
+    return CustomerResponse.fromJson(payload);
+  }
+
+  @override
   Future<CustomerResponse> updateCustomer(
       int id, UpdateCustomerRequest request) async {
     final apiResponse = await apiService.updateCustomer(id, request);

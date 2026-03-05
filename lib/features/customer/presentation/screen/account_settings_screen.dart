@@ -22,6 +22,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
   String _gender = 'nam';
   bool _isSaving = false;
+  bool _isLoadingProfile = true;
   int? _customerId;
 
   @override
@@ -31,19 +32,49 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   }
 
   Future<void> _initForm() async {
-    final customer = Auth.current?.customer;
     final storage = getIt<FlutterSecureStorage>();
     final rawId = await storage.read(key: Constants.customerId);
+    final id = int.tryParse(rawId ?? '');
 
-    if (!mounted) return;
+    if (id == null) {
+      if (!mounted) return;
+      setState(() {
+        _customerId = null;
+        _isLoadingProfile = false;
+      });
+      return;
+    }
 
-    setState(() {
-      _customerId = int.tryParse(rawId ?? '');
-      _fullNameController.text = customer?.fullName ?? '';
-      _phoneController.text = customer?.phoneNumber ?? '';
-      _hometownController.text = customer?.hometown ?? '';
-      _gender = _normalizeGender(customer?.gender);
-    });
+    try {
+      final customer = await getIt<CustomerRepository>().getCustomerById(id);
+      final current = Auth.current;
+      if (current != null) {
+        current.customer = customer;
+      }
+
+      if (!mounted) return;
+      setState(() {
+        _customerId = id;
+        _fullNameController.text = customer.fullName ?? '';
+        _phoneController.text = customer.phoneNumber ?? '';
+        _hometownController.text = customer.hometown ?? '';
+        _gender = _normalizeGender(customer.gender);
+      });
+    } catch (_) {
+      final fallback = Auth.current?.customer;
+      if (!mounted) return;
+      setState(() {
+        _customerId = id;
+        _fullNameController.text = fallback?.fullName ?? '';
+        _phoneController.text = fallback?.phoneNumber ?? '';
+        _hometownController.text = fallback?.hometown ?? '';
+        _gender = _normalizeGender(fallback?.gender);
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _isLoadingProfile = false);
+      }
+    }
   }
 
   String _normalizeGender(String? gender) {
@@ -119,6 +150,12 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoadingProfile) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Thiet lap tai khoan'),
@@ -161,7 +198,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
-                value: _gender,
+                initialValue: _gender,
                 decoration: const InputDecoration(
                   labelText: 'Gioi tinh',
                   border: OutlineInputBorder(),

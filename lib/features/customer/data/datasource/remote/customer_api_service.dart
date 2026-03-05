@@ -14,6 +14,9 @@ abstract class CustomerApiService {
   @POST('/customers')
   Future<ApiResponse> createCustomer(@Body() CreateCustomerRequest body);
 
+  @GET('/customers/{id}')
+  Future<ApiResponse> getCustomerById(@Path('id') int id);
+
   @PUT('/customers/{id}')
   Future<ApiResponse> updateCustomer(
       @Path('id') int id, @Body() UpdateCustomerRequest body);

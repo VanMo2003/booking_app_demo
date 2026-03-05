@@ -5,6 +5,8 @@ import '../../data/models/request/update_customer_request.dart';
 abstract class CustomerRepository {
   Future<void> createCustomer(CreateCustomerRequest request);
 
+  Future<CustomerResponse> getCustomerById(int id);
+
   Future<CustomerResponse> updateCustomer(
       int id, UpdateCustomerRequest request);
 }
