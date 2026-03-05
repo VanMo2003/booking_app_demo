@@ -17,7 +17,6 @@ class HotelManageListScreen extends StatefulWidget {
 class _HotelManageListScreenState extends State<HotelManageListScreen> {
   final HotelRepository _hotelRepository = getIt<HotelRepository>();
   bool _isLoading = true;
-  bool _isCreating = false;
   String? _errorMessage;
   List<Hotel> _hotels = [];
 
@@ -52,18 +51,19 @@ class _HotelManageListScreenState extends State<HotelManageListScreen> {
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Xác nhận đăng xuất'),
-        content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
+        content: const Text('ạn có chắc chắn muốn đăng xuất?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Hủy'),
+            child: const Text('Huy'),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.redAccent,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             onPressed: () async {
               Navigator.pop(ctx);
@@ -93,157 +93,11 @@ class _HotelManageListScreenState extends State<HotelManageListScreen> {
     );
   }
 
-  Future<void> _showCreateHotelDialog() async {
-    final nameCtl = TextEditingController();
-    final addressCtl = TextEditingController();
-    final phoneCtl = TextEditingController();
-    final descriptionCtl = TextEditingController();
-    final categoryCtl = TextEditingController();
-    final pathImageCtl = TextEditingController();
-    final formKey = GlobalKey<FormState>();
-
-    await showDialog(
-      context: context,
-      barrierDismissible: !_isCreating,
-      builder: (dialogContext) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            Future<void> createHotel() async {
-              if (!formKey.currentState!.validate()) return;
-              setDialogState(() => _isCreating = true);
-              try {
-                final created = await _hotelRepository.createHotel(
-                  name: nameCtl.text.trim(),
-                  address: addressCtl.text.trim(),
-                  phone: phoneCtl.text.trim(),
-                  description: descriptionCtl.text.trim(),
-                  category: categoryCtl.text.trim(),
-                  pathImage: pathImageCtl.text.trim(),
-                );
-                if (!mounted) return;
-                Navigator.pop(dialogContext);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Đã tạo cơ sở: ${created.name}')),
-                );
-                await _loadHotels();
-              } catch (e) {
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Tạo cơ sở thất bại: $e')),
-                );
-              } finally {
-                if (mounted) {
-                  setDialogState(() => _isCreating = false);
-                }
-              }
-            }
-
-            InputDecoration _inputDecoration(String label) {
-              return InputDecoration(
-                labelText: label,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: Colors.grey.shade300),
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              );
-            }
-
-            return AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
-              title: const Text('Thêm cơ sở mới',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              content: SingleChildScrollView(
-                child: Form(
-                  key: formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        controller: nameCtl,
-                        decoration: _inputDecoration('Tên cơ sở'),
-                        validator: (v) =>
-                            (v == null || v.trim().isEmpty) ? 'Nhập tên' : null,
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: addressCtl,
-                        decoration: _inputDecoration('Địa chỉ'),
-                        validator: (v) => (v == null || v.trim().isEmpty)
-                            ? 'Nhập địa chỉ'
-                            : null,
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: phoneCtl,
-                        decoration: _inputDecoration('Số điện thoại'),
-                        validator: (v) => (v == null || v.trim().isEmpty)
-                            ? 'Nhập số điện thoại'
-                            : null,
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: descriptionCtl,
-                        decoration: _inputDecoration('Mô tả'),
-                        minLines: 2,
-                        maxLines: 3,
-                        validator: (v) => (v == null || v.trim().isEmpty)
-                            ? 'Nhập mô tả'
-                            : null,
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: categoryCtl,
-                        decoration: _inputDecoration('Category'),
-                        validator: (v) => (v == null || v.trim().isEmpty)
-                            ? 'Nhập category'
-                            : null,
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: pathImageCtl,
-                        decoration:
-                            _inputDecoration('Đường dẫn ảnh (Tùy chọn)'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              actionsPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              actions: [
-                TextButton(
-                  onPressed:
-                      _isCreating ? null : () => Navigator.pop(dialogContext),
-                  child: const Text('Hủy',
-                      style: TextStyle(color: Colors.grey, fontSize: 16)),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 12),
-                  ),
-                  onPressed: _isCreating ? null : createHotel,
-                  child: _isCreating
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white),
-                        )
-                      : const Text('Tạo mới', style: TextStyle(fontSize: 16)),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
+  Future<void> _goToCreateHotelScreen() async {
+    final created = await context.router.push<bool>(const CreateHotelRoute());
+    if (created == true && mounted) {
+      await _loadHotels();
+    }
   }
 
   @override
@@ -251,7 +105,7 @@ class _HotelManageListScreenState extends State<HotelManageListScreen> {
     final primaryColor = Theme.of(context).primaryColor;
 
     return Scaffold(
-      backgroundColor: Colors.grey[50], // Đồng bộ background với màn detail
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -279,7 +133,7 @@ class _HotelManageListScreenState extends State<HotelManageListScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showCreateHotelDialog,
+        onPressed: _goToCreateHotelScreen,
         backgroundColor: primaryColor,
         icon: const Icon(Icons.add_business, color: Colors.white),
         label: const Text(
@@ -301,13 +155,20 @@ class _HotelManageListScreenState extends State<HotelManageListScreen> {
                 )
               : _hotels.isEmpty
                   ? const Center(
-                      child: Text('Chưa có cơ sở khách sạn nào',
-                          style: TextStyle(color: Colors.grey, fontSize: 16)))
+                      child: Text(
+                        'Chưa có cơ sở khách sạn nào',
+                        style: TextStyle(color: Colors.grey, fontSize: 16),
+                      ),
+                    )
                   : RefreshIndicator(
                       onRefresh: _loadHotels,
                       child: ListView.builder(
                         padding: const EdgeInsets.only(
-                            top: 16, bottom: 84, left: 16, right: 16),
+                          top: 16,
+                          bottom: 84,
+                          left: 16,
+                          right: 16,
+                        ),
                         itemCount: _hotels.length,
                         itemBuilder: (context, index) {
                           final hotel = _hotels[index];
@@ -344,8 +205,11 @@ class _HotelManageListScreenState extends State<HotelManageListScreen> {
                                           borderRadius:
                                               BorderRadius.circular(12),
                                         ),
-                                        child: Icon(Icons.domain,
-                                            color: primaryColor, size: 28),
+                                        child: Icon(
+                                          Icons.domain,
+                                          color: primaryColor,
+                                          size: 28,
+                                        ),
                                       ),
                                       const SizedBox(width: 16),
                                       Expanded(
@@ -365,16 +229,19 @@ class _HotelManageListScreenState extends State<HotelManageListScreen> {
                                             const SizedBox(height: 6),
                                             Row(
                                               children: [
-                                                Icon(Icons.location_on,
-                                                    size: 14,
-                                                    color: Colors.grey[500]),
+                                                Icon(
+                                                  Icons.location_on,
+                                                  size: 14,
+                                                  color: Colors.grey[500],
+                                                ),
                                                 const SizedBox(width: 4),
                                                 Expanded(
                                                   child: Text(
                                                     hotel.address,
                                                     style: TextStyle(
-                                                        color: Colors.grey[600],
-                                                        fontSize: 13),
+                                                      color: Colors.grey[600],
+                                                      fontSize: 13,
+                                                    ),
                                                     maxLines: 1,
                                                     overflow:
                                                         TextOverflow.ellipsis,
@@ -385,15 +252,18 @@ class _HotelManageListScreenState extends State<HotelManageListScreen> {
                                             const SizedBox(height: 4),
                                             Row(
                                               children: [
-                                                Icon(Icons.phone,
-                                                    size: 14,
-                                                    color: Colors.grey[500]),
+                                                Icon(
+                                                  Icons.phone,
+                                                  size: 14,
+                                                  color: Colors.grey[500],
+                                                ),
                                                 const SizedBox(width: 4),
                                                 Text(
                                                   '${hotel.phone} • ${hotel.category}',
                                                   style: TextStyle(
-                                                      color: Colors.grey[600],
-                                                      fontSize: 13),
+                                                    color: Colors.grey[600],
+                                                    fontSize: 13,
+                                                  ),
                                                 ),
                                               ],
                                             ),

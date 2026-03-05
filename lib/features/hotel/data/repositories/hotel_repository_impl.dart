@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:booking_app_mobile/features/hotel/data/mapper/hotel_mapper.dart';
@@ -14,7 +15,8 @@ import '../datasoure/remote/hotel_api_service.dart';
 @LazySingleton(as: HotelRepository)
 class HotelRepositoryImpl implements HotelRepository {
   final HotelApiService api;
-  HotelRepositoryImpl(this.api);
+  final Dio _dio;
+  HotelRepositoryImpl(this.api, this._dio);
 
   @override
   Future<Paged<Hotel>> getHotels({
@@ -116,16 +118,47 @@ class HotelRepositoryImpl implements HotelRepository {
     required String phone,
     required String description,
     required String category,
-    required String pathImage,
+    required bool active,
+    String? pathImage,
+    required List<String> imagePaths,
   }) async {
-    final ApiResponse res = await api.createHotel({
+    final files = await Future.wait(
+      imagePaths.map(
+        (path) => MultipartFile.fromFile(
+          path,
+          filename: path.split(Platform.pathSeparator).last,
+        ),
+      ),
+    );
+
+    final hotelPayload = <String, dynamic>{
       'name': name,
       'address': address,
       'phone': phone,
       'description': description,
       'category': category,
       'pathImage': pathImage,
-    });
+      'active': active,
+    };
+
+    final dataJson = jsonEncode(hotelPayload);
+    final formData = FormData();
+    formData.files.add(
+      MapEntry(
+        'data',
+        MultipartFile.fromString(
+          dataJson,
+          filename: 'data.json',
+          contentType: DioMediaType('application', 'json'),
+        ),
+      ),
+    );
+    for (final file in files) {
+      formData.files.add(MapEntry('files', file));
+    }
+
+    final response = await _dio.post('/hotels', data: formData);
+    final res = ApiResponse.fromJson(response.data as Map<String, dynamic>);
     final data = res.data;
     if (data is! Map<String, dynamic>) {
       throw Exception('Unexpected data format for created hotel');

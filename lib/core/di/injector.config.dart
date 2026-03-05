@@ -233,8 +233,6 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.lazySingleton<_i939.CustomerRepository>(
         () => _i223.CustomerRepositoryImpl(gh<_i361.CustomerApiService>()));
-    gh.lazySingleton<_i16.HotelRepository>(
-        () => _i48.HotelRepositoryImpl(gh<_i847.HotelApiService>()));
     gh.factory<_i15.LoginUseCase>(
         () => _i15.LoginUseCase(gh<_i619.AuthRepository>()));
     gh.factory<_i941.LogoutUseCase>(
@@ -264,8 +262,6 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i771.UpdateRoomType(gh<_i18.RoomTypeRepository>()));
     gh.factory<_i215.CreateCustomerUseCase>(
         () => _i215.CreateCustomerUseCase(gh<_i939.CustomerRepository>()));
-    gh.factory<_i758.GetHotelUseCase>(
-        () => _i758.GetHotelUseCase(gh<_i16.HotelRepository>()));
     gh.factory<_i41.CreateRoom>(
         () => _i41.CreateRoom(gh<_i77.RoomRepository>()));
     gh.factory<_i480.DeleteRoom>(
@@ -274,6 +270,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i503.GetAvailableRooms(gh<_i77.RoomRepository>()));
     gh.factory<_i737.UpdateRoom>(
         () => _i737.UpdateRoom(gh<_i77.RoomRepository>()));
+    gh.lazySingleton<_i16.HotelRepository>(() => _i48.HotelRepositoryImpl(
+          gh<_i847.HotelApiService>(),
+          gh<_i361.Dio>(),
+        ));
     gh.factory<_i834.CreateAmenity>(
         () => _i834.CreateAmenity(gh<_i273.AmenityRepository>()));
     gh.factory<_i915.DeleteAmenity>(
@@ -292,6 +292,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i720.GetEmployeeByHotel(gh<_i83.EmployeeRepository>()));
     gh.factory<_i741.UpdateEmployee>(
         () => _i741.UpdateEmployee(gh<_i83.EmployeeRepository>()));
+    gh.factory<_i758.GetHotelUseCase>(
+        () => _i758.GetHotelUseCase(gh<_i16.HotelRepository>()));
     return this;
   }
 }

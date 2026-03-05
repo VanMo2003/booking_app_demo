@@ -3,6 +3,7 @@ import 'package:retrofit/retrofit.dart';
 
 import '../../../../share/data/models/api_response.dart';
 import '../../models/request/create_customer_request.dart';
+import '../../models/request/update_customer_request.dart';
 
 part 'customer_api_service.g.dart';
 
@@ -12,4 +13,8 @@ abstract class CustomerApiService {
 
   @POST('/customers')
   Future<ApiResponse> createCustomer(@Body() CreateCustomerRequest body);
+
+  @PUT('/customers/{id}')
+  Future<ApiResponse> updateCustomer(
+      @Path('id') int id, @Body() UpdateCustomerRequest body);
 }

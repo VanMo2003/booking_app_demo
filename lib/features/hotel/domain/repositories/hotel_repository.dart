@@ -18,7 +18,9 @@ abstract class HotelRepository {
     required String phone,
     required String description,
     required String category,
-    required String pathImage,
+    required bool active,
+    String? pathImage,
+    required List<String> imagePaths,
   });
   Future<Hotel> getHotelById({
     required int id,

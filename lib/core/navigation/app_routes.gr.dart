@@ -184,6 +184,22 @@ class CreateCustomerRouteArgs {
 }
 
 /// generated route for
+/// [CreateHotelScreen]
+class CreateHotelRoute extends PageRouteInfo<void> {
+  const CreateHotelRoute({List<PageRouteInfo>? children})
+      : super(CreateHotelRoute.name, initialChildren: children);
+
+  static const String name = 'CreateHotelRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const CreateHotelScreen();
+    },
+  );
+}
+
+/// generated route for
 /// [CustomerScreen]
 class CustomerRoute extends PageRouteInfo<void> {
   const CustomerRoute({List<PageRouteInfo>? children})
