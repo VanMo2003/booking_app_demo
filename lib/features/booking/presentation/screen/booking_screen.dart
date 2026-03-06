@@ -45,6 +45,12 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
     super.dispose();
   }
 
+  void _showSnack(SnackBar snackBar) {
+    if (!mounted) return;
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    messenger?.showSnackBar(snackBar);
+  }
+
   String _formatCurrency(num? amount) {
     if (amount == null) return '0 d';
     return NumberFormat.currency(locale: 'vi_VN', symbol: 'd').format(amount);
@@ -129,8 +135,12 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
     return true;
   }
 
-  Future<void> _openPaymentUrl(BuildContext context, String paymentUrl,
-      {required VoidCallback onSuccess}) async {
+  Future<void> _openPaymentUrl(
+    BuildContext context,
+    String paymentUrl, {
+    required Future<void> Function() onSuccess,
+    int? bookingId,
+  }) async {
     final result = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
@@ -138,16 +148,19 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
       ),
     );
 
-    if (result == true && context.mounted) {
-      onSuccess();
-      ScaffoldMessenger.of(context).showSnackBar(
+    if (result == true) {
+      if (bookingId != null) {
+        await PaymentSessionStore.clear(bookingId);
+      }
+      await onSuccess();
+      _showSnack(
         const SnackBar(
           content: Text('Thanh toan thanh cong'),
           backgroundColor: Colors.green,
         ),
       );
-    } else if (result == false && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
+    } else if (result == false) {
+      _showSnack(
         const SnackBar(content: Text('Thanh toan that bai')),
       );
     }
@@ -156,11 +169,11 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
   Future<void> _requestAndOpenPayment(
     BuildContext context,
     BookingEntity booking,
-    VoidCallback onSuccess,
+    Future<void> Function() onSuccess,
   ) async {
     final amount = booking.totalAmount ?? 0;
     if (amount <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
+      _showSnack(
         const SnackBar(content: Text('Khong co so tien can thanh toan')),
       );
       return;
@@ -179,7 +192,7 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
 
       final paymentUrl = resp.data?['data']?['paymentUrl']?.toString();
       if (paymentUrl == null || paymentUrl.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        _showSnack(
           const SnackBar(content: Text('Khong nhan duoc link thanh toan')),
         );
         return;
@@ -196,10 +209,15 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
       }
 
       if (!context.mounted) return;
-      await _openPaymentUrl(context, paymentUrl, onSuccess: onSuccess);
+      await _openPaymentUrl(
+        context,
+        paymentUrl,
+        onSuccess: onSuccess,
+        bookingId: booking.id,
+      );
     } catch (e) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
+      if (!mounted) return;
+      _showSnack(
         SnackBar(content: Text('Loi thanh toan: $e')),
       );
     }
@@ -208,21 +226,31 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
   Future<void> _handlePaymentAction(
     BuildContext context,
     BookingEntity booking,
-    VoidCallback onSuccess,
+    Future<void> Function() onSuccess,
   ) async {
     final bookingId = booking.id;
     if (bookingId == null) return;
 
-    if (_isInPaymentWindow(booking)) {
-      final session = await PaymentSessionStore.get(bookingId);
-      if (session != null && !session.isExpired) {
-        if (!context.mounted) return;
-        await _openPaymentUrl(context, session.paymentUrl, onSuccess: onSuccess);
-        return;
-      }
+    // Uu tien session local truoc: neu user da tao link truoc do va con han,
+    // thi tiep tuc dung lai link cu, khong goi lai API.
+    final session = await PaymentSessionStore.get(bookingId);
+    if (session != null && !session.isExpired) {
+      if (!context.mounted) return;
+      await _openPaymentUrl(
+        context,
+        session.paymentUrl,
+        onSuccess: onSuccess,
+        bookingId: bookingId,
+      );
+      return;
     }
 
     await _requestAndOpenPayment(context, booking, onSuccess);
+  }
+
+  Future<bool> _hasActiveLocalSession(int bookingId) async {
+    final session = await PaymentSessionStore.get(bookingId);
+    return session != null && !session.isExpired;
   }
 
   Widget _buildStatusChip(String status) {
@@ -419,9 +447,6 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
           final countdown = _paymentCountdownLabel(item);
           final canPay = _canShowPaymentAction(item, isCustomerView);
           final inWindow = _isInPaymentWindow(item);
-          final payButtonLabel = inWindow
-              ? 'Tiep tuc thanh toan VNPay'
-              : 'Thanh toan lai VNPay';
 
           return Card(
             elevation: 2,
@@ -550,20 +575,41 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
                     ),
                     if (canPay) ...[
                       const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: () => _handlePaymentAction(
-                            context,
-                            item,
-                            () => context.read<BookingCubit>().fetch(
-                                  hotelId: widget.hotelId,
-                                  customerId: widget.customerId,
-                                ),
-                          ),
-                          icon: const Icon(Icons.payments_outlined),
-                          label: Text(payButtonLabel),
-                        ),
+                      FutureBuilder<bool>(
+                        future: item.id == null
+                            ? Future.value(false)
+                            : _hasActiveLocalSession(item.id!),
+                        builder: (context, snapshot) {
+                          final hasLocalSession = snapshot.data == true;
+                          final isContinue = hasLocalSession || inWindow;
+                          final payButtonLabel = isContinue
+                              ? 'Tiep tuc thanh toan VNPay'
+                              : 'Thanh toan lai VNPay';
+
+                          return SizedBox(
+                            width: double.infinity,
+                            child: OutlinedButton.icon(
+                              onPressed: () => _handlePaymentAction(
+                                context,
+                                item,
+                                () async {
+                                  final bookingId = item.id;
+                                  if (bookingId != null) {
+                                    context
+                                        .read<BookingCubit>()
+                                        .markPaymentPaid(bookingId);
+                                  }
+                                  await context.read<BookingCubit>().fetch(
+                                        hotelId: widget.hotelId,
+                                        customerId: widget.customerId,
+                                      );
+                                },
+                              ),
+                              icon: const Icon(Icons.payments_outlined),
+                              label: Text(payButtonLabel),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ],

@@ -1,27 +1,61 @@
+import 'dart:async';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:dio/dio.dart';
 
-import '../../../../core/di/injector.dart';
-import '../../../../core/widgets/app_scaffold.dart';
 import '../../../../core/api/app_config.dart';
+import '../../../../core/di/injector.dart';
+import '../../../../core/storage/payment_session_store.dart';
+import '../../../../core/widgets/app_scaffold.dart';
 import '../../../payment/presentation/screen/payment_webview_screen.dart';
 import '../../domain/entity/booking_entity.dart';
 import '../cubit/booking_cubit.dart';
 
-class BookingDetailScreen extends StatelessWidget {
+class BookingDetailScreen extends StatefulWidget {
   final BookingEntity booking;
   final bool allowActions;
 
-  const BookingDetailScreen(
-      {super.key, required this.booking, this.allowActions = true});
+  const BookingDetailScreen({
+    super.key,
+    required this.booking,
+    this.allowActions = true,
+  });
 
-  // --- HELPER FUNCTIONS ---
+  @override
+  State<BookingDetailScreen> createState() => _BookingDetailScreenState();
+}
+
+class _BookingDetailScreenState extends State<BookingDetailScreen> {
+  late BookingEntity _booking;
+  late Timer _ticker;
+  DateTime _now = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    _booking = widget.booking;
+    _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      setState(() => _now = DateTime.now());
+    });
+  }
+
+  @override
+  void dispose() {
+    _ticker.cancel();
+    super.dispose();
+  }
+
+  void _showSnack(SnackBar snackBar) {
+    if (!mounted) return;
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(snackBar);
+  }
 
   String _formatCurrency(num? amount) {
-    if (amount == null) return '0 đ';
-    return NumberFormat.currency(locale: 'vi_VN', symbol: 'đ').format(amount);
+    if (amount == null) return '0 d';
+    return NumberFormat.currency(locale: 'vi_VN', symbol: 'd').format(amount);
   }
 
   String _formatDate(String? dateStr) {
@@ -34,23 +68,114 @@ class BookingDetailScreen extends StatelessWidget {
     }
   }
 
-  // Hàm xử lý link ảnh (dùng chung cho Avatar và Room)
   String _resolveImageUrl(String? path, {bool isAvatar = false}) {
     if (path == null || path.isEmpty) {
       return isAvatar
           ? 'https://ui-avatars.com/api/?background=random&name=User'
-          : 'https://placehold.co/600x400/png?text=No+Image'; // Ảnh fallback cho phòng
+          : 'https://placehold.co/600x400/png?text=No+Image';
     }
     if (path.startsWith('http')) return path;
-    return "${AppConfig().baseURL}$path";
+    return '${AppConfig().baseURL}$path';
   }
 
-  Future<void> _startPayment(BuildContext context) async {
-    final amount = booking.totalAmount ?? 0;
+  DateTime? _parseDateTime(String? value) {
+    if (value == null || value.trim().isEmpty) return null;
+    final raw = value.trim();
+    return DateTime.tryParse(raw) ??
+        DateTime.tryParse(raw.replaceFirst(' ', 'T'));
+  }
+
+  bool _isVnPay() => (_booking.paymentMethod ?? '').toUpperCase() == 'VN_PAY';
+
+  bool _isPaid() => (_booking.paymentStatus ?? '').toUpperCase() == 'PAID';
+
+  bool _isCancelled() {
+    final status = (_booking.bookingStatus ?? '').toUpperCase();
+    return status == 'CANCELED' || status == 'CANCELLED';
+  }
+
+  Duration? _remainingPaymentWindow() {
+    final expireAt = _parseDateTime(_booking.paymentExpireAt);
+    if (expireAt == null) return null;
+    final diff = expireAt.difference(_now);
+    if (diff.isNegative) return Duration.zero;
+    return diff;
+  }
+
+  bool _isInPaymentWindow() {
+    final remain = _remainingPaymentWindow();
+    return remain != null && remain > Duration.zero;
+  }
+
+  String _formatDuration(Duration d) {
+    final total = d.inSeconds;
+    final h = total ~/ 3600;
+    final m = (total % 3600) ~/ 60;
+    final s = total % 60;
+    if (h > 0) {
+      return '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+    }
+    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+  }
+
+  String? _paymentCountdownLabel() {
+    if (!_isVnPay() || _isPaid()) return null;
+    final remain = _remainingPaymentWindow();
+    if (remain == null) return null;
+    if (remain == Duration.zero) return 'Het han thanh toan';
+    return 'Con lai: ${_formatDuration(remain)}';
+  }
+
+  Future<void> _openPaymentUrl(String paymentUrl) async {
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PaymentWebViewScreen(paymentUrl: paymentUrl),
+      ),
+    );
+
+    if (result == true) {
+      final bookingId = _booking.id;
+      if (bookingId != null) {
+        await PaymentSessionStore.clear(bookingId);
+      }
+
+      if (!mounted) return;
+      setState(() {
+        _booking = BookingEntity(
+          id: _booking.id,
+          checkinDate: _booking.checkinDate,
+          checkoutDate: _booking.checkoutDate,
+          bookingStatus: _booking.bookingStatus,
+          paymentMethod: _booking.paymentMethod,
+          paymentStatus: 'PAID',
+          paymentExpireAt: _booking.paymentExpireAt,
+          paidAt: DateTime.now().toIso8601String(),
+          hotel: _booking.hotel,
+          customer: _booking.customer,
+          bookingRooms: _booking.bookingRooms,
+          bookingServices: _booking.bookingServices,
+          totalAmount: _booking.totalAmount,
+          note: _booking.note,
+          onCreate: _booking.onCreate,
+          onUpdate: _booking.onUpdate,
+        );
+      });
+      Navigator.pop(context, true);
+    } else if (result == false) {
+      _showSnack(const SnackBar(content: Text('Thanh toan that bai')));
+    }
+  }
+
+  Future<void> _requestAndOpenPayment() async {
+    final amount = _booking.totalAmount ?? 0;
+    final bookingId = _booking.id;
+    if (bookingId == null) {
+      _showSnack(const SnackBar(content: Text('Khong tim thay bookingId')));
+      return;
+    }
     if (amount <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Khong co so tien can thanh toan')),
-      );
+      _showSnack(const SnackBar(content: Text('Khong co so tien can thanh toan')));
       return;
     }
 
@@ -59,48 +184,90 @@ class BookingDetailScreen extends StatelessWidget {
       final resp = await dio.get(
         '/payment/vn-pay',
         queryParameters: {
-          'bookingId': booking.id,
+          'bookingId': bookingId,
           'amount': amount,
           'bankCode': 'NCB',
         },
       );
       final paymentUrl = resp.data?['data']?['paymentUrl']?.toString();
       if (paymentUrl == null || paymentUrl.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Khong nhan duoc link thanh toan')),
-        );
+        _showSnack(const SnackBar(content: Text('Khong nhan duoc link thanh toan')));
         return;
       }
 
-      final result = await Navigator.push<bool>(
-        context,
-        MaterialPageRoute(
-          builder: (_) => PaymentWebViewScreen(paymentUrl: paymentUrl),
-        ),
+      final expireAt = _parseDateTime(_booking.paymentExpireAt) ??
+          DateTime.now().add(const Duration(minutes: 15));
+      await PaymentSessionStore.save(
+        bookingId: bookingId,
+        paymentUrl: paymentUrl,
+        expireAt: expireAt,
       );
 
-      if (result == true && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Thanh toan thanh cong'),
-              backgroundColor: Colors.green),
-        );
-      } else if (result == false && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Thanh toan that bai')),
-        );
-      }
+      if (!mounted) return;
+      await _openPaymentUrl(paymentUrl);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Loi thanh toan: $e')),
-      );
+      _showSnack(SnackBar(content: Text('Loi thanh toan: $e')));
     }
   }
 
-  // --- MAIN BUILD ---
+  Future<void> _handlePaymentAction() async {
+    final bookingId = _booking.id;
+    if (bookingId == null) return;
+
+    final session = await PaymentSessionStore.get(bookingId);
+    if (session != null && !session.isExpired) {
+      if (!mounted) return;
+      await _openPaymentUrl(session.paymentUrl);
+      return;
+    }
+
+    await _requestAndOpenPayment();
+  }
+
+  Widget _buildPaymentStatusChip(String? status) {
+    final value = (status ?? '').toUpperCase();
+    Color color;
+    String label;
+    switch (value) {
+      case 'PAID':
+        color = Colors.green;
+        label = 'Da thanh toan';
+        break;
+      case 'PENDING':
+        color = Colors.orange;
+        label = 'Dang cho thanh toan';
+        break;
+      case 'UNPAID':
+        color = Colors.redAccent;
+        label = 'Chua thanh toan';
+        break;
+      default:
+        color = Colors.grey;
+        label = status ?? 'Khong ro';
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final canCustomerPay = !widget.allowActions && _isVnPay() && !_isPaid() && !_isCancelled();
+
     return BlocProvider(
       create: (_) => BookingCubit(
         getBookings: getIt(),
@@ -112,25 +279,28 @@ class BookingDetailScreen extends StatelessWidget {
       child: BlocConsumer<BookingCubit, BookingState>(
         listener: (context, state) {
           if (state.status.isSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
+            _showSnack(
               const SnackBar(
-                  content: Text('Thao tác thành công'),
-                  backgroundColor: Colors.green),
+                content: Text('Thao tac thanh cong'),
+                backgroundColor: Colors.green,
+              ),
             );
             Navigator.pop(context, true);
           } else if (state.status.isFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
+            _showSnack(
               SnackBar(
-                  content: Text(state.errorMessage ?? 'Lỗi'),
-                  backgroundColor: Colors.red),
+                content: Text(state.errorMessage ?? 'Loi'),
+                backgroundColor: Colors.red,
+              ),
             );
           }
         },
         builder: (context, state) {
           final isLoading = state.status.isLoading;
+          final countdown = _paymentCountdownLabel();
 
           return AppScaffold(
-            title: 'Chi tiết đơn #${booking.id}',
+            title: 'Chi tiet don #${_booking.id}',
             body: Stack(
               children: [
                 SingleChildScrollView(
@@ -138,12 +308,10 @@ class BookingDetailScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // 1. Status Section
-                      Center(child: _buildBigStatusChip(booking.bookingStatus)),
+                      Center(child: _buildBigStatusChip(_booking.bookingStatus)),
                       const SizedBox(height: 24),
 
-                      // 2. Customer Info
-                      _buildSectionTitle('Thông tin khách hàng'),
+                      _buildSectionTitle('Thong tin khach hang'),
                       Card(
                         elevation: 1,
                         shape: RoundedRectangleBorder(
@@ -152,27 +320,26 @@ class BookingDetailScreen extends StatelessWidget {
                           contentPadding: const EdgeInsets.all(12),
                           leading: CircleAvatar(
                             radius: 28,
-                            backgroundImage: NetworkImage(_resolveImageUrl(
-                                booking.customer?.pathImage,
-                                isAvatar: true)),
+                            backgroundImage: NetworkImage(
+                              _resolveImageUrl(_booking.customer?.pathImage, isAvatar: true),
+                            ),
                           ),
-                          title: Text(booking.customer?.fullName ?? 'N/A',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold)),
+                          title: Text(
+                            _booking.customer?.fullName ?? 'N/A',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(height: 4),
-                              Text(booking.customer?.phoneNumber ??
-                                  'Không có SĐT'),
+                              Text(_booking.customer?.phoneNumber ?? 'Khong co SDT'),
                             ],
                           ),
                         ),
                       ),
                       const SizedBox(height: 20),
 
-                      // 3. Stay Info
-                      _buildSectionTitle('Thời gian lưu trú'),
+                      _buildSectionTitle('Thoi gian luu tru'),
                       Card(
                         elevation: 1,
                         shape: RoundedRectangleBorder(
@@ -182,27 +349,23 @@ class BookingDetailScreen extends StatelessWidget {
                           child: Row(
                             children: [
                               Expanded(
-                                  child: _buildDateBox(context, 'Nhận phòng',
-                                      booking.checkinDate)),
-                              const Icon(Icons.arrow_forward,
-                                  color: Colors.grey),
+                                child: _buildDateBox(context, 'Nhan phong', _booking.checkinDate),
+                              ),
+                              const Icon(Icons.arrow_forward, color: Colors.grey),
                               Expanded(
-                                  child: _buildDateBox(context, 'Trả phòng',
-                                      booking.checkoutDate)),
+                                child: _buildDateBox(context, 'Tra phong', _booking.checkoutDate),
+                              ),
                             ],
                           ),
                         ),
                       ),
                       const SizedBox(height: 20),
 
-                      // 4. Rooms List
-                      _buildSectionTitle(
-                          'Phòng đã đặt (${booking.bookingRooms?.length ?? 0})'),
-                      if (booking.bookingRooms != null)
-                        ...booking.bookingRooms!.map(
+                      _buildSectionTitle('Phong da dat (${_booking.bookingRooms?.length ?? 0})'),
+                      if (_booking.bookingRooms != null)
+                        ..._booking.bookingRooms!.map(
                           (bookingRoom) {
-                            final imageUrl = _resolveImageUrl(
-                                bookingRoom.roomInfo?.pathImage);
+                            final imageUrl = _resolveImageUrl(bookingRoom.roomInfo?.pathImage);
 
                             return Card(
                               margin: const EdgeInsets.only(bottom: 8),
@@ -223,39 +386,36 @@ class BookingDetailScreen extends StatelessWidget {
                                     child: Image.network(
                                       imageUrl,
                                       fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Icon(Icons.meeting_room,
-                                            color: Theme.of(context)
-                                                .primaryColor
-                                                .withOpacity(0.5));
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Icon(
+                                          Icons.meeting_room,
+                                          color: Theme.of(context)
+                                              .primaryColor
+                                              .withValues(alpha: 0.5),
+                                        );
                                       },
-                                      loadingBuilder:
-                                          (context, child, loadingProgress) {
-                                        if (loadingProgress == null)
-                                          return child;
+                                      loadingBuilder: (context, child, loadingProgress) {
+                                        if (loadingProgress == null) return child;
                                         return const Center(
-                                            child: SizedBox(
-                                                width: 20,
-                                                height: 20,
-                                                child:
-                                                    CircularProgressIndicator(
-                                                        strokeWidth: 2)));
+                                          child: SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child: CircularProgressIndicator(strokeWidth: 2),
+                                          ),
+                                        );
                                       },
                                     ),
                                   ),
                                 ),
                                 title: Text(
-                                  'Phòng ${bookingRoom.roomInfo?.roomNumber ?? "N/A"}',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
+                                  'Phong ${bookingRoom.roomInfo?.roomNumber ?? "N/A"}',
+                                  style: const TextStyle(fontWeight: FontWeight.bold),
                                 ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const SizedBox(height: 4),
-                                    Text(bookingRoom.roomInfo?.roomTypeName ??
-                                        "Loại phòng thường"),
+                                    Text(bookingRoom.roomInfo?.roomTypeName ?? 'Loai phong thuong'),
                                   ],
                                 ),
                               ),
@@ -265,8 +425,7 @@ class BookingDetailScreen extends StatelessWidget {
 
                       const SizedBox(height: 20),
 
-                      // 5. Payment Info
-                      _buildSectionTitle('Thanh toán'),
+                      _buildSectionTitle('Thanh toan'),
                       Card(
                         elevation: 1,
                         shape: RoundedRectangleBorder(
@@ -275,44 +434,76 @@ class BookingDetailScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(16),
                           child: Column(
                             children: [
-                              _buildInfoRow('Phương thức',
-                                  booking.paymentMethod ?? 'Tiền mặt'),
+                              _buildInfoRow('Phuong thuc', _booking.paymentMethod ?? 'Tien mat'),
+                              const SizedBox(height: 12),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text('Trang thai thanh toan',
+                                      style: TextStyle(color: Colors.grey)),
+                                  _buildPaymentStatusChip(_booking.paymentStatus),
+                                ],
+                              ),
+                              if (countdown != null) ...[
+                                const SizedBox(height: 8),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Text(
+                                    countdown,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: _isInPaymentWindow() ? Colors.orange : Colors.red,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
                               const Divider(height: 24),
                               Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text('Tổng tiền',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold)),
+                                  const Text('Tong tien',
+                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                                   Text(
-                                    _formatCurrency(booking.totalAmount),
+                                    _formatCurrency(_booking.totalAmount),
                                     style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).primaryColor),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
                                   ),
                                 ],
                               ),
-                              if (!allowActions &&
-                                  booking.paymentMethod == 'VN_PAY') ...[
+                              if (canCustomerPay) ...[
                                 const SizedBox(height: 16),
                                 SizedBox(
                                   width: double.infinity,
-                                  child: ElevatedButton(
-                                    onPressed: () => _startPayment(context),
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 14),
-                                      backgroundColor:
-                                          Theme.of(context).primaryColor,
-                                      foregroundColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12)),
-                                    ),
-                                    child: const Text('Thanh toán Vnpay'),
+                                  child: FutureBuilder<bool>(
+                                    future: (_booking.id == null)
+                                        ? Future.value(false)
+                                        : PaymentSessionStore.get(_booking.id!).then(
+                                            (session) => session != null && !session.isExpired,
+                                          ),
+                                    builder: (context, snapshot) {
+                                      final hasLocalSession = snapshot.data == true;
+                                      final isContinue = hasLocalSession || _isInPaymentWindow();
+                                      final label = isContinue
+                                          ? 'Tiep tuc thanh toan VNPay'
+                                          : 'Thanh toan lai VNPay';
+
+                                      return ElevatedButton(
+                                        onPressed: _handlePaymentAction,
+                                        style: ElevatedButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(vertical: 14),
+                                          backgroundColor: Theme.of(context).primaryColor,
+                                          foregroundColor: Colors.white,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                        ),
+                                        child: Text(label),
+                                      );
+                                    },
                                   ),
                                 ),
                               ],
@@ -326,10 +517,9 @@ class BookingDetailScreen extends StatelessWidget {
                   ),
                 ),
 
-                // Bottom Buttons (Floating)
-                if (allowActions &&
-                    (booking.bookingStatus == 'PENDING' ||
-                        booking.bookingStatus == 'CONFIRMED'))
+                if (widget.allowActions &&
+                    (_booking.bookingStatus == 'PENDING' ||
+                        _booking.bookingStatus == 'CONFIRMED'))
                   Positioned(
                     bottom: 0,
                     left: 0,
@@ -340,12 +530,13 @@ class BookingDetailScreen extends StatelessWidget {
                         color: Colors.white,
                         boxShadow: [
                           BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 10,
-                              offset: Offset(0, -2))
+                            color: Colors.black12,
+                            blurRadius: 10,
+                            offset: Offset(0, -2),
+                          )
                         ],
                       ),
-                      child: _buildActionButtons(context, booking.id!),
+                      child: _buildActionButtons(context, _booking.id!),
                     ),
                   ),
 
@@ -353,7 +544,7 @@ class BookingDetailScreen extends StatelessWidget {
                   Container(
                     color: Colors.black12,
                     child: const Center(child: CircularProgressIndicator()),
-                  )
+                  ),
               ],
             ),
           );
@@ -362,12 +553,10 @@ class BookingDetailScreen extends StatelessWidget {
     );
   }
 
-  // --- SUB WIDGETS ---
-
   Widget _buildActionButtons(BuildContext context, int bookingId) {
     final cubit = context.read<BookingCubit>();
 
-    if (booking.bookingStatus == 'PENDING') {
+    if (_booking.bookingStatus == 'PENDING') {
       return Row(
         children: [
           Expanded(
@@ -380,7 +569,7 @@ class BookingDetailScreen extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('Từ chối'),
+              child: const Text('Tu choi'),
             ),
           ),
           const SizedBox(width: 16),
@@ -394,14 +583,14 @@ class BookingDetailScreen extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('Xác nhận'),
+              child: const Text('Xac nhan'),
             ),
           ),
         ],
       );
     }
 
-    if (booking.bookingStatus == 'CONFIRMED') {
+    if (_booking.bookingStatus == 'CONFIRMED') {
       return SizedBox(
         width: double.infinity,
         child: ElevatedButton(
@@ -413,7 +602,7 @@ class BookingDetailScreen extends StatelessWidget {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
-          child: const Text('Check-in / Hoàn tất'),
+          child: const Text('Check-in / Hoan tat'),
         ),
       );
     }
@@ -450,11 +639,14 @@ class BookingDetailScreen extends StatelessWidget {
       children: [
         Text(label, style: const TextStyle(fontSize: 12, color: Colors.grey)),
         const SizedBox(height: 4),
-        Text(_formatDate(dateStr),
-            style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).primaryColor,
-                fontSize: 15)),
+        Text(
+          _formatDate(dateStr),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).primaryColor,
+            fontSize: 15,
+          ),
+        ),
       ],
     );
   }
@@ -465,19 +657,20 @@ class BookingDetailScreen extends StatelessWidget {
     switch (status) {
       case 'PENDING':
         color = Colors.orange;
-        label = 'CHỜ DUYỆT';
+        label = 'CHO DUYET';
         break;
       case 'CONFIRMED':
         color = Colors.blue;
-        label = 'ĐÃ XÁC NHẬN';
+        label = 'DA XAC NHAN';
         break;
       case 'COMPLETED':
         color = Colors.green;
-        label = 'HOÀN THÀNH';
+        label = 'HOAN THANH';
         break;
       case 'CANCELED':
+      case 'CANCELLED':
         color = Colors.red;
-        label = 'ĐÃ HỦY';
+        label = 'DA HUY';
         break;
       default:
         color = Colors.grey;
@@ -486,13 +679,18 @@ class BookingDetailScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: color),
       ),
-      child: Text(label,
-          style: TextStyle(
-              color: color, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1.2,
+        ),
+      ),
     );
   }
 }

@@ -555,7 +555,8 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
               content: Text('Thanh toán thành công'),
               backgroundColor: Colors.green),
         );
-      } else if (result == false && context.mounted) {
+      } else if (context.mounted) {
+        context.router.replaceAll([CustomerRoute()]);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Thanh toán thất bại')),
         );

@@ -51,10 +51,9 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
         queryParameters: uri.queryParameters,
       );
       final data = resp.data?['data'];
-      final code = data?['code']?.toString() ?? '';
       if (!mounted) return;
-      Navigator.pop(context, code == '00');
-    } catch (_) {
+      Navigator.pop(context, data == 'PAYMENT_SUCCESS');
+    } catch (e) {
       if (!mounted) return;
       Navigator.pop(context, false);
     }

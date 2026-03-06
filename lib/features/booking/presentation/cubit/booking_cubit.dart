@@ -106,4 +106,30 @@ class BookingCubit extends Cubit<BookingState> {
       ));
     }
   }
+
+  void markPaymentPaid(int bookingId, {String? paidAt}) {
+    final list = state.items?.map((e) {
+      if (e.id != bookingId) return e;
+      return BookingEntity(
+        id: e.id,
+        checkinDate: e.checkinDate,
+        checkoutDate: e.checkoutDate,
+        bookingStatus: e.bookingStatus,
+        paymentMethod: e.paymentMethod,
+        paymentStatus: 'PAID',
+        paymentExpireAt: e.paymentExpireAt,
+        paidAt: paidAt ?? DateTime.now().toIso8601String(),
+        hotel: e.hotel,
+        customer: e.customer,
+        bookingRooms: e.bookingRooms,
+        bookingServices: e.bookingServices,
+        totalAmount: e.totalAmount,
+        note: e.note,
+        onCreate: e.onCreate,
+        onUpdate: e.onUpdate,
+      );
+    }).toList();
+
+    emit(state.copyWith(items: list));
+  }
 }
