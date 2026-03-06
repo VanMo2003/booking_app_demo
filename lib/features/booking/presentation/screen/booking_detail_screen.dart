@@ -59,6 +59,7 @@ class BookingDetailScreen extends StatelessWidget {
       final resp = await dio.get(
         '/payment/vn-pay',
         queryParameters: {
+          'bookingId': booking.id,
           'amount': amount,
           'bankCode': 'NCB',
         },

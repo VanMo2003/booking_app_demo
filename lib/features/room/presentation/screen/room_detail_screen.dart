@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:booking_app_mobile/core/api/app_config.dart';
 import 'package:booking_app_mobile/core/di/injector.dart';
 import 'package:booking_app_mobile/core/navigation/app_routes.dart';
+import 'package:booking_app_mobile/core/storage/payment_session_store.dart';
 import 'package:booking_app_mobile/features/booking/data/models/request/booking_create_request.dart';
 import 'package:booking_app_mobile/features/booking/presentation/cubit/booking_cubit.dart';
 import 'package:booking_app_mobile/features/room/domain/entity/room.dart';
@@ -493,7 +494,19 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
     context.read<BookingCubit>().add(dto);
   }
 
-  Future<void> _startPayment(BuildContext context, int amount) async {
+  Future<void> _startPayment(
+    BuildContext context,
+    int amount, {
+    int? bookingId,
+    String? paymentExpireAt,
+  }) async {
+    if (bookingId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Khong tim thay bookingId de thanh toan')),
+      );
+      return;
+    }
+
     if (amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Không có số tiền để thanh toán')),
@@ -505,6 +518,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
       final resp = await dio.get(
         '/payment/vn-pay',
         queryParameters: {
+          'bookingId': bookingId,
           'amount': amount,
           'bankCode': 'NCB',
         },
@@ -516,6 +530,16 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
         );
         return;
       }
+
+      final rawExpire = (paymentExpireAt ?? '').trim();
+      final expireAt = DateTime.tryParse(rawExpire) ??
+          DateTime.tryParse(rawExpire.replaceFirst(' ', 'T')) ??
+          DateTime.now().add(const Duration(minutes: 15));
+      await PaymentSessionStore.save(
+        bookingId: bookingId,
+        paymentUrl: paymentUrl,
+        expireAt: expireAt,
+      );
 
       final result = await Navigator.push<bool>(
         context,
@@ -568,12 +592,18 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                   if (bookingState.status.isSuccess) {
                     final amount = _pendingPaymentAmount;
                     final shouldPay = _pendingPayment;
+                    final createdBooking = bookingState.selected;
                     _pendingPaymentAmount = 0;
                     // if (context.mounted) {
                     //   context.router.replaceAll([CustomerRoute()]);
                     // }
                     if (shouldPay) {
-                      await _startPayment(parentContext, amount);
+                      await _startPayment(
+                        parentContext,
+                        amount,
+                        bookingId: createdBooking?.id,
+                        paymentExpireAt: createdBooking?.paymentExpireAt,
+                      );
                       _pendingPayment = false;
                     } else if (parentContext.mounted) {
                       context.router.replaceAll([CustomerRoute()]);
@@ -645,7 +675,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                         Text('So dem: $nights'),
                         const SizedBox(height: 12),
                         DropdownButtonFormField<String>(
-                          value: _paymentMethod,
+                          initialValue: _paymentMethod,
                           decoration: const InputDecoration(
                             labelText: 'Phương thức thanh toán',
                             border: OutlineInputBorder(),
@@ -765,7 +795,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Row(

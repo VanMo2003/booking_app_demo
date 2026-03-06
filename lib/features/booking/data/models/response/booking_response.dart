@@ -7,6 +7,8 @@ class BookingResponse {
   String? bookingStatus;
   String? paymentMethod;
   String? paymentStatus;
+  String? paymentExpireAt;
+  String? paidAt;
   HotelInfo? hotel;
   CustomerInfo? customer;
   List<BookingRooms>? bookingRooms;
@@ -23,6 +25,8 @@ class BookingResponse {
       this.bookingStatus,
       this.paymentMethod,
       this.paymentStatus,
+      this.paymentExpireAt,
+      this.paidAt,
       this.hotel,
       this.customer,
       this.bookingRooms,
@@ -39,6 +43,8 @@ class BookingResponse {
     bookingStatus = json['bookingStatus'];
     paymentMethod = json['paymentMethod'];
     paymentStatus = json['paymentStatus'];
+    paymentExpireAt = json['paymentExpireAt'];
+    paidAt = json['paidAt'];
     hotel =
         json['hotel'] != null ? new HotelInfo.fromJson(json['hotel']) : null;
     customer = json['customer'] != null
@@ -70,6 +76,8 @@ class BookingResponse {
     data['bookingStatus'] = bookingStatus;
     data['paymentMethod'] = paymentMethod;
     data['paymentStatus'] = paymentStatus;
+    data['paymentExpireAt'] = paymentExpireAt;
+    data['paidAt'] = paidAt;
     if (hotel != null) {
       data['hotel'] = hotel!.toJson();
     }

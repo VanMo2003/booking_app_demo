@@ -63,6 +63,7 @@ class BookingCubit extends Cubit<BookingState> {
       emit(state.copyWith(
         status: BookingStatusState.success,
         items: list,
+        selected: created,
       ));
     } on AppException catch (e) {
       emit(state.copyWith(

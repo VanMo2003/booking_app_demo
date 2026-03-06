@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/api/app_config.dart';
 import '../../../../core/di/injector.dart';
+import '../../../../core/storage/payment_session_store.dart';
 import '../../../../core/widgets/app_scaffold.dart';
 import '../../../payment/presentation/screen/payment_webview_screen.dart';
 import '../../domain/entity/booking_entity.dart';
@@ -13,11 +16,34 @@ import '../cubit/booking_cubit.dart';
 import 'booking_detail_screen.dart';
 
 @RoutePage()
-class BookingAdminScreen extends StatelessWidget {
+class BookingAdminScreen extends StatefulWidget {
   final int? customerId;
   final int? hotelId;
 
   const BookingAdminScreen({super.key, this.customerId, this.hotelId});
+
+  @override
+  State<BookingAdminScreen> createState() => _BookingAdminScreenState();
+}
+
+class _BookingAdminScreenState extends State<BookingAdminScreen> {
+  late Timer _ticker;
+  DateTime _now = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    _ticker = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      setState(() => _now = DateTime.now());
+    });
+  }
+
+  @override
+  void dispose() {
+    _ticker.cancel();
+    super.dispose();
+  }
 
   String _formatCurrency(num? amount) {
     if (amount == null) return '0 d';
@@ -40,6 +66,163 @@ class BookingAdminScreen extends StatelessWidget {
     if (path == null || path.isEmpty) return fallbackUrl;
     if (path.startsWith('http')) return path;
     return '${AppConfig().baseURL}$path';
+  }
+
+  DateTime? _parseDateTime(String? value) {
+    if (value == null || value.trim().isEmpty) return null;
+    final raw = value.trim();
+    final parsed = DateTime.tryParse(raw) ??
+        DateTime.tryParse(raw.replaceFirst(' ', 'T'));
+    return parsed;
+  }
+
+  bool _isVnPay(BookingEntity booking) {
+    return (booking.paymentMethod ?? '').toUpperCase() == 'VN_PAY';
+  }
+
+  bool _isPaid(BookingEntity booking) {
+    return (booking.paymentStatus ?? '').toUpperCase() == 'PAID';
+  }
+
+  bool _isCancelled(BookingEntity booking) {
+    final status = (booking.bookingStatus ?? '').toUpperCase();
+    return status == 'CANCELED' || status == 'CANCELLED';
+  }
+
+  Duration? _remainingPaymentWindow(BookingEntity booking) {
+    final expireAt = _parseDateTime(booking.paymentExpireAt);
+    if (expireAt == null) return null;
+    final diff = expireAt.difference(_now);
+    if (diff.isNegative) return Duration.zero;
+    return diff;
+  }
+
+  bool _isInPaymentWindow(BookingEntity booking) {
+    final remain = _remainingPaymentWindow(booking);
+    return remain != null && remain > Duration.zero;
+  }
+
+  String _formatDuration(Duration d) {
+    final total = d.inSeconds;
+    final h = total ~/ 3600;
+    final m = (total % 3600) ~/ 60;
+    final s = total % 60;
+    if (h > 0) {
+      return '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+    }
+    return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
+  }
+
+  String? _paymentCountdownLabel(BookingEntity booking) {
+    if (!_isVnPay(booking) || _isPaid(booking)) return null;
+    final remain = _remainingPaymentWindow(booking);
+    if (remain == null) return null;
+    if (remain == Duration.zero) return 'Het han thanh toan';
+    return 'Con lai: ${_formatDuration(remain)}';
+  }
+
+  bool _canShowPaymentAction(BookingEntity booking, bool isCustomerView) {
+    if (!isCustomerView) return false;
+    if (!_isVnPay(booking) || _isPaid(booking) || _isCancelled(booking)) {
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> _openPaymentUrl(BuildContext context, String paymentUrl,
+      {required VoidCallback onSuccess}) async {
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PaymentWebViewScreen(paymentUrl: paymentUrl),
+      ),
+    );
+
+    if (result == true && context.mounted) {
+      onSuccess();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Thanh toan thanh cong'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else if (result == false && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Thanh toan that bai')),
+      );
+    }
+  }
+
+  Future<void> _requestAndOpenPayment(
+    BuildContext context,
+    BookingEntity booking,
+    VoidCallback onSuccess,
+  ) async {
+    final amount = booking.totalAmount ?? 0;
+    if (amount <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Khong co so tien can thanh toan')),
+      );
+      return;
+    }
+
+    try {
+      final dio = getIt<Dio>();
+      final resp = await dio.get(
+        '/payment/vn-pay',
+        queryParameters: {
+          'bookingId': booking.id,
+          'amount': amount,
+          'bankCode': 'NCB',
+        },
+      );
+
+      final paymentUrl = resp.data?['data']?['paymentUrl']?.toString();
+      if (paymentUrl == null || paymentUrl.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Khong nhan duoc link thanh toan')),
+        );
+        return;
+      }
+
+      final expireAt = _parseDateTime(booking.paymentExpireAt) ??
+          DateTime.now().add(const Duration(minutes: 15));
+      if (booking.id != null) {
+        await PaymentSessionStore.save(
+          bookingId: booking.id!,
+          paymentUrl: paymentUrl,
+          expireAt: expireAt,
+        );
+      }
+
+      if (!context.mounted) return;
+      await _openPaymentUrl(context, paymentUrl, onSuccess: onSuccess);
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Loi thanh toan: $e')),
+      );
+    }
+  }
+
+  Future<void> _handlePaymentAction(
+    BuildContext context,
+    BookingEntity booking,
+    VoidCallback onSuccess,
+  ) async {
+    final bookingId = booking.id;
+    if (bookingId == null) return;
+
+    if (_isInPaymentWindow(booking)) {
+      final session = await PaymentSessionStore.get(bookingId);
+      if (session != null && !session.isExpired) {
+        if (!context.mounted) return;
+        await _openPaymentUrl(context, session.paymentUrl, onSuccess: onSuccess);
+        return;
+      }
+    }
+
+    await _requestAndOpenPayment(context, booking, onSuccess);
   }
 
   Widget _buildStatusChip(String status) {
@@ -128,76 +311,6 @@ class BookingAdminScreen extends StatelessWidget {
     );
   }
 
-  bool _canContinueVnPay(BookingEntity booking, bool isCustomerView) {
-    final paymentMethod = (booking.paymentMethod ?? '').toUpperCase();
-    final paymentStatus = (booking.paymentStatus ?? '').toUpperCase();
-    final bookingStatus = (booking.bookingStatus ?? '').toUpperCase();
-
-    if (!isCustomerView) return false;
-    if (paymentMethod != 'VN_PAY') return false;
-    if (paymentStatus == 'PAID') return false;
-    if (bookingStatus == 'CANCELED' || bookingStatus == 'CANCELLED') {
-      return false;
-    }
-    return true;
-  }
-
-  Future<void> _startPayment(
-    BuildContext context,
-    int amount,
-    VoidCallback onSuccess,
-  ) async {
-    if (amount <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Khong co so tien can thanh toan')),
-      );
-      return;
-    }
-
-    try {
-      final dio = getIt<Dio>();
-      final resp = await dio.get(
-        '/payment/vn-pay',
-        queryParameters: {
-          'amount': amount,
-          'bankCode': 'NCB',
-        },
-      );
-      final paymentUrl = resp.data?['data']?['paymentUrl']?.toString();
-      if (paymentUrl == null || paymentUrl.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Khong nhan duoc link thanh toan')),
-        );
-        return;
-      }
-
-      final result = await Navigator.push<bool>(
-        context,
-        MaterialPageRoute(
-          builder: (_) => PaymentWebViewScreen(paymentUrl: paymentUrl),
-        ),
-      );
-
-      if (result == true && context.mounted) {
-        onSuccess();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Thanh toan thanh cong'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      } else if (result == false && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Thanh toan that bai')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Loi thanh toan: $e')),
-      );
-    }
-  }
-
   int _statusPriority(String? status) {
     switch (status) {
       case 'PENDING':
@@ -226,7 +339,8 @@ class BookingAdminScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isCustomerView = customerId != null && hotelId == null;
+    final isCustomerView = widget.customerId != null && widget.hotelId == null;
+
     return BlocProvider(
       create: (_) => BookingCubit(
         getBookings: getIt(),
@@ -234,7 +348,7 @@ class BookingAdminScreen extends StatelessWidget {
         confirmBooking: getIt(),
         cancelBooking: getIt(),
         completeBooking: getIt(),
-      )..fetch(hotelId: hotelId, customerId: customerId),
+      )..fetch(hotelId: widget.hotelId, customerId: widget.customerId),
       child: BlocConsumer<BookingCubit, BookingState>(
         listener: (context, state) {
           if (state.status.isFailure) {
@@ -249,15 +363,18 @@ class BookingAdminScreen extends StatelessWidget {
         builder: (context, state) {
           return AppScaffold(
             title: isCustomerView ? 'Don dat phong cua toi' : 'Quan ly dat phong',
-            body: _buildContent(context, state),
+            body: _buildContent(context, state, isCustomerView),
           );
         },
       ),
     );
   }
 
-  Widget _buildContent(BuildContext context, BookingState state) {
-    final isCustomerView = customerId != null && hotelId == null;
+  Widget _buildContent(
+    BuildContext context,
+    BookingState state,
+    bool isCustomerView,
+  ) {
     if (state.status.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -289,7 +406,9 @@ class BookingAdminScreen extends StatelessWidget {
 
     return RefreshIndicator(
       onRefresh: () async {
-        context.read<BookingCubit>().fetch(hotelId: hotelId, customerId: customerId);
+        context
+            .read<BookingCubit>()
+            .fetch(hotelId: widget.hotelId, customerId: widget.customerId);
       },
       child: ListView.separated(
         padding: const EdgeInsets.all(16),
@@ -297,6 +416,13 @@ class BookingAdminScreen extends StatelessWidget {
         separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
           final item = bookings[index];
+          final countdown = _paymentCountdownLabel(item);
+          final canPay = _canShowPaymentAction(item, isCustomerView);
+          final inWindow = _isInPaymentWindow(item);
+          final payButtonLabel = inWindow
+              ? 'Tiep tuc thanh toan VNPay'
+              : 'Thanh toan lai VNPay';
+
           return Card(
             elevation: 2,
             shape: RoundedRectangleBorder(
@@ -315,9 +441,10 @@ class BookingAdminScreen extends StatelessWidget {
                   ),
                 ).then((shouldRefresh) {
                   if (shouldRefresh == true) {
-                    context
-                        .read<BookingCubit>()
-                        .fetch(hotelId: hotelId, customerId: customerId);
+                    context.read<BookingCubit>().fetch(
+                          hotelId: widget.hotelId,
+                          customerId: widget.customerId,
+                        );
                   }
                 });
               },
@@ -340,10 +467,26 @@ class BookingAdminScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 6),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: _buildPaymentStatusChip(item.paymentStatus),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        _buildPaymentStatusChip(item.paymentStatus),
+                      ],
                     ),
+                    if (countdown != null) ...[
+                      const SizedBox(height: 6),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          countdown,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: inWindow ? Colors.orange : Colors.red,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
                     const Divider(height: 20, thickness: 0.5),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -400,26 +543,26 @@ class BookingAdminScreen extends StatelessWidget {
                               '${item.bookingRooms?.length ?? 0} phong',
                               style: const TextStyle(
                                   fontSize: 12, color: Colors.grey),
-                            )
+                            ),
                           ],
                         ),
                       ],
                     ),
-                    if (_canContinueVnPay(item, isCustomerView)) ...[
+                    if (canPay) ...[
                       const SizedBox(height: 12),
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton.icon(
-                          onPressed: () => _startPayment(
+                          onPressed: () => _handlePaymentAction(
                             context,
-                            item.totalAmount ?? 0,
+                            item,
                             () => context.read<BookingCubit>().fetch(
-                                  hotelId: hotelId,
-                                  customerId: customerId,
+                                  hotelId: widget.hotelId,
+                                  customerId: widget.customerId,
                                 ),
                           ),
                           icon: const Icon(Icons.payments_outlined),
-                          label: const Text('Tiep tuc thanh toan VNPay'),
+                          label: Text(payButtonLabel),
                         ),
                       ),
                     ],
