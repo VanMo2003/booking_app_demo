@@ -456,6 +456,10 @@ class RoomDetailRoute extends PageRouteInfo<RoomDetailRouteArgs> {
     Key? key,
     required int roomId,
     String? statusRoom,
+    String? checkinDate,
+    String? checkoutDate,
+    List<int>? selectedServiceIds,
+    int? selectedServiceTotal,
     bool isHotelManager = false,
     List<PageRouteInfo>? children,
   }) : super(
@@ -464,6 +468,10 @@ class RoomDetailRoute extends PageRouteInfo<RoomDetailRouteArgs> {
             key: key,
             roomId: roomId,
             statusRoom: statusRoom,
+            checkinDate: checkinDate,
+            checkoutDate: checkoutDate,
+            selectedServiceIds: selectedServiceIds,
+            selectedServiceTotal: selectedServiceTotal,
             isHotelManager: isHotelManager,
           ),
           initialChildren: children,
@@ -479,6 +487,10 @@ class RoomDetailRoute extends PageRouteInfo<RoomDetailRouteArgs> {
         key: args.key,
         roomId: args.roomId,
         statusRoom: args.statusRoom,
+        checkinDate: args.checkinDate,
+        checkoutDate: args.checkoutDate,
+        selectedServiceIds: args.selectedServiceIds,
+        selectedServiceTotal: args.selectedServiceTotal,
         isHotelManager: args.isHotelManager,
       );
     },
@@ -490,6 +502,10 @@ class RoomDetailRouteArgs {
     this.key,
     required this.roomId,
     this.statusRoom,
+    this.checkinDate,
+    this.checkoutDate,
+    this.selectedServiceIds,
+    this.selectedServiceTotal,
     this.isHotelManager = false,
   });
 
@@ -499,11 +515,19 @@ class RoomDetailRouteArgs {
 
   final String? statusRoom;
 
+  final String? checkinDate;
+
+  final String? checkoutDate;
+
+  final List<int>? selectedServiceIds;
+
+  final int? selectedServiceTotal;
+
   final bool isHotelManager;
 
   @override
   String toString() {
-    return 'RoomDetailRouteArgs{key: $key, roomId: $roomId, statusRoom: $statusRoom, isHotelManager: $isHotelManager}';
+    return 'RoomDetailRouteArgs{key: $key, roomId: $roomId, statusRoom: $statusRoom, checkinDate: $checkinDate, checkoutDate: $checkoutDate, selectedServiceIds: $selectedServiceIds, selectedServiceTotal: $selectedServiceTotal, isHotelManager: $isHotelManager}';
   }
 
   @override
@@ -513,6 +537,10 @@ class RoomDetailRouteArgs {
     return key == other.key &&
         roomId == other.roomId &&
         statusRoom == other.statusRoom &&
+        checkinDate == other.checkinDate &&
+        checkoutDate == other.checkoutDate &&
+        selectedServiceIds == other.selectedServiceIds &&
+        selectedServiceTotal == other.selectedServiceTotal &&
         isHotelManager == other.isHotelManager;
   }
 
@@ -521,6 +549,10 @@ class RoomDetailRouteArgs {
       key.hashCode ^
       roomId.hashCode ^
       statusRoom.hashCode ^
+      checkinDate.hashCode ^
+      checkoutDate.hashCode ^
+      selectedServiceIds.hashCode ^
+      selectedServiceTotal.hashCode ^
       isHotelManager.hashCode;
 }
 

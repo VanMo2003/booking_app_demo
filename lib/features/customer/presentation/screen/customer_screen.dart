@@ -607,34 +607,44 @@ class _CustomerScreenState extends State<CustomerScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Backend chưa có price trong response bạn gửi → hiển thị category/rating hoặc để placeholder
-                    Text(
-                      hotel.category,
-                      style: TextStyle(
-                        color: Theme.of(context).primaryColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Text(
+                            hotel.category,
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          if (hotel.status.toUpperCase() == 'FULL') ...[
+                            const SizedBox(width: 10),
+                            const Text(
+                              'Het phong',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        if (hotel.status == "AVAILABLE") {
-                          context.router.push(
-                            HotelDetailRoute(
-                                hotel: hotel,
-                                checkinDate:
-                                    _apiDateFormat.format(_checkinDate!),
-                                checkoutDate:
-                                    _apiDateFormat.format(_checkoutDate!)),
-                          );
-                        }
+                        context.router.push(
+                          HotelDetailRoute(
+                              hotel: hotel,
+                              checkinDate:
+                                  _apiDateFormat.format(_checkinDate!),
+                              checkoutDate:
+                                  _apiDateFormat.format(_checkoutDate!)),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: hotel.status == "FULL"
-                            ? Colors.grey
-                            : Theme.of(context).primaryColor,
-                        foregroundColor: hotel.status == "FULL"
-                            ? Theme.of(context).primaryColor
-                            : Colors.white,
+                        backgroundColor: Theme.of(context).primaryColor,
+                        foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
@@ -650,3 +660,4 @@ class _CustomerScreenState extends State<CustomerScreen> {
     );
   }
 }
+

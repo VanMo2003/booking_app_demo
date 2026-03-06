@@ -164,6 +164,13 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
       Navigator.pop(context, true);
     } else if (result == false) {
       _showSnack(const SnackBar(content: Text('Thanh toan that bai')));
+      if (mounted) {
+        setState(() {});
+      }
+    } else {
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
@@ -195,13 +202,19 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
         return;
       }
 
-      final expireAt = _parseDateTime(_booking.paymentExpireAt) ??
-          DateTime.now().add(const Duration(minutes: 15));
+      final existingExpireAt = _parseDateTime(_booking.paymentExpireAt);
+      final expireAt = (existingExpireAt != null &&
+              existingExpireAt.isAfter(DateTime.now()))
+          ? existingExpireAt
+          : DateTime.now().add(const Duration(minutes: 15));
       await PaymentSessionStore.save(
         bookingId: bookingId,
         paymentUrl: paymentUrl,
         expireAt: expireAt,
       );
+      if (mounted) {
+        setState(() {});
+      }
 
       if (!mounted) return;
       await _openPaymentUrl(paymentUrl);
@@ -422,6 +435,33 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                             );
                           },
                         ),
+
+                      if (_booking.bookingServices != null &&
+                          _booking.bookingServices!.isNotEmpty) ...[
+                        const SizedBox(height: 20),
+                        _buildSectionTitle(
+                            'Dich vu da chon (${_booking.bookingServices!.length})'),
+                        Card(
+                          elevation: 1,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Column(
+                            children: _booking.bookingServices!
+                                .map(
+                                  (s) => ListTile(
+                                    dense: true,
+                                    leading: const Icon(Icons.room_service),
+                                    title: Text(
+                                      s.serviceInfo?.name ?? 'Dich vu',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                      ],
 
                       const SizedBox(height: 20),
 

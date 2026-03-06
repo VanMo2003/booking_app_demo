@@ -77,8 +77,8 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
   DateTime? _parseDateTime(String? value) {
     if (value == null || value.trim().isEmpty) return null;
     final raw = value.trim();
-    final parsed = DateTime.tryParse(raw) ??
-        DateTime.tryParse(raw.replaceFirst(' ', 'T'));
+    final parsed =
+        DateTime.tryParse(raw) ?? DateTime.tryParse(raw.replaceFirst(' ', 'T'));
     return parsed;
   }
 
@@ -163,6 +163,17 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
       _showSnack(
         const SnackBar(content: Text('Thanh toan that bai')),
       );
+      if (!context.mounted) return;
+      context.read<BookingCubit>().fetch(
+            hotelId: widget.hotelId,
+            customerId: widget.customerId,
+          );
+    } else {
+      if (!context.mounted) return;
+      context.read<BookingCubit>().fetch(
+            hotelId: widget.hotelId,
+            customerId: widget.customerId,
+          );
     }
   }
 
@@ -198,14 +209,20 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
         return;
       }
 
-      final expireAt = _parseDateTime(booking.paymentExpireAt) ??
-          DateTime.now().add(const Duration(minutes: 15));
+      final existingExpireAt = _parseDateTime(booking.paymentExpireAt);
+      final expireAt =
+          (existingExpireAt != null && existingExpireAt.isAfter(DateTime.now()))
+              ? existingExpireAt
+              : DateTime.now().add(const Duration(minutes: 15));
       if (booking.id != null) {
         await PaymentSessionStore.save(
           bookingId: booking.id!,
           paymentUrl: paymentUrl,
           expireAt: expireAt,
         );
+      }
+      if (mounted) {
+        setState(() {});
       }
 
       if (!context.mounted) return;
@@ -390,7 +407,8 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
         },
         builder: (context, state) {
           return AppScaffold(
-            title: isCustomerView ? 'Don dat phong cua toi' : 'Quan ly dat phong',
+            title:
+                isCustomerView ? 'Don dat phong cua toi' : 'Quan ly dat phong',
             body: _buildContent(context, state, isCustomerView),
           );
         },
@@ -518,8 +536,8 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
                       children: [
                         CircleAvatar(
                           radius: 24,
-                          backgroundImage:
-                              NetworkImage(_resolveAvatarUrl(item.customer?.pathImage)),
+                          backgroundImage: NetworkImage(
+                              _resolveAvatarUrl(item.customer?.pathImage)),
                           backgroundColor: Colors.grey[200],
                         ),
                         const SizedBox(width: 12),

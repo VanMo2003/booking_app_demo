@@ -14,11 +14,15 @@ import '../../../hotel/presentation/cubit/hotel_detail/hotel_detail_state.dart';
 @RoutePage()
 class HotelDetailScreen extends StatefulWidget {
   final Hotel hotel;
-  String? checkinDate;
-  String? checkoutDate;
+  final String? checkinDate;
+  final String? checkoutDate;
 
-  HotelDetailScreen(
-      {super.key, required this.hotel, this.checkinDate, this.checkoutDate});
+  const HotelDetailScreen({
+    super.key,
+    required this.hotel,
+    this.checkinDate,
+    this.checkoutDate,
+  });
 
   @override
   State<HotelDetailScreen> createState() => _HotelDetailScreenState();
@@ -27,20 +31,30 @@ class HotelDetailScreen extends StatefulWidget {
 class _HotelDetailScreenState extends State<HotelDetailScreen> {
   int _currentImageIndex = 0;
   late final HotelDetailCubit _cubit;
-  final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: '₫');
+  final currencyFormat = NumberFormat.currency(locale: 'vi_VN', symbol: 'd');
+  final Set<int> _selectedServiceIds = <int>{};
 
   @override
   void initState() {
     super.initState();
     _cubit = HotelDetailCubit(getIt<HotelRepository>());
-    _cubit.fetch(widget.hotel.id,
-        checkinDate: widget.checkinDate, checkoutDate: widget.checkoutDate);
+    _cubit.fetch(
+      widget.hotel.id,
+      checkinDate: widget.checkinDate,
+      checkoutDate: widget.checkoutDate,
+    );
   }
 
   @override
   void dispose() {
     _cubit.close();
     super.dispose();
+  }
+
+  int _selectedServiceTotal(Hotel hotel) {
+    return hotel.services
+        .where((s) => _selectedServiceIds.contains(s.id))
+        .fold<int>(0, (sum, s) => sum + s.unitPrice);
   }
 
   @override
@@ -58,24 +72,25 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
               body: Center(child: CircularProgressIndicator()),
             );
           }
+
           if (state.status == HotelDetailStatus.failure) {
             return Scaffold(
               appBar: AppBar(),
               body: Center(
                 child: Text(
-                  'Lỗi tải thông tin khách sạn:\n${state.errorMessage}',
+                  'Loi tai thong tin khach san:\n${state.errorMessage}',
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: Colors.red),
                 ),
               ),
             );
           }
+
           final hotel = state.hotel ?? widget.hotel;
           const fallbackImageUrl =
               'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1000&auto=format&fit=crop';
           final imageUrls = _getHotelImageUrls(hotel, fallbackImageUrl);
-          final currentIndex =
-              _currentImageIndex.clamp(0, imageUrls.length - 1);
+          final currentIndex = _currentImageIndex.clamp(0, imageUrls.length - 1);
 
           return Scaffold(
             backgroundColor: Colors.white,
@@ -110,12 +125,9 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                                 return Container(
                                   width: isActive ? 18 : 8,
                                   height: 8,
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 4),
+                                  margin: const EdgeInsets.symmetric(horizontal: 4),
                                   decoration: BoxDecoration(
-                                    color: isActive
-                                        ? Colors.white
-                                        : Colors.white70,
+                                    color: isActive ? Colors.white : Colors.white70,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 );
@@ -153,63 +165,94 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            Icon(Icons.location_on,
-                                size: 16, color: primaryBlue),
+                            Icon(Icons.location_on, size: 16, color: primaryBlue),
                             const SizedBox(width: 4),
                             Expanded(
-                              child: Text(hotel.address,
-                                  style: const TextStyle(color: Colors.grey)),
+                              child: Text(
+                                hotel.address,
+                                style: const TextStyle(color: Colors.grey),
+                              ),
                             ),
                           ],
                         ),
 
                         const Divider(height: 40),
 
-                        // --- MÔ TẢ ---
-                        const Text("Mô tả khách sạn",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        const Text(
+                          'Mo ta khach san',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(height: 8),
                         Text(
-                            hotel.description.isNotEmpty
-                                ? hotel.description
-                                : "Đang cập nhật...",
-                            style: const TextStyle(
-                                color: Colors.black87, height: 1.5)),
+                          hotel.description.isNotEmpty
+                              ? hotel.description
+                              : 'Dang cap nhat...',
+                          style: const TextStyle(color: Colors.black87, height: 1.5),
+                        ),
 
                         const SizedBox(height: 24),
 
-                        // --- TIỆN ÍCH (Lấy từ list amenities trong JSON) ---
                         if (hotel.amenities.isNotEmpty) ...[
-                          const Text("Tiện ích",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                          const Text(
+                            'Tien ich',
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
                           const SizedBox(height: 12),
                           _buildAmenitiesList(hotel.amenities, primaryBlue),
                           const SizedBox(height: 24),
                         ],
 
-                        const Text("Chọn phòng",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        if (hotel.services.isNotEmpty) ...[
+                          const Text(
+                            'Dich vu di kem',
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 6),
+                          const Text(
+                            'Chon dich vu de them vao don dat phong',
+                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                          ),
+                          const SizedBox(height: 12),
+                          ...hotel.services.map(
+                            (s) => _buildServiceItem(
+                              title: s.name,
+                              price: s.unitPrice,
+                              icon: Icons.star_outline,
+                              selected: _selectedServiceIds.contains(s.id),
+                              onTap: () {
+                                setState(() {
+                                  if (_selectedServiceIds.contains(s.id)) {
+                                    _selectedServiceIds.remove(s.id);
+                                  } else {
+                                    _selectedServiceIds.add(s.id);
+                                  }
+                                });
+                              },
+                            ),
+                          ),
+                          if (_selectedServiceIds.isNotEmpty) ...[
+                            const SizedBox(height: 6),
+                            Text(
+                              'Tong dich vu da chon: ${currencyFormat.format(_selectedServiceTotal(hotel))}',
+                              style: TextStyle(
+                                color: primaryBlue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                          const SizedBox(height: 24),
+                        ],
+
+                        const Text(
+                          'Chon phong',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(height: 12),
                         if (hotel.rooms.isEmpty)
-                          const Text("Hiện tại khách sạn chưa cập nhật phòng.")
+                          const Text('Hien tai khach san chua cap nhat phong.')
                         else
                           ...hotel.rooms
-                              .map((room) => _buildRoomCard(room, primaryBlue)),
-
-                        const SizedBox(height: 24),
-
-                        // --- DỊCH VỤ (Lấy từ list services trong JSON) ---
-                        if (hotel.services.isNotEmpty) ...[
-                          const Text("Dịch vụ đi kèm",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 12),
-                          ...hotel.services.map((s) => _buildServiceItem(
-                              s.name, s.unitPrice, Icons.star_outline)),
-                        ],
+                              .map((room) => _buildRoomCard(room, primaryBlue, hotel)),
 
                         const SizedBox(height: 100),
                       ],
@@ -237,10 +280,9 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
     if (path.startsWith('http://') || path.startsWith('https://')) {
       return path;
     }
-    return "${AppConfig().baseURL}$path";
+    return '${AppConfig().baseURL}$path';
   }
 
-  // Widget hiển thị Tiện ích dạng Chip/Wrap
   Widget _buildAmenitiesList(List<dynamic> amenities, Color color) {
     return Wrap(
       spacing: 8,
@@ -250,7 +292,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -258,11 +300,14 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                   children: [
                     Icon(Icons.check_circle_outline, size: 14, color: color),
                     const SizedBox(width: 6),
-                    Text(a.name,
-                        style: TextStyle(
-                            fontSize: 13,
-                            color: color,
-                            fontWeight: FontWeight.w500)),
+                    Text(
+                      a.name,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: color,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ],
                 ),
               ))
@@ -270,11 +315,11 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
     );
   }
 
-  // Widget Card cho từng Phòng
-  Widget _buildRoomCard(HotelRoom room, Color primaryBlue) {
+  Widget _buildRoomCard(HotelRoom room, Color primaryBlue, Hotel hotel) {
     final imageUrl = room.pathImage.isNotEmpty
-        ? "${AppConfig().baseURL}${room.pathImage}"
+        ? '${AppConfig().baseURL}${room.pathImage}'
         : 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=1000&auto=format&fit=crop';
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -284,15 +329,24 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 10,
-              offset: const Offset(0, 4))
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          )
         ],
       ),
       child: InkWell(
-        onTap: room.status == "AVAILABLE"
-            ? () => context.router
-                .push(RoomDetailRoute(roomId: room.id, statusRoom: room.status))
+        onTap: room.status == 'AVAILABLE'
+            ? () => context.router.push(
+                  RoomDetailRoute(
+                    roomId: room.id,
+                    statusRoom: room.status,
+                    checkinDate: widget.checkinDate,
+                    checkoutDate: widget.checkoutDate,
+                    selectedServiceIds: _selectedServiceIds.toList(),
+                    selectedServiceTotal: _selectedServiceTotal(hotel),
+                  ),
+                )
             : null,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,60 +365,68 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Phòng ${room.roomNumber} - ${room.roomTypeName}",
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                  'Phong ${room.roomNumber} - ${room.roomTypeName}',
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: room.status == "AVAILABLE"
-                        ? Colors.green.withOpacity(0.1)
-                        : Colors.red.withOpacity(0.1),
+                    color: room.status == 'AVAILABLE'
+                        ? Colors.green.withValues(alpha: 0.1)
+                        : Colors.red.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    room.status == "AVAILABLE" ? "Sẵn sàng" : "Hết phòng",
+                    room.status == 'AVAILABLE' ? 'San sang' : 'Het phong',
                     style: TextStyle(
-                        color: room.status == "AVAILABLE"
-                            ? Colors.green
-                            : Colors.red,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold),
+                      color: room.status == 'AVAILABLE' ? Colors.green : Colors.red,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 8),
-            Text(room.description,
-                style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+            Text(
+              room.description,
+              style: TextStyle(color: Colors.grey[600], fontSize: 13),
+            ),
             const SizedBox(height: 12),
             Row(
               children: [
                 Icon(Icons.people_outline, size: 18, color: Colors.grey[700]),
                 const SizedBox(width: 4),
-                Text("Sức chứa: ${room.capacity} người",
+                Text('Suc chua: ${room.capacity} nguoi',
                     style: const TextStyle(fontSize: 13)),
                 const Spacer(),
                 Text(
                   currencyFormat.format(room.price),
                   style: TextStyle(
-                      color: primaryBlue,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
+                    color: primaryBlue,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                const Text(" /đêm",
-                    style: TextStyle(color: Colors.grey, fontSize: 12)),
+                const Text(' /dem', style: TextStyle(color: Colors.grey, fontSize: 12)),
               ],
             ),
             const SizedBox(height: 12),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: room.status == "AVAILABLE"
-                    ? () => context.router.push(RoomDetailRoute(
-                        roomId: room.id, statusRoom: room.status))
+                onPressed: room.status == 'AVAILABLE'
+                    ? () => context.router.push(
+                          RoomDetailRoute(
+                            roomId: room.id,
+                            statusRoom: room.status,
+                            checkinDate: widget.checkinDate,
+                            checkoutDate: widget.checkoutDate,
+                            selectedServiceIds: _selectedServiceIds.toList(),
+                            selectedServiceTotal: _selectedServiceTotal(hotel),
+                          ),
+                        )
                     : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryBlue,
@@ -373,7 +435,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                       borderRadius: BorderRadius.circular(8)),
                   elevation: 0,
                 ),
-                child: const Text("Chọn phòng này"),
+                child: const Text('Chon phong nay'),
               ),
             )
           ],
@@ -382,26 +444,47 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
     );
   }
 
-  Widget _buildServiceItem(String title, dynamic price, IconData icon) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey.shade100),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.blueGrey, size: 20),
-          const SizedBox(width: 12),
-          Expanded(
+  Widget _buildServiceItem({
+    required String title,
+    required dynamic price,
+    required IconData icon,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: selected ? Colors.blue.withValues(alpha: 0.08) : Colors.grey[50],
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: selected ? Colors.blue : Colors.grey.shade100,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              selected ? Icons.check_circle : icon,
+              color: selected ? Colors.blue : Colors.blueGrey,
+              size: 20,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
               child: Text(title,
-                  style: const TextStyle(fontWeight: FontWeight.w500))),
-          Text(currencyFormat.format(price),
+                  style: const TextStyle(fontWeight: FontWeight.w500)),
+            ),
+            Text(
+              currencyFormat.format(price),
               style: const TextStyle(
-                  fontWeight: FontWeight.bold, color: Colors.orange)),
-        ],
+                fontWeight: FontWeight.bold,
+                color: Colors.orange,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

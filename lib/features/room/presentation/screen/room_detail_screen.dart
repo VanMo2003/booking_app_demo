@@ -24,11 +24,19 @@ class RoomDetailScreen extends StatefulWidget {
   final int roomId;
   final bool isHotelManager;
   final String? statusRoom;
+  final String? checkinDate;
+  final String? checkoutDate;
+  final List<int>? selectedServiceIds;
+  final int? selectedServiceTotal;
 
   const RoomDetailScreen(
       {super.key,
       required this.roomId,
       this.statusRoom,
+      this.checkinDate,
+      this.checkoutDate,
+      this.selectedServiceIds,
+      this.selectedServiceTotal,
       this.isHotelManager = false});
 
   @override
@@ -47,12 +55,47 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
   int _pendingPaymentAmount = 0;
   bool _isSubmittingBooking = false;
   bool _isBookingSheetOpen = false;
+  bool _isFixedDateRange = false;
+  List<int> _selectedServiceIds = const <int>[];
+  int _selectedServiceTotal = 0;
+
+  String _mapBookingErrorMessage(String? raw) {
+    final msg = (raw ?? '').trim();
+    if (msg.isEmpty) return 'Dat phong that bai';
+    if (msg.contains('already booked')) {
+      return 'Phong nay da duoc dat trong khoang ngay ban chon.';
+    }
+    return msg;
+  }
 
   @override
   void initState() {
     super.initState();
+    _initDateRangeFromRoute();
     _cubit = RoomDetailCubit(getIt<RoomRepository>());
     _cubit.fetch(widget.roomId);
+  }
+
+  void _initDateRangeFromRoute() {
+    DateTime? parse(String? raw) {
+      if (raw == null || raw.trim().isEmpty) return null;
+      final value = raw.trim();
+      return DateTime.tryParse(value) ??
+          DateTime.tryParse(value.replaceFirst(' ', 'T'));
+    }
+
+    final incomingCheckin = parse(widget.checkinDate);
+    final incomingCheckout = parse(widget.checkoutDate);
+    if (incomingCheckin != null && incomingCheckout != null) {
+      _checkinDate = DateTime(
+          incomingCheckin.year, incomingCheckin.month, incomingCheckin.day);
+      _checkoutDate = DateTime(
+          incomingCheckout.year, incomingCheckout.month, incomingCheckout.day);
+      _isFixedDateRange = true;
+    }
+
+    _selectedServiceIds = List<int>.from(widget.selectedServiceIds ?? const []);
+    _selectedServiceTotal = widget.selectedServiceTotal ?? 0;
   }
 
   @override
@@ -125,7 +168,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
             setState(() => _isSubmittingBooking = false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.errorMessage ?? 'Đặt phòng thất bại'),
+                content: Text(_mapBookingErrorMessage(state.errorMessage)),
                 backgroundColor: Colors.red,
               ),
             );
@@ -446,7 +489,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
   int _calculateTotalAmount(int? price) {
     final nights = _calculateNights();
     final roomPrice = price ?? 0;
-    return roomPrice * nights;
+    return roomPrice * nights + _selectedServiceTotal;
   }
 
   Future<void> _submitBooking(BuildContext context, Room room) async {
@@ -481,7 +524,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
       hotelId: room.hotelId,
       customerId: customerId,
       rooms: [room.id ?? 0],
-      services: <int>[],
+      services: _selectedServiceIds,
       totalAmount: totalAmount,
       note: _noteController.text.trim().isEmpty
           ? null
@@ -620,7 +663,8 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                     if (parentContext.mounted) {
                       ScaffoldMessenger.of(parentContext).showSnackBar(
                         SnackBar(
-                            content: Text(bookingState.errorMessage ?? 'Loi'),
+                            content: Text(_mapBookingErrorMessage(
+                                bookingState.errorMessage)),
                             backgroundColor: Colors.red),
                       );
                     }
@@ -651,9 +695,11 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                           children: [
                             Expanded(
                               child: OutlinedButton.icon(
-                                onPressed: () => _pickDate(
-                                    isCheckin: true,
-                                    onChanged: () => setModalState(() {})),
+                                onPressed: _isFixedDateRange
+                                    ? null
+                                    : () => _pickDate(
+                                        isCheckin: true,
+                                        onChanged: () => setModalState(() {})),
                                 icon:
                                     const Icon(Icons.calendar_today, size: 16),
                                 label: Text(_formatDateDisplay(_checkinDate)),
@@ -662,9 +708,11 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                             const SizedBox(width: 12),
                             Expanded(
                               child: OutlinedButton.icon(
-                                onPressed: () => _pickDate(
-                                    isCheckin: false,
-                                    onChanged: () => setModalState(() {})),
+                                onPressed: _isFixedDateRange
+                                    ? null
+                                    : () => _pickDate(
+                                        isCheckin: false,
+                                        onChanged: () => setModalState(() {})),
                                 icon:
                                     const Icon(Icons.event_outlined, size: 16),
                                 label: Text(_formatDateDisplay(_checkoutDate)),
@@ -672,8 +720,23 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                             ),
                           ],
                         ),
+                        if (_isFixedDateRange) ...[
+                          const SizedBox(height: 6),
+                          const Text(
+                            'Ngay dat phong duoc giu theo bo loc ban da chon.',
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                        ],
                         const SizedBox(height: 8),
                         Text('So dem: $nights'),
+                        if (_selectedServiceIds.isNotEmpty) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            'Dich vu da chon: ${_selectedServiceIds.length} (cong ${currencyFormat.format(_selectedServiceTotal)})',
+                            style:
+                                const TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                        ],
                         const SizedBox(height: 12),
                         DropdownButtonFormField<String>(
                           initialValue: _paymentMethod,
