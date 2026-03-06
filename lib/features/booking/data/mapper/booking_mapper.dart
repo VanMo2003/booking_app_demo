@@ -15,6 +15,7 @@ class BookingMapper {
       checkoutDate: dto.checkoutDate ?? '',
       bookingStatus: dto.bookingStatus ?? '',
       paymentMethod: dto.paymentMethod ?? '',
+      paymentStatus: dto.paymentStatus ?? '',
       hotel: dto.hotel != null ? _hotelToEntity(dto.hotel!) : null,
       customer: dto.customer != null ? _customerToEntity(dto.customer!) : null,
       bookingRooms:
@@ -65,6 +66,7 @@ class BookingMapper {
       checkoutDate: entity.checkoutDate,
       bookingStatus: entity.bookingStatus,
       paymentMethod: entity.paymentMethod,
+      paymentStatus: entity.paymentStatus,
       hotel: entity.hotel != null ? _hotelToResponse(entity.hotel!) : null,
       customer: entity.customer != null
           ? _customerToResponse(entity.customer!)

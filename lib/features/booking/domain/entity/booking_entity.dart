@@ -6,6 +6,7 @@ class BookingEntity {
   String? checkoutDate;
   String? bookingStatus;
   String? paymentMethod;
+  String? paymentStatus;
   HotelInfoEntity? hotel;
   CustomerInfoEntity? customer;
   List<BookingRoomsEntity>? bookingRooms;
@@ -21,6 +22,7 @@ class BookingEntity {
       this.checkoutDate,
       this.bookingStatus,
       this.paymentMethod,
+      this.paymentStatus,
       this.hotel,
       this.customer,
       this.bookingRooms,
