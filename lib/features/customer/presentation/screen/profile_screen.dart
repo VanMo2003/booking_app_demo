@@ -1,8 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:booking_app_mobile/core/constants/constant.dart';
 import 'package:booking_app_mobile/core/di/injector.dart';
+import 'package:booking_app_mobile/features/auth/data/models/response/customer_response.dart';
 import 'package:booking_app_mobile/features/auth/domain/entity/auth.dart';
 import 'package:booking_app_mobile/features/auth/domain/repositories/auth_repository.dart';
+import 'package:booking_app_mobile/features/customer/domain/repositories/customer_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../../../core/navigation/app_routes.dart';
 import 'account_settings_screen.dart';
@@ -16,6 +20,45 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  CustomerResponse? _customer;
+  bool _isLoadingCustomer = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCustomerProfile();
+  }
+
+  Future<void> _loadCustomerProfile() async {
+    final current = Auth.current?.customer;
+    if (current != null) {
+      _customer = current;
+    }
+
+    final storage = getIt<FlutterSecureStorage>();
+    final rawId = await storage.read(key: Constants.customerId);
+    final id = int.tryParse(rawId ?? '');
+
+    if (id == null) {
+      if (!mounted) return;
+      setState(() => _isLoadingCustomer = false);
+      return;
+    }
+
+    try {
+      final fetched = await getIt<CustomerRepository>().getCustomerById(id);
+      Auth.current?.customer = fetched;
+      if (!mounted) return;
+      setState(() {
+        _customer = fetched;
+        _isLoadingCustomer = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isLoadingCustomer = false);
+    }
+  }
+
   void _handleLogout(BuildContext context) {
     showDialog(
       context: context,
@@ -53,19 +96,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _openAccountSettings() async {
+    final customer = _customer ?? Auth.current?.customer;
     final changed = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => const AccountSettingsScreen()),
+      MaterialPageRoute(
+        builder: (_) => AccountSettingsScreen(customer: customer),
+      ),
     );
 
     if (changed == true && mounted) {
-      setState(() {});
+      await _loadCustomerProfile();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     const brandGold = Color(0xFF8B7355);
-    final customer = Auth.current?.customer;
+    final customer = _customer ?? Auth.current?.customer;
     final fullName = customer?.fullName?.trim();
     final username = customer?.username?.trim();
     final subtitle = customer?.phoneNumber?.trim();
@@ -100,22 +146,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          (fullName != null && fullName.isNotEmpty)
-                              ? fullName
-                              : ((username != null && username.isNotEmpty)
-                                  ? username
-                                  : 'Ten nguoi dung'),
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          (subtitle != null && subtitle.isNotEmpty)
-                              ? subtitle
-                              : 'So dien thoai',
-                          style:
-                              const TextStyle(color: brandGold, fontSize: 13),
-                        ),
+                        if (_isLoadingCustomer)
+                          const SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        else ...[
+                          Text(
+                            (fullName != null && fullName.isNotEmpty)
+                                ? fullName
+                                : ((username != null && username.isNotEmpty)
+                                    ? username
+                                    : 'Ten nguoi dung'),
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            (subtitle != null && subtitle.isNotEmpty)
+                                ? subtitle
+                                : 'So dien thoai',
+                            style:
+                                const TextStyle(color: brandGold, fontSize: 13),
+                          ),
+                        ],
                       ],
                     ),
                   ),

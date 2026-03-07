@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
-  const AccountSettingsScreen({super.key});
+  final CustomerResponse? customer;
+
+  const AccountSettingsScreen({super.key, this.customer});
 
   @override
   State<AccountSettingsScreen> createState() => _AccountSettingsScreenState();
@@ -52,49 +54,22 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   }
 
   Future<void> _initForm() async {
+    final source = widget.customer ?? Auth.current?.customer;
+
+    _fullNameController.text = source?.fullName ?? '';
+    _phoneController.text = source?.phoneNumber ?? '';
+    _hometownController.text = source?.hometown ?? '';
+    _gender = _normalizeGender(source?.gender);
+
     final storage = getIt<FlutterSecureStorage>();
     final rawId = await storage.read(key: Constants.customerId);
     final id = int.tryParse(rawId ?? '');
 
-    if (id == null) {
-      if (!mounted) return;
-      setState(() {
-        _customerId = null;
-        _isLoadingProfile = false;
-      });
-      return;
-    }
-
-    try {
-      final customer = await getIt<CustomerRepository>().getCustomerById(id);
-      final current = Auth.current;
-      if (current != null) {
-        current.customer = customer;
-      }
-
-      if (!mounted) return;
-      setState(() {
-        _customerId = id;
-        _fullNameController.text = customer.fullName ?? '';
-        _phoneController.text = customer.phoneNumber ?? '';
-        _hometownController.text = customer.hometown ?? '';
-        _gender = _normalizeGender(customer.gender);
-      });
-    } catch (_) {
-      final fallback = Auth.current?.customer;
-      if (!mounted) return;
-      setState(() {
-        _customerId = id;
-        _fullNameController.text = fallback?.fullName ?? '';
-        _phoneController.text = fallback?.phoneNumber ?? '';
-        _hometownController.text = fallback?.hometown ?? '';
-        _gender = _normalizeGender(fallback?.gender);
-      });
-    } finally {
-      if (mounted) {
-        setState(() => _isLoadingProfile = false);
-      }
-    }
+    if (!mounted) return;
+    setState(() {
+      _customerId = id ?? source?.id;
+      _isLoadingProfile = false;
+    });
   }
 
   String _normalizeGender(String? gender) {
@@ -242,7 +217,8 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                       ),
                       const SizedBox(height: 16),
                       DropdownButtonFormField<String>(
-                        value: _gender,
+                        key: ValueKey(_gender),
+                        initialValue: _gender,
                         decoration: _inputDecoration('Giới tính'),
                         items: const [
                           DropdownMenuItem(value: 'nam', child: Text('Nam')),
