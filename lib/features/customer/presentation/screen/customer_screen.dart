@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:booking_app_mobile/core/api/app_config.dart';
 import 'package:booking_app_mobile/core/constants/constant.dart';
@@ -29,6 +31,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
   DateTime? _checkinDate;
   DateTime? _checkoutDate;
   int? _customerId;
+  bool _isManualLoading = false;
+  Completer<void>? _refreshCompleter;
 
   @override
   void initState() {
@@ -104,7 +108,14 @@ class _CustomerScreenState extends State<CustomerScreen> {
     });
   }
 
-  void _fetchHotels(BuildContext context, {required int size}) {
+  void _fetchHotels(
+    BuildContext context, {
+    required int size,
+    bool fromUserAction = false,
+  }) {
+    if (fromUserAction && mounted) {
+      setState(() => _isManualLoading = true);
+    }
     context.read<HotelBloc>().add(
           HotelsFetched(
             page: 0,
@@ -125,7 +136,14 @@ class _CustomerScreenState extends State<CustomerScreen> {
       );
       return;
     }
-    _fetchHotels(context, size: size);
+    _fetchHotels(context, size: size, fromUserAction: true);
+  }
+
+  Future<void> _handleRefresh(BuildContext context, int size) async {
+    _refreshCompleter?.complete();
+    _refreshCompleter = Completer<void>();
+    _fetchHotels(context, size: size, fromUserAction: true);
+    await _refreshCompleter!.future;
   }
 
   Future<void> _openBookingList(BuildContext context) async {
@@ -160,6 +178,13 @@ class _CustomerScreenState extends State<CustomerScreen> {
           listenWhen: (p, c) =>
               p.status != c.status || p.errorMessage != c.errorMessage,
           listener: (context, state) {
+            if (_isManualLoading && state.status != HotelStatus.loading) {
+              if (mounted) {
+                setState(() => _isManualLoading = false);
+              }
+              _refreshCompleter?.complete();
+              _refreshCompleter = null;
+            }
             if (state.status == HotelStatus.failure &&
                 state.errorMessage != null) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -168,341 +193,383 @@ class _CustomerScreenState extends State<CustomerScreen> {
             }
           },
           builder: (context, state) {
-            return RefreshIndicator(
-              onRefresh: () async {
-                _fetchHotels(context, size: state.size);
-              },
-              child: CustomScrollView(
-                controller: _scroll,
-                slivers: [
-                  SliverAppBar(
-                    expandedHeight: 260,
-                    floating: false,
-                    pinned: true,
-                    elevation: 0,
-                    backgroundColor: theme.primaryColor,
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              theme.primaryColor,
-                              theme.primaryColor.withValues(alpha: 0.8),
-                            ],
-                          ),
-                        ),
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            return ClipRect(
-                              child: SingleChildScrollView(
-                                child: ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    minHeight: constraints.maxHeight,
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20, right: 20, top: 60),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+            return Stack(
+              children: [
+                RefreshIndicator(
+                  onRefresh: () => _handleRefresh(context, state.size),
+                  child: CustomScrollView(
+                    controller: _scroll,
+                    slivers: [
+                      SliverAppBar(
+                        expandedHeight: 260,
+                        floating: false,
+                        pinned: true,
+                        elevation: 0,
+                        backgroundColor: theme.primaryColor,
+                        flexibleSpace: FlexibleSpaceBar(
+                          background: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  theme.primaryColor,
+                                  theme.primaryColor.withValues(alpha: 0.8),
+                                ],
+                              ),
+                            ),
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                return ClipRect(
+                                  child: SingleChildScrollView(
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        minHeight: constraints.maxHeight,
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 20, right: 20, top: 60),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            const Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text('Chào mừng bạn,',
-                                                    style: TextStyle(
-                                                        color: Colors.white70,
-                                                        fontSize: 16)),
-                                                Text(
-                                                  'Khám phá ngay! 👋',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 22,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
                                             Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: [
-                                                IconButton(
-                                                  onPressed: () =>
-                                                      _openBookingList(context),
-                                                  icon: const Icon(
-                                                    Icons.receipt_long,
-                                                    color: Colors.white,
-                                                  ),
-                                                  tooltip: 'Đơn đặt phòng',
-                                                ),
-                                                GestureDetector(
-                                                  onTap: () => context.router
-                                                      .push(
-                                                          const ProfileRoute()),
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      border: Border.all(
-                                                          color: Colors.white,
-                                                          width: 2),
-                                                    ),
-                                                    child: const CircleAvatar(
-                                                      radius: 24,
-                                                      backgroundImage: NetworkImage(
-                                                          'https://i.pravatar.cc/150?img=68'),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 20),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 12),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white,
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                  boxShadow: const [
-                                                    BoxShadow(
-                                                        color: Colors.black12,
-                                                        blurRadius: 10)
-                                                  ],
-                                                ),
-                                                child: const Row(
+                                                const Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
-                                                    Icon(Icons.search,
-                                                        color: Colors.grey),
-                                                    SizedBox(width: 10),
-                                                    Text('Bạn muốn đi đâu?',
+                                                    Text('Chào mừng bạn,',
                                                         style: TextStyle(
                                                             color:
-                                                                Colors.grey)),
+                                                                Colors.white70,
+                                                            fontSize: 16)),
+                                                    Text(
+                                                      'Khám phá ngay! 👋',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 22,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
                                                   ],
                                                 ),
-                                              ),
+                                                Row(
+                                                  children: [
+                                                    IconButton(
+                                                      onPressed: () =>
+                                                          _openBookingList(
+                                                              context),
+                                                      icon: const Icon(
+                                                        Icons.receipt_long,
+                                                        color: Colors.white,
+                                                      ),
+                                                      tooltip: 'Đơn đặt phòng',
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: () =>
+                                                          context.router.push(
+                                                              const ProfileRoute()),
+                                                      child: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          shape:
+                                                              BoxShape.circle,
+                                                          border: Border.all(
+                                                              color:
+                                                                  Colors.white,
+                                                              width: 2),
+                                                        ),
+                                                        child:
+                                                            const CircleAvatar(
+                                                          radius: 24,
+                                                          backgroundImage:
+                                                              NetworkImage(
+                                                                  'https://i.pravatar.cc/150?img=68'),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
                                             ),
-                                            const SizedBox(width: 12),
-                                            SizedBox(
-                                              child: ElevatedButton.icon(
-                                                onPressed: () => _applyFilter(
-                                                    context,
-                                                    size: state.size),
-                                                label: const Text('Lọc'),
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Colors.white,
-                                                  foregroundColor:
-                                                      theme.primaryColor,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(vertical: 12),
-                                                  shape: RoundedRectangleBorder(
+                                            const SizedBox(height: 20),
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 16,
+                                                        vertical: 12),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              12),
+                                                      boxShadow: const [
+                                                        BoxShadow(
+                                                            color:
+                                                                Colors.black12,
+                                                            blurRadius: 10)
+                                                      ],
+                                                    ),
+                                                    child: const Row(
+                                                      children: [
+                                                        Icon(Icons.search,
+                                                            color: Colors.grey),
+                                                        SizedBox(width: 10),
+                                                        Text('Bạn muốn đi đâu?',
+                                                            style: TextStyle(
+                                                                color: Colors
+                                                                    .grey)),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 12),
+                                                SizedBox(
+                                                  child: ElevatedButton.icon(
+                                                    onPressed: () =>
+                                                        _applyFilter(context,
+                                                            size: state.size),
+                                                    label: const Text('Lọc'),
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      foregroundColor:
+                                                          theme.primaryColor,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 12),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 16),
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: InkWell(
+                                                    onTap: () => _pickDate(
+                                                        isCheckin: true),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             12),
+                                                    child: InputDecorator(
+                                                      decoration:
+                                                          InputDecoration(
+                                                        labelText: 'Ngày đến',
+                                                        labelStyle:
+                                                            const TextStyle(
+                                                          color: Colors.white70,
+                                                        ),
+                                                        filled: true,
+                                                        fillColor: Colors.white
+                                                            .withValues(
+                                                                alpha: 0.15),
+                                                        border:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                        ),
+                                                        enabledBorder:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: Colors.white
+                                                                .withValues(
+                                                                    alpha:
+                                                                        0.35),
+                                                          ),
+                                                        ),
+                                                        focusedBorder:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                          borderSide:
+                                                              const BorderSide(
+                                                            color: Colors.white,
+                                                            width: 1.6,
+                                                          ),
+                                                        ),
+                                                        prefixIcon: Icon(
+                                                          Icons
+                                                              .calendar_today_outlined,
+                                                          color: Colors.white
+                                                              .withValues(
+                                                                  alpha: 0.9),
+                                                        ),
+                                                      ),
+                                                      child: Text(
+                                                        _formatDate(
+                                                            _checkinDate),
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
+                                                const SizedBox(width: 12),
+                                                Expanded(
+                                                  child: InkWell(
+                                                    onTap: () => _pickDate(
+                                                        isCheckin: false),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                    child: InputDecorator(
+                                                      decoration:
+                                                          InputDecoration(
+                                                        labelText: 'Ngày đi',
+                                                        labelStyle:
+                                                            const TextStyle(
+                                                          color: Colors.white70,
+                                                        ),
+                                                        filled: true,
+                                                        fillColor: Colors.white
+                                                            .withValues(
+                                                                alpha: 0.15),
+                                                        border:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                        ),
+                                                        enabledBorder:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                          borderSide:
+                                                              BorderSide(
+                                                            color: Colors.white
+                                                                .withValues(
+                                                                    alpha:
+                                                                        0.35),
+                                                          ),
+                                                        ),
+                                                        focusedBorder:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                          borderSide:
+                                                              const BorderSide(
+                                                            color: Colors.white,
+                                                            width: 1.6,
+                                                          ),
+                                                        ),
+                                                        prefixIcon: Icon(
+                                                          Icons.event_outlined,
+                                                          color: Colors.white
+                                                              .withValues(
+                                                                  alpha: 0.9),
+                                                        ),
+                                                      ),
+                                                      child: Text(
+                                                        _formatDate(
+                                                            _checkoutDate),
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(height: 16),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: InkWell(
-                                                onTap: () =>
-                                                    _pickDate(isCheckin: true),
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                                child: InputDecorator(
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Ngày đến',
-                                                    labelStyle: const TextStyle(
-                                                      color: Colors.white70,
-                                                    ),
-                                                    filled: true,
-                                                    fillColor: Colors.white
-                                                        .withValues(
-                                                            alpha: 0.15),
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
-                                                    ),
-                                                    enabledBorder:
-                                                        OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
-                                                      borderSide: BorderSide(
-                                                        color: Colors.white
-                                                            .withValues(
-                                                                alpha: 0.35),
-                                                      ),
-                                                    ),
-                                                    focusedBorder:
-                                                        OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
-                                                      borderSide:
-                                                          const BorderSide(
-                                                        color: Colors.white,
-                                                        width: 1.6,
-                                                      ),
-                                                    ),
-                                                    prefixIcon: Icon(
-                                                      Icons
-                                                          .calendar_today_outlined,
-                                                      color: Colors.white
-                                                          .withValues(
-                                                              alpha: 0.9),
-                                                    ),
-                                                  ),
-                                                  child: Text(
-                                                    _formatDate(_checkinDate),
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 12),
-                                            Expanded(
-                                              child: InkWell(
-                                                onTap: () =>
-                                                    _pickDate(isCheckin: false),
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                                child: InputDecorator(
-                                                  decoration: InputDecoration(
-                                                    labelText: 'Ngày đi',
-                                                    labelStyle: const TextStyle(
-                                                      color: Colors.white70,
-                                                    ),
-                                                    filled: true,
-                                                    fillColor: Colors.white
-                                                        .withValues(
-                                                            alpha: 0.15),
-                                                    border: OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
-                                                    ),
-                                                    enabledBorder:
-                                                        OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
-                                                      borderSide: BorderSide(
-                                                        color: Colors.white
-                                                            .withValues(
-                                                                alpha: 0.35),
-                                                      ),
-                                                    ),
-                                                    focusedBorder:
-                                                        OutlineInputBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              12),
-                                                      borderSide:
-                                                          const BorderSide(
-                                                        color: Colors.white,
-                                                        width: 1.6,
-                                                      ),
-                                                    ),
-                                                    prefixIcon: Icon(
-                                                      Icons.event_outlined,
-                                                      color: Colors.white
-                                                          .withValues(
-                                                              alpha: 0.9),
-                                                    ),
-                                                  ),
-                                                  child: Text(
-                                                    _formatDate(_checkoutDate),
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            );
-                          },
+                                );
+                              },
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  SliverPadding(
-                    padding: const EdgeInsets.all(20),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          // footer loading / end
-                          if (index == state.items.length) {
-                            if (state.status == HotelStatus.loading &&
-                                state.items.isNotEmpty) {
-                              return const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 16),
-                                child:
-                                    Center(child: CircularProgressIndicator()),
-                              );
-                            }
-                            // if (!state.hasMore && state.items.isNotEmpty) {
-                            //   return const Padding(
-                            //     padding: EdgeInsets.symmetric(vertical: 16),
-                            //     child: Center(child: Text('Hết dữ liệu')),
-                            //   );
-                            // }
-                            return const SizedBox.shrink();
-                          }
+                      SliverPadding(
+                        padding: const EdgeInsets.all(20),
+                        sliver: SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                              // footer loading / end
+                              if (index == state.items.length) {
+                                if (state.status == HotelStatus.loading &&
+                                    state.items.isNotEmpty) {
+                                  return const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 16),
+                                    child: Center(
+                                        child: CircularProgressIndicator()),
+                                  );
+                                }
+                                // if (!state.hasMore && state.items.isNotEmpty) {
+                                //   return const Padding(
+                                //     padding: EdgeInsets.symmetric(vertical: 16),
+                                //     child: Center(child: Text('Hết dữ liệu')),
+                                //   );
+                                // }
+                                return const SizedBox.shrink();
+                              }
 
-                          final hotel = state.items[index];
-                          return _buildHotelCard(context, hotel);
-                        },
-                        childCount: state.items.length + 1,
+                              final hotel = state.items[index];
+                              return _buildHotelCard(context, hotel);
+                            },
+                            childCount: state.items.length + 1,
+                          ),
+                        ),
                       ),
-                    ),
+                      if (state.items.isEmpty)
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 40),
+                            child: Center(
+                              child: state.status == HotelStatus.loading
+                                  ? const CircularProgressIndicator()
+                                  : const Text('Chưa có khách sạn'),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
-                  if (state.items.isEmpty)
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 40),
-                        child: Center(
-                          child: state.status == HotelStatus.loading
-                              ? const CircularProgressIndicator()
-                              : const Text('Chưa có khách sạn'),
+                ),
+                if (_isManualLoading)
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: Container(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        child: const Center(
+                          child: CircularProgressIndicator(),
                         ),
                       ),
                     ),
-                ],
-              ),
+                  ),
+              ],
             );
           },
         ),
