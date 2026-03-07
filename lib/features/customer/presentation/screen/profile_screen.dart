@@ -67,6 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     const brandGold = Color(0xFF8B7355);
     final customer = Auth.current?.customer;
     final fullName = customer?.fullName?.trim();
+    final username = customer?.username?.trim();
     final subtitle = customer?.phoneNumber?.trim();
 
     return Scaffold(
@@ -91,7 +92,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   const CircleAvatar(
                     radius: 30,
-                    backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=68'),
+                    backgroundImage:
+                        NetworkImage('https://i.pravatar.cc/150?img=68'),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -101,14 +103,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Text(
                           (fullName != null && fullName.isNotEmpty)
                               ? fullName
-                              : 'Khach hang',
+                              : ((username != null && username.isNotEmpty)
+                                  ? username
+                                  : 'Ten nguoi dung'),
                           style: const TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         Text(
                           (subtitle != null && subtitle.isNotEmpty)
                               ? subtitle
-                              : 'Cap nhat thong tin tai khoan',
+                              : 'So dien thoai',
                           style:
                               const TextStyle(color: brandGold, fontSize: 13),
                         ),
@@ -125,11 +129,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: Colors.white, borderRadius: BorderRadius.circular(16)),
               child: Column(
                 children: [
-                  _buildMenuItem(Icons.help_outline_rounded, 'Huong dan dung app'),
+                  _buildMenuItem(
+                      Icons.help_outline_rounded, 'Huong dan dung app'),
                   _buildDivider(),
                   _buildMenuItem(Icons.hotel_outlined, 'Thong tin khach san'),
                   _buildDivider(),
-                  _buildMenuItem(Icons.loyalty_outlined, 'Goi uu dai dang dung'),
+                  _buildMenuItem(
+                      Icons.loyalty_outlined, 'Goi uu dai dang dung'),
                   _buildDivider(),
                   _buildMenuItem(
                     Icons.manage_accounts_outlined,
@@ -137,7 +143,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onTap: _openAccountSettings,
                   ),
                   _buildDivider(),
-                  _buildMenuItem(Icons.color_lens_outlined, 'Thay doi giao dien'),
+                  _buildMenuItem(
+                      Icons.color_lens_outlined, 'Thay doi giao dien'),
                 ],
               ),
             ),

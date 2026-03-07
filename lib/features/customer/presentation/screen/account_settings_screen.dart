@@ -25,6 +25,26 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   bool _isLoadingProfile = true;
   int? _customerId;
 
+  // Helper để tạo InputDecoration đồng bộ
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      filled: true,
+      fillColor: Colors.white,
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.3)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide:
+            BorderSide(color: Theme.of(context).primaryColor, width: 1.6),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -88,7 +108,9 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     final id = _customerId;
     if (id == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Khong tim thay customerId. Vui long dang nhap lai.')),
+        const SnackBar(
+            content:
+                Text('Khong tim thay customerId. Vui long dang nhap lai.')),
       );
       return;
     }
@@ -156,93 +178,114 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       );
     }
 
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Thiet lap tai khoan'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _fullNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Ho va ten',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Vui long nhap ho va ten';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _phoneController,
-                keyboardType: TextInputType.phone,
-                decoration: const InputDecoration(
-                  labelText: 'So dien thoai',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  final v = value?.trim() ?? '';
-                  if (v.isEmpty) return 'Vui long nhap so dien thoai';
-                  if (!RegExp(r'^[0-9]{9,11}$').hasMatch(v)) {
-                    return 'So dien thoai khong hop le';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                initialValue: _gender,
-                decoration: const InputDecoration(
-                  labelText: 'Gioi tinh',
-                  border: OutlineInputBorder(),
-                ),
-                items: const [
-                  DropdownMenuItem(value: 'nam', child: Text('Nam')),
-                  DropdownMenuItem(value: 'nu', child: Text('Nu')),
-                ],
-                onChanged: (value) {
-                  if (value == null) return;
-                  setState(() => _gender = value);
-                },
-              ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _hometownController,
-                decoration: const InputDecoration(
-                  labelText: 'Que quan',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Vui long nhap que quan';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isSaving ? null : _submit,
-                  child: _isSaving
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Luu thay doi'),
+      backgroundColor: Colors.grey[50],
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 120,
+            pinned: true,
+            backgroundColor: theme.primaryColor,
+            flexibleSpace: FlexibleSpaceBar(
+              title: const Text('Thiết lập tài khoản',
+                  style: TextStyle(color: Colors.white)),
+              background: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      theme.primaryColor,
+                      theme.primaryColor.withValues(alpha: 0.8)
+                    ],
+                  ),
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: _fullNameController,
+                        decoration: _inputDecoration('Họ và tên'),
+                        validator: (v) => (v?.trim().isEmpty ?? true)
+                            ? 'Vui lòng nhập họ tên'
+                            : null,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        decoration: _inputDecoration('Số điện thoại'),
+                        validator: (v) =>
+                            !RegExp(r'^[0-9]{9,11}$').hasMatch(v ?? '')
+                                ? 'Số điện thoại không hợp lệ'
+                                : null,
+                      ),
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<String>(
+                        value: _gender,
+                        decoration: _inputDecoration('Giới tính'),
+                        items: const [
+                          DropdownMenuItem(value: 'nam', child: Text('Nam')),
+                          DropdownMenuItem(value: 'nu', child: Text('Nữ')),
+                        ],
+                        onChanged: (v) => setState(() => _gender = v!),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _hometownController,
+                        decoration: _inputDecoration('Quê quán'),
+                        validator: (v) => (v?.trim().isEmpty ?? true)
+                            ? 'Vui lòng nhập quê quán'
+                            : null,
+                      ),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: _isSaving ? null : _submit,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: theme.primaryColor,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                          ),
+                          child: _isSaving
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white, strokeWidth: 2)
+                              : const Text('Lưu thay đổi',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

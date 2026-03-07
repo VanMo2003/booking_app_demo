@@ -182,7 +182,8 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
       return;
     }
     if (amount <= 0) {
-      _showSnack(const SnackBar(content: Text('Khong co so tien can thanh toan')));
+      _showSnack(
+          const SnackBar(content: Text('Khong co so tien can thanh toan')));
       return;
     }
 
@@ -198,15 +199,16 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
       );
       final paymentUrl = resp.data?['data']?['paymentUrl']?.toString();
       if (paymentUrl == null || paymentUrl.isEmpty) {
-        _showSnack(const SnackBar(content: Text('Khong nhan duoc link thanh toan')));
+        _showSnack(
+            const SnackBar(content: Text('Khong nhan duoc link thanh toan')));
         return;
       }
 
       final existingExpireAt = _parseDateTime(_booking.paymentExpireAt);
-      final expireAt = (existingExpireAt != null &&
-              existingExpireAt.isAfter(DateTime.now()))
-          ? existingExpireAt
-          : DateTime.now().add(const Duration(minutes: 15));
+      final expireAt =
+          (existingExpireAt != null && existingExpireAt.isAfter(DateTime.now()))
+              ? existingExpireAt
+              : DateTime.now().add(const Duration(minutes: 15));
       await PaymentSessionStore.save(
         bookingId: bookingId,
         paymentUrl: paymentUrl,
@@ -279,7 +281,8 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final canCustomerPay = !widget.allowActions && _isVnPay() && !_isPaid() && !_isCancelled();
+    final canCustomerPay =
+        !widget.allowActions && _isVnPay() && !_isPaid() && !_isCancelled();
 
     return BlocProvider(
       create: (_) => BookingCubit(
@@ -321,9 +324,65 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Center(child: _buildBigStatusChip(_booking.bookingStatus)),
+                      Center(
+                          child: _buildBigStatusChip(_booking.bookingStatus)),
                       const SizedBox(height: 24),
-
+                      _buildSectionTitle('Thong tin khach san'),
+                      Card(
+                        elevation: 1,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(12),
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: SizedBox(
+                              width: 56,
+                              height: 56,
+                              child: Image.network(
+                                _resolveImageUrl(_booking.hotel?.pathImage),
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Container(
+                                  color: Colors.grey.shade200,
+                                  child: Icon(
+                                    Icons.hotel,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          title: Text(
+                            _booking.hotel?.name ?? 'Khach san',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 6),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Icon(Icons.location_on_outlined,
+                                      size: 14, color: Colors.grey),
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      _booking.hotel?.address ??
+                                          'Dang cap nhat dia chi',
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
                       _buildSectionTitle('Thong tin khach hang'),
                       Card(
                         elevation: 1,
@@ -334,7 +393,8 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                           leading: CircleAvatar(
                             radius: 28,
                             backgroundImage: NetworkImage(
-                              _resolveImageUrl(_booking.customer?.pathImage, isAvatar: true),
+                              _resolveImageUrl(_booking.customer?.pathImage,
+                                  isAvatar: true),
                             ),
                           ),
                           title: Text(
@@ -345,13 +405,13 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(height: 4),
-                              Text(_booking.customer?.phoneNumber ?? 'Khong co SDT'),
+                              Text(_booking.customer?.phoneNumber ??
+                                  'Khong co SDT'),
                             ],
                           ),
                         ),
                       ),
                       const SizedBox(height: 20),
-
                       _buildSectionTitle('Thoi gian luu tru'),
                       Card(
                         elevation: 1,
@@ -362,23 +422,27 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                           child: Row(
                             children: [
                               Expanded(
-                                child: _buildDateBox(context, 'Nhan phong', _booking.checkinDate),
+                                child: _buildDateBox(context, 'Nhan phong',
+                                    _booking.checkinDate),
                               ),
-                              const Icon(Icons.arrow_forward, color: Colors.grey),
+                              const Icon(Icons.arrow_forward,
+                                  color: Colors.grey),
                               Expanded(
-                                child: _buildDateBox(context, 'Tra phong', _booking.checkoutDate),
+                                child: _buildDateBox(context, 'Tra phong',
+                                    _booking.checkoutDate),
                               ),
                             ],
                           ),
                         ),
                       ),
                       const SizedBox(height: 20),
-
-                      _buildSectionTitle('Phong da dat (${_booking.bookingRooms?.length ?? 0})'),
+                      _buildSectionTitle(
+                          'Phong da dat (${_booking.bookingRooms?.length ?? 0})'),
                       if (_booking.bookingRooms != null)
                         ..._booking.bookingRooms!.map(
                           (bookingRoom) {
-                            final imageUrl = _resolveImageUrl(bookingRoom.roomInfo?.pathImage);
+                            final imageUrl = _resolveImageUrl(
+                                bookingRoom.roomInfo?.pathImage);
 
                             return Card(
                               margin: const EdgeInsets.only(bottom: 8),
@@ -399,7 +463,8 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                     child: Image.network(
                                       imageUrl,
                                       fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) {
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
                                         return Icon(
                                           Icons.meeting_room,
                                           color: Theme.of(context)
@@ -407,13 +472,16 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                               .withValues(alpha: 0.5),
                                         );
                                       },
-                                      loadingBuilder: (context, child, loadingProgress) {
-                                        if (loadingProgress == null) return child;
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                        if (loadingProgress == null)
+                                          return child;
                                         return const Center(
                                           child: SizedBox(
                                             width: 20,
                                             height: 20,
-                                            child: CircularProgressIndicator(strokeWidth: 2),
+                                            child: CircularProgressIndicator(
+                                                strokeWidth: 2),
                                           ),
                                         );
                                       },
@@ -422,20 +490,21 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                 ),
                                 title: Text(
                                   'Phong ${bookingRoom.roomInfo?.roomNumber ?? "N/A"}',
-                                  style: const TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
                                 ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const SizedBox(height: 4),
-                                    Text(bookingRoom.roomInfo?.roomTypeName ?? 'Loai phong thuong'),
+                                    Text(bookingRoom.roomInfo?.roomTypeName ??
+                                        'Loai phong thuong'),
                                   ],
                                 ),
                               ),
                             );
                           },
                         ),
-
                       if (_booking.bookingServices != null &&
                           _booking.bookingServices!.isNotEmpty) ...[
                         const SizedBox(height: 20),
@@ -462,9 +531,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                           ),
                         ),
                       ],
-
                       const SizedBox(height: 20),
-
                       _buildSectionTitle('Thanh toan'),
                       Card(
                         elevation: 1,
@@ -474,14 +541,17 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                           padding: const EdgeInsets.all(16),
                           child: Column(
                             children: [
-                              _buildInfoRow('Phuong thuc', _booking.paymentMethod ?? 'Tien mat'),
+                              _buildInfoRow('Phuong thuc',
+                                  _booking.paymentMethod ?? 'Tien mat'),
                               const SizedBox(height: 12),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text('Trang thai thanh toan',
                                       style: TextStyle(color: Colors.grey)),
-                                  _buildPaymentStatusChip(_booking.paymentStatus),
+                                  _buildPaymentStatusChip(
+                                      _booking.paymentStatus),
                                 ],
                               ),
                               if (countdown != null) ...[
@@ -492,7 +562,9 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                     countdown,
                                     style: TextStyle(
                                       fontSize: 12,
-                                      color: _isInPaymentWindow() ? Colors.orange : Colors.red,
+                                      color: _isInPaymentWindow()
+                                          ? Colors.orange
+                                          : Colors.red,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -500,10 +572,13 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                               ],
                               const Divider(height: 24),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   const Text('Tong tien',
-                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold)),
                                   Text(
                                     _formatCurrency(_booking.totalAmount),
                                     style: TextStyle(
@@ -521,12 +596,17 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                   child: FutureBuilder<bool>(
                                     future: (_booking.id == null)
                                         ? Future.value(false)
-                                        : PaymentSessionStore.get(_booking.id!).then(
-                                            (session) => session != null && !session.isExpired,
+                                        : PaymentSessionStore.get(_booking.id!)
+                                            .then(
+                                            (session) =>
+                                                session != null &&
+                                                !session.isExpired,
                                           ),
                                     builder: (context, snapshot) {
-                                      final hasLocalSession = snapshot.data == true;
-                                      final isContinue = hasLocalSession || _isInPaymentWindow();
+                                      final hasLocalSession =
+                                          snapshot.data == true;
+                                      final isContinue = hasLocalSession ||
+                                          _isInPaymentWindow();
                                       final label = isContinue
                                           ? 'Tiep tuc thanh toan VNPay'
                                           : 'Thanh toan lai VNPay';
@@ -534,11 +614,14 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                       return ElevatedButton(
                                         onPressed: _handlePaymentAction,
                                         style: ElevatedButton.styleFrom(
-                                          padding: const EdgeInsets.symmetric(vertical: 14),
-                                          backgroundColor: Theme.of(context).primaryColor,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 14),
+                                          backgroundColor:
+                                              Theme.of(context).primaryColor,
                                           foregroundColor: Colors.white,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius:
+                                                BorderRadius.circular(12),
                                           ),
                                         ),
                                         child: Text(label),
@@ -551,12 +634,10 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                           ),
                         ),
                       ),
-
                       const SizedBox(height: 80),
                     ],
                   ),
                 ),
-
                 if (widget.allowActions &&
                     (_booking.bookingStatus == 'PENDING' ||
                         _booking.bookingStatus == 'CONFIRMED'))
@@ -579,7 +660,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                       child: _buildActionButtons(context, _booking.id!),
                     ),
                   ),
-
                 if (isLoading)
                   Container(
                     color: Colors.black12,

@@ -44,7 +44,7 @@ class HotelInfoEntity {
   String? phone;
   String? description;
   String? category;
-  int? rating;
+  num? rating;
   String? pathImage;
   bool? active;
 

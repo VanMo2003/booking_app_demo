@@ -29,6 +29,17 @@ class BookingAdminScreen extends StatefulWidget {
 class _BookingAdminScreenState extends State<BookingAdminScreen> {
   late Timer _ticker;
   DateTime _now = DateTime.now();
+  static const String _allStatusValue = 'ALL';
+  static const List<String> _statusFilters = [
+    _allStatusValue,
+    'PENDING',
+    'CONFIRMED',
+    'COMPLETED',
+    'CANCELED',
+  ];
+  String _selectedStatus = _allStatusValue;
+  DateTime? _fromDate;
+  DateTime? _toDate;
 
   @override
   void initState() {
@@ -74,6 +85,13 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
     return '${AppConfig().baseURL}$path';
   }
 
+  String _resolveHotelImageUrl(String? path) {
+    const fallbackUrl = 'https://placehold.co/600x400/png?text=Hotel';
+    if (path == null || path.isEmpty) return fallbackUrl;
+    if (path.startsWith('http')) return path;
+    return '${AppConfig().baseURL}$path';
+  }
+
   DateTime? _parseDateTime(String? value) {
     if (value == null || value.trim().isEmpty) return null;
     final raw = value.trim();
@@ -106,6 +124,13 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
   bool _isInPaymentWindow(BookingEntity booking) {
     final remain = _remainingPaymentWindow(booking);
     return remain != null && remain > Duration.zero;
+  }
+
+  Future<void> _fetchBookings(BuildContext context) {
+    return context.read<BookingCubit>().fetch(
+          hotelId: widget.hotelId,
+          customerId: widget.customerId,
+        );
   }
 
   String _formatDuration(Duration d) {
@@ -164,16 +189,10 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
         const SnackBar(content: Text('Thanh toan that bai')),
       );
       if (!context.mounted) return;
-      context.read<BookingCubit>().fetch(
-            hotelId: widget.hotelId,
-            customerId: widget.customerId,
-          );
+      _fetchBookings(context);
     } else {
       if (!context.mounted) return;
-      context.read<BookingCubit>().fetch(
-            hotelId: widget.hotelId,
-            customerId: widget.customerId,
-          );
+      _fetchBookings(context);
     }
   }
 
@@ -282,10 +301,6 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
         color = Colors.blue;
         label = 'Da xac nhan';
         break;
-      case 'CHECKED_IN':
-        color = Colors.purple;
-        label = 'Dang o';
-        break;
       case 'COMPLETED':
         color = Colors.green;
         label = 'Hoan thanh';
@@ -382,6 +397,190 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
     }
   }
 
+  DateTime _startOfDay(DateTime date) {
+    return DateTime(date.year, date.month, date.day);
+  }
+
+  DateTime _endOfDay(DateTime date) {
+    return DateTime(date.year, date.month, date.day, 23, 59, 59, 999);
+  }
+
+  bool get _hasActiveFilters {
+    return _selectedStatus != _allStatusValue ||
+        _fromDate != null ||
+        _toDate != null;
+  }
+
+  String _statusFilterLabel(String status) {
+    switch (status) {
+      case _allStatusValue:
+        return 'Tat ca trang thai';
+      case 'PENDING':
+        return 'Cho duyet';
+      case 'CONFIRMED':
+        return 'Da xac nhan';
+      case 'CHECKED_IN':
+        return 'Dang o';
+      case 'COMPLETED':
+        return 'Hoan thanh';
+      case 'CANCELED':
+        return 'Da huy';
+      default:
+        return status;
+    }
+  }
+
+  Future<void> _pickFromDate(BuildContext context) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _fromDate ?? _toDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (picked == null) return;
+    setState(() {
+      _fromDate = picked;
+      if (_toDate != null && _toDate!.isBefore(picked)) {
+        _toDate = picked;
+      }
+    });
+  }
+
+  Future<void> _pickToDate(BuildContext context) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _toDate ?? _fromDate ?? DateTime.now(),
+      firstDate: _fromDate ?? DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (picked == null) return;
+    setState(() => _toDate = picked);
+  }
+
+  void _clearFilters() {
+    setState(() {
+      _selectedStatus = _allStatusValue;
+      _fromDate = null;
+      _toDate = null;
+    });
+  }
+
+  List<BookingEntity> _applyFilters(List<BookingEntity> bookings) {
+    return bookings.where((booking) {
+      final status = (booking.bookingStatus ?? '').toUpperCase();
+      if (_selectedStatus != _allStatusValue) {
+        if (_selectedStatus == 'CANCELED') {
+          if (status != 'CANCELED' && status != 'CANCELLED') return false;
+        } else if (status != _selectedStatus) {
+          return false;
+        }
+      }
+
+      if (_fromDate == null && _toDate == null) return true;
+
+      final compareDate =
+          _parseDateTime(booking.onCreate ?? booking.checkinDate);
+      if (compareDate == null) return false;
+      if (_fromDate != null && compareDate.isBefore(_startOfDay(_fromDate!))) {
+        return false;
+      }
+      if (_toDate != null && compareDate.isAfter(_endOfDay(_toDate!))) {
+        return false;
+      }
+      return true;
+    }).toList();
+  }
+
+  Widget _buildFilterSection(int filteredCount, int totalCount) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey.shade300),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    key: ValueKey(_selectedStatus),
+                    initialValue: _selectedStatus,
+                    decoration: const InputDecoration(
+                      labelText: 'Trang thai don',
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                    ),
+                    items: _statusFilters
+                        .map(
+                          (e) => DropdownMenuItem<String>(
+                            value: e,
+                            child: Text(_statusFilterLabel(e)),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      if (value == null) return;
+                      setState(() => _selectedStatus = value);
+                    },
+                  ),
+                ),
+                if (_hasActiveFilters) ...[
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: _clearFilters,
+                    child: const Text('Xoa loc'),
+                  ),
+                ],
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _pickFromDate(context),
+                    icon: const Icon(Icons.date_range_outlined),
+                    label: Text(
+                      _fromDate == null
+                          ? 'Tu ngay'
+                          : 'Tu: ${DateFormat('dd/MM/yyyy').format(_fromDate!)}',
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _pickToDate(context),
+                    icon: const Icon(Icons.event_outlined),
+                    label: Text(
+                      _toDate == null
+                          ? 'Den ngay'
+                          : 'Den: ${DateFormat('dd/MM/yyyy').format(_toDate!)}',
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Hien thi $filteredCount / $totalCount don',
+                style: TextStyle(
+                  color: Colors.grey.shade700,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isCustomerView = widget.customerId != null && widget.hotelId == null;
@@ -435,33 +634,44 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
       return dateB.compareTo(dateA);
     });
 
-    if (bookings.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.calendar_month_outlined,
-                size: 64, color: Colors.grey[400]),
-            const SizedBox(height: 16),
-            const Text('Chua co don dat phong nao',
-                style: TextStyle(color: Colors.grey)),
-          ],
-        ),
-      );
-    }
+    final filteredBookings = _applyFilters(bookings);
+    final hasItems = filteredBookings.isNotEmpty;
 
     return RefreshIndicator(
-      onRefresh: () async {
-        context
-            .read<BookingCubit>()
-            .fetch(hotelId: widget.hotelId, customerId: widget.customerId);
-      },
+      onRefresh: () => _fetchBookings(context),
       child: ListView.separated(
         padding: const EdgeInsets.all(16),
-        itemCount: bookings.length,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: hasItems ? filteredBookings.length + 1 : 2,
         separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
-          final item = bookings[index];
+          if (index == 0) {
+            return _buildFilterSection(
+                filteredBookings.length, bookings.length);
+          }
+          if (!hasItems) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 48),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.calendar_month_outlined,
+                    size: 64,
+                    color: Colors.grey[400],
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    bookings.isEmpty
+                        ? 'Chua co don dat phong nao'
+                        : 'Khong co don phu hop bo loc',
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          final item = filteredBookings[index - 1];
           final countdown = _paymentCountdownLabel(item);
           final canPay = _canShowPaymentAction(item, isCustomerView);
           final inWindow = _isInPaymentWindow(item);
@@ -484,10 +694,7 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
                   ),
                 ).then((shouldRefresh) {
                   if (shouldRefresh == true) {
-                    context.read<BookingCubit>().fetch(
-                          hotelId: widget.hotelId,
-                          customerId: widget.customerId,
-                        );
+                    _fetchBookings(context);
                   }
                 });
               },
@@ -531,66 +738,164 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
                       ),
                     ],
                     const Divider(height: 20, thickness: 0.5),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CircleAvatar(
-                          radius: 24,
-                          backgroundImage: NetworkImage(
-                              _resolveAvatarUrl(item.customer?.pathImage)),
-                          backgroundColor: Colors.grey[200],
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                    if (isCustomerView) ...[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              _resolveHotelImageUrl(item.hotel?.pathImage),
+                              width: 56,
+                              height: 56,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Container(
+                                width: 56,
+                                height: 56,
+                                color: Colors.grey.shade200,
+                                child: Icon(
+                                  Icons.hotel,
+                                  color: Theme.of(context).primaryColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.hotel?.name ?? 'Khach san',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Icon(Icons.location_on_outlined,
+                                        size: 14, color: Colors.grey),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        item.hotel?.address ??
+                                            'Dang cap nhat dia chi',
+                                        style: const TextStyle(
+                                            color: Colors.grey, fontSize: 13),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.calendar_today,
+                                        size: 12, color: Colors.grey),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        '${_formatDate(item.checkinDate)} - ${_formatDate(item.checkoutDate)}',
+                                        style: const TextStyle(
+                                            color: Colors.grey, fontSize: 13),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                item.customer?.fullName ?? 'Khach vang lai',
-                                style: const TextStyle(
+                                _formatCurrency(item.totalAmount),
+                                style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 4),
-                              Row(
-                                children: [
-                                  const Icon(Icons.calendar_today,
-                                      size: 12, color: Colors.grey),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '${_formatDate(item.checkinDate)} - ${_formatDate(item.checkoutDate)}',
-                                    style: const TextStyle(
-                                        color: Colors.grey, fontSize: 13),
-                                  ),
-                                ],
+                              Text(
+                                '${item.bookingRooms?.length ?? 0} phong',
+                                style: const TextStyle(
+                                    fontSize: 12, color: Colors.grey),
                               ),
                             ],
                           ),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              _formatCurrency(item.totalAmount),
-                              style: TextStyle(
-                                color: Theme.of(context).primaryColor,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
+                        ],
+                      ),
+                    ] else
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            radius: 24,
+                            backgroundImage: NetworkImage(
+                                _resolveAvatarUrl(item.customer?.pathImage)),
+                            backgroundColor: Colors.grey[200],
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.customer?.fullName ?? 'Khach vang lai',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.calendar_today,
+                                        size: 12, color: Colors.grey),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '${_formatDate(item.checkinDate)} - ${_formatDate(item.checkoutDate)}',
+                                      style: const TextStyle(
+                                          color: Colors.grey, fontSize: 13),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                _formatCurrency(item.totalAmount),
+                                style: TextStyle(
+                                  color: Theme.of(context).primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${item.bookingRooms?.length ?? 0} phong',
-                              style: const TextStyle(
-                                  fontSize: 12, color: Colors.grey),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${item.bookingRooms?.length ?? 0} phong',
+                                style: const TextStyle(
+                                    fontSize: 12, color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     if (canPay) ...[
                       const SizedBox(height: 12),
                       FutureBuilder<bool>(
@@ -617,10 +922,7 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
                                         .read<BookingCubit>()
                                         .markPaymentPaid(bookingId);
                                   }
-                                  await context.read<BookingCubit>().fetch(
-                                        hotelId: widget.hotelId,
-                                        customerId: widget.customerId,
-                                      );
+                                  await _fetchBookings(context);
                                 },
                               ),
                               icon: const Icon(Icons.payments_outlined),

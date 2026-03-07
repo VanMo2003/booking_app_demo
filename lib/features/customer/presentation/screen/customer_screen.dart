@@ -474,12 +474,12 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                     Center(child: CircularProgressIndicator()),
                               );
                             }
-                            if (!state.hasMore && state.items.isNotEmpty) {
-                              return const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 16),
-                                child: Center(child: Text('Hết dữ liệu')),
-                              );
-                            }
+                            // if (!state.hasMore && state.items.isNotEmpty) {
+                            //   return const Padding(
+                            //     padding: EdgeInsets.symmetric(vertical: 16),
+                            //     child: Center(child: Text('Hết dữ liệu')),
+                            //   );
+                            // }
                             return const SizedBox.shrink();
                           }
 
@@ -636,8 +636,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                         context.router.push(
                           HotelDetailRoute(
                               hotel: hotel,
-                              checkinDate:
-                                  _apiDateFormat.format(_checkinDate!),
+                              checkinDate: _apiDateFormat.format(_checkinDate!),
                               checkoutDate:
                                   _apiDateFormat.format(_checkoutDate!)),
                         );
@@ -660,4 +659,3 @@ class _CustomerScreenState extends State<CustomerScreen> {
     );
   }
 }
-

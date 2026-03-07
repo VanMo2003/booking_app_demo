@@ -233,25 +233,25 @@ class _RoomScreenState extends State<RoomScreen> {
                   onChanged: (v) => selectedRoomTypeId = v,
                   validator: (v) => v == null ? 'Chọn loại phòng' : null,
                 ),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  initialValue: status,
-                  decoration: InputDecoration(
-                    labelText: 'Trạng thái',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  items: const [
-                    DropdownMenuItem(value: 'AVAILABLE', child: Text('Trống')),
-                    DropdownMenuItem(value: 'BOOKED', child: Text('Đã thuê')),
-                    DropdownMenuItem(
-                      value: 'MAINTENANCE',
-                      child: Text('Bảo trì'),
-                    ),
-                  ],
-                  onChanged: (v) => status = v!,
-                ),
+                // const SizedBox(height: 12),
+                // DropdownButtonFormField<String>(
+                //   initialValue: status,
+                //   decoration: InputDecoration(
+                //     labelText: 'Trạng thái',
+                //     border: OutlineInputBorder(
+                //       borderRadius: BorderRadius.circular(12),
+                //     ),
+                //   ),
+                //   items: const [
+                //     DropdownMenuItem(value: 'AVAILABLE', child: Text('Trống')),
+                //     DropdownMenuItem(value: 'BOOKED', child: Text('Đã thuê')),
+                //     DropdownMenuItem(
+                //       value: 'MAINTENANCE',
+                //       child: Text('Bảo trì'),
+                //     ),
+                //   ],
+                //   onChanged: (v) => status = v!,
+                // ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: descCtrl,

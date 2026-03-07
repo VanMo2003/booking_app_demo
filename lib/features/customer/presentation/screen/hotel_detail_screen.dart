@@ -90,7 +90,8 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
           const fallbackImageUrl =
               'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1000&auto=format&fit=crop';
           final imageUrls = _getHotelImageUrls(hotel, fallbackImageUrl);
-          final currentIndex = _currentImageIndex.clamp(0, imageUrls.length - 1);
+          final currentIndex =
+              _currentImageIndex.clamp(0, imageUrls.length - 1);
 
           return Scaffold(
             backgroundColor: Colors.white,
@@ -125,9 +126,12 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                                 return Container(
                                   width: isActive ? 18 : 8,
                                   height: 8,
-                                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 4),
                                   decoration: BoxDecoration(
-                                    color: isActive ? Colors.white : Colors.white70,
+                                    color: isActive
+                                        ? Colors.white
+                                        : Colors.white70,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 );
@@ -156,7 +160,6 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                       children: [
                         if (state.status == HotelDetailStatus.loading)
                           const LinearProgressIndicator(minHeight: 2),
-
                         Text(
                           hotel.name,
                           style: const TextStyle(
@@ -165,7 +168,8 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            Icon(Icons.location_on, size: 16, color: primaryBlue),
+                            Icon(Icons.location_on,
+                                size: 16, color: primaryBlue),
                             const SizedBox(width: 4),
                             Expanded(
                               child: Text(
@@ -175,37 +179,36 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                             ),
                           ],
                         ),
-
                         const Divider(height: 40),
-
                         const Text(
                           'Mo ta khach san',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           hotel.description.isNotEmpty
                               ? hotel.description
                               : 'Dang cap nhat...',
-                          style: const TextStyle(color: Colors.black87, height: 1.5),
+                          style: const TextStyle(
+                              color: Colors.black87, height: 1.5),
                         ),
-
                         const SizedBox(height: 24),
-
                         if (hotel.amenities.isNotEmpty) ...[
                           const Text(
                             'Tien ich',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 12),
                           _buildAmenitiesList(hotel.amenities, primaryBlue),
                           const SizedBox(height: 24),
                         ],
-
                         if (hotel.services.isNotEmpty) ...[
                           const Text(
                             'Dich vu di kem',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 6),
                           const Text(
@@ -242,18 +245,17 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                           ],
                           const SizedBox(height: 24),
                         ],
-
                         const Text(
                           'Chon phong',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 12),
                         if (hotel.rooms.isEmpty)
                           const Text('Hien tai khach san chua cap nhat phong.')
                         else
-                          ...hotel.rooms
-                              .map((room) => _buildRoomCard(room, primaryBlue, hotel)),
-
+                          ...hotel.rooms.map((room) =>
+                              _buildRoomCard(room, primaryBlue, hotel)),
                         const SizedBox(height: 100),
                       ],
                     ),
@@ -364,10 +366,16 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Phong ${room.roomNumber} - ${room.roomTypeName}',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Expanded(
+                  child: Text(
+                    'Phong ${room.roomNumber} - ${room.roomTypeName}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ),
+                const SizedBox(width: 8),
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -380,7 +388,9 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                   child: Text(
                     room.status == 'AVAILABLE' ? 'San sang' : 'Het phong',
                     style: TextStyle(
-                      color: room.status == 'AVAILABLE' ? Colors.green : Colors.red,
+                      color: room.status == 'AVAILABLE'
+                          ? Colors.green
+                          : Colors.red,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
@@ -409,7 +419,8 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Text(' /dem', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                const Text(' /dem',
+                    style: TextStyle(color: Colors.grey, fontSize: 12)),
               ],
             ),
             const SizedBox(height: 12),
@@ -458,7 +469,8 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: selected ? Colors.blue.withValues(alpha: 0.08) : Colors.grey[50],
+          color:
+              selected ? Colors.blue.withValues(alpha: 0.08) : Colors.grey[50],
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: selected ? Colors.blue : Colors.grey.shade100,
