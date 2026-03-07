@@ -40,12 +40,11 @@ class _SplashScreenState extends State<SplashScreen> {
       case 'CUSTOMER':
         context.router.replace(const CustomerRoute());
         break;
-      case 'HOTEL':
       case 'HOTEL_MANAGER':
         context.router.replace(const HotelManageListRoute());
         break;
-      case 'STAFF':
-        context.router.replace(const EmployeeRoute());
+      case 'ADMIN':
+        context.router.replace(const HotelManageListRoute());
         break;
       default:
         context.router.replace(const LoginRoute());

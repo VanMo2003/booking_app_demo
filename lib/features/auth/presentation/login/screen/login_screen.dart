@@ -57,6 +57,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 case 'STAFF':
                   context.router.replace(const EmployeeRoute());
                   break;
+                case 'ADMIN':
+                  context.router.replace(const HotelManageListRoute());
+                  break;
               }
             }
           },
