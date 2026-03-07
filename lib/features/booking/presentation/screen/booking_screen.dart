@@ -148,8 +148,8 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
     if (!_isVnPay(booking) || _isPaid(booking)) return null;
     final remain = _remainingPaymentWindow(booking);
     if (remain == null) return null;
-    if (remain == Duration.zero) return 'Het han thanh toan';
-    return 'Con lai: ${_formatDuration(remain)}';
+    if (remain == Duration.zero) return 'Hết hạn thanh toán';
+    return 'Còn lại: ${_formatDuration(remain)}';
   }
 
   bool _canShowPaymentAction(BookingEntity booking, bool isCustomerView) {
@@ -180,13 +180,13 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
       await onSuccess();
       _showSnack(
         const SnackBar(
-          content: Text('Thanh toan thanh cong'),
+          content: Text('Thanh toán thành công'),
           backgroundColor: Colors.green,
         ),
       );
     } else if (result == false) {
       _showSnack(
-        const SnackBar(content: Text('Thanh toan that bai')),
+        const SnackBar(content: Text('Thanh toán thất bại')),
       );
       if (!context.mounted) return;
       _fetchBookings(context);
@@ -204,7 +204,7 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
     final amount = booking.totalAmount ?? 0;
     if (amount <= 0) {
       _showSnack(
-        const SnackBar(content: Text('Khong co so tien can thanh toan')),
+        const SnackBar(content: Text('Không có số tiền cần thanh toán')),
       );
       return;
     }
@@ -223,7 +223,7 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
       final paymentUrl = resp.data?['data']?['paymentUrl']?.toString();
       if (paymentUrl == null || paymentUrl.isEmpty) {
         _showSnack(
-          const SnackBar(content: Text('Khong nhan duoc link thanh toan')),
+          const SnackBar(content: Text('Không nhận được link thanh toán')),
         );
         return;
       }
@@ -254,7 +254,7 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
     } catch (e) {
       if (!mounted) return;
       _showSnack(
-        SnackBar(content: Text('Loi thanh toan: $e')),
+        SnackBar(content: Text('Lỗi thanh toán: $e')),
       );
     }
   }
@@ -267,8 +267,8 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
     final bookingId = booking.id;
     if (bookingId == null) return;
 
-    // Uu tien session local truoc: neu user da tao link truoc do va con han,
-    // thi tiep tuc dung lai link cu, khong goi lai API.
+    // Ưu tiên session local trước: nếu user đã tạo link trước đó và còn hạn,
+    // thì tiếp tục dùng lại link cũ, không gọi lại API.
     final session = await PaymentSessionStore.get(bookingId);
     if (session != null && !session.isExpired) {
       if (!context.mounted) return;
@@ -295,20 +295,20 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
     switch (status) {
       case 'PENDING':
         color = Colors.orange;
-        label = 'Cho duyet';
+        label = 'Chờ duyệt';
         break;
       case 'CONFIRMED':
         color = Colors.blue;
-        label = 'Da xac nhan';
+        label = 'Đã xác nhận';
         break;
       case 'COMPLETED':
         color = Colors.green;
-        label = 'Hoan thanh';
+        label = 'Hoàn thành';
         break;
       case 'CANCELLED':
       case 'CANCELED':
         color = Colors.red;
-        label = 'Da huy';
+        label = 'Đã hủy';
         break;
       default:
         color = Colors.grey;
@@ -339,19 +339,19 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
     switch (value) {
       case 'PAID':
         color = Colors.green;
-        label = 'Da thanh toan';
+        label = 'Đã thanh toán';
         break;
       case 'PENDING':
         color = Colors.orange;
-        label = 'Dang cho thanh toan';
+        label = 'Đang chờ thanh toán';
         break;
       case 'UNPAID':
         color = Colors.redAccent;
-        label = 'Chua thanh toan';
+        label = 'Chưa thanh toán';
         break;
       default:
         color = Colors.grey;
-        label = status ?? 'Khong ro';
+        label = status ?? 'Không rõ';
     }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -414,17 +414,17 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
   String _statusFilterLabel(String status) {
     switch (status) {
       case _allStatusValue:
-        return 'Tat ca trang thai';
+        return 'Tất cả trạng thái';
       case 'PENDING':
-        return 'Cho duyet';
+        return 'Chờ duyệt';
       case 'CONFIRMED':
-        return 'Da xac nhan';
+        return 'Đã xác nhận';
       case 'CHECKED_IN':
-        return 'Dang o';
+        return 'Đang ở';
       case 'COMPLETED':
-        return 'Hoan thanh';
+        return 'Hoàn thành';
       case 'CANCELED':
-        return 'Da huy';
+        return 'Đã hủy';
       default:
         return status;
     }
@@ -509,7 +509,7 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
                     key: ValueKey(_selectedStatus),
                     initialValue: _selectedStatus,
                     decoration: const InputDecoration(
-                      labelText: 'Trang thai don',
+                      labelText: 'Trạng thái đơn',
                       border: OutlineInputBorder(),
                       isDense: true,
                     ),
@@ -531,7 +531,7 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
                   const SizedBox(width: 8),
                   TextButton(
                     onPressed: _clearFilters,
-                    child: const Text('Xoa loc'),
+                    child: const Text('Xóa lọc'),
                   ),
                 ],
               ],
@@ -545,8 +545,8 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
                     icon: const Icon(Icons.date_range_outlined),
                     label: Text(
                       _fromDate == null
-                          ? 'Tu ngay'
-                          : 'Tu: ${DateFormat('dd/MM/yyyy').format(_fromDate!)}',
+                          ? 'Từ ngày'
+                          : 'Từ: ${DateFormat('dd/MM/yyyy').format(_fromDate!)}',
                     ),
                   ),
                 ),
@@ -557,8 +557,8 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
                     icon: const Icon(Icons.event_outlined),
                     label: Text(
                       _toDate == null
-                          ? 'Den ngay'
-                          : 'Den: ${DateFormat('dd/MM/yyyy').format(_toDate!)}',
+                          ? 'Đến ngày'
+                          : 'Đến: ${DateFormat('dd/MM/yyyy').format(_toDate!)}',
                     ),
                   ),
                 ),
@@ -568,7 +568,7 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Hien thi $filteredCount / $totalCount don',
+                'Hiển thị $filteredCount / $totalCount đơn',
                 style: TextStyle(
                   color: Colors.grey.shade700,
                   fontSize: 12,
@@ -598,7 +598,7 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
           if (state.status.isFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.errorMessage ?? 'Co loi xay ra'),
+                content: Text(state.errorMessage ?? 'Có lỗi xảy ra'),
                 backgroundColor: Colors.red,
               ),
             );
@@ -607,7 +607,7 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
         builder: (context, state) {
           return AppScaffold(
             title:
-                isCustomerView ? 'Don dat phong cua toi' : 'Quan ly dat phong',
+                isCustomerView ? 'Đơn đặt phòng của tôi' : 'Quản lý đặt phòng',
             body: _buildContent(context, state, isCustomerView),
           );
         },
@@ -662,8 +662,8 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
                   const SizedBox(height: 16),
                   Text(
                     bookings.isEmpty
-                        ? 'Chua co don dat phong nao'
-                        : 'Khong co don phu hop bo loc',
+                        ? 'Chưa có đơn đặt phòng nào'
+                        : 'Không có đơn phù hợp bộ lọc',
                     style: const TextStyle(color: Colors.grey),
                   ),
                 ],
@@ -766,7 +766,7 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  item.hotel?.name ?? 'Khach san',
+                                  item.hotel?.name ?? 'Khách sạn',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15,
@@ -784,7 +784,7 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
                                     Expanded(
                                       child: Text(
                                         item.hotel?.address ??
-                                            'Dang cap nhat dia chi',
+                                            'Đang cập nhật địa chỉ',
                                         style: const TextStyle(
                                             color: Colors.grey, fontSize: 13),
                                         maxLines: 2,
@@ -851,7 +851,7 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  item.customer?.fullName ?? 'Khach vang lai',
+                                  item.customer?.fullName ?? 'Khách vãng lai',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15,
@@ -906,8 +906,8 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
                           final hasLocalSession = snapshot.data == true;
                           final isContinue = hasLocalSession || inWindow;
                           final payButtonLabel = isContinue
-                              ? 'Tiep tuc thanh toan VNPay'
-                              : 'Thanh toan lai VNPay';
+                              ? 'Tiếp tục thanh toán VNPay'
+                              : 'Thanh toán lại VNPay';
 
                           return SizedBox(
                             width: double.infinity,

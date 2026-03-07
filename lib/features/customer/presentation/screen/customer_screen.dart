@@ -132,7 +132,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
     await _loadCustomerId();
     if (_customerId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Chua xac dinh thong tin khach hang')),
+        const SnackBar(content: Text('Chưa xác định thông tin khách hàng')),
       );
       return;
     }
@@ -240,7 +240,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                                     Icons.receipt_long,
                                                     color: Colors.white,
                                                   ),
-                                                  tooltip: 'Don dat phong',
+                                                  tooltip: 'Đơn đặt phòng',
                                                 ),
                                                 GestureDetector(
                                                   onTap: () => context.router

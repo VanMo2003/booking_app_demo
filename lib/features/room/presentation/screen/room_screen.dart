@@ -634,14 +634,14 @@ class _RoomScreenState extends State<RoomScreen> {
                                         final confirm = await showDialog<bool>(
                                           context: context,
                                           builder: (ctx) => AlertDialog(
-                                            title: const Text('X?c nh?n x?a'),
+                                            title: const Text('Xác nhận xóa'),
                                             content: Text(
                                                 'Xóa phòng ${room.roomNumber}?'),
                                             actions: [
                                               TextButton(
                                                 onPressed: () =>
                                                     Navigator.pop(ctx, false),
-                                                child: const Text('H?y'),
+                                                child: const Text('Hủy'),
                                               ),
                                               ElevatedButton(
                                                 style: ElevatedButton.styleFrom(
@@ -650,7 +650,7 @@ class _RoomScreenState extends State<RoomScreen> {
                                                 ),
                                                 onPressed: () =>
                                                     Navigator.pop(ctx, true),
-                                                child: const Text('X?a'),
+                                                child: const Text('Xóa'),
                                               ),
                                             ],
                                           ),

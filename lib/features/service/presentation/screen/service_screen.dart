@@ -172,10 +172,14 @@ class _ServiceScreenState extends State<ServiceScreen> {
   @override
   Widget build(BuildContext context) {
     if (_loadingHotelId) {
-      return const AppScaffold(title: "Quan ly dich vu", body: Center(child: CircularProgressIndicator()));
+      return const AppScaffold(
+          title: "Quản lý dịch vụ",
+          body: Center(child: CircularProgressIndicator()));
     }
     if (_hotelId == null) {
-      return const AppScaffold(title: "Quan ly dich vu", body: Center(child: Text("Chua xac dinh thong tin khach san")));
+      return const AppScaffold(
+          title: "Quản lý dịch vụ",
+          body: Center(child: Text("Chưa xác định thông tin khách sạn")));
     }
     return BlocProvider(
       create: (context) => ServiceCubit(
@@ -202,9 +206,9 @@ class _ServiceScreenState extends State<ServiceScreen> {
               body: _buildContent(context, state: state),
               floatingActionButton: FloatingActionButton(
                 onPressed: () {
-                if (_hotelId == null) return;
-                _showEditDialog(context, null, hotelId: _hotelId!);
-              },
+                  if (_hotelId == null) return;
+                  _showEditDialog(context, null, hotelId: _hotelId!);
+                },
                 backgroundColor: Theme.of(context).primaryColor,
                 child: const Icon(Icons.add, color: Colors.white),
               ),
@@ -279,8 +283,8 @@ class _ServiceScreenState extends State<ServiceScreen> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.edit_outlined, color: Colors.blue),
-                    onPressed: () =>
-                        _showEditDialog(context, it, hotelId: it.hotelId ?? _hotelId!),
+                    onPressed: () => _showEditDialog(context, it,
+                        hotelId: it.hotelId ?? _hotelId!),
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete_outline, color: Colors.red),

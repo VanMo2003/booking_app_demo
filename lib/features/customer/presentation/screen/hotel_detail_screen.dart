@@ -78,7 +78,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
               appBar: AppBar(),
               body: Center(
                 child: Text(
-                  'Loi tai thong tin khach san:\n${state.errorMessage}',
+                  'Lỗi tải thông tin khách sạn:\n${state.errorMessage}',
                   textAlign: TextAlign.center,
                   style: const TextStyle(color: Colors.red),
                 ),
@@ -181,7 +181,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                         ),
                         const Divider(height: 40),
                         const Text(
-                          'Mo ta khach san',
+                          'Mô tả khách sạn',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
@@ -189,14 +189,14 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                         Text(
                           hotel.description.isNotEmpty
                               ? hotel.description
-                              : 'Dang cap nhat...',
+                              : 'Đang cập nhật...',
                           style: const TextStyle(
                               color: Colors.black87, height: 1.5),
                         ),
                         const SizedBox(height: 24),
                         if (hotel.amenities.isNotEmpty) ...[
                           const Text(
-                            'Tien ich',
+                            'Tiện ích',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
@@ -206,13 +206,13 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                         ],
                         if (hotel.services.isNotEmpty) ...[
                           const Text(
-                            'Dich vu di kem',
+                            'Dịch vụ đi kèm',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 6),
                           const Text(
-                            'Chon dich vu de them vao don dat phong',
+                            'Chọn dịch vụ để thêm vào đơn đặt phòng',
                             style: TextStyle(color: Colors.grey, fontSize: 12),
                           ),
                           const SizedBox(height: 12),
@@ -236,7 +236,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                           if (_selectedServiceIds.isNotEmpty) ...[
                             const SizedBox(height: 6),
                             Text(
-                              'Tong dich vu da chon: ${currencyFormat.format(_selectedServiceTotal(hotel))}',
+                              'Tổng dịch vụ đã chọn: ${currencyFormat.format(_selectedServiceTotal(hotel))}',
                               style: TextStyle(
                                 color: primaryBlue,
                                 fontWeight: FontWeight.bold,
@@ -246,13 +246,13 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                           const SizedBox(height: 24),
                         ],
                         const Text(
-                          'Chon phong',
+                          'Chọn phòng',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 12),
                         if (hotel.rooms.isEmpty)
-                          const Text('Hien tai khach san chua cap nhat phong.')
+                          const Text('Hiện tại khách sạn chưa cập nhật phòng.')
                         else
                           ...hotel.rooms.map((room) =>
                               _buildRoomCard(room, primaryBlue, hotel)),
@@ -368,7 +368,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    'Phong ${room.roomNumber} - ${room.roomTypeName}',
+                    'Phòng ${room.roomNumber} - ${room.roomTypeName}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -386,7 +386,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    room.status == 'AVAILABLE' ? 'San sang' : 'Het phong',
+                    room.status == 'AVAILABLE' ? 'Sẵn sàng' : 'Hết phòng',
                     style: TextStyle(
                       color: room.status == 'AVAILABLE'
                           ? Colors.green
@@ -408,7 +408,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
               children: [
                 Icon(Icons.people_outline, size: 18, color: Colors.grey[700]),
                 const SizedBox(width: 4),
-                Text('Suc chua: ${room.capacity} nguoi',
+                Text('Sức chứa: ${room.capacity} người',
                     style: const TextStyle(fontSize: 13)),
                 const Spacer(),
                 Text(
@@ -419,7 +419,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Text(' /dem',
+                const Text(' /đêm',
                     style: TextStyle(color: Colors.grey, fontSize: 12)),
               ],
             ),
@@ -446,7 +446,7 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
                       borderRadius: BorderRadius.circular(8)),
                   elevation: 0,
                 ),
-                child: const Text('Chon phong nay'),
+                child: const Text('Chọn phòng này'),
               ),
             )
           ],

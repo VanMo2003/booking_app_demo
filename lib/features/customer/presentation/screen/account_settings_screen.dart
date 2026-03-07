@@ -85,7 +85,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content:
-                Text('Khong tim thay customerId. Vui long dang nhap lai.')),
+                Text('Không tìm thấy customerId. Vui lòng đăng nhập lại.')),
       );
       return;
     }
@@ -122,13 +122,13 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cap nhat thong tin thanh cong')),
+        const SnackBar(content: Text('Cập nhật thông tin thành công')),
       );
       Navigator.pop(context, true);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Cap nhat that bai: $e')),
+        SnackBar(content: Text('Cập nhật thất bại: $e')),
       );
     } finally {
       if (mounted) {

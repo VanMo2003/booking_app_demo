@@ -122,8 +122,8 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     if (!_isVnPay() || _isPaid()) return null;
     final remain = _remainingPaymentWindow();
     if (remain == null) return null;
-    if (remain == Duration.zero) return 'Het han thanh toan';
-    return 'Con lai: ${_formatDuration(remain)}';
+    if (remain == Duration.zero) return 'Hết hạn thanh toán';
+    return 'Còn lại: ${_formatDuration(remain)}';
   }
 
   Future<void> _openPaymentUrl(String paymentUrl) async {
@@ -163,7 +163,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
       });
       Navigator.pop(context, true);
     } else if (result == false) {
-      _showSnack(const SnackBar(content: Text('Thanh toan that bai')));
+      _showSnack(const SnackBar(content: Text('Thanh toán thất bại')));
       if (mounted) {
         setState(() {});
       }
@@ -178,12 +178,12 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     final amount = _booking.totalAmount ?? 0;
     final bookingId = _booking.id;
     if (bookingId == null) {
-      _showSnack(const SnackBar(content: Text('Khong tim thay bookingId')));
+      _showSnack(const SnackBar(content: Text('Không tìm thấy bookingId')));
       return;
     }
     if (amount <= 0) {
       _showSnack(
-          const SnackBar(content: Text('Khong co so tien can thanh toan')));
+          const SnackBar(content: Text('Không có số tiền cần thanh toán')));
       return;
     }
 
@@ -200,7 +200,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
       final paymentUrl = resp.data?['data']?['paymentUrl']?.toString();
       if (paymentUrl == null || paymentUrl.isEmpty) {
         _showSnack(
-            const SnackBar(content: Text('Khong nhan duoc link thanh toan')));
+            const SnackBar(content: Text('Không nhận được link thanh toán')));
         return;
       }
 
@@ -221,7 +221,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
       if (!mounted) return;
       await _openPaymentUrl(paymentUrl);
     } catch (e) {
-      _showSnack(SnackBar(content: Text('Loi thanh toan: $e')));
+      _showSnack(SnackBar(content: Text('Lỗi thanh toán: $e')));
     }
   }
 
@@ -246,19 +246,19 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     switch (value) {
       case 'PAID':
         color = Colors.green;
-        label = 'Da thanh toan';
+        label = 'Đã thanh toán';
         break;
       case 'PENDING':
         color = Colors.orange;
-        label = 'Dang cho thanh toan';
+        label = 'Đang chờ thanh toán';
         break;
       case 'UNPAID':
         color = Colors.redAccent;
-        label = 'Chua thanh toan';
+        label = 'Chưa thanh toán';
         break;
       default:
         color = Colors.grey;
-        label = status ?? 'Khong ro';
+        label = status ?? 'Không rõ';
     }
 
     return Container(
@@ -297,7 +297,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
           if (state.status.isSuccess) {
             _showSnack(
               const SnackBar(
-                content: Text('Thao tac thanh cong'),
+                content: Text('Thao tác thành công'),
                 backgroundColor: Colors.green,
               ),
             );
@@ -305,7 +305,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
           } else if (state.status.isFailure) {
             _showSnack(
               SnackBar(
-                content: Text(state.errorMessage ?? 'Loi'),
+                content: Text(state.errorMessage ?? 'Lỗi'),
                 backgroundColor: Colors.red,
               ),
             );
@@ -316,7 +316,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
           final countdown = _paymentCountdownLabel();
 
           return AppScaffold(
-            title: 'Chi tiet don #${_booking.id}',
+            title: 'Chi tiết đơn #${_booking.id}',
             body: Stack(
               children: [
                 SingleChildScrollView(
@@ -327,7 +327,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                       Center(
                           child: _buildBigStatusChip(_booking.bookingStatus)),
                       const SizedBox(height: 24),
-                      _buildSectionTitle('Thong tin khach san'),
+                      _buildSectionTitle('Thông tin khách sạn'),
                       Card(
                         elevation: 1,
                         shape: RoundedRectangleBorder(
@@ -353,7 +353,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                             ),
                           ),
                           title: Text(
-                            _booking.hotel?.name ?? 'Khach san',
+                            _booking.hotel?.name ?? 'Khách sạn',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -371,7 +371,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                   Expanded(
                                     child: Text(
                                       _booking.hotel?.address ??
-                                          'Dang cap nhat dia chi',
+                                          'Đang cập nhật địa chỉ',
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -383,7 +383,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      _buildSectionTitle('Thong tin khach hang'),
+                      _buildSectionTitle('Thông tin khách hàng'),
                       Card(
                         elevation: 1,
                         shape: RoundedRectangleBorder(
@@ -406,13 +406,13 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                             children: [
                               const SizedBox(height: 4),
                               Text(_booking.customer?.phoneNumber ??
-                                  'Khong co SDT'),
+                                  'Không có SĐT'),
                             ],
                           ),
                         ),
                       ),
                       const SizedBox(height: 20),
-                      _buildSectionTitle('Thoi gian luu tru'),
+                      _buildSectionTitle('Thời gian lưu trú'),
                       Card(
                         elevation: 1,
                         shape: RoundedRectangleBorder(
@@ -422,13 +422,13 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                           child: Row(
                             children: [
                               Expanded(
-                                child: _buildDateBox(context, 'Nhan phong',
+                                child: _buildDateBox(context, 'Nhận phòng',
                                     _booking.checkinDate),
                               ),
                               const Icon(Icons.arrow_forward,
                                   color: Colors.grey),
                               Expanded(
-                                child: _buildDateBox(context, 'Tra phong',
+                                child: _buildDateBox(context, 'Trả phòng',
                                     _booking.checkoutDate),
                               ),
                             ],
@@ -437,7 +437,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                       ),
                       const SizedBox(height: 20),
                       _buildSectionTitle(
-                          'Phong da dat (${_booking.bookingRooms?.length ?? 0})'),
+                          'Phòng đã đặt (${_booking.bookingRooms?.length ?? 0})'),
                       if (_booking.bookingRooms != null)
                         ..._booking.bookingRooms!.map(
                           (bookingRoom) {
@@ -498,7 +498,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                   children: [
                                     const SizedBox(height: 4),
                                     Text(bookingRoom.roomInfo?.roomTypeName ??
-                                        'Loai phong thuong'),
+                                        'Loại phòng thường'),
                                   ],
                                 ),
                               ),
@@ -509,7 +509,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                           _booking.bookingServices!.isNotEmpty) ...[
                         const SizedBox(height: 20),
                         _buildSectionTitle(
-                            'Dich vu da chon (${_booking.bookingServices!.length})'),
+                            'Dịch vụ đã chọn (${_booking.bookingServices!.length})'),
                         Card(
                           elevation: 1,
                           shape: RoundedRectangleBorder(
@@ -521,7 +521,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                     dense: true,
                                     leading: const Icon(Icons.room_service),
                                     title: Text(
-                                      s.serviceInfo?.name ?? 'Dich vu',
+                                      s.serviceInfo?.name ?? 'Dịch vụ',
                                       style: const TextStyle(
                                           fontWeight: FontWeight.w500),
                                     ),
@@ -532,7 +532,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                         ),
                       ],
                       const SizedBox(height: 20),
-                      _buildSectionTitle('Thanh toan'),
+                      _buildSectionTitle('Thanh toán'),
                       Card(
                         elevation: 1,
                         shape: RoundedRectangleBorder(
@@ -541,14 +541,14 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                           padding: const EdgeInsets.all(16),
                           child: Column(
                             children: [
-                              _buildInfoRow('Phuong thuc',
-                                  _booking.paymentMethod ?? 'Tien mat'),
+                              _buildInfoRow('Phương thức',
+                                  _booking.paymentMethod ?? 'Tiền mặt'),
                               const SizedBox(height: 12),
                               Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text('Trang thai thanh toan',
+                                  const Text('Trạng thái thanh toán',
                                       style: TextStyle(color: Colors.grey)),
                                   _buildPaymentStatusChip(
                                       _booking.paymentStatus),
@@ -575,7 +575,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text('Tong tien',
+                                  const Text('Tổng tiền',
                                       style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold)),
@@ -608,8 +608,8 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                                       final isContinue = hasLocalSession ||
                                           _isInPaymentWindow();
                                       final label = isContinue
-                                          ? 'Tiep tuc thanh toan VNPay'
-                                          : 'Thanh toan lai VNPay';
+                                          ? 'Tiếp tục thanh toán VNPay'
+                                          : 'Thanh toán lại VNPay';
 
                                       return ElevatedButton(
                                         onPressed: _handlePaymentAction,
@@ -689,7 +689,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('Tu choi'),
+              child: const Text('Từ chối'),
             ),
           ),
           const SizedBox(width: 16),
@@ -703,7 +703,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('Xac nhan'),
+              child: const Text('Xác nhận'),
             ),
           ),
         ],
@@ -722,7 +722,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
-          child: const Text('Check-in / Hoan tat'),
+          child: const Text('Check-in / Hoàn tất'),
         ),
       );
     }
@@ -777,20 +777,20 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
     switch (status) {
       case 'PENDING':
         color = Colors.orange;
-        label = 'CHO DUYET';
+        label = 'CHỜ DUYỆT';
         break;
       case 'CONFIRMED':
         color = Colors.blue;
-        label = 'DA XAC NHAN';
+        label = 'ĐÃ XÁC NHẬN';
         break;
       case 'COMPLETED':
         color = Colors.green;
-        label = 'HOAN THANH';
+        label = 'HOÀN THÀNH';
         break;
       case 'CANCELED':
       case 'CANCELLED':
         color = Colors.red;
-        label = 'DA HUY';
+        label = 'ĐÃ HỦY';
         break;
       default:
         color = Colors.grey;

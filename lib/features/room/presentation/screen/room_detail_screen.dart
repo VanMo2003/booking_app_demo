@@ -545,7 +545,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
   }) async {
     if (bookingId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Khong tim thay bookingId de thanh toan')),
+        const SnackBar(content: Text('Không tìm thấy bookingId để thanh toán')),
       );
       return;
     }
@@ -723,18 +723,18 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                         if (_isFixedDateRange) ...[
                           const SizedBox(height: 6),
                           const Text(
-                            'Ngay dat phong duoc giu theo bo loc ban da chon.',
+                            'Ngày đặt phòng được giữ theo bộ lọc bạn đã chọn.',
                             style: TextStyle(fontSize: 12, color: Colors.grey),
                           ),
                         ],
                         const SizedBox(height: 8),
-                        Text('So dem: $nights'),
+                        Text('Số đêm: $nights'),
                         if (_selectedServiceIds.isNotEmpty) ...[
                           const SizedBox(height: 4),
                           Text(
                             'Dich vu da chon: ${_selectedServiceIds.length} (cong ${currencyFormat.format(_selectedServiceTotal)})',
-                            style:
-                                const TextStyle(fontSize: 12, color: Colors.grey),
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.grey),
                           ),
                         ],
                         const SizedBox(height: 12),

@@ -64,11 +64,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Xac nhan'),
-        content: const Text('Ban co muon dang xuat khoi ung dung?'),
+        title: const Text('Xác nhận'),
+        content: const Text('Bạn có muốn đăng xuất khỏi ứng dụng?'),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx), child: const Text('Huy')),
+              onPressed: () => Navigator.pop(ctx), child: const Text('Hủy')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.redAccent,
@@ -84,11 +84,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 context.router.replaceAll([const LoginRoute()]);
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Loi: ${e.toString()}')),
+                  SnackBar(content: Text('Lỗi: ${e.toString()}')),
                 );
               }
             },
-            child: const Text('Dang xuat'),
+            child: const Text('Đăng xuất'),
           ),
         ],
       ),
@@ -122,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: const AutoLeadingButton(color: Colors.black87),
-        title: const Text('Cai dat tai khoan',
+        title: const Text('Cài đặt tài khoản',
             style:
                 TextStyle(color: Colors.black87, fontWeight: FontWeight.bold)),
       ),
@@ -158,14 +158,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ? fullName
                                 : ((username != null && username.isNotEmpty)
                                     ? username
-                                    : 'Ten nguoi dung'),
+                                    : 'Tên người dùng'),
                             style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           Text(
                             (subtitle != null && subtitle.isNotEmpty)
                                 ? subtitle
-                                : 'So dien thoai',
+                                : 'Số điện thoại',
                             style:
                                 const TextStyle(color: brandGold, fontSize: 13),
                           ),
@@ -184,21 +184,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 children: [
                   _buildMenuItem(
-                      Icons.help_outline_rounded, 'Huong dan dung app'),
+                      Icons.help_outline_rounded, 'Hướng dẫn dùng app'),
                   _buildDivider(),
-                  _buildMenuItem(Icons.hotel_outlined, 'Thong tin khach san'),
+                  _buildMenuItem(Icons.hotel_outlined, 'Thông tin khách sạn'),
                   _buildDivider(),
                   _buildMenuItem(
-                      Icons.loyalty_outlined, 'Goi uu dai dang dung'),
+                      Icons.loyalty_outlined, 'Gói ưu đãi đang dùng'),
                   _buildDivider(),
                   _buildMenuItem(
                     Icons.manage_accounts_outlined,
-                    'Thiet lap tai khoan',
+                    'Thiết lập tài khoản',
                     onTap: _openAccountSettings,
                   ),
                   _buildDivider(),
                   _buildMenuItem(
-                      Icons.color_lens_outlined, 'Thay doi giao dien'),
+                      Icons.color_lens_outlined, 'Thay đổi giao diện'),
                 ],
               ),
             ),
@@ -210,7 +210,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 onTap: () => _handleLogout(context),
                 leading: const Icon(Icons.power_settings_new_rounded,
                     color: Colors.redAccent),
-                title: const Text('Dang xuat',
+                title: const Text('Đăng xuất',
                     style: TextStyle(
                         color: Colors.redAccent, fontWeight: FontWeight.bold)),
                 trailing: const Icon(Icons.chevron_right, color: Colors.grey),

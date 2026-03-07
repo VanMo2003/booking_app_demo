@@ -55,7 +55,7 @@ class _HotelManageListScreenState extends State<HotelManageListScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Huy'),
+            child: const Text('Hủy'),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
