@@ -722,7 +722,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
-          child: const Text('Check-in / Hoàn tất'),
+          child: const Text('Check-out / Hoàn tất'),
         ),
       );
     }

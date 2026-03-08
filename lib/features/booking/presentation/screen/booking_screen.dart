@@ -536,34 +536,34 @@ class _BookingAdminScreenState extends State<BookingAdminScreen> {
                 ],
               ],
             ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => _pickFromDate(context),
-                    icon: const Icon(Icons.date_range_outlined),
-                    label: Text(
-                      _fromDate == null
-                          ? 'Từ ngày'
-                          : 'Từ: ${DateFormat('dd/MM/yyyy').format(_fromDate!)}',
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => _pickToDate(context),
-                    icon: const Icon(Icons.event_outlined),
-                    label: Text(
-                      _toDate == null
-                          ? 'Đến ngày'
-                          : 'Đến: ${DateFormat('dd/MM/yyyy').format(_toDate!)}',
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            // const SizedBox(height: 10),
+            // Row(
+            //   children: [
+            //     Expanded(
+            //       child: OutlinedButton.icon(
+            //         onPressed: () => _pickFromDate(context),
+            //         icon: const Icon(Icons.date_range_outlined),
+            //         label: Text(
+            //           _fromDate == null
+            //               ? 'Từ ngày'
+            //               : 'Từ: ${DateFormat('dd/MM/yyyy').format(_fromDate!)}',
+            //         ),
+            //       ),
+            //     ),
+            //     const SizedBox(width: 8),
+            //     Expanded(
+            //       child: OutlinedButton.icon(
+            //         onPressed: () => _pickToDate(context),
+            //         icon: const Icon(Icons.event_outlined),
+            //         label: Text(
+            //           _toDate == null
+            //               ? 'Đến ngày'
+            //               : 'Đến: ${DateFormat('dd/MM/yyyy').format(_toDate!)}',
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
             const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerLeft,

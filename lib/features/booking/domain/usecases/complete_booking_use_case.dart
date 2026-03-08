@@ -7,5 +7,5 @@ class CompleteBooking {
   final BookingRepository repo;
   CompleteBooking(this.repo);
 
-  Future<BookingEntity> call(int id) => repo.confirmBooking(id);
+  Future<BookingEntity> call(int id) => repo.completeBooking(id);
 }
