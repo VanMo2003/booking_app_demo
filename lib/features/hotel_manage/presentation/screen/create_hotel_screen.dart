@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:booking_app_mobile/core/di/injector.dart';
 import 'package:booking_app_mobile/features/hotel/domain/repositories/hotel_repository.dart';
@@ -34,31 +36,39 @@ class _CreateHotelScreenState extends State<CreateHotelScreen> {
     super.dispose();
   }
 
-  Future<void> _pickImages() async {
+  Future<void> _pickImage() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.image,
-      allowMultiple: true,
+      allowMultiple: false,
     );
     if (result == null || result.files.isEmpty) return;
 
-    final paths = result.files.map((e) => e.path).whereType<String>().toList();
-    if (paths.isEmpty) return;
+    final path = result.files.first.path;
+    if (path == null || path.isEmpty) return;
+
     setState(() {
-      for (final path in paths) {
-        if (!_imagePaths.contains(path)) {
-          _imagePaths.add(path);
-        }
-      }
+      _imagePaths
+        ..clear()
+        ..add(path);
     });
   }
 
-  void _removeImageAt(int index) {
-    setState(() => _imagePaths.removeAt(index));
+  void _removeImage() {
+    setState(() => _imagePaths.clear());
   }
 
   Future<void> _submit() async {
     if (_isSubmitting) return;
     if (!_formKey.currentState!.validate()) return;
+
+    if (_imagePaths.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Vui lòng chọn 1 ảnh cho cơ sở.'),
+        ),
+      );
+      return;
+    }
 
     setState(() => _isSubmitting = true);
     try {
@@ -74,7 +84,7 @@ class _CreateHotelScreenState extends State<CreateHotelScreen> {
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Tạo cơ sơ mới thành công: ${created.name}')),
+        SnackBar(content: Text('Tạo cơ sở mới thành công: ${created.name}')),
       );
       context.router.pop(true);
     } catch (e) {
@@ -101,11 +111,15 @@ class _CreateHotelScreenState extends State<CreateHotelScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final selectedPath = _imagePaths.isNotEmpty ? _imagePaths.first : null;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: Colors.black87,
-        title: const Text('Tạo cơ sở mới'),
+        title: const Text('Tạo cơ sở mới',
+            style:
+                TextStyle(color: Colors.black87, fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -157,50 +171,59 @@ class _CreateHotelScreenState extends State<CreateHotelScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    'Ảnh mặc định',
+                    'Ảnh cơ sở',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
                   OutlinedButton.icon(
-                    onPressed: _isSubmitting ? null : _pickImages,
+                    onPressed: _isSubmitting ? null : _pickImage,
                     icon: const Icon(Icons.photo_library_outlined),
                     label: const Text('Chọn ảnh'),
                   ),
                 ],
               ),
               const SizedBox(height: 8),
-              if (_imagePaths.isEmpty)
+              if (selectedPath == null)
                 const Text(
-                  'Chưa chọn ảnh. Bạn vẫn có thể tạo cơ sở mà không cần ảnh.',
-                  style: TextStyle(color: Colors.grey),
+                  'Chưa chọn ảnh. Vui lòng chọn đúng 1 ảnh.',
+                  style: TextStyle(color: Colors.redAccent),
                 )
               else
-                Column(
-                  children: List.generate(_imagePaths.length, (index) {
-                    final path = _imagePaths[index];
-                    final fileName = path.split(RegExp(r'[\\\\/]')).last;
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      child: ListTile(
-                        leading: const Icon(Icons.image_outlined),
-                        title: Text(
-                          fileName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Row(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.file(
+                            File(selectedPath),
+                            width: 72,
+                            height: 72,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Container(
+                              width: 72,
+                              height: 72,
+                              color: Colors.grey.shade200,
+                              child: const Icon(Icons.broken_image_outlined),
+                            ),
+                          ),
                         ),
-                        subtitle: Text(
-                          path,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            selectedPath.split(RegExp(r'[\\/]')).last,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
                         ),
-                        trailing: IconButton(
-                          onPressed: _isSubmitting
-                              ? null
-                              : () => _removeImageAt(index),
+                        IconButton(
+                          onPressed: _isSubmitting ? null : _removeImage,
                           icon: const Icon(Icons.close),
                         ),
-                      ),
-                    );
-                  }),
+                      ],
+                    ),
+                  ),
                 ),
               const SizedBox(height: 20),
               SizedBox(
