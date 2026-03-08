@@ -30,6 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final storage = getIt<FlutterSecureStorage>();
     final token = await storage.read(key: Constants.accessToken);
     final role = await storage.read(key: Constants.role);
+    final hotelId = await storage.read(key: Constants.hotelId);
 
     if (token == null || token.isEmpty) {
       context.router.replace(const LoginRoute());
@@ -41,7 +42,10 @@ class _SplashScreenState extends State<SplashScreen> {
         context.router.replace(const CustomerRoute());
         break;
       case 'HOTEL_MANAGER':
-        context.router.replace(const HotelManageListRoute());
+        context.router.replace(HotelManageRoute(
+          hotelId: int.parse(hotelId ?? '0'),
+          role: role!,
+        ));
         break;
       case 'ADMIN':
         context.router.replace(const HotelManageListRoute());

@@ -49,7 +49,8 @@ class _AmenityFormPageState extends State<AmenityFormPage> {
     super.dispose();
   }
 
-  String? _required(String? v) => (v == null || v.trim().isEmpty) ? 'Bắt buộc' : null;
+  String? _required(String? v) =>
+      (v == null || v.trim().isEmpty) ? 'Báº¯t buá»™c' : null;
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
@@ -69,27 +70,41 @@ class _AmenityFormPageState extends State<AmenityFormPage> {
         description: _description.text.trim(),
         common: _common,
       );
-      context.read<AmenityBloc>().add(AmenityUpdated(id: widget.amenity!.id, request: req));
+      context
+          .read<AmenityBloc>()
+          .add(AmenityUpdated(id: widget.amenity!.id, request: req));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<AmenityBloc, AmenityState>(
-      listenWhen: (p, c) => p.status != c.status || p.lastCreatedOrUpdated != c.lastCreatedOrUpdated,
+      listenWhen: (p, c) =>
+          p.status != c.status ||
+          p.lastCreatedOrUpdated != c.lastCreatedOrUpdated,
       listener: (context, state) {
-        if (state.status == AmenityStatus.success && state.lastCreatedOrUpdated != null) {
+        if (state.status == AmenityStatus.success &&
+            state.lastCreatedOrUpdated != null) {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(isEdit ? 'Cập nhật thành công' : 'Thêm tiện ích thành công')),
+            SnackBar(
+                content: Text(isEdit
+                    ? 'Cáº­p nháº­t thÃ nh cÃ´ng'
+                    : 'ThÃªm tiá»‡n Ã­ch thÃ nh cÃ´ng')),
           );
         }
-        if (state.status == AmenityStatus.failure && state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+        if (state.status == AmenityStatus.failure &&
+            state.errorMessage != null) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text(isEdit ? 'Chỉnh sửa tiện ích' : 'Thêm tiện ích')),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black87,
+          title: Text(isEdit ? 'Chỉnh sửa tiện ích' : 'Thêm tiện ích'),
+        ),
         body: BlocBuilder<AmenityBloc, AmenityState>(
           builder: (context, state) {
             final loading = state.status == AmenityStatus.loading;
@@ -102,19 +117,20 @@ class _AmenityFormPageState extends State<AmenityFormPage> {
                   children: [
                     TextFormField(
                       controller: _name,
-                      decoration: const InputDecoration(labelText: 'Tên tiện ích'),
+                      decoration:
+                          const InputDecoration(labelText: 'TÃªn tiá»‡n Ã­ch'),
                       validator: _required,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _description,
-                      decoration: const InputDecoration(labelText: 'Mô tả'),
+                      decoration: const InputDecoration(labelText: 'MÃ´ táº£'),
                       validator: _required,
                       maxLines: 3,
                     ),
                     const SizedBox(height: 12),
                     SwitchListTile(
-                      title: const Text('Tiện ích chung (common)'),
+                      title: const Text('Tiá»‡n Ã­ch chung (common)'),
                       value: _common,
                       onChanged: (v) => setState(() => _common = v),
                     ),
@@ -127,7 +143,7 @@ class _AmenityFormPageState extends State<AmenityFormPage> {
                               width: 18,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : Text(isEdit ? 'Lưu' : 'Thêm'),
+                          : Text(isEdit ? 'LÆ°u' : 'ThÃªm'),
                     ),
                   ],
                 ),

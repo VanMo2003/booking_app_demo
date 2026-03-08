@@ -344,10 +344,11 @@ class HotelManageRoute extends PageRouteInfo<HotelManageRouteArgs> {
   HotelManageRoute({
     Key? key,
     required int hotelId,
+    required String role,
     List<PageRouteInfo>? children,
   }) : super(
           HotelManageRoute.name,
-          args: HotelManageRouteArgs(key: key, hotelId: hotelId),
+          args: HotelManageRouteArgs(key: key, hotelId: hotelId, role: role),
           initialChildren: children,
         );
 
@@ -357,17 +358,21 @@ class HotelManageRoute extends PageRouteInfo<HotelManageRouteArgs> {
     name,
     builder: (data) {
       final args = data.argsAs<HotelManageRouteArgs>();
-      return HotelManageScreen(key: args.key, hotelId: args.hotelId);
+      return HotelManageScreen(
+          key: args.key, hotelId: args.hotelId, role: args.role);
     },
   );
 }
 
 class HotelManageRouteArgs {
-  const HotelManageRouteArgs({this.key, required this.hotelId});
+  const HotelManageRouteArgs(
+      {this.key, required this.hotelId, required this.role});
 
   final Key? key;
 
   final int hotelId;
+
+  final String role;
 
   @override
   String toString() {

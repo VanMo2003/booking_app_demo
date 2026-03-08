@@ -1,6 +1,8 @@
-import 'package:auto_route/auto_route.dart';
+﻿import 'package:auto_route/auto_route.dart';
 import 'package:booking_app_mobile/core/api/app_config.dart';
 import 'package:booking_app_mobile/core/di/injector.dart';
+import 'package:booking_app_mobile/features/auth/domain/entity/auth.dart';
+import 'package:booking_app_mobile/features/auth/domain/repositories/auth_repository.dart';
 import 'package:booking_app_mobile/features/hotel/domain/entities/hotel.dart';
 import 'package:booking_app_mobile/features/hotel/domain/repositories/hotel_repository.dart';
 import 'package:dio/dio.dart';
@@ -42,7 +44,9 @@ class MonthlyReport {
 @RoutePage()
 class HotelManageScreen extends StatefulWidget {
   final int hotelId;
-  const HotelManageScreen({super.key, required this.hotelId});
+  final String role;
+  const HotelManageScreen(
+      {super.key, required this.hotelId, required this.role});
 
   @override
   State<HotelManageScreen> createState() => _HotelManageScreenState();
@@ -62,6 +66,7 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
   String? _monthlyError;
   List<DailyReport> _daily = [];
   List<MonthlyReport> _monthly = [];
+  bool get _isHotelManageRole => widget.role == 'HOTEL_MANAGER';
 
   @override
   void initState() {
@@ -186,6 +191,44 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
     _fetchMonthly();
   }
 
+  Future<void> _handleLogout() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Xác nhận đăng xuất'),
+        content: const Text('Bạn có chắc chắn muốn đăng xuất?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Hủy'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Đăng xuất'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    try {
+      await getIt<AuthRepository>().logout();
+      if (!mounted) return;
+      context.router.replaceAll([const LoginRoute()]);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Đăng xuất thất bại: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final primaryColor = Theme.of(context).primaryColor;
@@ -202,59 +245,64 @@ class _HotelManageScreenState extends State<HotelManageScreen> {
               backgroundColor: Colors.white,
               elevation: 0,
               centerTitle: false,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios,
-                    color: Colors.black, size: 20),
-                onPressed: () => context.router.maybePop(),
-                tooltip: 'Quay lại',
-              ),
+              automaticallyImplyLeading: !_isHotelManageRole,
+              leading: _isHotelManageRole
+                  ? null
+                  : IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.black,
+                        size: 20,
+                      ),
+                      onPressed: () => context.router.maybePop(),
+                      tooltip: 'Quay lại',
+                    ),
               title: Text(
-                state.hotel?.name ?? 'Quản lý khách sạn',
+                state.hotel?.name ?? 'Khách sạn Mường Thanh',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                   fontSize: 20,
                 ),
               ),
+              actions: _isHotelManageRole
+                  ? [
+                      IconButton(
+                        onPressed: _handleLogout,
+                        icon: const Icon(Icons.logout, color: Colors.redAccent),
+                        tooltip: 'Đăng xuất',
+                      ),
+                    ]
+                  : null,
             ),
             body: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // --- PHẦN DOANH THU (OVERVIEW) ---
                   _buildRevenueCard(primaryColor),
-
                   const SizedBox(height: 24),
-
                   const Text(
                     'Doanh thu theo ngày',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
                   _buildDailySection(primaryColor),
-
                   const SizedBox(height: 28),
-
                   const Text(
                     'Doanh thu theo tháng',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
                   _buildMonthlySection(primaryColor),
-
                   const SizedBox(height: 28),
-
                   const Text(
                     'Thông tin khách sạn',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
                   _buildHotelInfoCard(context, state),
-
                   const SizedBox(height: 28),
-
-                  // --- DANH MỤC QUẢN LÝ ---
                   const Text(
                     'Quản lý',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

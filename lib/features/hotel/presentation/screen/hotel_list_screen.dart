@@ -44,15 +44,19 @@ class _HotelListScreenState extends State<HotelListScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HotelBloc, HotelState>(
-      listenWhen: (p, c) => p.status != c.status || p.errorMessage != c.errorMessage,
+      listenWhen: (p, c) =>
+          p.status != c.status || p.errorMessage != c.errorMessage,
       listener: (context, state) {
         if (state.status == HotelStatus.failure && state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(state.errorMessage!)));
         }
       },
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black87,
             title: const Text('Danh sách khách sạn'),
             actions: [
               IconButton(
@@ -67,7 +71,9 @@ class _HotelListScreenState extends State<HotelListScreen> {
           ),
           body: RefreshIndicator(
             onRefresh: () async {
-              context.read<HotelBloc>().add(HotelsFetched(page: 0, size: state.size, refresh: true));
+              context
+                  .read<HotelBloc>()
+                  .add(HotelsFetched(page: 0, size: state.size, refresh: true));
             },
             child: ListView.separated(
               controller: _scroll,

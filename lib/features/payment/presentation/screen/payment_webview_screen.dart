@@ -63,6 +63,8 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
         title: const Text(
           'Thanh toán Vnpay',
           style: TextStyle(color: Colors.black),

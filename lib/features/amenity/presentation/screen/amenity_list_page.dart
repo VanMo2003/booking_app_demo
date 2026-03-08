@@ -49,6 +49,8 @@ class _AmenityListPageState extends State<AmenityListPage> {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
+            backgroundColor: Colors.white,
+            foregroundColor: Colors.black87,
             title: Text(widget.roomId != null
                 ? 'Tiện ích phòng'
                 : 'Tiện ích khách sạn'),

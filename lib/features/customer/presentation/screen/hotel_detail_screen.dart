@@ -75,7 +75,10 @@ class _HotelDetailScreenState extends State<HotelDetailScreen> {
 
           if (state.status == HotelDetailStatus.failure) {
             return Scaffold(
-              appBar: AppBar(),
+              appBar: AppBar(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black87,
+              ),
               body: Center(
                 child: Text(
                   'Lỗi tải thông tin khách sạn:\n${state.errorMessage}',

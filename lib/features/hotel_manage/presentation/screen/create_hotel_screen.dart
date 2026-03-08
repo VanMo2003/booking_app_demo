@@ -74,7 +74,7 @@ class _CreateHotelScreenState extends State<CreateHotelScreen> {
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Tên cơ sở đã tồn tại: ${created.name}')),
+        SnackBar(content: Text('Tạo cơ sơ mới thành công: ${created.name}')),
       );
       context.router.pop(true);
     } catch (e) {
@@ -103,6 +103,8 @@ class _CreateHotelScreenState extends State<CreateHotelScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
         title: const Text('Tạo cơ sở mới'),
       ),
       body: SingleChildScrollView(

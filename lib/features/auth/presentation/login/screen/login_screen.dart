@@ -52,10 +52,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   }
                   break;
                 case 'HOTEL_MANAGER':
-                  context.router.replace(const HotelManageListRoute());
-                  break;
-                case 'STAFF':
-                  context.router.replace(const EmployeeRoute());
+                  final hotel = state.authResponse?.hotel;
+                  if ((hotel != null)) {
+                    context.router.replace(
+                        HotelManageRoute(hotelId: hotel.id ?? 0, role: role));
+                  }
                   break;
                 case 'ADMIN':
                   context.router.replace(const HotelManageListRoute());

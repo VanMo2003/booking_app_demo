@@ -190,7 +190,8 @@ class _HotelManageListScreenState extends State<HotelManageListScreen> {
                               child: InkWell(
                                 borderRadius: BorderRadius.circular(16),
                                 onTap: () => context.router.push(
-                                  HotelManageRoute(hotelId: hotel.id),
+                                  HotelManageRoute(
+                                      hotelId: hotel.id, role: 'ADMIN'),
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(16.0),
