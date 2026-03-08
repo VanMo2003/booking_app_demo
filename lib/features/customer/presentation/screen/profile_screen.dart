@@ -173,7 +173,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ],
                     ),
                   ),
-                  const Icon(Icons.edit_note_rounded, color: brandGold),
+                  IconButton(
+                      onPressed: _openAccountSettings,
+                      icon: Icon(Icons.edit_note_rounded, color: brandGold))
                 ],
               ),
             ),
@@ -194,7 +196,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildMenuItem(
                     Icons.manage_accounts_outlined,
                     'Thiết lập tài khoản',
-                    onTap: _openAccountSettings,
                   ),
                   _buildDivider(),
                   _buildMenuItem(
