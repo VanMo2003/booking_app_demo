@@ -1,32 +1,31 @@
-import '../../../share/data/models/paged.dart';
+import '../../../../core/network/paged.dart';
+import '../../../../core/network/upload_file.dart';
+import '../../data/models/hotel_models.dart';
 import '../entities/hotel.dart';
 
-abstract class HotelRepository {
-  Future<Paged<Hotel>> getHotels({
-    required int page,
-    required int size,
-    required String checkinDate,
-    required String checkoutDate,
+abstract interface class HotelRepository {
+  Future<Paged<Hotel>> getHotels({required int page, required int size});
+
+  /// Gom mọi trang của `/hotels`.
+  Future<List<Hotel>> getAllHotels();
+
+  Future<List<Hotel>> searchAvailable({
+    required DateTime checkin,
+    required DateTime checkout,
   });
-  Future<Paged<Hotel>> getAllHotels({
-    required int page,
-    required int size,
+
+  Future<List<Hotel>> byCategory(String category);
+
+  Future<HotelDetail> getDetail(int id, {DateTime? checkin, DateTime? checkout});
+
+  Future<Hotel> create(
+    HotelCreateRequest request, {
+    List<UploadFile> images = const [],
   });
-  Future<Hotel> createHotel({
-    required String name,
-    required String address,
-    required String phone,
-    required String description,
-    required String category,
-    required bool active,
-    String? pathImage,
-    required List<String> imagePaths,
-  });
-  Future<Hotel> getHotelById({
-    required int id,
-    String? checkinDate,
-    String? checkoutDate,
-  });
-  Future<List<String>> uploadHotelImages(
-      {required int hotelId, required List<String> filePaths});
+
+  Future<Hotel> update(int id, HotelUpdateRequest request);
+
+  Future<void> delete(int id);
+
+  Future<List<String>> uploadImages(int id, List<UploadFile> images);
 }

@@ -1,12 +1,20 @@
-import 'package:booking_app_mobile/features/auth/data/models/request/login_request.dart';
-import 'package:booking_app_mobile/features/auth/data/models/request/register_request.dart';
+import '../entities/session.dart';
 
-import '../entity/auth.dart';
+abstract interface class AuthRepository {
+  Future<Session> login({required String username, required String password});
 
-abstract class AuthRepository {
-  Future<Auth> login(LoginRequest request);
+  /// Đăng ký công khai — chỉ tạo tài khoản CUSTOMER.
+  Future<void> registerCustomer({
+    required String username,
+    required String password,
+  });
 
   Future<void> logout();
 
-  Future<void> register(RegisterRequest request);
+  /// Phiên đã lưu trên máy, `null` nếu chưa đăng nhập hoặc refresh token đã hết hạn.
+  Future<Session?> restoreSession();
+
+  Future<void> saveSession(Session session);
+
+  Future<void> clearSession();
 }

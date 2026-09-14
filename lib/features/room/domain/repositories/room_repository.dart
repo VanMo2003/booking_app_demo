@@ -1,31 +1,24 @@
-import '../entity/room.dart';
+import '../../../../core/network/upload_file.dart';
+import '../../data/models/room_models.dart';
+import '../entities/room.dart';
 
-class RoomList {
-  final List<Room> content;
-  final int page;
-  final int size;
-  final int totalElements;
-  final int totalPages;
+abstract interface class RoomRepository {
+  /// Toàn bộ phòng của cơ sở (gom mọi trang).
+  Future<List<Room>> getRooms(int hotelId);
 
-  RoomList({
-    required this.content,
-    required this.page,
-    required this.size,
-    required this.totalElements,
-    required this.totalPages,
-  });
-}
+  Future<RoomDetail> getRoom(int id);
 
-abstract class RoomRepository {
-  Future<List<Room>> getAvailableRooms({
+  Future<List<Room>> available({
     required int hotelId,
-    required String checkinDate,
-    required String checkoutDate,
+    required DateTime checkin,
+    required DateTime checkout,
   });
-  Future<Room> getRoomById({required int id});
-  Future<Room> createRoom(Room room);
-  Future<Room> updateRoom(Room room);
-  Future<List<String>> uploadRoomImages(
-      {required int roomId, required List<String> filePaths});
-  Future<void> deleteRoom(int id);
+
+  Future<Room> create(RoomRequest request);
+
+  Future<Room> update(int id, RoomRequest request);
+
+  Future<void> delete(int id);
+
+  Future<List<String>> uploadImages(int id, List<UploadFile> images);
 }

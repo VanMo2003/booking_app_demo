@@ -1,105 +1,116 @@
-class Hotel {
-  int id;
-  String name;
-  String address;
-  String phone;
-  String description;
-  String category;
-  num rating;
-  String pathImage;
-  List<String> images;
-  bool active;
-  String accountId;
-  List<HotelRoom> rooms;
-  List<HotelAmenity> amenities;
-  List<HotelService> services;
-  String status;
-  String onCreate;
-  String onUpdate;
+import 'package:equatable/equatable.dart';
 
-  Hotel(
-      {required this.id,
-      required this.name,
-      required this.address,
-      required this.phone,
-      required this.description,
-      required this.category,
-      required this.rating,
-      required this.pathImage,
-      required this.images,
-      required this.active,
-      required this.accountId,
-      required this.rooms,
-      required this.amenities,
-      required this.services,
-      required this.onCreate,
-      required this.onUpdate,
-      required this.status});
+import '../../../../core/enums/app_enums.dart';
+import '../../../amenity/domain/entities/amenity.dart';
+import '../../../room/domain/entities/room.dart';
+import '../../../service/domain/entities/hotel_service.dart';
+
+/// Một cơ sở (entity `Hotel` phía BE — là chi nhánh, không phải chuỗi).
+class Hotel extends Equatable {
+  const Hotel({
+    required this.id,
+    required this.name,
+    this.address = '',
+    this.phone = '',
+    this.description = '',
+    this.category = '',
+    this.rating = 0,
+    this.pathImage,
+    this.active = true,
+    this.status,
+    this.accountId,
+    this.hotelChainId,
+    this.amenities = const [],
+    this.services = const [],
+  });
+
+  final int id;
+  final String name;
+  final String address;
+  final String phone;
+  final String description;
+  final String category;
+  final int rating;
+  final String? pathImage;
+  final bool active;
+
+  /// Chỉ có khi tìm theo ngày (`/hotels/search`).
+  final HotelStatus? status;
+
+  /// Tài khoản quản lý cơ sở.
+  final String? accountId;
+  final int? hotelChainId;
+  final List<Amenity> amenities;
+  final List<HotelService> services;
+
+  bool get acceptsBooking =>
+      active && status != HotelStatus.full && status != HotelStatus.inactive;
+
+  Hotel copyWith({bool? active, HotelStatus? status, String? pathImage}) => Hotel(
+        id: id,
+        name: name,
+        address: address,
+        phone: phone,
+        description: description,
+        category: category,
+        rating: rating,
+        pathImage: pathImage ?? this.pathImage,
+        active: active ?? this.active,
+        status: status ?? this.status,
+        accountId: accountId,
+        hotelChainId: hotelChainId,
+        amenities: amenities,
+        services: services,
+      );
+
+  @override
+  List<Object?> get props => [
+        id,
+        name,
+        address,
+        phone,
+        description,
+        category,
+        rating,
+        pathImage,
+        active,
+        status,
+        accountId,
+        hotelChainId,
+        amenities,
+        services,
+      ];
 }
 
-class HotelRoom {
-  int id;
-  String pathImage;
-  String roomNumber;
-  int price;
-  String description;
-  int capacity;
-  String status;
-  int hotelId;
-  String hotelName;
-  int roomTypeId;
-  String roomTypeName;
-  String onCreate;
-  String onUpdate;
+/// Chi tiết cơ sở (`/hotels/detail/{id}`): ảnh, phòng, mọi tiện ích, dịch vụ.
+class HotelDetail extends Equatable {
+  const HotelDetail({
+    required this.hotel,
+    this.images = const [],
+    this.rooms = const [],
+  });
 
-  HotelRoom(
-      {required this.id,
-      required this.pathImage,
-      required this.roomNumber,
-      required this.price,
-      required this.description,
-      required this.capacity,
-      required this.status,
-      required this.hotelId,
-      required this.hotelName,
-      required this.roomTypeId,
-      required this.roomTypeName,
-      required this.onCreate,
-      required this.onUpdate});
-}
+  final Hotel hotel;
+  final List<String> images;
+  final List<Room> rooms;
 
-class HotelAmenity {
-  int id;
-  String name;
-  String description;
-  bool common;
-  bool active;
-  String onCreate;
-  String onUpdate;
+  int get id => hotel.id;
 
-  HotelAmenity(
-      {required this.id,
-      required this.name,
-      required this.description,
-      required this.common,
-      required this.active,
-      required this.onCreate,
-      required this.onUpdate});
-}
+  /// `amenities` của chi tiết gồm cả tiện ích riêng từng phòng; khách chỉ cần chung.
+  List<Amenity> get commonAmenities =>
+      hotel.amenities.where((a) => a.common).toList();
 
-class HotelService {
-  int id;
-  String name;
-  int unitPrice;
-  String description;
-  String onCreate;
-  String onUpdate;
+  List<String> get gallery {
+    final cover = hotel.pathImage;
+    return [
+      if (cover != null && cover.isNotEmpty && !images.contains(cover)) cover,
+      ...images,
+    ];
+  }
 
-  HotelService(
-      {required this.id,
-      required this.name,
-      required this.unitPrice,
-      required this.description,
-      required this.onCreate,
-      required this.onUpdate});
+  List<Room> get availableRooms =>
+      rooms.where((room) => room.status == RoomStatus.available).toList();
+
+  @override
+  List<Object?> get props => [hotel, images, rooms];
 }

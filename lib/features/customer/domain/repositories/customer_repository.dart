@@ -1,12 +1,20 @@
-import '../../data/models/request/create_customer_request.dart';
-import '../../../auth/data/models/response/customer_response.dart';
-import '../../data/models/request/update_customer_request.dart';
+import '../../../../core/network/paged.dart';
+import '../../data/models/customer_models.dart';
+import '../entities/customer.dart';
 
-abstract class CustomerRepository {
-  Future<void> createCustomer(CreateCustomerRequest request);
+abstract interface class CustomerRepository {
+  Future<Customer> create(CustomerRequest request);
 
-  Future<CustomerResponse> getCustomerById(int id);
+  Future<Customer> update(int id, CustomerRequest request);
 
-  Future<CustomerResponse> updateCustomer(
-      int id, UpdateCustomerRequest request);
+  Future<Customer> getById(int id);
+
+  Future<Paged<Customer>> getAll({required int page, required int size});
+
+  /// Khách đã từng có đơn ở cơ sở.
+  Future<List<Customer>> byHotel(int hotelId);
+
+  Future<List<Customer>> searchByPhone(String phoneNumber);
+
+  Future<Customer> linkByPhone(String phoneNumber);
 }

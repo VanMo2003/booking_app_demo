@@ -9,293 +9,637 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:booking_app_mobile/core/api/dio_client.dart' as _i764;
-import 'package:booking_app_mobile/core/di/network_module.dart' as _i186;
-import 'package:booking_app_mobile/features/amenity/data/datasource/remote/amenity_api_service.dart'
-    as _i31;
-import 'package:booking_app_mobile/features/amenity/data/repository_impl/amenity_repository_impl.dart'
-    as _i480;
-import 'package:booking_app_mobile/features/amenity/domain/respository/amenity_repository.dart'
-    as _i273;
-import 'package:booking_app_mobile/features/amenity/domain/use_case/create_amenity.dart'
-    as _i834;
-import 'package:booking_app_mobile/features/amenity/domain/use_case/delete_amenity.dart'
-    as _i915;
-import 'package:booking_app_mobile/features/amenity/domain/use_case/get_by_hotel.dart'
-    as _i920;
-import 'package:booking_app_mobile/features/amenity/domain/use_case/get_by_room.dart'
-    as _i1044;
-import 'package:booking_app_mobile/features/amenity/domain/use_case/update_amenity.dart'
-    as _i371;
-import 'package:booking_app_mobile/features/auth/data/datasource/remote/auth_api_service.dart'
-    as _i608;
-import 'package:booking_app_mobile/features/auth/data/repository/auth_repository_impl.dart'
-    as _i443;
+
+import 'package:booking_app_mobile/core/di/app_module.dart' as _i732;
+import 'package:booking_app_mobile/core/network/session_events.dart' as _i432;
+import 'package:booking_app_mobile/core/storage/app_preferences.dart' as _i774;
+import 'package:booking_app_mobile/core/storage/token_storage.dart' as _i991;
+import 'package:booking_app_mobile/features/account/data/datasources/account_api.dart'
+    as _i458;
+import 'package:booking_app_mobile/features/account/data/repositories/account_repository_impl.dart'
+    as _i767;
+import 'package:booking_app_mobile/features/account/domain/repositories/account_repository.dart'
+    as _i654;
+import 'package:booking_app_mobile/features/account/domain/usecases/account_usecases.dart'
+    as _i275;
+import 'package:booking_app_mobile/features/admin/domain/usecases/load_system_overview.dart'
+    as _i962;
+import 'package:booking_app_mobile/features/admin/presentation/accounts_screen.dart'
+    as _i770;
+import 'package:booking_app_mobile/features/admin/presentation/admin_overview_screen.dart'
+    as _i1048;
+import 'package:booking_app_mobile/features/admin/presentation/catalog_screen.dart'
+    as _i1018;
+import 'package:booking_app_mobile/features/admin/presentation/system_data_screen.dart'
+    as _i489;
+import 'package:booking_app_mobile/features/amenity/data/datasources/amenity_api.dart'
+    as _i619;
+import 'package:booking_app_mobile/features/amenity/data/repositories/amenity_repository_impl.dart'
+    as _i408;
+import 'package:booking_app_mobile/features/amenity/domain/repositories/amenity_repository.dart'
+    as _i214;
+import 'package:booking_app_mobile/features/amenity/domain/usecases/amenity_usecases.dart'
+    as _i961;
+import 'package:booking_app_mobile/features/auth/data/datasources/auth_api.dart'
+    as _i165;
+import 'package:booking_app_mobile/features/auth/data/datasources/session_local_data_source.dart'
+    as _i624;
+import 'package:booking_app_mobile/features/auth/data/repositories/auth_repository_impl.dart'
+    as _i535;
 import 'package:booking_app_mobile/features/auth/domain/repositories/auth_repository.dart'
     as _i619;
-import 'package:booking_app_mobile/features/auth/domain/usecases/login_use_case.dart'
-    as _i15;
-import 'package:booking_app_mobile/features/auth/domain/usecases/logout_use_case.dart'
-    as _i941;
-import 'package:booking_app_mobile/features/auth/domain/usecases/register_use_case.dart'
-    as _i417;
-import 'package:booking_app_mobile/features/booking/data/datasource/remote/booking_api_service.dart'
-    as _i1055;
-import 'package:booking_app_mobile/features/booking/data/repositoy_impl/booking_repository_impl.dart'
-    as _i400;
+import 'package:booking_app_mobile/features/auth/domain/usecases/auth_usecases.dart'
+    as _i856;
+import 'package:booking_app_mobile/features/auth/presentation/login/login_cubit.dart'
+    as _i836;
+import 'package:booking_app_mobile/features/auth/presentation/profile_setup/profile_setup_cubit.dart'
+    as _i388;
+import 'package:booking_app_mobile/features/auth/presentation/session/session_cubit.dart'
+    as _i642;
+import 'package:booking_app_mobile/features/booking/data/datasources/booking_api.dart'
+    as _i691;
+import 'package:booking_app_mobile/features/booking/data/repositories/booking_repository_impl.dart'
+    as _i1028;
 import 'package:booking_app_mobile/features/booking/domain/repositories/booking_repository.dart'
     as _i299;
-import 'package:booking_app_mobile/features/booking/domain/usecases/cancel_booking_use_case.dart'
-    as _i715;
-import 'package:booking_app_mobile/features/booking/domain/usecases/complete_booking_use_case.dart'
-    as _i1065;
-import 'package:booking_app_mobile/features/booking/domain/usecases/confirm_booking_use_case.dart'
-    as _i671;
-import 'package:booking_app_mobile/features/booking/domain/usecases/create_booking_use_case.dart'
-    as _i653;
-import 'package:booking_app_mobile/features/booking/domain/usecases/get_booking_use_case.dart'
-    as _i114;
-import 'package:booking_app_mobile/features/customer/data/datasource/remote/customer_api_service.dart'
-    as _i361;
-import 'package:booking_app_mobile/features/customer/data/repository/customer_repository_impl.dart'
-    as _i223;
+import 'package:booking_app_mobile/features/booking/domain/usecases/booking_usecases.dart'
+    as _i750;
+import 'package:booking_app_mobile/features/booking/presentation/create/booking_create_cubit.dart'
+    as _i625;
+import 'package:booking_app_mobile/features/booking/presentation/desk/desk_cubit.dart'
+    as _i534;
+import 'package:booking_app_mobile/features/booking/presentation/detail/booking_detail_cubit.dart'
+    as _i287;
+import 'package:booking_app_mobile/features/booking/presentation/edit/booking_edit_screen.dart'
+    as _i1027;
+import 'package:booking_app_mobile/features/booking/presentation/my_bookings/my_bookings_screen.dart'
+    as _i811;
+import 'package:booking_app_mobile/features/booking/presentation/walk_in/walk_in_guest_cubit.dart'
+    as _i209;
+import 'package:booking_app_mobile/features/catalog/data/datasources/catalog_api.dart'
+    as _i477;
+import 'package:booking_app_mobile/features/catalog/data/repositories/catalog_repository_impl.dart'
+    as _i682;
+import 'package:booking_app_mobile/features/catalog/domain/repositories/catalog_repository.dart'
+    as _i128;
+import 'package:booking_app_mobile/features/catalog/domain/usecases/catalog_usecases.dart'
+    as _i1061;
+import 'package:booking_app_mobile/features/customer/data/datasources/customer_api.dart'
+    as _i294;
+import 'package:booking_app_mobile/features/customer/data/repositories/customer_repository_impl.dart'
+    as _i339;
 import 'package:booking_app_mobile/features/customer/domain/repositories/customer_repository.dart'
     as _i939;
-import 'package:booking_app_mobile/features/customer/domain/usecases/create_customer_use_case.dart'
-    as _i215;
-import 'package:booking_app_mobile/features/employee/data/datasource/remote/employee_api_service.dart'
-    as _i676;
-import 'package:booking_app_mobile/features/employee/data/repository/employee_repository_impl.dart'
-    as _i537;
+import 'package:booking_app_mobile/features/customer/domain/usecases/customer_usecases.dart'
+    as _i57;
+import 'package:booking_app_mobile/features/customer/presentation/branch/branch_customers_screen.dart'
+    as _i999;
+import 'package:booking_app_mobile/features/customer/presentation/branch/customer_detail_screen.dart'
+    as _i823;
+import 'package:booking_app_mobile/features/employee/data/datasources/employee_api.dart'
+    as _i618;
+import 'package:booking_app_mobile/features/employee/data/repositories/employee_repository_impl.dart'
+    as _i71;
 import 'package:booking_app_mobile/features/employee/domain/repositories/employee_repository.dart'
     as _i83;
-import 'package:booking_app_mobile/features/employee/domain/use_case/create_employee.dart'
-    as _i759;
-import 'package:booking_app_mobile/features/employee/domain/use_case/delete_employee.dart'
-    as _i729;
-import 'package:booking_app_mobile/features/employee/domain/use_case/get_employee_by_hotel.dart'
-    as _i720;
-import 'package:booking_app_mobile/features/employee/domain/use_case/update_employee.dart'
-    as _i741;
-import 'package:booking_app_mobile/features/hotel/data/datasoure/remote/hotel_api_service.dart'
-    as _i847;
+import 'package:booking_app_mobile/features/employee/domain/usecases/employee_usecases.dart'
+    as _i320;
+import 'package:booking_app_mobile/features/employee/presentation/employees_screen.dart'
+    as _i41;
+import 'package:booking_app_mobile/features/favorite/data/favorite_store.dart'
+    as _i412;
+import 'package:booking_app_mobile/features/favorite/presentation/favorites_cubit.dart'
+    as _i329;
+import 'package:booking_app_mobile/features/feedback/data/datasources/feedback_api.dart'
+    as _i621;
+import 'package:booking_app_mobile/features/feedback/data/repositories/feedback_repository_impl.dart'
+    as _i267;
+import 'package:booking_app_mobile/features/feedback/domain/repositories/feedback_repository.dart'
+    as _i900;
+import 'package:booking_app_mobile/features/feedback/domain/usecases/feedback_usecases.dart'
+    as _i406;
+import 'package:booking_app_mobile/features/hotel/data/datasources/hotel_api.dart'
+    as _i1009;
 import 'package:booking_app_mobile/features/hotel/data/repositories/hotel_repository_impl.dart'
     as _i48;
 import 'package:booking_app_mobile/features/hotel/domain/repositories/hotel_repository.dart'
     as _i16;
-import 'package:booking_app_mobile/features/hotel/domain/use_case/get_hotel_use_case.dart'
-    as _i758;
-import 'package:booking_app_mobile/features/position/data/datasource/remote/position_api_service.dart'
-    as _i277;
-import 'package:booking_app_mobile/features/position/data/repository/position_repository_impl.dart'
-    as _i548;
-import 'package:booking_app_mobile/features/position/domain/repositories/position_repository.dart'
-    as _i555;
-import 'package:booking_app_mobile/features/position/domain/usecases/create_position.dart'
-    as _i930;
-import 'package:booking_app_mobile/features/position/domain/usecases/delete_position.dart'
-    as _i352;
-import 'package:booking_app_mobile/features/position/domain/usecases/get_positions.dart'
-    as _i194;
-import 'package:booking_app_mobile/features/position/domain/usecases/update_position.dart'
-    as _i111;
-import 'package:booking_app_mobile/features/room/data/datasource/remote/room_api_service.dart'
-    as _i192;
-import 'package:booking_app_mobile/features/room/data/repository/room_repository_impl.dart'
-    as _i84;
+import 'package:booking_app_mobile/features/hotel/domain/usecases/hotel_usecases.dart'
+    as _i672;
+import 'package:booking_app_mobile/features/hotel/presentation/branch/branch_cubit.dart'
+    as _i728;
+import 'package:booking_app_mobile/features/hotel/presentation/detail/hotel_detail_cubit.dart'
+    as _i1019;
+import 'package:booking_app_mobile/features/hotel/presentation/explore/explore_cubit.dart'
+    as _i187;
+import 'package:booking_app_mobile/features/hotel/presentation/search/search_results_screen.dart'
+    as _i98;
+import 'package:booking_app_mobile/features/hotel_chain/data/datasources/hotel_chain_api.dart'
+    as _i502;
+import 'package:booking_app_mobile/features/hotel_chain/data/manager_registry.dart'
+    as _i232;
+import 'package:booking_app_mobile/features/hotel_chain/data/repositories/hotel_chain_repository_impl.dart'
+    as _i430;
+import 'package:booking_app_mobile/features/hotel_chain/domain/repositories/hotel_chain_repository.dart'
+    as _i1057;
+import 'package:booking_app_mobile/features/hotel_chain/domain/usecases/hotel_chain_usecases.dart'
+    as _i782;
+import 'package:booking_app_mobile/features/hotel_chain/presentation/chain_cubits.dart'
+    as _i1;
+import 'package:booking_app_mobile/features/payment/data/datasources/payment_api.dart'
+    as _i219;
+import 'package:booking_app_mobile/features/payment/data/repositories/payment_repository_impl.dart'
+    as _i1070;
+import 'package:booking_app_mobile/features/payment/domain/repositories/payment_repository.dart'
+    as _i545;
+import 'package:booking_app_mobile/features/payment/domain/usecases/payment_usecases.dart'
+    as _i854;
+import 'package:booking_app_mobile/features/payroll/data/datasources/payroll_api.dart'
+    as _i981;
+import 'package:booking_app_mobile/features/payroll/data/payroll_session_store.dart'
+    as _i381;
+import 'package:booking_app_mobile/features/payroll/data/repositories/payroll_repository_impl.dart'
+    as _i65;
+import 'package:booking_app_mobile/features/payroll/domain/repositories/payroll_repository.dart'
+    as _i625;
+import 'package:booking_app_mobile/features/payroll/domain/usecases/payroll_usecases.dart'
+    as _i134;
+import 'package:booking_app_mobile/features/payroll/presentation/payroll_screen.dart'
+    as _i102;
+import 'package:booking_app_mobile/features/report/data/datasources/report_remote_data_source.dart'
+    as _i797;
+import 'package:booking_app_mobile/features/report/data/repositories/report_repository_impl.dart'
+    as _i903;
+import 'package:booking_app_mobile/features/report/domain/repositories/report_repository.dart'
+    as _i12;
+import 'package:booking_app_mobile/features/report/domain/usecases/report_usecases.dart'
+    as _i109;
+import 'package:booking_app_mobile/features/report/presentation/dashboard/dashboard_screen.dart'
+    as _i79;
+import 'package:booking_app_mobile/features/report/presentation/reports/reports_cubit.dart'
+    as _i978;
+import 'package:booking_app_mobile/features/room/data/datasources/room_api.dart'
+    as _i679;
+import 'package:booking_app_mobile/features/room/data/repositories/room_repository_impl.dart'
+    as _i968;
 import 'package:booking_app_mobile/features/room/domain/repositories/room_repository.dart'
     as _i77;
-import 'package:booking_app_mobile/features/room/domain/usecases/create_room.dart'
-    as _i41;
-import 'package:booking_app_mobile/features/room/domain/usecases/delete_room.dart'
-    as _i480;
-import 'package:booking_app_mobile/features/room/domain/usecases/get_rooms.dart'
-    as _i503;
-import 'package:booking_app_mobile/features/room/domain/usecases/update_room.dart'
-    as _i737;
-import 'package:booking_app_mobile/features/room_type/data/datasource/remote/room_type_api_service.dart'
-    as _i244;
-import 'package:booking_app_mobile/features/room_type/data/repository/room_type_repository_impl.dart'
-    as _i559;
-import 'package:booking_app_mobile/features/room_type/domain/repositories/room_type_repository.dart'
-    as _i18;
-import 'package:booking_app_mobile/features/room_type/domain/usecases/create_room_type.dart'
-    as _i526;
-import 'package:booking_app_mobile/features/room_type/domain/usecases/delete_room_type.dart'
-    as _i117;
-import 'package:booking_app_mobile/features/room_type/domain/usecases/get_room_types.dart'
-    as _i592;
-import 'package:booking_app_mobile/features/room_type/domain/usecases/update_room_type.dart'
-    as _i771;
-import 'package:booking_app_mobile/features/service/data/datasource/remote/service_api_service.dart'
-    as _i267;
-import 'package:booking_app_mobile/features/service/data/repository/service_repository_impl.dart'
-    as _i704;
-import 'package:booking_app_mobile/features/service/domain/repositories/service_repository.dart'
-    as _i820;
-import 'package:booking_app_mobile/features/service/domain/usecases/create_service.dart'
-    as _i171;
-import 'package:booking_app_mobile/features/service/domain/usecases/delete_service.dart'
-    as _i161;
-import 'package:booking_app_mobile/features/service/domain/usecases/get_services.dart'
-    as _i329;
-import 'package:booking_app_mobile/features/service/domain/usecases/update_service.dart'
-    as _i482;
+import 'package:booking_app_mobile/features/room/domain/usecases/room_usecases.dart'
+    as _i643;
+import 'package:booking_app_mobile/features/room/presentation/detail/room_detail_cubit.dart'
+    as _i955;
+import 'package:booking_app_mobile/features/room/presentation/manage/room_manage_detail_screen.dart'
+    as _i785;
+import 'package:booking_app_mobile/features/room/presentation/manage/rooms_manage_screen.dart'
+    as _i508;
+import 'package:booking_app_mobile/features/service/data/datasources/service_api.dart'
+    as _i17;
+import 'package:booking_app_mobile/features/service/data/repositories/hotel_service_repository_impl.dart'
+    as _i262;
+import 'package:booking_app_mobile/features/service/domain/repositories/hotel_service_repository.dart'
+    as _i324;
+import 'package:booking_app_mobile/features/service/domain/usecases/hotel_service_usecases.dart'
+    as _i358;
+import 'package:booking_app_mobile/features/service/presentation/services_screen.dart'
+    as _i1049;
 import 'package:dio/dio.dart' as _i361;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
-  _i174.GetIt init({
+  Future<_i174.GetIt> init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
-  }) {
+  }) async {
     final gh = _i526.GetItHelper(
       this,
       environment,
       environmentFilter,
     );
-    final networkModule = _$NetworkModule();
-    gh.lazySingleton<_i558.FlutterSecureStorage>(
-        () => networkModule.provideSecureStorage());
-    gh.lazySingleton<_i361.Dio>(
-        () => networkModule.provideDio(gh<_i558.FlutterSecureStorage>()));
-    gh.lazySingleton<_i764.DioClient>(
-        () => networkModule.provideDioClient(gh<_i361.Dio>()));
-    gh.lazySingleton<_i608.AuthApiService>(
-        () => networkModule.provideAuthApiService(gh<_i361.Dio>()));
-    gh.lazySingleton<_i277.PositionApiService>(
-        () => networkModule.providePositionApiService(gh<_i361.Dio>()));
-    gh.lazySingleton<_i244.RoomTypeApiService>(
-        () => networkModule.provideRoomTypeApiService(gh<_i361.Dio>()));
-    gh.lazySingleton<_i192.RoomApiService>(
-        () => networkModule.provideRoomApiService(gh<_i361.Dio>()));
-    gh.lazySingleton<_i267.ServiceApiService>(
-        () => networkModule.provideServiceApiService(gh<_i361.Dio>()));
-    gh.lazySingleton<_i361.CustomerApiService>(
-        () => networkModule.provideCustomerApiService(gh<_i361.Dio>()));
-    gh.lazySingleton<_i676.EmployeeApiService>(
-        () => networkModule.provideEmployeeApiService(gh<_i361.Dio>()));
-    gh.lazySingleton<_i847.HotelApiService>(
-        () => networkModule.provideHotelApiService(gh<_i361.Dio>()));
-    gh.lazySingleton<_i31.AmenityApiService>(
-        () => networkModule.provideAmenityApiService(gh<_i361.Dio>()));
-    gh.lazySingleton<_i1055.BookingApiService>(
-        () => networkModule.provideBookingApiService(gh<_i361.Dio>()));
-    gh.lazySingleton<_i273.AmenityRepository>(
-        () => _i480.AmenityRepositoryImpl(gh<_i31.AmenityApiService>()));
-    gh.lazySingleton<_i299.BookingRepository>(() => _i400.BookingRepositoryImpl(
-          gh<_i1055.BookingApiService>(),
-          gh<_i764.DioClient>(),
+    final appModule = _$AppModule();
+    final accountApiModule = _$AccountApiModule();
+    final amenityApiModule = _$AmenityApiModule();
+    final authApiModule = _$AuthApiModule();
+    final bookingApiModule = _$BookingApiModule();
+    final catalogApiModule = _$CatalogApiModule();
+    final customerApiModule = _$CustomerApiModule();
+    final employeeApiModule = _$EmployeeApiModule();
+    final feedbackApiModule = _$FeedbackApiModule();
+    final hotelApiModule = _$HotelApiModule();
+    final hotelChainApiModule = _$HotelChainApiModule();
+    final paymentApiModule = _$PaymentApiModule();
+    final payrollApiModule = _$PayrollApiModule();
+    final roomApiModule = _$RoomApiModule();
+    final serviceApiModule = _$ServiceApiModule();
+    await gh.factoryAsync<_i460.SharedPreferences>(
+      () => appModule.preferences,
+      preResolve: true,
+    );
+    gh.lazySingleton<_i558.FlutterSecureStorage>(() => appModule.secureStorage);
+    gh.lazySingleton<_i432.SessionEvents>(
+      () => _i432.SessionEvents(),
+      dispose: (i) => i.dispose(),
+    );
+    gh.lazySingleton<_i381.PayrollSessionStore>(
+        () => _i381.PayrollSessionStore());
+    gh.lazySingleton<_i774.AppPreferences>(
+        () => _i774.AppPreferences(gh<_i460.SharedPreferences>()));
+    gh.lazySingleton<_i991.TokenStorage>(
+        () => _i991.TokenStorage(gh<_i558.FlutterSecureStorage>()));
+    gh.lazySingleton<_i624.SessionLocalDataSource>(
+        () => _i624.SessionLocalDataSource(gh<_i558.FlutterSecureStorage>()));
+    gh.lazySingleton<_i412.FavoriteStore>(
+        () => _i412.FavoriteStore(gh<_i774.AppPreferences>()));
+    gh.lazySingleton<_i232.ManagerRegistry>(
+        () => _i232.ManagerRegistry(gh<_i774.AppPreferences>()));
+    gh.lazySingleton<_i361.Dio>(() => appModule.dio(
+          gh<_i991.TokenStorage>(),
+          gh<_i432.SessionEvents>(),
         ));
-    gh.lazySingleton<_i619.AuthRepository>(() => _i443.AuthRepositoryImpl(
-          gh<_i608.AuthApiService>(),
-          gh<_i764.DioClient>(),
-          gh<_i558.FlutterSecureStorage>(),
-        ));
-    gh.lazySingleton<_i555.PositionRepository>(
-        () => _i548.PositionRepositoryImpl(
-              gh<_i277.PositionApiService>(),
-              gh<_i764.DioClient>(),
+    gh.lazySingleton<_i797.ReportRemoteDataSource>(
+        () => _i797.ReportRemoteDataSource(gh<_i361.Dio>()));
+    gh.lazySingleton<_i12.ReportRepository>(
+        () => _i903.ReportRepositoryImpl(gh<_i797.ReportRemoteDataSource>()));
+    gh.lazySingleton<_i458.AccountApi>(
+        () => accountApiModule.accountApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i619.AmenityApi>(
+        () => amenityApiModule.amenityApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i165.AuthApi>(
+        () => authApiModule.authApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i691.BookingApi>(
+        () => bookingApiModule.bookingApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i477.CatalogApi>(
+        () => catalogApiModule.catalogApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i294.CustomerApi>(
+        () => customerApiModule.customerApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i618.EmployeeApi>(
+        () => employeeApiModule.employeeApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i621.FeedbackApi>(
+        () => feedbackApiModule.feedbackApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i1009.HotelApi>(
+        () => hotelApiModule.hotelApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i502.HotelChainApi>(
+        () => hotelChainApiModule.hotelChainApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i219.PaymentApi>(
+        () => paymentApiModule.paymentApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i981.PayrollApi>(
+        () => payrollApiModule.payrollApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i679.RoomApi>(
+        () => roomApiModule.roomApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i17.ServiceApi>(
+        () => serviceApiModule.serviceApi(gh<_i361.Dio>()));
+    gh.factory<_i109.LoadRevenueReport>(
+        () => _i109.LoadRevenueReport(gh<_i12.ReportRepository>()));
+    gh.factory<_i109.LoadOccupancyReport>(
+        () => _i109.LoadOccupancyReport(gh<_i12.ReportRepository>()));
+    gh.factory<_i109.LoadBreakdownReport>(
+        () => _i109.LoadBreakdownReport(gh<_i12.ReportRepository>()));
+    gh.factory<_i109.LoadPeopleReport>(
+        () => _i109.LoadPeopleReport(gh<_i12.ReportRepository>()));
+    gh.factory<_i109.ExportReport>(
+        () => _i109.ExportReport(gh<_i12.ReportRepository>()));
+    gh.factory<_i109.LoadBranchComparison>(
+        () => _i109.LoadBranchComparison(gh<_i12.ReportRepository>()));
+    gh.lazySingleton<_i900.FeedbackRepository>(
+        () => _i267.FeedbackRepositoryImpl(
+              gh<_i621.FeedbackApi>(),
+              gh<_i774.AppPreferences>(),
             ));
-    gh.factory<_i930.CreatePosition>(
-        () => _i930.CreatePosition(gh<_i555.PositionRepository>()));
-    gh.factory<_i352.DeletePosition>(
-        () => _i352.DeletePosition(gh<_i555.PositionRepository>()));
-    gh.factory<_i194.GetPositions>(
-        () => _i194.GetPositions(gh<_i555.PositionRepository>()));
-    gh.factory<_i111.UpdatePosition>(
-        () => _i111.UpdatePosition(gh<_i555.PositionRepository>()));
-    gh.lazySingleton<_i820.ServiceRepository>(() => _i704.ServiceRepositoryImpl(
-          gh<_i267.ServiceApiService>(),
-          gh<_i764.DioClient>(),
+    gh.lazySingleton<_i619.AuthRepository>(() => _i535.AuthRepositoryImpl(
+          gh<_i165.AuthApi>(),
+          gh<_i991.TokenStorage>(),
+          gh<_i624.SessionLocalDataSource>(),
         ));
-    gh.factory<_i715.CancelBooking>(
-        () => _i715.CancelBooking(gh<_i299.BookingRepository>()));
-    gh.factory<_i1065.CompleteBooking>(
-        () => _i1065.CompleteBooking(gh<_i299.BookingRepository>()));
-    gh.factory<_i671.ConfirmBooking>(
-        () => _i671.ConfirmBooking(gh<_i299.BookingRepository>()));
-    gh.factory<_i653.CreateBooking>(
-        () => _i653.CreateBooking(gh<_i299.BookingRepository>()));
-    gh.factory<_i114.GetBookings>(
-        () => _i114.GetBookings(gh<_i299.BookingRepository>()));
-    gh.lazySingleton<_i18.RoomTypeRepository>(
-        () => _i559.RoomTypeRepositoryImpl(
-              gh<_i244.RoomTypeApiService>(),
-              gh<_i764.DioClient>(),
-            ));
-    gh.lazySingleton<_i77.RoomRepository>(() => _i84.RoomRepositoryImpl(
-          gh<_i192.RoomApiService>(),
-          gh<_i764.DioClient>(),
-        ));
-    gh.lazySingleton<_i939.CustomerRepository>(
-        () => _i223.CustomerRepositoryImpl(gh<_i361.CustomerApiService>()));
-    gh.factory<_i15.LoginUseCase>(
-        () => _i15.LoginUseCase(gh<_i619.AuthRepository>()));
-    gh.factory<_i941.LogoutUseCase>(
-        () => _i941.LogoutUseCase(gh<_i619.AuthRepository>()));
-    gh.factory<_i417.RegisterUseCase>(
-        () => _i417.RegisterUseCase(gh<_i619.AuthRepository>()));
+    gh.lazySingleton<_i16.HotelRepository>(
+        () => _i48.HotelRepositoryImpl(gh<_i1009.HotelApi>()));
+    gh.factory<_i672.GetHotelsPage>(
+        () => _i672.GetHotelsPage(gh<_i16.HotelRepository>()));
+    gh.factory<_i672.GetAllHotels>(
+        () => _i672.GetAllHotels(gh<_i16.HotelRepository>()));
+    gh.factory<_i672.GetHotelsByCategory>(
+        () => _i672.GetHotelsByCategory(gh<_i16.HotelRepository>()));
+    gh.factory<_i672.SearchAvailableHotels>(
+        () => _i672.SearchAvailableHotels(gh<_i16.HotelRepository>()));
+    gh.factory<_i672.GetHotelDetail>(
+        () => _i672.GetHotelDetail(gh<_i16.HotelRepository>()));
+    gh.factory<_i672.GetManagedHotels>(
+        () => _i672.GetManagedHotels(gh<_i16.HotelRepository>()));
+    gh.factory<_i672.CreateBranch>(
+        () => _i672.CreateBranch(gh<_i16.HotelRepository>()));
+    gh.factory<_i672.UpdateBranch>(
+        () => _i672.UpdateBranch(gh<_i16.HotelRepository>()));
+    gh.factory<_i672.SetBranchActive>(
+        () => _i672.SetBranchActive(gh<_i16.HotelRepository>()));
+    gh.factory<_i672.DeleteBranch>(
+        () => _i672.DeleteBranch(gh<_i16.HotelRepository>()));
+    gh.factory<_i672.UploadBranchImages>(
+        () => _i672.UploadBranchImages(gh<_i16.HotelRepository>()));
+    gh.factory<_i856.RefreshManagerBranches>(
+        () => _i856.RefreshManagerBranches(gh<_i16.HotelRepository>()));
+    gh.lazySingleton<_i128.CatalogRepository>(
+        () => _i682.CatalogRepositoryImpl(gh<_i477.CatalogApi>()));
+    gh.factory<_i856.Login>(() => _i856.Login(gh<_i619.AuthRepository>()));
+    gh.factory<_i856.RegisterCustomer>(
+        () => _i856.RegisterCustomer(gh<_i619.AuthRepository>()));
+    gh.factory<_i856.Logout>(() => _i856.Logout(gh<_i619.AuthRepository>()));
+    gh.factory<_i856.RestoreSession>(
+        () => _i856.RestoreSession(gh<_i619.AuthRepository>()));
+    gh.factory<_i856.PersistSession>(
+        () => _i856.PersistSession(gh<_i619.AuthRepository>()));
+    gh.lazySingleton<_i324.HotelServiceRepository>(
+        () => _i262.HotelServiceRepositoryImpl(gh<_i17.ServiceApi>()));
+    gh.lazySingleton<_i214.AmenityRepository>(
+        () => _i408.AmenityRepositoryImpl(gh<_i619.AmenityApi>()));
+    gh.lazySingleton<_i299.BookingRepository>(
+        () => _i1028.BookingRepositoryImpl(gh<_i691.BookingApi>()));
+    gh.factory<_i98.SearchResultsCubit>(
+        () => _i98.SearchResultsCubit(gh<_i672.SearchAvailableHotels>()));
+    gh.factory<_i961.GetRoomAmenities>(
+        () => _i961.GetRoomAmenities(gh<_i214.AmenityRepository>()));
+    gh.factory<_i961.CreateAmenity>(
+        () => _i961.CreateAmenity(gh<_i214.AmenityRepository>()));
+    gh.factory<_i961.UpdateAmenity>(
+        () => _i961.UpdateAmenity(gh<_i214.AmenityRepository>()));
+    gh.factory<_i961.DeleteAmenity>(
+        () => _i961.DeleteAmenity(gh<_i214.AmenityRepository>()));
+    gh.factory<_i961.LinkAmenityToRoom>(
+        () => _i961.LinkAmenityToRoom(gh<_i214.AmenityRepository>()));
     gh.lazySingleton<_i83.EmployeeRepository>(
-        () => _i537.EmployeeRepositoryImpl(
-              apiService: gh<_i676.EmployeeApiService>(),
-              dioClient: gh<_i764.DioClient>(),
-            ));
-    gh.factory<_i171.CreateService>(
-        () => _i171.CreateService(gh<_i820.ServiceRepository>()));
-    gh.factory<_i161.DeleteService>(
-        () => _i161.DeleteService(gh<_i820.ServiceRepository>()));
-    gh.factory<_i329.GetServices>(
-        () => _i329.GetServices(gh<_i820.ServiceRepository>()));
-    gh.factory<_i482.UpdateService>(
-        () => _i482.UpdateService(gh<_i820.ServiceRepository>()));
-    gh.factory<_i526.CreateRoomType>(
-        () => _i526.CreateRoomType(gh<_i18.RoomTypeRepository>()));
-    gh.factory<_i117.DeleteRoomType>(
-        () => _i117.DeleteRoomType(gh<_i18.RoomTypeRepository>()));
-    gh.factory<_i592.GetRoomTypes>(
-        () => _i592.GetRoomTypes(gh<_i18.RoomTypeRepository>()));
-    gh.factory<_i771.UpdateRoomType>(
-        () => _i771.UpdateRoomType(gh<_i18.RoomTypeRepository>()));
-    gh.factory<_i215.CreateCustomerUseCase>(
-        () => _i215.CreateCustomerUseCase(gh<_i939.CustomerRepository>()));
-    gh.factory<_i41.CreateRoom>(
-        () => _i41.CreateRoom(gh<_i77.RoomRepository>()));
-    gh.factory<_i480.DeleteRoom>(
-        () => _i480.DeleteRoom(gh<_i77.RoomRepository>()));
-    gh.factory<_i503.GetAvailableRooms>(
-        () => _i503.GetAvailableRooms(gh<_i77.RoomRepository>()));
-    gh.factory<_i737.UpdateRoom>(
-        () => _i737.UpdateRoom(gh<_i77.RoomRepository>()));
-    gh.lazySingleton<_i16.HotelRepository>(() => _i48.HotelRepositoryImpl(
-          gh<_i847.HotelApiService>(),
-          gh<_i361.Dio>(),
+        () => _i71.EmployeeRepositoryImpl(gh<_i618.EmployeeApi>()));
+    gh.factory<_i489.BranchesPageCubit>(
+        () => _i489.BranchesPageCubit(gh<_i672.GetHotelsPage>()));
+    gh.factory<_i406.SubmitReview>(
+        () => _i406.SubmitReview(gh<_i900.FeedbackRepository>()));
+    gh.factory<_i406.IsBookingReviewed>(
+        () => _i406.IsBookingReviewed(gh<_i900.FeedbackRepository>()));
+    gh.lazySingleton<_i1057.HotelChainRepository>(
+        () => _i430.HotelChainRepositoryImpl(gh<_i502.HotelChainApi>()));
+    gh.lazySingleton<_i545.PaymentRepository>(
+        () => _i1070.PaymentRepositoryImpl(gh<_i219.PaymentApi>()));
+    gh.lazySingleton<_i625.PayrollRepository>(
+        () => _i65.PayrollRepositoryImpl(gh<_i981.PayrollApi>()));
+    gh.lazySingleton<_i939.CustomerRepository>(
+        () => _i339.CustomerRepositoryImpl(gh<_i294.CustomerApi>()));
+    gh.lazySingleton<_i642.SessionCubit>(() => _i642.SessionCubit(
+          gh<_i856.RestoreSession>(),
+          gh<_i856.Logout>(),
+          gh<_i856.PersistSession>(),
+          gh<_i432.SessionEvents>(),
         ));
-    gh.factory<_i834.CreateAmenity>(
-        () => _i834.CreateAmenity(gh<_i273.AmenityRepository>()));
-    gh.factory<_i915.DeleteAmenity>(
-        () => _i915.DeleteAmenity(gh<_i273.AmenityRepository>()));
-    gh.factory<_i920.GetAmenityByHotel>(
-        () => _i920.GetAmenityByHotel(gh<_i273.AmenityRepository>()));
-    gh.factory<_i1044.GetAmenityByRoom>(
-        () => _i1044.GetAmenityByRoom(gh<_i273.AmenityRepository>()));
-    gh.factory<_i371.UpdateAmenity>(
-        () => _i371.UpdateAmenity(gh<_i273.AmenityRepository>()));
-    gh.factory<_i759.CreateEmployee>(
-        () => _i759.CreateEmployee(gh<_i83.EmployeeRepository>()));
-    gh.factory<_i729.DeleteEmployee>(
-        () => _i729.DeleteEmployee(gh<_i83.EmployeeRepository>()));
-    gh.factory<_i720.GetEmployeeByHotel>(
-        () => _i720.GetEmployeeByHotel(gh<_i83.EmployeeRepository>()));
-    gh.factory<_i741.UpdateEmployee>(
-        () => _i741.UpdateEmployee(gh<_i83.EmployeeRepository>()));
-    gh.factory<_i758.GetHotelUseCase>(
-        () => _i758.GetHotelUseCase(gh<_i16.HotelRepository>()));
+    gh.lazySingleton<_i654.AccountRepository>(
+        () => _i767.AccountRepositoryImpl(gh<_i458.AccountApi>()));
+    gh.factory<_i1061.GetCatalog>(
+        () => _i1061.GetCatalog(gh<_i128.CatalogRepository>()));
+    gh.factory<_i1061.SaveCatalogItem>(
+        () => _i1061.SaveCatalogItem(gh<_i128.CatalogRepository>()));
+    gh.factory<_i1061.DeleteCatalogItem>(
+        () => _i1061.DeleteCatalogItem(gh<_i128.CatalogRepository>()));
+    gh.factory<_i962.LoadSystemOverview>(() => _i962.LoadSystemOverview(
+          gh<_i654.AccountRepository>(),
+          gh<_i1057.HotelChainRepository>(),
+          gh<_i16.HotelRepository>(),
+          gh<_i939.CustomerRepository>(),
+          gh<_i83.EmployeeRepository>(),
+        ));
+    gh.lazySingleton<_i77.RoomRepository>(
+        () => _i968.RoomRepositoryImpl(gh<_i679.RoomApi>()));
+    gh.lazySingleton<_i329.FavoritesCubit>(() => _i329.FavoritesCubit(
+          gh<_i412.FavoriteStore>(),
+          gh<_i642.SessionCubit>(),
+        ));
+    gh.factory<_i358.GetBranchServices>(
+        () => _i358.GetBranchServices(gh<_i324.HotelServiceRepository>()));
+    gh.factory<_i358.SaveService>(
+        () => _i358.SaveService(gh<_i324.HotelServiceRepository>()));
+    gh.factory<_i358.DeleteService>(
+        () => _i358.DeleteService(gh<_i324.HotelServiceRepository>()));
+    gh.factory<_i275.GetAccountsPage>(
+        () => _i275.GetAccountsPage(gh<_i654.AccountRepository>()));
+    gh.factory<_i275.GetAccount>(
+        () => _i275.GetAccount(gh<_i654.AccountRepository>()));
+    gh.factory<_i275.CreateAccount>(
+        () => _i275.CreateAccount(gh<_i654.AccountRepository>()));
+    gh.factory<_i275.UpdateAccount>(
+        () => _i275.UpdateAccount(gh<_i654.AccountRepository>()));
+    gh.factory<_i275.DeleteAccount>(
+        () => _i275.DeleteAccount(gh<_i654.AccountRepository>()));
+    gh.factory<_i728.BranchCubit>(
+        () => _i728.BranchCubit(gh<_i672.GetHotelDetail>()));
+    gh.factory<_i1019.HotelDetailCubit>(
+        () => _i1019.HotelDetailCubit(gh<_i672.GetHotelDetail>()));
+    gh.factory<_i109.LoadBranchDashboard>(() => _i109.LoadBranchDashboard(
+          gh<_i12.ReportRepository>(),
+          gh<_i299.BookingRepository>(),
+        ));
+    gh.factory<_i187.ExploreCubit>(() => _i187.ExploreCubit(
+          gh<_i672.GetHotelsPage>(),
+          gh<_i672.GetHotelsByCategory>(),
+        ));
+    gh.factory<_i854.CreateVnPayLink>(
+        () => _i854.CreateVnPayLink(gh<_i545.PaymentRepository>()));
+    gh.factory<_i854.ConfirmVnPayReturn>(
+        () => _i854.ConfirmVnPayReturn(gh<_i545.PaymentRepository>()));
+    gh.factory<_i1018.CatalogCubit>(
+        () => _i1018.CatalogCubit(gh<_i1061.GetCatalog>()));
+    gh.factory<_i782.GetChainManagers>(() => _i782.GetChainManagers(
+          gh<_i654.AccountRepository>(),
+          gh<_i232.ManagerRegistry>(),
+        ));
+    gh.factory<_i782.CreateManagerAccount>(() => _i782.CreateManagerAccount(
+          gh<_i654.AccountRepository>(),
+          gh<_i232.ManagerRegistry>(),
+        ));
+    gh.factory<_i320.GetBranchEmployees>(
+        () => _i320.GetBranchEmployees(gh<_i83.EmployeeRepository>()));
+    gh.factory<_i320.SaveEmployee>(
+        () => _i320.SaveEmployee(gh<_i83.EmployeeRepository>()));
+    gh.factory<_i320.DeleteEmployee>(
+        () => _i320.DeleteEmployee(gh<_i83.EmployeeRepository>()));
+    gh.factory<_i320.GetEmployeesPage>(
+        () => _i320.GetEmployeesPage(gh<_i83.EmployeeRepository>()));
+    gh.factory<_i836.LoginCubit>(() => _i836.LoginCubit(
+          gh<_i856.Login>(),
+          gh<_i642.SessionCubit>(),
+        ));
+    gh.factory<_i782.LoadChainOverview>(() => _i782.LoadChainOverview(
+          gh<_i1057.HotelChainRepository>(),
+          gh<_i12.ReportRepository>(),
+        ));
+    gh.factory<_i57.GetCustomer>(
+        () => _i57.GetCustomer(gh<_i939.CustomerRepository>()));
+    gh.factory<_i57.CreateCustomerProfile>(
+        () => _i57.CreateCustomerProfile(gh<_i939.CustomerRepository>()));
+    gh.factory<_i57.UpdateCustomer>(
+        () => _i57.UpdateCustomer(gh<_i939.CustomerRepository>()));
+    gh.factory<_i57.LinkWalkInProfile>(
+        () => _i57.LinkWalkInProfile(gh<_i939.CustomerRepository>()));
+    gh.factory<_i57.FindCustomersByPhone>(
+        () => _i57.FindCustomersByPhone(gh<_i939.CustomerRepository>()));
+    gh.factory<_i57.CreateWalkInCustomer>(
+        () => _i57.CreateWalkInCustomer(gh<_i939.CustomerRepository>()));
+    gh.factory<_i57.GetBranchCustomers>(
+        () => _i57.GetBranchCustomers(gh<_i939.CustomerRepository>()));
+    gh.factory<_i57.GetCustomersPage>(
+        () => _i57.GetCustomersPage(gh<_i939.CustomerRepository>()));
+    gh.factory<_i1.ChainOverviewCubit>(
+        () => _i1.ChainOverviewCubit(gh<_i782.LoadChainOverview>()));
+    gh.factory<_i489.EmployeesPageCubit>(
+        () => _i489.EmployeesPageCubit(gh<_i320.GetEmployeesPage>()));
+    gh.factory<_i1048.SystemOverviewCubit>(
+        () => _i1048.SystemOverviewCubit(gh<_i962.LoadSystemOverview>()));
+    gh.factory<_i643.GetBranchRooms>(
+        () => _i643.GetBranchRooms(gh<_i77.RoomRepository>()));
+    gh.factory<_i643.GetRoomDetail>(
+        () => _i643.GetRoomDetail(gh<_i77.RoomRepository>()));
+    gh.factory<_i643.GetRoomsForDates>(
+        () => _i643.GetRoomsForDates(gh<_i77.RoomRepository>()));
+    gh.factory<_i643.SaveRoom>(() => _i643.SaveRoom(gh<_i77.RoomRepository>()));
+    gh.factory<_i643.SetRoomStatus>(
+        () => _i643.SetRoomStatus(gh<_i77.RoomRepository>()));
+    gh.factory<_i643.DeleteRoom>(
+        () => _i643.DeleteRoom(gh<_i77.RoomRepository>()));
+    gh.factory<_i643.UploadRoomImages>(
+        () => _i643.UploadRoomImages(gh<_i77.RoomRepository>()));
+    gh.factory<_i856.ResolveStaffBranch>(() => _i856.ResolveStaffBranch(
+          gh<_i16.HotelRepository>(),
+          gh<_i83.EmployeeRepository>(),
+        ));
+    gh.factory<_i489.CustomersPageCubit>(
+        () => _i489.CustomersPageCubit(gh<_i57.GetCustomersPage>()));
+    gh.factory<_i750.CreateBooking>(
+        () => _i750.CreateBooking(gh<_i299.BookingRepository>()));
+    gh.factory<_i750.UpdateBooking>(
+        () => _i750.UpdateBooking(gh<_i299.BookingRepository>()));
+    gh.factory<_i750.GetBooking>(
+        () => _i750.GetBooking(gh<_i299.BookingRepository>()));
+    gh.factory<_i750.GetCustomerBookings>(
+        () => _i750.GetCustomerBookings(gh<_i299.BookingRepository>()));
+    gh.factory<_i750.GetBranchBookings>(
+        () => _i750.GetBranchBookings(gh<_i299.BookingRepository>()));
+    gh.factory<_i750.ChangeBookingStatus>(
+        () => _i750.ChangeBookingStatus(gh<_i299.BookingRepository>()));
+    gh.factory<_i750.DeleteBooking>(
+        () => _i750.DeleteBooking(gh<_i299.BookingRepository>()));
+    gh.factory<_i534.DeskCubit>(
+        () => _i534.DeskCubit(gh<_i750.GetBranchBookings>()));
+    gh.factory<_i823.CustomerBookingsCubit>(
+        () => _i823.CustomerBookingsCubit(gh<_i750.GetBranchBookings>()));
+    gh.factory<_i134.SavePayroll>(
+        () => _i134.SavePayroll(gh<_i625.PayrollRepository>()));
+    gh.factory<_i508.RoomsManageCubit>(
+        () => _i508.RoomsManageCubit(gh<_i643.GetBranchRooms>()));
+    gh.factory<_i836.RegisterCubit>(() => _i836.RegisterCubit(
+          gh<_i856.RegisterCustomer>(),
+          gh<_i642.SessionCubit>(),
+        ));
+    gh.factory<_i782.CreateHotelChain>(
+        () => _i782.CreateHotelChain(gh<_i1057.HotelChainRepository>()));
+    gh.factory<_i782.UpdateHotelChain>(
+        () => _i782.UpdateHotelChain(gh<_i1057.HotelChainRepository>()));
+    gh.factory<_i782.DeleteHotelChain>(
+        () => _i782.DeleteHotelChain(gh<_i1057.HotelChainRepository>()));
+    gh.factory<_i782.GetHotelChainDetail>(
+        () => _i782.GetHotelChainDetail(gh<_i1057.HotelChainRepository>()));
+    gh.factory<_i782.GetHotelChainsPage>(
+        () => _i782.GetHotelChainsPage(gh<_i1057.HotelChainRepository>()));
+    gh.factory<_i999.BranchCustomersCubit>(
+        () => _i999.BranchCustomersCubit(gh<_i57.GetBranchCustomers>()));
+    gh.factory<_i785.RoomAdminCubit>(
+        () => _i785.RoomAdminCubit(gh<_i643.GetRoomDetail>()));
+    gh.factory<_i102.PayrollCubit>(() => _i102.PayrollCubit(
+          gh<_i320.GetBranchEmployees>(),
+          gh<_i134.SavePayroll>(),
+          gh<_i381.PayrollSessionStore>(),
+        ));
+    gh.factory<_i79.DashboardCubit>(
+        () => _i79.DashboardCubit(gh<_i109.LoadBranchDashboard>()));
+    gh.factory<_i1049.ServicesCubit>(
+        () => _i1049.ServicesCubit(gh<_i358.GetBranchServices>()));
+    gh.factory<_i388.ProfileSetupCubit>(() => _i388.ProfileSetupCubit(
+          gh<_i57.LinkWalkInProfile>(),
+          gh<_i57.CreateCustomerProfile>(),
+          gh<_i642.SessionCubit>(),
+        ));
+    gh.factory<_i811.MyBookingsCubit>(() => _i811.MyBookingsCubit(
+          gh<_i750.GetCustomerBookings>(),
+          gh<_i642.SessionCubit>(),
+        ));
+    gh.factory<_i978.ReportsCubit>(() => _i978.ReportsCubit(
+          gh<_i109.LoadRevenueReport>(),
+          gh<_i109.LoadOccupancyReport>(),
+          gh<_i109.LoadBreakdownReport>(),
+          gh<_i109.LoadPeopleReport>(),
+          gh<_i109.ExportReport>(),
+          gh<_i109.LoadBranchComparison>(),
+          gh<_i782.GetHotelChainDetail>(),
+        ));
+    gh.factory<_i489.ChainsPageCubit>(
+        () => _i489.ChainsPageCubit(gh<_i782.GetHotelChainsPage>()));
+    gh.factory<_i625.BookingCreateCubit>(() => _i625.BookingCreateCubit(
+          gh<_i672.GetHotelDetail>(),
+          gh<_i750.CreateBooking>(),
+        ));
+    gh.factory<_i770.AccountsCubit>(
+        () => _i770.AccountsCubit(gh<_i275.GetAccountsPage>()));
+    gh.factory<_i209.WalkInGuestCubit>(() => _i209.WalkInGuestCubit(
+          gh<_i57.FindCustomersByPhone>(),
+          gh<_i57.CreateWalkInCustomer>(),
+        ));
+    gh.factory<_i41.EmployeesCubit>(
+        () => _i41.EmployeesCubit(gh<_i320.GetBranchEmployees>()));
+    gh.factory<_i955.RoomDetailCubit>(() => _i955.RoomDetailCubit(
+          gh<_i643.GetRoomDetail>(),
+          gh<_i643.GetRoomsForDates>(),
+        ));
+    gh.factory<_i287.BookingDetailCubit>(() => _i287.BookingDetailCubit(
+          gh<_i750.GetBooking>(),
+          gh<_i750.ChangeBookingStatus>(),
+          gh<_i750.DeleteBooking>(),
+        ));
+    gh.factory<_i1.ManagersCubit>(() => _i1.ManagersCubit(
+          gh<_i782.GetHotelChainDetail>(),
+          gh<_i782.GetChainManagers>(),
+        ));
+    gh.factory<_i1027.BookingEditCubit>(() => _i1027.BookingEditCubit(
+          gh<_i750.GetBooking>(),
+          gh<_i672.GetHotelDetail>(),
+          gh<_i750.UpdateBooking>(),
+        ));
+    gh.factory<_i1.ChainCubit>(
+        () => _i1.ChainCubit(gh<_i782.GetHotelChainDetail>()));
     return this;
   }
 }
 
-class _$NetworkModule extends _i186.NetworkModule {}
+class _$AppModule extends _i732.AppModule {}
+
+class _$AccountApiModule extends _i458.AccountApiModule {}
+
+class _$AmenityApiModule extends _i619.AmenityApiModule {}
+
+class _$AuthApiModule extends _i165.AuthApiModule {}
+
+class _$BookingApiModule extends _i691.BookingApiModule {}
+
+class _$CatalogApiModule extends _i477.CatalogApiModule {}
+
+class _$CustomerApiModule extends _i294.CustomerApiModule {}
+
+class _$EmployeeApiModule extends _i618.EmployeeApiModule {}
+
+class _$FeedbackApiModule extends _i621.FeedbackApiModule {}
+
+class _$HotelApiModule extends _i1009.HotelApiModule {}
+
+class _$HotelChainApiModule extends _i502.HotelChainApiModule {}
+
+class _$PaymentApiModule extends _i219.PaymentApiModule {}
+
+class _$PayrollApiModule extends _i981.PayrollApiModule {}
+
+class _$RoomApiModule extends _i679.RoomApiModule {}
+
+class _$ServiceApiModule extends _i17.ServiceApiModule {}

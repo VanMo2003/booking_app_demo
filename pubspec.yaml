@@ -1,47 +1,53 @@
 name: booking_app_mobile
-description: Mobile app generated from Postman collection (Booking App BE API)
+description: Ứng dụng đặt phòng khách sạn cho Booking App — khách hàng, nhân viên, quản lý cơ sở, chủ khách sạn và quản trị.
 publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.3.0 <4.0.0'
+  sdk: '>=3.5.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.6
+  flutter_localizations:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # Mạng
   dio: ^5.7.0
   retrofit: 4.9.0
-  auto_route: ^10.1.0+1
-  shared_preferences: ^2.3.2
+
+  # Kiến trúc: DI, điều hướng, state
   get_it: ^8.2.0
-  json_annotation: ^4.9.0
   injectable: ^2.1.2
-  intl: ^0.20.2
-  slang: ^4.11.1
-  slang_flutter: ^4.11.0
-  flutter_secure_storage: ^9.0.0
-  collection: ^1.19.1
-  network_info_plus: ^7.0.0
+  auto_route: ^10.1.0+1
+  flutter_bloc: ^9.1.1
   equatable: ^2.0.7
-  file_picker: ^8.1.2
-  webview_flutter: ^4.7.0
+
+  # Lưu trữ
+  flutter_secure_storage: ^9.2.4
+  shared_preferences: ^2.3.2
+
+  # Giao diện
+  google_fonts: ^6.3.3
+  fl_chart: ^1.1.1
+  intl: ^0.20.2
+  collection: ^1.19.1
+
+  # Nền tảng
+  file_picker: ^8.3.7
+  webview_flutter: ^4.13.0
+  url_launcher: ^6.3.2
+  web: ^1.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
   build_runner: ^2.4.15
-  json_serializable: ^6.7.0
   injectable_generator: ^2.1.2
   auto_route_generator: ^10.1.0
-  flutter_gen_runner: ^5.4.0
-  freezed: ^2.3.2
   retrofit_generator: ^9.7.0
-  flutter_bloc: ^9.1.1
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/images/
-    - assets/icons/

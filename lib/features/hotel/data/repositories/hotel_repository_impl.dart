@@ -1,202 +1,86 @@
-import 'dart:convert';
-import 'dart:io';
-
-import 'package:booking_app_mobile/features/hotel/data/mapper/hotel_mapper.dart';
-import 'package:booking_app_mobile/features/hotel/data/models/hotel_response.dart';
-import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../share/data/models/api_response.dart';
-import '../../../share/data/models/paged.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../../core/network/paged.dart';
+import '../../../../core/network/upload_file.dart';
+import '../../../../core/utils/formatters.dart';
 import '../../domain/entities/hotel.dart';
 import '../../domain/repositories/hotel_repository.dart';
-import '../datasoure/remote/hotel_api_service.dart';
+import '../datasources/hotel_api.dart';
+import '../models/hotel_models.dart';
 
 @LazySingleton(as: HotelRepository)
 class HotelRepositoryImpl implements HotelRepository {
-  final HotelApiService api;
-  final Dio _dio;
-  HotelRepositoryImpl(this.api, this._dio);
+  HotelRepositoryImpl(this._api);
+
+  final HotelApi _api;
 
   @override
-  Future<Paged<Hotel>> getHotels({
-    required int page,
-    required int size,
-    required String checkinDate,
-    required String checkoutDate,
+  Future<Paged<Hotel>> getHotels({required int page, required int size}) async =>
+      (await _api.getHotels(page, size)).parsePage(HotelModel.fromJson);
+
+  @override
+  Future<List<Hotel>> getAllHotels() async {
+    const size = AppConstants.bulkPageSize;
+    final first = await getHotels(page: 0, size: size);
+    final hotels = [...first.items];
+    for (var page = 1; page < first.totalPages; page++) {
+      hotels.addAll((await getHotels(page: page, size: size)).items);
+    }
+    return hotels;
+  }
+
+  @override
+  Future<List<Hotel>> searchAvailable({
+    required DateTime checkin,
+    required DateTime checkout,
+  }) async =>
+      (await _api.search(Fmt.apiDate(checkin), Fmt.apiDate(checkout)))
+          .parseList(HotelModel.fromJson);
+
+  @override
+  Future<List<Hotel>> byCategory(String category) async =>
+      (await _api.byCategory(category)).parseList(HotelModel.fromJson);
+
+  @override
+  Future<HotelDetail> getDetail(
+    int id, {
+    DateTime? checkin,
+    DateTime? checkout,
   }) async {
-    final ApiResponse res = await api.getHotels(
-      checkinDate,
-      checkoutDate,
+    final withDates = checkin != null && checkout != null;
+    final response = await _api.detail(
+      id,
+      checkinDate: withDates ? Fmt.apiDate(checkin) : null,
+      checkoutDate: withDates ? Fmt.apiDate(checkout) : null,
     );
-    final data = res.data;
-
-    if (data is List) {
-      final hotels = data.map((e) {
-        var hotelRes = HotelResponse.fromJson(e as Map<String, dynamic>);
-        return HotelMapper.toEntity(hotelRes);
-      }).toList();
-      return Paged<Hotel>(
-        content: hotels,
-        page: 0,
-        size: hotels.length,
-        totalElements: hotels.length,
-        totalPages: 1,
-      );
-    }
-
-    if (data is! Map<String, dynamic>) {
-      throw Exception('Unexpected data format for hotels');
-    }
-
-    final rawContent = data['content'];
-    final hotels = (rawContent is List)
-        ? rawContent.map((e) {
-            var hotelRes = HotelResponse.fromJson(e as Map<String, dynamic>);
-            return HotelMapper.toEntity(hotelRes);
-          }).toList()
-        : <Hotel>[];
-
-    return Paged<Hotel>(
-      content: hotels,
-      page: (data['page'] ?? page) as int,
-      size: (data['size'] ?? size) as int,
-      totalElements:
-          data['totalElements'] is int ? data['totalElements'] as int : null,
-      totalPages: data['totalPages'] is int ? data['totalPages'] as int : null,
-    );
+    return response.parse(HotelModel.detailFromJson);
   }
 
   @override
-  Future<Paged<Hotel>> getAllHotels({
-    required int page,
-    required int size,
+  Future<Hotel> create(
+    HotelCreateRequest request, {
+    List<UploadFile> images = const [],
   }) async {
-    final ApiResponse res = await api.getAllHotels(page, size);
-    final data = res.data;
-
-    if (data is List) {
-      final hotels = data.map((e) {
-        final hotelRes = HotelResponse.fromJson(e as Map<String, dynamic>);
-        return HotelMapper.toEntity(hotelRes);
-      }).toList();
-      return Paged<Hotel>(
-        content: hotels,
-        page: page,
-        size: size,
-        totalElements: hotels.length,
-        totalPages: 1,
-      );
-    }
-
-    if (data is! Map<String, dynamic>) {
-      throw Exception('Unexpected data format for hotels');
-    }
-
-    final rawContent = data['content'];
-    final hotels = (rawContent is List)
-        ? rawContent.map((e) {
-            final hotelRes = HotelResponse.fromJson(e as Map<String, dynamic>);
-            return HotelMapper.toEntity(hotelRes);
-          }).toList()
-        : <Hotel>[];
-
-    return Paged<Hotel>(
-      content: hotels,
-      page: (data['page'] ?? page) as int,
-      size: (data['size'] ?? size) as int,
-      totalElements:
-          data['totalElements'] is int ? data['totalElements'] as int : null,
-      totalPages: data['totalPages'] is int ? data['totalPages'] as int : null,
+    final response = await _api.create(
+      [jsonPart(request.toJson())],
+      images.map((image) => image.toMultipart()).toList(),
     );
+    return response.parse(HotelModel.fromJson);
   }
 
   @override
-  Future<Hotel> createHotel({
-    required String name,
-    required String address,
-    required String phone,
-    required String description,
-    required String category,
-    required bool active,
-    String? pathImage,
-    required List<String> imagePaths,
-  }) async {
-    final files = await Future.wait(
-      imagePaths.map(
-        (path) => MultipartFile.fromFile(
-          path,
-          filename: path.split(Platform.pathSeparator).last,
-        ),
-      ),
-    );
-
-    final hotelPayload = <String, dynamic>{
-      'name': name,
-      'address': address,
-      'phone': phone,
-      'description': description,
-      'category': category,
-      'pathImage': pathImage,
-      'active': active,
-    };
-
-    final dataJson = jsonEncode(hotelPayload);
-    final formData = FormData();
-    formData.files.add(
-      MapEntry(
-        'data',
-        MultipartFile.fromString(
-          dataJson,
-          filename: 'data.json',
-          contentType: DioMediaType('application', 'json'),
-        ),
-      ),
-    );
-    for (final file in files) {
-      formData.files.add(MapEntry('files', file));
-    }
-
-    final response = await _dio.post('/hotels', data: formData);
-    final res = ApiResponse.fromJson(response.data as Map<String, dynamic>);
-    final data = res.data;
-    if (data is! Map<String, dynamic>) {
-      throw Exception('Unexpected data format for created hotel');
-    }
-    return HotelMapper.toEntity(HotelResponse.fromJson(data));
-  }
+  Future<Hotel> update(int id, HotelUpdateRequest request) async =>
+      (await _api.update(id, request.toJson())).parse(HotelModel.fromJson);
 
   @override
-  Future<Hotel> getHotelById({
-    required int id,
-    String? checkinDate,
-    String? checkoutDate,
-  }) async {
-    final ApiResponse res =
-        await api.getHotelById(id, checkinDate, checkoutDate);
-    final data = res.data;
-
-    if (data is! Map<String, dynamic>) {
-      throw Exception('Unexpected data format for hotel detail');
-    }
-
-    final hotelRes = HotelResponse.fromJson(data);
-    return HotelMapper.toEntity(hotelRes);
-  }
+  Future<void> delete(int id) async => (await _api.delete(id)).ensureSuccess();
 
   @override
-  Future<List<String>> uploadHotelImages(
-      {required int hotelId, required List<String> filePaths}) async {
-    final files = await Future.wait(
-      filePaths.map(
-        (path) => MultipartFile.fromFile(
-          path,
-          filename: path.split(Platform.pathSeparator).last,
-        ),
-      ),
-    );
-    final ApiResponse res = await api.uploadHotelImages(hotelId, files);
-    final data = res.data as List<dynamic>;
-    return data.map((e) => e.toString()).toList();
-  }
+  Future<List<String>> uploadImages(int id, List<UploadFile> images) async =>
+      (await _api.uploadImages(
+        id,
+        images.map((image) => image.toMultipart()).toList(),
+      ))
+          .stringList;
 }

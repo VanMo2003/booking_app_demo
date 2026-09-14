@@ -1,31 +1,49 @@
-class Employee {
-  final int id;
-  final String username;
-  final String pathImage;
-  final String accountId;
-  final String fullName;
-  final String phoneNumber;
-  final String gender;
-  final String dateOfBirth; // yyyy-MM-dd
-  final String hometown;
-  final int salary;
-  final String positionName;
-  final DateTime? onCreate;
-  final DateTime? onUpdate;
+import 'package:equatable/equatable.dart';
 
+class Employee extends Equatable {
   const Employee({
     required this.id,
-    required this.username,
-    required this.pathImage,
-    required this.accountId,
     required this.fullName,
-    required this.phoneNumber,
-    required this.gender,
-    required this.dateOfBirth,
-    required this.hometown,
-    required this.salary,
-    required this.positionName,
-    this.onCreate,
-    this.onUpdate,
+    this.accountId,
+    this.pathImage,
+    this.phoneNumber = '',
+    this.gender = '',
+    this.dateOfBirth,
+    this.hometown = '',
+    this.salary = 0,
+    this.hotelId,
+    this.hotelName,
+    this.positionName = '',
   });
+
+  final int id;
+  final String fullName;
+  final String? accountId;
+  final String? pathImage;
+  final String phoneNumber;
+  final String gender;
+  final DateTime? dateOfBirth;
+  final String hometown;
+  final double salary;
+
+  /// BE hiện chưa trả `hotelId` cho nhân viên; FE tự dò cơ sở khi thiếu.
+  final int? hotelId;
+  final String? hotelName;
+  final String positionName;
+
+  @override
+  List<Object?> get props => [
+        id,
+        fullName,
+        accountId,
+        pathImage,
+        phoneNumber,
+        gender,
+        dateOfBirth,
+        hometown,
+        salary,
+        hotelId,
+        hotelName,
+        positionName,
+      ];
 }

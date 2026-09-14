@@ -1,20 +1,26 @@
-import '../../data/models/request/booking_create_request.dart';
-import '../entity/booking_entity.dart';
+import '../../../../core/enums/app_enums.dart';
+import '../../data/models/booking_models.dart';
+import '../entities/booking.dart';
 
-abstract class BookingRepository {
-  Future<List<BookingEntity>> getBookings({
-    int? hotelId,
-    int? customerId,
-    String? bookingStatus,
-  });
+abstract interface class BookingRepository {
+  Future<Booking> create(BookingCreateRequest request);
 
-  Future<BookingEntity> getBookingById(int id);
+  Future<Booking> update(int id, BookingUpdateRequest request);
 
-  Future<BookingEntity> createBooking(BookingCreateRequest dto);
+  Future<Booking> getById(int id);
 
-  Future<BookingEntity> confirmBooking(int id);
+  Future<List<Booking>> byHotel(int hotelId);
 
-  Future<BookingEntity> cancelBooking(int id);
+  Future<List<Booking>> byCustomer(int customerId, {BookingStatus? status});
 
-  Future<BookingEntity> completeBooking(int id);
+  Future<void> delete(int id);
+
+  Future<Booking> confirm(int id);
+
+  Future<Booking> cancel(int id);
+
+  Future<Booking> complete(int id);
+
+  /// Ghi nhận đã thu tiền (tiền mặt / chuyển khoản).
+  Future<Booking> markPaid(int id);
 }
