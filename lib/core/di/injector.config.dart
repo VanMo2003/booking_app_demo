@@ -11,6 +11,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
 import 'package:booking_app_mobile/core/di/app_module.dart' as _i732;
+import 'package:booking_app_mobile/core/network/network_status.dart' as _i820;
 import 'package:booking_app_mobile/core/network/session_events.dart' as _i432;
 import 'package:booking_app_mobile/core/storage/app_preferences.dart' as _i774;
 import 'package:booking_app_mobile/core/storage/token_storage.dart' as _i991;
@@ -202,6 +203,7 @@ import 'package:booking_app_mobile/features/service/domain/usecases/hotel_servic
     as _i358;
 import 'package:booking_app_mobile/features/service/presentation/services_screen.dart'
     as _i1049;
+import 'package:connectivity_plus/connectivity_plus.dart' as _i895;
 import 'package:dio/dio.dart' as _i361;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
@@ -239,6 +241,7 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
     );
     gh.lazySingleton<_i558.FlutterSecureStorage>(() => appModule.secureStorage);
+    gh.lazySingleton<_i895.Connectivity>(() => appModule.connectivity);
     gh.lazySingleton<_i432.SessionEvents>(
       () => _i432.SessionEvents(),
       dispose: (i) => i.dispose(),
@@ -251,6 +254,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i991.TokenStorage(gh<_i558.FlutterSecureStorage>()));
     gh.lazySingleton<_i624.SessionLocalDataSource>(
         () => _i624.SessionLocalDataSource(gh<_i558.FlutterSecureStorage>()));
+    gh.lazySingleton<_i820.NetworkStatus>(
+        () => _i820.NetworkStatus(gh<_i895.Connectivity>()));
     gh.lazySingleton<_i412.FavoriteStore>(
         () => _i412.FavoriteStore(gh<_i774.AppPreferences>()));
     gh.lazySingleton<_i232.ManagerRegistry>(
@@ -258,11 +263,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i361.Dio>(() => appModule.dio(
           gh<_i991.TokenStorage>(),
           gh<_i432.SessionEvents>(),
+          gh<_i820.NetworkStatus>(),
         ));
-    gh.lazySingleton<_i797.ReportRemoteDataSource>(
-        () => _i797.ReportRemoteDataSource(gh<_i361.Dio>()));
-    gh.lazySingleton<_i12.ReportRepository>(
-        () => _i903.ReportRepositoryImpl(gh<_i797.ReportRemoteDataSource>()));
     gh.lazySingleton<_i458.AccountApi>(
         () => accountApiModule.accountApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i619.AmenityApi>(
@@ -291,18 +293,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => roomApiModule.roomApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i17.ServiceApi>(
         () => serviceApiModule.serviceApi(gh<_i361.Dio>()));
-    gh.factory<_i109.LoadRevenueReport>(
-        () => _i109.LoadRevenueReport(gh<_i12.ReportRepository>()));
-    gh.factory<_i109.LoadOccupancyReport>(
-        () => _i109.LoadOccupancyReport(gh<_i12.ReportRepository>()));
-    gh.factory<_i109.LoadBreakdownReport>(
-        () => _i109.LoadBreakdownReport(gh<_i12.ReportRepository>()));
-    gh.factory<_i109.LoadPeopleReport>(
-        () => _i109.LoadPeopleReport(gh<_i12.ReportRepository>()));
-    gh.factory<_i109.ExportReport>(
-        () => _i109.ExportReport(gh<_i12.ReportRepository>()));
-    gh.factory<_i109.LoadBranchComparison>(
-        () => _i109.LoadBranchComparison(gh<_i12.ReportRepository>()));
+    gh.lazySingleton<_i797.ReportRemoteDataSource>(
+        () => _i797.ReportRemoteDataSource(gh<_i361.Dio>()));
     gh.lazySingleton<_i900.FeedbackRepository>(
         () => _i267.FeedbackRepositoryImpl(
               gh<_i621.FeedbackApi>(),
@@ -377,6 +369,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i406.IsBookingReviewed(gh<_i900.FeedbackRepository>()));
     gh.lazySingleton<_i1057.HotelChainRepository>(
         () => _i430.HotelChainRepositoryImpl(gh<_i502.HotelChainApi>()));
+    gh.lazySingleton<_i12.ReportRepository>(
+        () => _i903.ReportRepositoryImpl(gh<_i797.ReportRemoteDataSource>()));
     gh.lazySingleton<_i545.PaymentRepository>(
         () => _i1070.PaymentRepositoryImpl(gh<_i219.PaymentApi>()));
     gh.lazySingleton<_i625.PayrollRepository>(
@@ -434,6 +428,18 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i12.ReportRepository>(),
           gh<_i299.BookingRepository>(),
         ));
+    gh.factory<_i109.LoadRevenueReport>(
+        () => _i109.LoadRevenueReport(gh<_i12.ReportRepository>()));
+    gh.factory<_i109.LoadOccupancyReport>(
+        () => _i109.LoadOccupancyReport(gh<_i12.ReportRepository>()));
+    gh.factory<_i109.LoadBreakdownReport>(
+        () => _i109.LoadBreakdownReport(gh<_i12.ReportRepository>()));
+    gh.factory<_i109.LoadPeopleReport>(
+        () => _i109.LoadPeopleReport(gh<_i12.ReportRepository>()));
+    gh.factory<_i109.ExportReport>(
+        () => _i109.ExportReport(gh<_i12.ReportRepository>()));
+    gh.factory<_i109.LoadBranchComparison>(
+        () => _i109.LoadBranchComparison(gh<_i12.ReportRepository>()));
     gh.factory<_i187.ExploreCubit>(() => _i187.ExploreCubit(
           gh<_i672.GetHotelsPage>(),
           gh<_i672.GetHotelsByCategory>(),

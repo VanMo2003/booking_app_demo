@@ -96,7 +96,7 @@ class _BookingCreateViewState extends State<_BookingCreateView> {
           title: BookingStrings.createTitle,
           body: detail == null
               ? (state.detail.isFailure
-                  ? AppErrorView(message: state.detail.error!)
+                  ? AppFailureView.fromState(state.detail, onRetry: cubit.reload)
                   : const AppLoadingView())
               : ListView(
                   padding: AppSpacing.page,

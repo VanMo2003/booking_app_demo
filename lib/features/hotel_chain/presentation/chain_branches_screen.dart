@@ -106,7 +106,7 @@ class _ChainBranchesScreenState extends State<ChainBranchesScreen> {
               icon: const Icon(Icons.refresh_rounded),
             ),
           ],
-          floatingActionButton: detail == null
+          floatingActionButton: detail == null || detail.hotels.isEmpty
               ? null
               : FloatingActionButton.extended(
                   onPressed: () => _openForm(detail.chain.id),
@@ -117,10 +117,12 @@ class _ChainBranchesScreenState extends State<ChainBranchesScreen> {
             state: state,
             onRetry: _reload,
             isEmpty: (data) => data.hotels.isEmpty,
-            empty: const AppEmptyView(
+            empty: AppEmptyView(
               icon: Icons.apartment_rounded,
               title: ManagementStrings.branchesEmpty,
               message: ManagementStrings.branchesEmptyHint,
+              addLabel: ManagementStrings.openBranch,
+              onAdd: detail == null ? null : () => _openForm(detail.chain.id),
             ),
             builder: (context, data) => FutureBuilder<Map<String, String>>(
               future: _managerNames,

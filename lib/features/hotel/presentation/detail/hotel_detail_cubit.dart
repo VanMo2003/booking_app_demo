@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/bloc/load_state.dart';
-import '../../../../core/network/app_exception.dart';
 import '../../domain/entities/hotel.dart';
 import '../../domain/usecases/hotel_usecases.dart';
 
@@ -55,6 +54,12 @@ class HotelDetailCubit extends Cubit<HotelDetailState> {
 
   Future<void> refresh() => _fetch();
 
+  /// Tải lại sau lỗi — hiện vòng xoay trong lúc chờ.
+  Future<void> retry() {
+    emit(state.copyWith(detail: state.detail.toLoading()));
+    return _fetch();
+  }
+
   /// Đổi ngày → BE tính lại trạng thái từng phòng cho khoảng mới.
   Future<void> changeDates(DateTimeRange range) {
     emit(state.copyWith(
@@ -74,11 +79,7 @@ class HotelDetailCubit extends Cubit<HotelDetailState> {
       );
       if (!isClosed) emit(state.copyWith(detail: state.detail.toSuccess(detail)));
     } catch (error) {
-      if (!isClosed) {
-        emit(state.copyWith(
-          detail: state.detail.toFailure(AppException.from(error).message),
-        ));
-      }
+      if (!isClosed) emit(state.copyWith(detail: state.detail.toError(error)));
     }
   }
 }

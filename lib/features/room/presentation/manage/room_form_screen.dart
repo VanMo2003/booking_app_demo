@@ -7,7 +7,6 @@ import '../../../../core/color/app_colors.dart';
 import '../../../../core/component/component.dart';
 import '../../../../core/di/injector.dart';
 import '../../../../core/enums/app_enums.dart';
-import '../../../../core/network/app_exception.dart';
 import '../../../../core/network/upload_file.dart';
 import '../../../../core/style/style.dart';
 import '../../../../core/text/app_strings.dart';
@@ -108,8 +107,8 @@ class _RoomFormScreenState extends State<RoomFormScreen> {
         future: _roomTypes,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return AppErrorView(
-              message: AppException.from(snapshot.error!).message,
+            return AppFailureView.fromError(
+              snapshot.error!,
               onRetry: () => setState(() => _roomTypes = _loadRoomTypes()),
             );
           }

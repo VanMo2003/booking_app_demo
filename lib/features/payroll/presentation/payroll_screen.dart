@@ -10,7 +10,6 @@ import '../../../core/color/app_colors.dart';
 import '../../../core/component/component.dart';
 import '../../../core/di/injector.dart';
 import '../../../core/enums/app_enums.dart';
-import '../../../core/network/app_exception.dart';
 import '../../../core/style/style.dart';
 import '../../../core/text/app_strings.dart';
 import '../../../core/text/enum_labels.dart';
@@ -71,7 +70,7 @@ class PayrollCubit extends Cubit<PayrollState> {
     } catch (error) {
       if (!isClosed) {
         emit(state.copyWith(
-          employees: state.employees.toFailure(AppException.from(error).message),
+          employees: state.employees.toError(error),
         ));
       }
     }
@@ -236,7 +235,11 @@ class _PayrollViewState extends State<_PayrollView> {
     final employees = state.employees.data;
     if (employees == null) {
       return state.employees.isFailure
-          ? AppErrorView(message: state.employees.error!, onRetry: cubit.loadEmployees)
+          ? AppFailureView.fromState(
+              state.employees,
+              onRetry: cubit.loadEmployees,
+              compact: true,
+            )
           : const AppLoadingView();
     }
     if (employees.isEmpty) {

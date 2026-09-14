@@ -75,7 +75,10 @@ class _RoomDetailView extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(title: const Text(ExploreStrings.roomDetailTitle)),
             body: state.detail.isFailure
-                ? AppErrorView(message: state.detail.error!)
+                ? AppFailureView.fromState(
+                    state.detail,
+                    onRetry: context.read<RoomDetailCubit>().retry,
+                  )
                 : const AppLoadingView(),
           );
         }

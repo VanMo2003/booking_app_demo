@@ -8,7 +8,6 @@ import '../../../core/color/app_colors.dart';
 import '../../../core/component/component.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/di/injector.dart';
-import '../../../core/network/app_exception.dart';
 import '../../../core/style/style.dart';
 import '../../../core/text/app_strings.dart';
 import '../../../core/text/auth_strings.dart';
@@ -117,8 +116,8 @@ class _EmployeeFormScreenState extends State<EmployeeFormScreen> {
         future: _positions,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return AppErrorView(
-              message: AppException.from(snapshot.error!).message,
+            return AppFailureView.fromError(
+              snapshot.error!,
               onRetry: () => setState(() => _positions = _loadPositions()),
             );
           }

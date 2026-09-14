@@ -36,7 +36,11 @@ class PagedListView<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     if (state.items.isEmpty) {
       if (state.status == ViewStatus.failure) {
-        return AppErrorView(message: state.error ?? ErrorStrings.unknown, onRetry: onRefresh);
+        return AppFailureView(
+          message: state.error ?? ErrorStrings.unknown,
+          kind: state.errorKind,
+          onRetry: onRefresh,
+        );
       }
       if (state.status != ViewStatus.success) return const AppLoadingView();
     }

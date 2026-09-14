@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/bloc/load_state.dart';
-import '../../../../core/network/app_exception.dart';
 import '../../domain/entities/booking.dart';
 import '../../domain/usecases/booking_usecases.dart';
 
@@ -38,9 +37,7 @@ class BookingDetailCubit extends Cubit<BookingDetailState> {
       if (!isClosed) emit(BookingDetailState(booking: state.booking.toSuccess(booking)));
     } catch (error) {
       if (!isClosed) {
-        emit(BookingDetailState(
-          booking: state.booking.toFailure(AppException.from(error).message),
-        ));
+        emit(BookingDetailState(booking: state.booking.toError(error)));
       }
     }
   }

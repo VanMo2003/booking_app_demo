@@ -116,7 +116,9 @@ class _AmenitiesViewState extends State<_AmenitiesView> {
         return AppPage(
           title: WorkspaceStrings.amenitiesTitle,
           subtitle: loaded?.hotel.name,
-          floatingActionButton: loaded == null
+          // Danh sách đang xem trống thì nút thêm nằm ngay trong trạng thái rỗng.
+          floatingActionButton: loaded == null ||
+                  !loaded.hotel.amenities.any((amenity) => amenity.common == _common)
               ? null
               : FloatingActionButton.extended(
                   onPressed: () => _openForm(loaded.rooms),
@@ -155,6 +157,8 @@ class _AmenitiesViewState extends State<_AmenitiesView> {
                                   title: _common
                                       ? WorkspaceStrings.amenitiesEmpty
                                       : WorkspaceStrings.amenitiesRoomEmpty,
+                                  addLabel: WorkspaceStrings.addAmenity,
+                                  onAdd: () => _openForm(detail.rooms),
                                 ),
                               ],
                             )

@@ -30,6 +30,7 @@ class ApiResponse {
       throw AppException(
         ErrorStrings.translate(message, code: code),
         code: code,
+        kind: AppException.kindOf(code: code),
       );
     }
   }

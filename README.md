@@ -75,6 +75,37 @@ Quy ước giao diện: màn hình không tự đặt mã màu, cỡ chữ hay c
 `core/color`, `core/style`, `core/text` và ghép từ `core/component`, để mọi màn
 đồng nhất và đổi thiết kế chỉ cần sửa một chỗ.
 
+## Màn lỗi hệ thống, mất mạng, dữ liệu trống
+
+Lỗi được phân nhóm trong `core/network/app_exception.dart` (`AppErrorKind`).
+Khi request không tới được máy chủ, `ConnectivityInterceptor` kiểm tra thiết bị
+còn mạng không — nhờ vậy "mất mạng" và "BE không phản hồi" hiện hai màn khác nhau.
+
+| Component | Khi nào | Nút |
+|---|---|---|
+| `AppErrorView` | BE không chạy, máy chủ lỗi 5xx, lỗi không xác định | Tải lại |
+| `AppOfflineView` | Thiết bị mất mạng; có mạng lại thì tự tải lại | Tải lại |
+| `AppEmptyView` | Danh sách trống | Thêm mới (khi truyền `onAdd`) |
+| `AppFailureView` | Tự chọn một trong các màn trên theo nhóm lỗi | — |
+
+Mọi component đều có `showImage`, `showTitle`, `showDescription`, `showButton`,
+và nhận ảnh riêng qua `image` (widget) hoặc `imageAsset` (ảnh trong assets).
+Cubit báo lỗi bằng `state.toError(error)`; `LoadStateView` tự hiện đúng component.
+
+```dart
+AppEmptyView(
+  title: 'Chưa có phòng',
+  onAdd: openRoomForm,       // hiện nút "Thêm mới"
+  showDescription: false,
+)
+```
+
+## Xem log request
+
+Bản debug có trình xem request (`requests_inspector`, gắn vào Dio trong
+`core/di/app_module.dart`). Điện thoại: lắc máy hoặc nhấn giữ màn hình;
+web/desktop: nhấn giữ màn hình.
+
 ## FE bù cho các chỗ BE còn thiếu
 
 - Nhân viên: hồ sơ chưa có `hotelId` → FE dò cơ sở qua `/employees/by-hotel`.

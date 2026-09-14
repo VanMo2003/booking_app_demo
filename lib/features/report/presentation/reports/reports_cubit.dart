@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/bloc/load_state.dart';
-import '../../../../core/network/app_exception.dart';
 import '../../../hotel/domain/entities/hotel.dart';
 import '../../../hotel_chain/domain/usecases/hotel_chain_usecases.dart';
 import '../../domain/entities/report_entities.dart';
@@ -146,8 +145,6 @@ class ReportsCubit extends Cubit<ReportsState> {
 
   bool _isCurrent(ReportRange range) => !isClosed && state.range == range;
 
-  String _message(Object error) => AppException.from(error).message;
-
   Future<void> _loadRevenue() async {
     final range = state.range;
     final granularity = state.granularity;
@@ -158,9 +155,7 @@ class ReportsCubit extends Cubit<ReportsState> {
         emit(state.copyWith(revenue: state.revenue.toSuccess(report)));
       }
     } catch (error) {
-      if (_isCurrent(range)) {
-        emit(state.copyWith(revenue: state.revenue.toFailure(_message(error))));
-      }
+      if (_isCurrent(range)) emit(state.copyWith(revenue: state.revenue.toError(error)));
     }
   }
 
@@ -177,7 +172,7 @@ class ReportsCubit extends Cubit<ReportsState> {
       }
     } catch (error) {
       if (_isCurrent(range)) {
-        emit(state.copyWith(comparison: state.comparison.toFailure(_message(error))));
+        emit(state.copyWith(comparison: state.comparison.toError(error)));
       }
     }
   }
@@ -189,9 +184,7 @@ class ReportsCubit extends Cubit<ReportsState> {
       final report = await _occupancy(_scope, range);
       if (_isCurrent(range)) emit(state.copyWith(occupancy: state.occupancy.toSuccess(report)));
     } catch (error) {
-      if (_isCurrent(range)) {
-        emit(state.copyWith(occupancy: state.occupancy.toFailure(_message(error))));
-      }
+      if (_isCurrent(range)) emit(state.copyWith(occupancy: state.occupancy.toError(error)));
     }
   }
 
@@ -202,9 +195,7 @@ class ReportsCubit extends Cubit<ReportsState> {
       final report = await _breakdown(_scope, range);
       if (_isCurrent(range)) emit(state.copyWith(breakdown: state.breakdown.toSuccess(report)));
     } catch (error) {
-      if (_isCurrent(range)) {
-        emit(state.copyWith(breakdown: state.breakdown.toFailure(_message(error))));
-      }
+      if (_isCurrent(range)) emit(state.copyWith(breakdown: state.breakdown.toError(error)));
     }
   }
 
@@ -215,9 +206,7 @@ class ReportsCubit extends Cubit<ReportsState> {
       final report = await _people(_scope, range);
       if (_isCurrent(range)) emit(state.copyWith(people: state.people.toSuccess(report)));
     } catch (error) {
-      if (_isCurrent(range)) {
-        emit(state.copyWith(people: state.people.toFailure(_message(error))));
-      }
+      if (_isCurrent(range)) emit(state.copyWith(people: state.people.toError(error)));
     }
   }
 }

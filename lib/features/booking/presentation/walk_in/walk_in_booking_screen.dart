@@ -345,7 +345,7 @@ class _WalkInViewState extends State<_WalkInView> {
       const Gap(AppSpacing.sm),
       if (detail == null)
         booking.detail.isFailure
-            ? AppErrorView(message: booking.detail.error!)
+            ? AppFailureView.fromState(booking.detail, onRetry: cubit.reload, compact: true)
             : const AppLoadingView()
       else
         RoomChoiceList(

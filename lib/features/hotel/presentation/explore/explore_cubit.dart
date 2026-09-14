@@ -21,6 +21,7 @@ class ExploreState extends Equatable {
     this.category,
     this.categories = const [],
     this.error,
+    this.errorKind,
   });
 
   final DateTime checkin;
@@ -38,6 +39,9 @@ class ExploreState extends Equatable {
   final List<String> categories;
   final String? error;
 
+  /// Nhóm lỗi để chọn component: mất mạng hay lỗi hệ thống.
+  final AppErrorKind? errorKind;
+
   ExploreState copyWith({
     DateTime? checkin,
     DateTime? checkout,
@@ -50,6 +54,7 @@ class ExploreState extends Equatable {
     bool clearCategory = false,
     List<String>? categories,
     String? error,
+    AppErrorKind? errorKind,
   }) =>
       ExploreState(
         checkin: checkin ?? this.checkin,
@@ -62,6 +67,7 @@ class ExploreState extends Equatable {
         category: clearCategory ? null : category ?? this.category,
         categories: categories ?? this.categories,
         error: error,
+        errorKind: errorKind,
       );
 
   @override
@@ -76,6 +82,7 @@ class ExploreState extends Equatable {
         category,
         categories,
         error,
+        errorKind,
       ];
 }
 
@@ -115,9 +122,11 @@ class ExploreCubit extends Cubit<ExploreState> {
         ));
       }
     } catch (error) {
+      final exception = AppException.from(error);
       emit(state.copyWith(
         status: ViewStatus.failure,
-        error: AppException.from(error).message,
+        error: exception.message,
+        errorKind: exception.kind,
       ));
     }
   }

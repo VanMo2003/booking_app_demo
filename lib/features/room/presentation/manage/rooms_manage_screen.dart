@@ -152,12 +152,8 @@ class _RoomsManageViewState extends State<_RoomsManageView> {
                     icon: Icons.bed_outlined,
                     title: WorkspaceStrings.roomsEmpty,
                     message: WorkspaceStrings.roomsEmptyHint,
-                    action: AppButton(
-                      label: WorkspaceStrings.addRoom,
-                      icon: Icons.add_rounded,
-                      size: AppButtonSize.medium,
-                      onPressed: _addRoom,
-                    ),
+                    addLabel: WorkspaceStrings.addRoom,
+                    onAdd: _addRoom,
                   ),
                   builder: (context, _) => RefreshIndicator(
                     onRefresh: cubit.load,

@@ -12,6 +12,7 @@ class PagedState<T> extends Equatable {
     this.items = const [],
     this.status = ViewStatus.initial,
     this.error,
+    this.errorKind,
     this.page = 0,
     this.total = 0,
     this.hasMore = false,
@@ -21,6 +22,9 @@ class PagedState<T> extends Equatable {
   final List<T> items;
   final ViewStatus status;
   final String? error;
+
+  /// Nhóm lỗi của lần tải trang đầu (mất mạng, lỗi hệ thống…).
+  final AppErrorKind? errorKind;
   final int page;
   final int total;
   final bool hasMore;
@@ -30,6 +34,7 @@ class PagedState<T> extends Equatable {
     List<T>? items,
     ViewStatus? status,
     String? error,
+    AppErrorKind? errorKind,
     int? page,
     int? total,
     bool? hasMore,
@@ -39,6 +44,7 @@ class PagedState<T> extends Equatable {
         items: items ?? this.items,
         status: status ?? this.status,
         error: error ?? this.error,
+        errorKind: errorKind ?? this.errorKind,
         page: page ?? this.page,
         total: total ?? this.total,
         hasMore: hasMore ?? this.hasMore,
@@ -46,7 +52,8 @@ class PagedState<T> extends Equatable {
       );
 
   @override
-  List<Object?> get props => [items, status, error, page, total, hasMore, loadingMore];
+  List<Object?> get props =>
+      [items, status, error, errorKind, page, total, hasMore, loadingMore];
 }
 
 abstract class PagedCubit<T> extends Cubit<PagedState<T>> {
@@ -71,9 +78,11 @@ abstract class PagedCubit<T> extends Cubit<PagedState<T>> {
       ));
     } catch (error) {
       if (!isClosed) {
+        final exception = AppException.from(error);
         emit(state.copyWith(
           status: ViewStatus.failure,
-          error: AppException.from(error).message,
+          error: exception.message,
+          errorKind: exception.kind,
         ));
       }
     }

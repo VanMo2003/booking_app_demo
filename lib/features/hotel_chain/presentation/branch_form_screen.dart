@@ -7,7 +7,6 @@ import '../../../core/bloc/load_state.dart';
 import '../../../core/component/component.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/di/injector.dart';
-import '../../../core/network/app_exception.dart';
 import '../../../core/network/upload_file.dart';
 import '../../../core/style/style.dart';
 import '../../../core/text/auth_strings.dart';
@@ -138,8 +137,8 @@ class _BranchFormScreenState extends State<BranchFormScreen> {
         future: _managers,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return AppErrorView(
-              message: AppException.from(snapshot.error!).message,
+            return AppFailureView.fromError(
+              snapshot.error!,
               onRetry: () => setState(() => _managers = _loadManagers()),
             );
           }

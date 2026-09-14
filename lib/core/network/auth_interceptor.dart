@@ -17,11 +17,17 @@ class AuthInterceptor extends Interceptor {
   AuthInterceptor({
     required TokenStorage tokens,
     required SessionEvents events,
+    List<Interceptor> retryInterceptors = const [],
   })  : _tokens = tokens,
-        _events = events;
+        _events = events,
+        _retryInterceptors = retryInterceptors;
 
   final TokenStorage _tokens;
   final SessionEvents _events;
+
+  /// Interceptor gắn thêm vào client làm mới token / gửi lại request
+  /// (ví dụ trình xem request) để các request này cũng được ghi lại.
+  final List<Interceptor> _retryInterceptors;
 
   /// Đặt `extra[skipAuth] = true` để gửi request không kèm token.
   static const skipAuth = 'skipAuth';
@@ -37,7 +43,7 @@ class AuthInterceptor extends Interceptor {
       receiveTimeout: AppConfig.receiveTimeout,
       contentType: Headers.jsonContentType,
     ),
-  );
+  )..interceptors.addAll(_retryInterceptors);
 
   @override
   Future<void> onRequest(
@@ -77,7 +83,7 @@ class AuthInterceptor extends Interceptor {
     try {
       options.extra[_retried] = true;
       options.headers['Authorization'] = 'Bearer ${_tokens.accessToken}';
-      // Gửi lại qua client không có interceptor để tránh vòng lặp.
+      // Gửi lại qua client không có interceptor xác thực để tránh vòng lặp.
       final response = await _plainClient.fetch<dynamic>(options);
       handler.resolve(response);
     } on DioException catch (retryError) {

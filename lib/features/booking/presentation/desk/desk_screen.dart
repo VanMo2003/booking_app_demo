@@ -63,6 +63,11 @@ class _DeskViewState extends State<_DeskView> {
     if (mounted) await context.read<DeskCubit>().load();
   }
 
+  Future<void> _walkIn() async {
+    await context.rootRouter.push(WalkInBookingRoute(hotelId: widget.hotelId));
+    if (mounted) await context.read<DeskCubit>().load();
+  }
+
   @override
   Widget build(BuildContext context) {
     final branchName = context.branchName;
@@ -70,6 +75,9 @@ class _DeskViewState extends State<_DeskView> {
     return BlocBuilder<DeskCubit, DeskState>(
       builder: (context, state) {
         final cubit = context.read<DeskCubit>();
+        final visible = state.visible;
+        // Danh sách trống thì nút tạo đơn nằm ngay trong trạng thái rỗng.
+        final showFab = !(state.bookings.hasData && visible.isEmpty);
         return AppPage(
           title: BookingStrings.deskTitle,
           subtitle: [
@@ -83,14 +91,13 @@ class _DeskViewState extends State<_DeskView> {
               icon: const Icon(Icons.refresh_rounded),
             ),
           ],
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () async {
-              await context.rootRouter.push(WalkInBookingRoute(hotelId: widget.hotelId));
-              if (context.mounted) await cubit.load();
-            },
-            icon: const Icon(Icons.add_rounded),
-            label: const Text(BookingStrings.walkInAction),
-          ),
+          floatingActionButton: showFab
+              ? FloatingActionButton.extended(
+                  onPressed: _walkIn,
+                  icon: const Icon(Icons.add_rounded),
+                  label: const Text(BookingStrings.walkInAction),
+                )
+              : null,
           body: Column(
             children: [
               Padding(
@@ -115,37 +122,36 @@ class _DeskViewState extends State<_DeskView> {
                 child: LoadStateView<List<Booking>>(
                   state: state.bookings,
                   onRetry: cubit.load,
-                  builder: (context, _) {
-                    final visible = state.visible;
-                    return RefreshIndicator(
-                      onRefresh: cubit.load,
-                      child: visible.isEmpty
-                          ? ListView(
-                              children: const [
-                                Gap(AppSpacing.xxl),
-                                AppEmptyView(
-                                  icon: Icons.event_available_outlined,
-                                  title: BookingStrings.deskEmpty,
-                                ),
-                              ],
-                            )
-                          : ListView.separated(
-                              padding: const EdgeInsets.fromLTRB(
-                                16,
-                                8,
-                                16,
-                                AppSpacing.bottomBarClearance,
+                  builder: (context, _) => RefreshIndicator(
+                    onRefresh: cubit.load,
+                    child: visible.isEmpty
+                        ? ListView(
+                            children: [
+                              AppEmptyView(
+                                icon: Icons.event_available_outlined,
+                                title: BookingStrings.deskEmpty,
+                                message: BookingStrings.deskEmptyHint,
+                                addLabel: BookingStrings.walkInAction,
+                                onAdd: _walkIn,
                               ),
-                              itemCount: visible.length,
-                              separatorBuilder: (_, __) => const Gap(AppSpacing.sm),
-                              itemBuilder: (context, index) => BookingCard(
-                                booking: visible[index],
-                                view: BookingCardView.desk,
-                                onTap: () => _open(visible[index]),
-                              ),
+                            ],
+                          )
+                        : ListView.separated(
+                            padding: const EdgeInsets.fromLTRB(
+                              16,
+                              8,
+                              16,
+                              AppSpacing.bottomBarClearance,
                             ),
-                    );
-                  },
+                            itemCount: visible.length,
+                            separatorBuilder: (_, __) => const Gap(AppSpacing.sm),
+                            itemBuilder: (context, index) => BookingCard(
+                              booking: visible[index],
+                              view: BookingCardView.desk,
+                              onTap: () => _open(visible[index]),
+                            ),
+                          ),
+                  ),
                 ),
               ),
             ],

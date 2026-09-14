@@ -93,18 +93,22 @@ class _ServicesView extends StatelessWidget {
         return AppPage(
           title: WorkspaceStrings.servicesTitle,
           subtitle: state.hasData ? AppStrings.itemsCount(state.data!.length) : null,
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => _openForm(context),
-            icon: const Icon(Icons.add_rounded),
-            label: const Text(WorkspaceStrings.addService),
-          ),
+          floatingActionButton: state.data?.isEmpty ?? true
+              ? null
+              : FloatingActionButton.extended(
+                  onPressed: () => _openForm(context),
+                  icon: const Icon(Icons.add_rounded),
+                  label: const Text(WorkspaceStrings.addService),
+                ),
           body: LoadStateView<List<HotelService>>(
             state: state,
             onRetry: cubit.load,
             isEmpty: (data) => data.isEmpty,
-            empty: const AppEmptyView(
+            empty: AppEmptyView(
               icon: Icons.room_service_outlined,
               title: WorkspaceStrings.servicesEmpty,
+              addLabel: WorkspaceStrings.addService,
+              onAdd: () => _openForm(context),
             ),
             builder: (context, services) => RefreshIndicator(
               onRefresh: cubit.load,

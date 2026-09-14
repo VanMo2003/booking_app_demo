@@ -106,11 +106,13 @@ class _AccountsViewState extends State<_AccountsView> {
               icon: const Icon(Icons.refresh_rounded),
             ),
           ],
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: _create,
-            icon: const Icon(Icons.person_add_alt_1_rounded),
-            label: const Text(ManagementStrings.createAccount),
-          ),
+          floatingActionButton: state.status == ViewStatus.success && state.items.isEmpty
+              ? null
+              : FloatingActionButton.extended(
+                  onPressed: _create,
+                  icon: const Icon(Icons.person_add_alt_1_rounded),
+                  label: const Text(ManagementStrings.createAccount),
+                ),
           body: Column(
             children: [
               Padding(
@@ -134,9 +136,11 @@ class _AccountsViewState extends State<_AccountsView> {
                   onRefresh: cubit.load,
                   onLoadMore: cubit.loadMore,
                   filter: _matches,
-                  empty: const AppEmptyView(
+                  empty: AppEmptyView(
                     icon: Icons.manage_accounts_outlined,
                     title: ManagementStrings.accountsEmpty,
+                    addLabel: ManagementStrings.createAccount,
+                    onAdd: _create,
                   ),
                   itemBuilder: (context, account) => AppCard(
                     onTap: () => _edit(account),

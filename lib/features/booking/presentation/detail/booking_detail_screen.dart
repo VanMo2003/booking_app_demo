@@ -168,7 +168,7 @@ class _BookingDetailView extends StatelessWidget {
           ],
           body: LoadStateView<Booking>(
             state: state.booking,
-            onRetry: context.read<BookingDetailCubit>().refresh,
+            onRetry: () => context.read<BookingDetailCubit>().load(bookingId),
             builder: (context, booking) => RefreshIndicator(
               onRefresh: context.read<BookingDetailCubit>().refresh,
               child: _BookingBody(booking: booking, backOffice: backOffice),

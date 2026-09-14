@@ -121,18 +121,22 @@ class _EmployeesView extends StatelessWidget {
         return AppPage(
           title: WorkspaceStrings.employeesTitle,
           subtitle: state.hasData ? WorkspaceStrings.employeesCount(state.data!.length) : null,
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => _openForm(context),
-            icon: const Icon(Icons.person_add_alt_1_rounded),
-            label: const Text(WorkspaceStrings.addEmployee),
-          ),
+          floatingActionButton: state.data?.isEmpty ?? true
+              ? null
+              : FloatingActionButton.extended(
+                  onPressed: () => _openForm(context),
+                  icon: const Icon(Icons.person_add_alt_1_rounded),
+                  label: const Text(WorkspaceStrings.addEmployee),
+                ),
           body: LoadStateView<List<Employee>>(
             state: state,
             onRetry: cubit.load,
             isEmpty: (data) => data.isEmpty,
-            empty: const AppEmptyView(
+            empty: AppEmptyView(
               icon: Icons.badge_outlined,
               title: WorkspaceStrings.employeesEmpty,
+              addLabel: WorkspaceStrings.addEmployee,
+              onAdd: () => _openForm(context),
             ),
             builder: (context, employees) => RefreshIndicator(
               onRefresh: cubit.load,

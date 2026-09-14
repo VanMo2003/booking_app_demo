@@ -1,12 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../bloc/load_state.dart';
-import '../color/app_colors.dart';
+import '../di/injector.dart';
+import '../network/app_exception.dart';
+import '../network/network_status.dart';
 import '../style/app_dimens.dart';
 import '../style/app_text_styles.dart';
 import '../text/app_strings.dart';
 import '../text/error_strings.dart';
+import '../text/state_strings.dart';
 import 'app_button.dart';
+import 'gap.dart';
+import 'state_illustration.dart';
 
 class AppLoadingView extends StatelessWidget {
   const AppLoadingView({super.key, this.message});
@@ -37,59 +44,129 @@ class AppLoadingView extends StatelessWidget {
   }
 }
 
-class _StateMessage extends StatelessWidget {
-  const _StateMessage({
-    required this.icon,
-    required this.iconColor,
-    required this.iconBackground,
-    required this.title,
-    this.message,
+/// Khung chung của mọi màn trạng thái: ảnh minh hoạ, tiêu đề, mô tả và nút.
+///
+/// Mỗi phần ẩn/hiện được qua `show…`; phần nào không có nội dung (tiêu đề rỗng,
+/// không có nút bấm) cũng tự ẩn.
+class AppStateView extends StatelessWidget {
+  const AppStateView({
+    super.key,
+    this.illustration = AppIllustrationType.empty,
+    this.icon,
+    this.image,
+    this.imageAsset,
+    this.title,
+    this.description,
+    this.buttonLabel,
+    this.buttonIcon,
+    this.onPressed,
+    this.buttonVariant = AppButtonVariant.primary,
+    this.buttonLoading = false,
     this.action,
+    this.footer,
+    this.showImage = true,
+    this.showTitle = true,
+    this.showDescription = true,
+    this.showButton = true,
+    this.compact = false,
   });
 
-  final IconData icon;
-  final Color iconColor;
-  final Color iconBackground;
-  final String title;
-  final String? message;
+  /// Ảnh dựng sẵn, dùng khi không truyền [image] hoặc [imageAsset].
+  final AppIllustrationType illustration;
+
+  /// Biểu tượng chính trên ảnh dựng sẵn.
+  final IconData? icon;
+
+  /// Ảnh tuỳ chỉnh (`Image.asset`, `Image.network`, `SvgPicture`…).
+  final Widget? image;
+
+  /// Đường dẫn ảnh trong assets — nhớ khai báo thư mục ảnh trong pubspec.yaml.
+  final String? imageAsset;
+
+  final String? title;
+  final String? description;
+  final String? buttonLabel;
+  final IconData? buttonIcon;
+  final VoidCallback? onPressed;
+  final AppButtonVariant buttonVariant;
+  final bool buttonLoading;
+
+  /// Khối hành động tuỳ chỉnh, thay cho nút mặc định.
   final Widget? action;
+
+  /// Dòng phụ dưới nút (ví dụ "Đang tải lại…").
+  final Widget? footer;
+
+  final bool showImage;
+  final bool showTitle;
+  final bool showDescription;
+  final bool showButton;
+
+  /// Bản gọn cho khối nằm giữa trang: ảnh nhỏ hơn, ít khoảng trắng.
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
+    final imageSize = compact ? 112.0 : 164.0;
+    final hasTitle = showTitle && (title ?? '').isNotEmpty;
+    final hasDescription = showDescription && (description ?? '').isNotEmpty;
+    final Widget? button = !showButton
+        ? null
+        : action ??
+            (buttonLabel == null || onPressed == null
+                ? null
+                : AppButton(
+                    label: buttonLabel!,
+                    icon: buttonIcon,
+                    variant: buttonVariant,
+                    size: AppButtonSize.medium,
+                    loading: buttonLoading,
+                    onPressed: onPressed,
+                  ));
+    final hasText = hasTitle || hasDescription;
+
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.xl,
+          vertical: compact ? AppSpacing.md : AppSpacing.xl,
+        ),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 360),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 64,
-                height: 64,
-                decoration: BoxDecoration(
-                  color: iconBackground,
-                  shape: BoxShape.circle,
+              if (showImage) ...[
+                SizedBox.square(
+                  dimension: imageSize,
+                  child: image ??
+                      (imageAsset != null
+                          ? Image.asset(imageAsset!, fit: BoxFit.contain)
+                          : AppIllustration(type: illustration, icon: icon)),
                 ),
-                child: Icon(icon, size: 30, color: iconColor),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                title,
-                style: AppTextStyles.subtitle,
-                textAlign: TextAlign.center,
-              ),
-              if (message != null) ...[
-                const SizedBox(height: AppSpacing.xs),
-                Text(
-                  message!,
-                  style: AppTextStyles.bodySmall,
-                  textAlign: TextAlign.center,
-                ),
+                if (hasText || button != null)
+                  Gap(compact ? AppSpacing.sm : AppSpacing.md),
               ],
-              if (action != null) ...[
-                const SizedBox(height: AppSpacing.lg),
-                action!,
+              if (hasTitle)
+                Text(
+                  title!,
+                  textAlign: TextAlign.center,
+                  style: compact ? AppTextStyles.subtitle : AppTextStyles.title,
+                ),
+              if (hasTitle && hasDescription) const Gap(AppSpacing.xs),
+              if (hasDescription)
+                Text(
+                  description!,
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.bodySmall,
+                ),
+              if (button != null) ...[
+                if (showImage || hasText) Gap(compact ? AppSpacing.md : AppSpacing.lg),
+                button,
+              ],
+              if (footer != null) ...[
+                const Gap(AppSpacing.sm),
+                footer!,
               ],
             ],
           ),
@@ -99,55 +176,276 @@ class _StateMessage extends StatelessWidget {
   }
 }
 
+/// Lỗi hệ thống: BE không phản hồi, máy chủ lỗi hoặc lỗi không xác định.
+/// Nút "Tải lại" chỉ hiện khi truyền [onRetry].
 class AppErrorView extends StatelessWidget {
-  const AppErrorView({super.key, required this.message, this.onRetry});
+  const AppErrorView({
+    super.key,
+    this.message,
+    this.title = StateStrings.systemErrorTitle,
+    this.onRetry,
+    this.retryLabel = StateStrings.reload,
+    this.illustration = AppIllustrationType.serverError,
+    this.image,
+    this.imageAsset,
+    this.showImage = true,
+    this.showTitle = true,
+    this.showDescription = true,
+    this.showButton = true,
+    this.compact = false,
+  });
 
-  final String message;
+  /// Mô tả lỗi; mặc định là thông báo lỗi hệ thống chung.
+  final String? message;
+  final String title;
   final VoidCallback? onRetry;
+  final String retryLabel;
+  final AppIllustrationType illustration;
+  final Widget? image;
+  final String? imageAsset;
+  final bool showImage;
+  final bool showTitle;
+  final bool showDescription;
+  final bool showButton;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
-    return _StateMessage(
-      icon: Icons.cloud_off_rounded,
-      iconColor: AppColors.danger,
-      iconBackground: AppColors.dangerSoft,
-      title: AppStrings.errorTitle,
-      message: message,
-      action: onRetry == null
-          ? null
-          : AppButton.secondary(
-              label: AppStrings.retry,
-              icon: Icons.refresh_rounded,
-              size: AppButtonSize.medium,
-              onPressed: onRetry,
-            ),
+    return AppStateView(
+      illustration: illustration,
+      image: image,
+      imageAsset: imageAsset,
+      title: title,
+      description: message ?? StateStrings.systemErrorMessage,
+      buttonLabel: retryLabel,
+      buttonIcon: Icons.refresh_rounded,
+      onPressed: onRetry,
+      showImage: showImage,
+      showTitle: showTitle,
+      showDescription: showDescription,
+      showButton: showButton,
+      compact: compact,
     );
   }
 }
 
-class AppEmptyView extends StatelessWidget {
-  const AppEmptyView({
+/// Mất kết nối mạng. Có mạng trở lại thì tự gọi [onRetry] (khi [autoReload]).
+class AppOfflineView extends StatefulWidget {
+  const AppOfflineView({
     super.key,
-    required this.title,
-    this.message,
-    this.icon = Icons.inbox_outlined,
-    this.action,
+    this.onRetry,
+    this.title = StateStrings.offlineTitle,
+    this.message = StateStrings.offlineMessage,
+    this.retryLabel = StateStrings.reload,
+    this.autoReload = true,
+    this.image,
+    this.imageAsset,
+    this.showImage = true,
+    this.showTitle = true,
+    this.showDescription = true,
+    this.showButton = true,
+    this.compact = false,
   });
 
+  final VoidCallback? onRetry;
   final String title;
-  final String? message;
-  final IconData icon;
-  final Widget? action;
+  final String message;
+  final String retryLabel;
+
+  /// Tự tải lại khi thiết bị có mạng trở lại.
+  final bool autoReload;
+  final Widget? image;
+  final String? imageAsset;
+  final bool showImage;
+  final bool showTitle;
+  final bool showDescription;
+  final bool showButton;
+  final bool compact;
+
+  @override
+  State<AppOfflineView> createState() => _AppOfflineViewState();
+}
+
+class _AppOfflineViewState extends State<AppOfflineView> {
+  StreamSubscription<bool>? _subscription;
+  Timer? _resetTimer;
+  bool _reconnecting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.autoReload && widget.onRetry != null) {
+      _subscription = getIt<NetworkStatus>().onChanged.listen(_handleNetwork);
+    }
+  }
+
+  void _handleNetwork(bool online) {
+    if (!online || !mounted || _reconnecting) return;
+    setState(() => _reconnecting = true);
+    widget.onRetry?.call();
+    // Nếu màn không đổi trạng thái (tải lại vẫn lỗi), cho bấm lại sau ít giây.
+    _resetTimer?.cancel();
+    _resetTimer = Timer(const Duration(seconds: 8), () {
+      if (mounted) setState(() => _reconnecting = false);
+    });
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    _resetTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return _StateMessage(
+    return AppStateView(
+      illustration: AppIllustrationType.offline,
+      image: widget.image,
+      imageAsset: widget.imageAsset,
+      title: widget.title,
+      description: widget.message,
+      buttonLabel: widget.retryLabel,
+      buttonIcon: Icons.refresh_rounded,
+      buttonLoading: _reconnecting,
+      onPressed: widget.onRetry,
+      showImage: widget.showImage,
+      showTitle: widget.showTitle,
+      showDescription: widget.showDescription,
+      showButton: widget.showButton,
+      compact: widget.compact,
+      footer: _reconnecting
+          ? Text(StateStrings.reconnecting, style: AppTextStyles.caption)
+          : null,
+    );
+  }
+}
+
+/// Dữ liệu trống. Truyền [onAdd] để hiện nút "Thêm mới" (đổi chữ bằng [addLabel]).
+class AppEmptyView extends StatelessWidget {
+  const AppEmptyView({
+    super.key,
+    this.title = StateStrings.emptyTitle,
+    this.message,
+    this.icon,
+    this.onAdd,
+    this.addLabel = StateStrings.addNew,
+    this.addIcon = Icons.add_rounded,
+    this.action,
+    this.image,
+    this.imageAsset,
+    this.showImage = true,
+    this.showTitle = true,
+    this.showDescription = true,
+    this.showButton = true,
+    this.compact = false,
+  });
+
+  final String title;
+
+  /// Mô tả thêm dưới tiêu đề.
+  final String? message;
+
+  /// Biểu tượng chính trên ảnh minh hoạ (mặc định là hộp trống).
+  final IconData? icon;
+  final VoidCallback? onAdd;
+  final String addLabel;
+  final IconData addIcon;
+
+  /// Khối hành động tuỳ chỉnh thay cho nút "Thêm mới" (ví dụ "Khám phá cơ sở").
+  final Widget? action;
+  final Widget? image;
+  final String? imageAsset;
+  final bool showImage;
+  final bool showTitle;
+  final bool showDescription;
+  final bool showButton;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppStateView(
+      illustration: AppIllustrationType.empty,
       icon: icon,
-      iconColor: AppColors.primary,
-      iconBackground: AppColors.primarySoft,
+      image: image,
+      imageAsset: imageAsset,
       title: title,
-      message: message,
+      description: message,
+      buttonLabel: addLabel,
+      buttonIcon: addIcon,
+      onPressed: onAdd,
       action: action,
+      showImage: showImage,
+      showTitle: showTitle,
+      showDescription: showDescription,
+      showButton: showButton,
+      compact: compact,
+    );
+  }
+}
+
+/// Chọn component theo nhóm lỗi: mất mạng → [AppOfflineView]; máy chủ lỗi hoặc
+/// lỗi không xác định → [AppErrorView]; lỗi yêu cầu (không có quyền, không tìm
+/// thấy…) → thông báo cụ thể.
+class AppFailureView extends StatelessWidget {
+  const AppFailureView({
+    super.key,
+    required this.message,
+    this.kind,
+    this.onRetry,
+    this.compact = false,
+  });
+
+  factory AppFailureView.fromState(
+    LoadState<Object?> state, {
+    Key? key,
+    VoidCallback? onRetry,
+    bool compact = false,
+  }) =>
+      AppFailureView(
+        key: key,
+        message: state.error ?? ErrorStrings.unknown,
+        kind: state.errorKind,
+        onRetry: onRetry,
+        compact: compact,
+      );
+
+  factory AppFailureView.fromError(
+    Object error, {
+    Key? key,
+    VoidCallback? onRetry,
+    bool compact = false,
+  }) {
+    final exception = AppException.from(error);
+    return AppFailureView(
+      key: key,
+      message: exception.message,
+      kind: exception.kind,
+      onRetry: onRetry,
+      compact: compact,
+    );
+  }
+
+  final String message;
+  final AppErrorKind? kind;
+  final VoidCallback? onRetry;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    final errorKind = kind ?? AppErrorKind.unknown;
+    if (errorKind == AppErrorKind.network) {
+      return AppOfflineView(onRetry: onRetry, compact: compact);
+    }
+    if (errorKind.isSystem) {
+      return AppErrorView(message: message, onRetry: onRetry, compact: compact);
+    }
+    return AppErrorView(
+      title: StateStrings.requestErrorTitle,
+      message: message,
+      illustration: AppIllustrationType.requestError,
+      onRetry: onRetry,
+      compact: compact,
     );
   }
 }
@@ -171,17 +469,17 @@ class LoginPromptView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _StateMessage(
+    return AppStateView(
+      illustration: AppIllustrationType.login,
       icon: icon,
-      iconColor: AppColors.primary,
-      iconBackground: AppColors.primarySoft,
       title: title,
-      message: message,
+      description: message,
       action: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           AppButton(label: AppStrings.login, onPressed: onLogin, expand: true),
           if (onRegister != null) ...[
-            const SizedBox(height: AppSpacing.xs),
+            const Gap(AppSpacing.xs),
             AppButton.text(label: AppStrings.register, onPressed: onRegister),
           ],
         ],
@@ -190,8 +488,9 @@ class LoginPromptView extends StatelessWidget {
   }
 }
 
-/// Dựng giao diện theo [LoadState]: đang tải → vòng xoay, lỗi → nút thử lại,
-/// có dữ liệu → [builder]. Khi tải lại, dữ liệu cũ vẫn hiển thị.
+/// Dựng giao diện theo [LoadState]: đang tải → vòng xoay; lỗi → component theo
+/// nhóm lỗi (mất mạng / lỗi hệ thống / lỗi yêu cầu); có dữ liệu → [builder].
+/// Khi tải lại, dữ liệu cũ vẫn hiển thị.
 class LoadStateView<T> extends StatelessWidget {
   const LoadStateView({
     super.key,
@@ -218,10 +517,7 @@ class LoadStateView<T> extends StatelessWidget {
       return builder(context, data);
     }
     if (state.isFailure) {
-      return AppErrorView(
-        message: state.error ?? ErrorStrings.unknown,
-        onRetry: onRetry,
-      );
+      return AppFailureView.fromState(state, onRetry: onRetry);
     }
     return loading ?? const AppLoadingView();
   }

@@ -107,7 +107,7 @@ class BookingEditCubit extends Cubit<BookingEditState> {
       ));
       await _fetchDetail();
     } catch (error) {
-      emit(state.copyWith(detail: state.detail.toFailure(AppException.from(error).message)));
+      emit(state.copyWith(detail: state.detail.toError(error)));
     }
   }
 
@@ -118,7 +118,7 @@ class BookingEditCubit extends Cubit<BookingEditState> {
       final detail = await _getDetail(hotelId, checkin: state.checkin, checkout: state.checkout);
       if (!isClosed) emit(state.copyWith(detail: state.detail.toSuccess(detail)));
     } catch (error) {
-      if (!isClosed) emit(state.copyWith(detail: state.detail.toFailure(AppException.from(error).message)));
+      if (!isClosed) emit(state.copyWith(detail: state.detail.toError(error)));
     }
   }
 
@@ -224,7 +224,12 @@ class _BookingEditViewState extends State<_BookingEditView> {
         return AppPage(
           title: BookingStrings.editTitle(widget.bookingId),
           body: booking == null || detail == null
-              ? (state.detail.isFailure ? AppErrorView(message: state.detail.error!) : const AppLoadingView())
+              ? (state.detail.isFailure
+                  ? AppFailureView.fromState(
+                      state.detail,
+                      onRetry: () => cubit.start(widget.bookingId),
+                    )
+                  : const AppLoadingView())
               : ListView(
                   padding: AppSpacing.page,
                   children: [

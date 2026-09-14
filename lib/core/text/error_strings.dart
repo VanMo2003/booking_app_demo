@@ -1,8 +1,10 @@
 /// Thông báo lỗi hiển thị cho người dùng, kèm bảng dịch thông báo tiếng Anh
 /// mà BE trả trong trường `message`.
 abstract final class ErrorStrings {
-  static const network =
-      'Không kết nối được máy chủ. Kiểm tra mạng hoặc địa chỉ API.';
+  static const serverUnreachable =
+      'Không kết nối được máy chủ. Vui lòng thử lại sau ít phút.';
+  static const offline =
+      'Không có kết nối mạng. Kiểm tra Wi-Fi hoặc dữ liệu di động.';
   static const timeout = 'Máy chủ phản hồi quá lâu. Vui lòng thử lại.';
   static const cancelled = 'Yêu cầu đã bị huỷ.';
   static const unauthenticated =

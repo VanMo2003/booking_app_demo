@@ -90,9 +90,9 @@ class _HotelDetailView extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(),
             body: state.detail.isFailure
-                ? AppErrorView(
-                    message: state.detail.error!,
-                    onRetry: context.read<HotelDetailCubit>().refresh,
+                ? AppFailureView.fromState(
+                    state.detail,
+                    onRetry: context.read<HotelDetailCubit>().retry,
                   )
                 : const AppLoadingView(),
           );

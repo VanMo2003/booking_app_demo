@@ -93,7 +93,11 @@ class _ExploreView extends StatelessWidget {
   List<Widget> _content(BuildContext context, ExploreState state, ExploreCubit cubit) {
     if (state.hotels.isEmpty) {
       final Widget child = switch (state.status) {
-        ViewStatus.failure => AppErrorView(message: state.error!, onRetry: cubit.load),
+        ViewStatus.failure => AppFailureView(
+            message: state.error!,
+            kind: state.errorKind,
+            onRetry: cubit.load,
+          ),
         ViewStatus.success => AppEmptyView(
             icon: Icons.apartment_rounded,
             title: state.category == null

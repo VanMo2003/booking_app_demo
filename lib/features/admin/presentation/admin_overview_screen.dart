@@ -131,7 +131,7 @@ class _AdminOverviewView extends StatelessWidget {
     final data = state.data;
     if (data == null) {
       return state.isFailure
-          ? AppErrorView(message: state.error!, onRetry: cubit.load)
+          ? AppFailureView.fromState(state, onRetry: cubit.load)
           : const Padding(
               padding: EdgeInsets.only(top: AppSpacing.xxl),
               child: AppLoadingView(),

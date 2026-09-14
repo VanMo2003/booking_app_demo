@@ -54,11 +54,13 @@ class _ManagersView extends StatelessWidget {
         final cubit = context.read<ManagersCubit>();
         return AppPage(
           title: ManagementStrings.managersTitle,
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => _create(context),
-            icon: const Icon(Icons.person_add_alt_1_rounded),
-            label: const Text(ManagementStrings.createManager),
-          ),
+          floatingActionButton: state.data?.isEmpty ?? true
+              ? null
+              : FloatingActionButton.extended(
+                  onPressed: () => _create(context),
+                  icon: const Icon(Icons.person_add_alt_1_rounded),
+                  label: const Text(ManagementStrings.createManager),
+                ),
           body: LoadStateView<List<ManagerSummary>>(
             state: state,
             onRetry: cubit.load,
@@ -83,9 +85,11 @@ class _ManagersView extends StatelessWidget {
                   ),
                   const Gap(AppSpacing.md),
                   if (managers.isEmpty)
-                    const AppEmptyView(
+                    AppEmptyView(
                       icon: Icons.manage_accounts_outlined,
                       title: ManagementStrings.managersEmpty,
+                      addLabel: ManagementStrings.createManager,
+                      onAdd: () => _create(context),
                     )
                   else
                     for (final manager in managers) ...[

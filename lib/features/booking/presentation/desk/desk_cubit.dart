@@ -4,7 +4,6 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/bloc/load_state.dart';
 import '../../../../core/enums/app_enums.dart';
-import '../../../../core/network/app_exception.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../../core/utils/text_search.dart';
 import '../../domain/entities/booking.dart';
@@ -92,9 +91,7 @@ class DeskCubit extends Cubit<DeskState> {
       final bookings = await _getBookings(_hotelId);
       if (!isClosed) emit(state.copyWith(bookings: state.bookings.toSuccess(bookings)));
     } catch (error) {
-      if (!isClosed) {
-        emit(state.copyWith(bookings: state.bookings.toFailure(AppException.from(error).message)));
-      }
+      if (!isClosed) emit(state.copyWith(bookings: state.bookings.toError(error)));
     }
   }
 

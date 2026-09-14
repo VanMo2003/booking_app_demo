@@ -205,7 +205,7 @@ class _CustomerDetailViewState extends State<_CustomerDetailView> {
                 const Gap(AppSpacing.sm),
                 if (!state.hasData)
                   state.isFailure
-                      ? AppErrorView(message: state.error!, onRetry: cubit.load)
+                      ? AppFailureView.fromState(state, onRetry: cubit.load, compact: true)
                       : const AppLoadingView()
                 else if (bookings.isEmpty)
                   Text(WorkspaceStrings.customerBookingsEmpty, style: AppTextStyles.bodySmall)

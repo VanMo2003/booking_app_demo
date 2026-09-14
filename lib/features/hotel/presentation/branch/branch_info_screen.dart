@@ -34,8 +34,8 @@ class BranchInfoScreen extends StatelessWidget {
             return AppPage(
               title: WorkspaceStrings.branchInfoTitle,
               body: state.isFailure
-                  ? AppErrorView(
-                      message: state.error!,
+                  ? AppFailureView.fromState(
+                      state,
                       onRetry: context.read<BranchCubit>().load,
                     )
                   : const AppLoadingView(),

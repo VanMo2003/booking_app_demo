@@ -123,6 +123,7 @@ abstract final class BookingStrings {
   static const filterAll = 'Tất cả';
   static const deskSearchHint = 'Tên khách, số điện thoại hoặc mã đơn';
   static const deskEmpty = 'Không có đơn phù hợp';
+  static const deskEmptyHint = 'Khách đến trực tiếp? Tạo đơn tại quầy ngay.';
   static const walkInAction = 'Đặt tại quầy';
 
   // Đặt tại quầy

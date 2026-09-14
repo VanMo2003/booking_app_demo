@@ -7,7 +7,6 @@ import '../../../core/color/app_colors.dart';
 import '../../../core/component/component.dart';
 import '../../../core/di/injector.dart';
 import '../../../core/navigation/app_router.dart';
-import '../../../core/network/app_exception.dart';
 import '../../../core/style/style.dart';
 import '../../../core/text/app_strings.dart';
 import '../../../core/text/management_strings.dart';
@@ -111,8 +110,8 @@ class _ChainInfoScreenState extends State<ChainInfoScreen> {
         future: _detail,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return AppErrorView(
-              message: AppException.from(snapshot.error!).message,
+            return AppFailureView.fromError(
+              snapshot.error!,
               onRetry: () => setState(() => _detail = _load()),
             );
           }

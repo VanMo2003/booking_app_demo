@@ -6,7 +6,6 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/bloc/load_state.dart';
 import '../../../../core/enums/app_enums.dart';
-import '../../../../core/network/app_exception.dart';
 import '../../domain/entities/room.dart';
 import '../../domain/usecases/room_usecases.dart';
 
@@ -72,11 +71,17 @@ class RoomDetailCubit extends Cubit<RoomDetailState> {
       emit(state.copyWith(detail: state.detail.toSuccess(room)));
       if (state.hasDates) await _checkDates();
     } catch (error) {
-      if (!isClosed) {
-        emit(state.copyWith(detail: state.detail.toFailure(AppException.from(error).message)));
-      }
+      if (!isClosed) emit(state.copyWith(detail: state.detail.toError(error)));
     }
   }
+
+  /// Tải lại sau lỗi với phòng và khoảng ngày đang xem.
+  Future<void> retry() => load(
+        roomId: _roomId,
+        hotelId: _hotelId,
+        checkin: state.checkin,
+        checkout: state.checkout,
+      );
 
   Future<void> changeDates(DateTimeRange range) async {
     emit(state.copyWith(checkin: range.start, checkout: range.end));

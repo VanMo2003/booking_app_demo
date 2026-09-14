@@ -129,6 +129,12 @@ class BookingCreateCubit extends Cubit<BookingCreateState> {
     return _fetch();
   }
 
+  /// Tải lại chi tiết cơ sở sau lỗi.
+  Future<void> reload() {
+    emit(state.copyWith(detail: state.detail.toLoading()));
+    return _fetch();
+  }
+
   Future<void> changeDates(DateTimeRange range) {
     emit(state.copyWith(
       checkin: range.start,
@@ -153,11 +159,7 @@ class BookingCreateCubit extends Cubit<BookingCreateState> {
         ));
       }
     } catch (error) {
-      if (!isClosed) {
-        emit(state.copyWith(
-          detail: state.detail.toFailure(AppException.from(error).message),
-        ));
-      }
+      if (!isClosed) emit(state.copyWith(detail: state.detail.toError(error)));
     }
   }
 

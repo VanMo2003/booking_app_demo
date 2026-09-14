@@ -8,7 +8,6 @@ import '../../../core/bloc/load_state.dart';
 import '../../../core/color/app_colors.dart';
 import '../../../core/component/component.dart';
 import '../../../core/di/injector.dart';
-import '../../../core/network/app_exception.dart';
 import '../../../core/style/style.dart';
 import '../../../core/text/app_strings.dart';
 import '../../../core/text/management_strings.dart';
@@ -51,10 +50,7 @@ class CatalogCubit extends Cubit<CatalogState> {
       }
     } catch (error) {
       if (!isClosed && state.kind == kind) {
-        emit(CatalogState(
-          kind: kind,
-          items: state.items.toFailure(AppException.from(error).message),
-        ));
+        emit(CatalogState(kind: kind, items: state.items.toError(error)));
       }
     }
   }
@@ -80,6 +76,11 @@ class _CatalogView extends StatelessWidget {
   static String _kindLabel(CatalogKind kind) => switch (kind) {
         CatalogKind.roomType => ManagementStrings.roomTypes,
         CatalogKind.position => ManagementStrings.positions,
+      };
+
+  static String _addLabel(CatalogKind kind) => switch (kind) {
+        CatalogKind.roomType => ManagementStrings.addRoomType,
+        CatalogKind.position => ManagementStrings.addPosition,
       };
 
   Future<void> _openForm(BuildContext context, CatalogKind kind, {CatalogItem? item}) async {
@@ -122,9 +123,10 @@ class _CatalogView extends StatelessWidget {
       builder: (context, state) {
         final cubit = context.read<CatalogCubit>();
         final kind = state.kind;
+        final items = state.items.data;
         return AppPage(
           title: ManagementStrings.catalogTitle,
-          subtitle: state.items.hasData ? AppStrings.itemsCount(state.items.data!.length) : null,
+          subtitle: items == null ? null : AppStrings.itemsCount(items.length),
           actions: [
             IconButton(
               tooltip: AppStrings.refresh,
@@ -132,15 +134,14 @@ class _CatalogView extends StatelessWidget {
               icon: const Icon(Icons.refresh_rounded),
             ),
           ],
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => _openForm(context, kind),
-            icon: const Icon(Icons.add_rounded),
-            label: Text(
-              kind == CatalogKind.roomType
-                  ? ManagementStrings.addRoomType
-                  : ManagementStrings.addPosition,
-            ),
-          ),
+          // Danh mục trống thì nút thêm nằm ngay trong trạng thái rỗng.
+          floatingActionButton: items == null || items.isEmpty
+              ? null
+              : FloatingActionButton.extended(
+                  onPressed: () => _openForm(context, kind),
+                  icon: const Icon(Icons.add_rounded),
+                  label: Text(_addLabel(kind)),
+                ),
           body: Column(
             children: [
               const Gap(AppSpacing.xs),
@@ -156,9 +157,13 @@ class _CatalogView extends StatelessWidget {
                   state: state.items,
                   onRetry: cubit.load,
                   isEmpty: (items) => items.isEmpty,
-                  empty: const AppEmptyView(
-                    icon: Icons.category_outlined,
+                  empty: AppEmptyView(
+                    icon: kind == CatalogKind.roomType
+                        ? Icons.king_bed_outlined
+                        : Icons.work_outline_rounded,
                     title: ManagementStrings.catalogEmpty,
+                    addLabel: _addLabel(kind),
+                    onAdd: () => _openForm(context, kind),
                   ),
                   builder: (context, items) => RefreshIndicator(
                     onRefresh: cubit.load,

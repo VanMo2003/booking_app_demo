@@ -235,7 +235,7 @@ class _Section<T> extends StatelessWidget {
       );
     }
     if (state.isFailure) {
-      return AppErrorView(message: state.error!, onRetry: onRetry);
+      return AppFailureView.fromState(state, onRetry: onRetry, compact: true);
     }
     return const Padding(
       padding: EdgeInsets.symmetric(vertical: AppSpacing.xxxl),
