@@ -21,6 +21,7 @@ import '../domain/usecases/amenity_usecases.dart';
 
 /// Tiện ích của cơ sở: tiện ích chung và tiện ích gắn theo phòng.
 /// Danh sách lấy từ chi tiết cơ sở vì API theo cơ sở chỉ trả tiện ích chung.
+/// Quản trị viên chỉ xem.
 @RoutePage()
 class AmenitiesScreen extends StatelessWidget {
   const AmenitiesScreen({super.key, required this.hotelId});
@@ -107,9 +108,9 @@ class _AmenitiesViewState extends State<_AmenitiesView> {
 
   @override
   Widget build(BuildContext context) {
-    final canDelete = context.select(
-      (SessionCubit cubit) => cubit.state.role?.isManagerOrAbove ?? false,
-    );
+    final role = context.select((SessionCubit cubit) => cubit.state.role);
+    final canDelete = role?.isManagerOrAbove ?? false;
+    final canEdit = role?.canEditBranchContent ?? false;
     return BlocBuilder<BranchCubit, LoadState<HotelDetail>>(
       builder: (context, state) {
         final loaded = state.data;
@@ -117,7 +118,8 @@ class _AmenitiesViewState extends State<_AmenitiesView> {
           title: WorkspaceStrings.amenitiesTitle,
           subtitle: loaded?.hotel.name,
           // Danh sách đang xem trống thì nút thêm nằm ngay trong trạng thái rỗng.
-          floatingActionButton: loaded == null ||
+          floatingActionButton: !canEdit ||
+                  loaded == null ||
                   !loaded.hotel.amenities.any((amenity) => amenity.common == _common)
               ? null
               : FloatingActionButton.extended(
@@ -134,6 +136,14 @@ class _AmenitiesViewState extends State<_AmenitiesView> {
               final visible = _common ? common : byRoom;
               return Column(
                 children: [
+                  if (!canEdit)
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+                      child: NoticeBanner(
+                        text: WorkspaceStrings.readOnlyNotice,
+                        icon: Icons.visibility_outlined,
+                      ),
+                    ),
                   const Gap(AppSpacing.xs),
                   ChoiceChipBar<bool>(
                     options: const [true, false],
@@ -158,7 +168,7 @@ class _AmenitiesViewState extends State<_AmenitiesView> {
                                       ? WorkspaceStrings.amenitiesEmpty
                                       : WorkspaceStrings.amenitiesRoomEmpty,
                                   addLabel: WorkspaceStrings.addAmenity,
-                                  onAdd: () => _openForm(detail.rooms),
+                                  onAdd: canEdit ? () => _openForm(detail.rooms) : null,
                                 ),
                               ],
                             )
@@ -175,6 +185,7 @@ class _AmenitiesViewState extends State<_AmenitiesView> {
                                 final amenity = visible[index];
                                 return _AmenityTile(
                                   amenity: amenity,
+                                  editable: canEdit,
                                   canLink: detail.rooms.isNotEmpty,
                                   canDelete: canDelete,
                                   onTap: () => _openForm(detail.rooms, amenity: amenity),
@@ -206,6 +217,7 @@ class _AmenitiesViewState extends State<_AmenitiesView> {
 class _AmenityTile extends StatelessWidget {
   const _AmenityTile({
     required this.amenity,
+    required this.editable,
     required this.canLink,
     required this.canDelete,
     required this.onTap,
@@ -213,6 +225,9 @@ class _AmenityTile extends StatelessWidget {
   });
 
   final Amenity amenity;
+
+  /// `false` với quản trị viên: chỉ xem, không có menu sửa/gắn/xoá.
+  final bool editable;
   final bool canLink;
   final bool canDelete;
   final VoidCallback onTap;
@@ -223,8 +238,8 @@ class _AmenityTile extends StatelessWidget {
     final roomName = amenity.roomName ?? '';
     final tone = amenity.common ? StatusTone.brand : StatusTone.info;
     return AppCard(
-      onTap: onTap,
-      padding: const EdgeInsets.fromLTRB(14, 10, 4, 10),
+      onTap: editable ? onTap : null,
+      padding: EdgeInsets.fromLTRB(14, 10, editable ? 4 : 14, 10),
       child: Row(
         children: [
           Container(
@@ -260,26 +275,27 @@ class _AmenityTile extends StatelessWidget {
               ],
             ),
           ),
-          PopupMenuButton<_AmenityMenu>(
-            icon: const Icon(Icons.more_vert_rounded, color: AppColors.inkTertiary),
-            onSelected: onSelected,
-            itemBuilder: (_) => [
-              const PopupMenuItem(value: _AmenityMenu.edit, child: Text(AppStrings.edit)),
-              if (canLink)
-                const PopupMenuItem(
-                  value: _AmenityMenu.link,
-                  child: Text(WorkspaceStrings.linkToRoom),
-                ),
-              if (canDelete)
-                PopupMenuItem(
-                  value: _AmenityMenu.delete,
-                  child: Text(
-                    AppStrings.delete,
-                    style: AppTextStyles.body.colored(AppColors.danger),
+          if (editable)
+            PopupMenuButton<_AmenityMenu>(
+              icon: const Icon(Icons.more_vert_rounded, color: AppColors.inkTertiary),
+              onSelected: onSelected,
+              itemBuilder: (_) => [
+                const PopupMenuItem(value: _AmenityMenu.edit, child: Text(AppStrings.edit)),
+                if (canLink)
+                  const PopupMenuItem(
+                    value: _AmenityMenu.link,
+                    child: Text(WorkspaceStrings.linkToRoom),
                   ),
-                ),
-            ],
-          ),
+                if (canDelete)
+                  PopupMenuItem(
+                    value: _AmenityMenu.delete,
+                    child: Text(
+                      AppStrings.delete,
+                      style: AppTextStyles.body.colored(AppColors.danger),
+                    ),
+                  ),
+              ],
+            ),
         ],
       ),
     );

@@ -55,6 +55,13 @@ class _BranchFormScreenState extends State<BranchFormScreen> {
     final detail = await getIt<GetHotelChainDetail>()(widget.chainId);
     final managers = await getIt<GetChainManagers>()(detail, ownerUsername: _ownerUsername);
     if (managers.isEmpty && mounted) setState(() => _newManager = true);
+    // Cơ sở đầu tiên thường chính là khách sạn đã đăng ký — điền sẵn thông tin hồ sơ.
+    if (detail.hotels.isEmpty) {
+      if (_name.text.isEmpty) _name.text = detail.chain.name;
+      if (_address.text.isEmpty) _address.text = detail.chain.address;
+      if (_phone.text.isEmpty) _phone.text = detail.chain.phone;
+      if (_description.text.isEmpty) _description.text = detail.chain.description;
+    }
     return managers;
   }
 

@@ -343,6 +343,36 @@ class BrandMark extends StatelessWidget {
   }
 }
 
+/// Dải lưu ý nền màu theo tông: chế độ chỉ xem, giải thích quyền, ghi chú nghiệp vụ.
+class NoticeBanner extends StatelessWidget {
+  const NoticeBanner({
+    super.key,
+    required this.text,
+    this.icon = Icons.info_outline_rounded,
+    this.tone = StatusTone.info,
+  });
+
+  final String text;
+  final IconData icon;
+  final StatusTone tone;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = tone.colors;
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.sm),
+      decoration: BoxDecoration(color: colors.background, borderRadius: AppRadius.smAll),
+      child: IconText(
+        icon: icon,
+        iconColor: colors.foreground,
+        text: text,
+        maxLines: 4,
+        style: AppTextStyles.bodySmall.colored(colors.foreground),
+      ),
+    );
+  }
+}
+
 /// Vùng đầu trang nền xanh ngọc chuyển màu, bo tròn cạnh dưới.
 class GradientHeader extends StatelessWidget {
   const GradientHeader({

@@ -73,6 +73,14 @@ extension PayrollStatusTone on PayrollStatus {
       };
 }
 
+extension ApprovalStatusTone on ApprovalStatus {
+  StatusTone get tone => switch (this) {
+        ApprovalStatus.pending => StatusTone.warning,
+        ApprovalStatus.approved => StatusTone.success,
+        ApprovalStatus.rejected => StatusTone.danger,
+      };
+}
+
 extension RoleTone on Role {
   StatusTone get tone => switch (this) {
         Role.admin => StatusTone.danger,

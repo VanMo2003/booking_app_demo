@@ -33,7 +33,7 @@ class ServicesCubit extends LoadCubit<List<HotelService>> {
   Future<void> load() => guard(() => _getServices(_hotelId));
 }
 
-/// Dịch vụ tính thêm tiền của cơ sở.
+/// Dịch vụ tính thêm tiền của cơ sở. Quản trị viên chỉ xem.
 @RoutePage()
 class ServicesScreen extends StatelessWidget {
   const ServicesScreen({super.key, required this.hotelId});
@@ -84,16 +84,16 @@ class _ServicesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final canDelete = context.select(
-      (SessionCubit cubit) => cubit.state.role?.isManagerOrAbove ?? false,
-    );
+    final role = context.select((SessionCubit cubit) => cubit.state.role);
+    final canEdit = role?.canEditBranchContent ?? false;
+    final canDelete = canEdit && (role?.isManagerOrAbove ?? false);
     return BlocBuilder<ServicesCubit, LoadState<List<HotelService>>>(
       builder: (context, state) {
         final cubit = context.read<ServicesCubit>();
         return AppPage(
           title: WorkspaceStrings.servicesTitle,
           subtitle: state.hasData ? AppStrings.itemsCount(state.data!.length) : null,
-          floatingActionButton: state.data?.isEmpty ?? true
+          floatingActionButton: !canEdit || (state.data?.isEmpty ?? true)
               ? null
               : FloatingActionButton.extended(
                   onPressed: () => _openForm(context),
@@ -108,22 +108,28 @@ class _ServicesView extends StatelessWidget {
               icon: Icons.room_service_outlined,
               title: WorkspaceStrings.servicesEmpty,
               addLabel: WorkspaceStrings.addService,
-              onAdd: () => _openForm(context),
+              onAdd: canEdit ? () => _openForm(context) : null,
             ),
             builder: (context, services) => RefreshIndicator(
               onRefresh: cubit.load,
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, AppSpacing.bottomBarClearance),
                 children: [
-                  const IconText(
-                    icon: Icons.info_outline_rounded,
-                    text: WorkspaceStrings.servicePriceNote,
-                    maxLines: 2,
-                  ),
+                  if (canEdit)
+                    const IconText(
+                      icon: Icons.info_outline_rounded,
+                      text: WorkspaceStrings.servicePriceNote,
+                      maxLines: 2,
+                    )
+                  else
+                    const NoticeBanner(
+                      text: WorkspaceStrings.readOnlyNotice,
+                      icon: Icons.visibility_outlined,
+                    ),
                   const Gap(AppSpacing.sm),
                   for (final service in services) ...[
                     AppCard(
-                      onTap: () => _openForm(context, service: service),
+                      onTap: canEdit ? () => _openForm(context, service: service) : null,
                       padding: const EdgeInsets.fromLTRB(14, 12, 4, 12),
                       child: Row(
                         children: [

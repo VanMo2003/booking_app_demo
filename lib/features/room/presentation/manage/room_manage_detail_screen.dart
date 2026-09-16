@@ -38,6 +38,7 @@ class RoomAdminCubit extends LoadCubit<RoomDetail> {
 enum _RoomMenu { upload, amenities, delete }
 
 /// Chi tiết phòng phía cơ sở: ảnh, thông tin, tiện ích, đổi trạng thái.
+/// Quản trị viên chỉ xem.
 @RoutePage()
 class RoomManageDetailScreen extends StatelessWidget {
   const RoomManageDetailScreen({
@@ -133,9 +134,9 @@ class _RoomManageDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final canManage = context.select(
-      (SessionCubit cubit) => cubit.state.role?.isManagerOrAbove ?? false,
-    );
+    final role = context.select((SessionCubit cubit) => cubit.state.role);
+    final canManage = role?.isManagerOrAbove ?? false;
+    final canEdit = role?.canEditBranchContent ?? false;
     return BlocBuilder<RoomAdminCubit, LoadState<RoomDetail>>(
       builder: (context, state) {
         final room = state.data?.room;
@@ -147,7 +148,7 @@ class _RoomManageDetailView extends StatelessWidget {
               : ExploreStrings.roomTitle(room.roomNumber),
           subtitle: (room?.roomTypeName ?? '').isEmpty ? null : room!.roomTypeName,
           actions: [
-            if (room != null)
+            if (room != null && canEdit)
               PopupMenuButton<_RoomMenu>(
                 icon: const Icon(Icons.more_vert_rounded),
                 onSelected: (value) {
@@ -186,10 +187,10 @@ class _RoomManageDetailView extends StatelessWidget {
             onRetry: () => _reload(context),
             builder: (context, detail) => RefreshIndicator(
               onRefresh: () => _reload(context),
-              child: _RoomBody(detail: detail, hotelId: hotelId),
+              child: _RoomBody(detail: detail, hotelId: hotelId, canEdit: canEdit),
             ),
           ),
-          bottomBar: room == null
+          bottomBar: room == null || !canEdit
               ? null
               : BottomActionBar(
                   child: Row(
@@ -225,10 +226,11 @@ class _RoomManageDetailView extends StatelessWidget {
 }
 
 class _RoomBody extends StatelessWidget {
-  const _RoomBody({required this.detail, required this.hotelId});
+  const _RoomBody({required this.detail, required this.hotelId, required this.canEdit});
 
   final RoomDetail detail;
   final int hotelId;
+  final bool canEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -278,7 +280,7 @@ class _RoomBody extends StatelessWidget {
         const Gap(AppSpacing.lg),
         SectionHeader(
           title: ExploreStrings.roomAmenities,
-          actionLabel: WorkspaceStrings.manageAmenities,
+          actionLabel: canEdit ? WorkspaceStrings.manageAmenities : WorkspaceStrings.viewAmenities,
           onAction: () => context.router.push(AmenitiesRoute(hotelId: hotelId)),
         ),
         const Gap(AppSpacing.xs),

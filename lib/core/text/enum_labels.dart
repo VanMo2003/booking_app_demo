@@ -71,3 +71,11 @@ extension PayrollStatusLabel on PayrollStatus {
         PayrollStatus.rejected => 'Từ chối',
       };
 }
+
+extension ApprovalStatusLabel on ApprovalStatus {
+  String get label => switch (this) {
+        ApprovalStatus.pending => 'Chờ duyệt',
+        ApprovalStatus.approved => 'Đã duyệt',
+        ApprovalStatus.rejected => 'Từ chối',
+      };
+}

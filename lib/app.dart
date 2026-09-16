@@ -10,6 +10,8 @@ import 'core/text/auth_strings.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/session/session_cubit.dart';
 import 'features/favorite/presentation/favorites_cubit.dart';
+import 'features/notification/presentation/app_events_listener.dart';
+import 'features/notification/presentation/notification_badge_cubit.dart';
 
 class BookingApp extends StatefulWidget {
   const BookingApp({super.key});
@@ -28,6 +30,7 @@ class _BookingAppState extends State<BookingApp> {
       providers: [
         BlocProvider.value(value: session),
         BlocProvider.value(value: getIt<FavoritesCubit>()),
+        BlocProvider.value(value: getIt<NotificationBadgeCubit>()),
       ],
       child: BlocListener<SessionCubit, SessionState>(
         listenWhen: (previous, current) =>
@@ -37,15 +40,19 @@ class _BookingAppState extends State<BookingApp> {
           _router.replaceAll([const CustomerShellRoute()]);
           AppToast.infoGlobal(AuthStrings.sessionExpired);
         },
-        child: MaterialApp.router(
-          title: AppStrings.appName,
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.light,
-          routerConfig: _router.config(),
-          scaffoldMessengerKey: AppToast.messengerKey,
-          locale: const Locale('vi'),
-          supportedLocales: const [Locale('vi'), Locale('en')],
-          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+        // Thông báo đẩy, deep link từ email, kiểm tra thông báo mới định kỳ.
+        child: AppEventsListener(
+          router: _router,
+          child: MaterialApp.router(
+            title: AppStrings.appName,
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.light,
+            routerConfig: _router.config(),
+            scaffoldMessengerKey: AppToast.messengerKey,
+            locale: const Locale('vi'),
+            supportedLocales: const [Locale('vi'), Locale('en')],
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          ),
         ),
       ),
     );

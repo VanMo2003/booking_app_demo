@@ -6,12 +6,13 @@ nhập, app tự đưa người dùng tới khung làm việc của vai trò đ�
 
 | Vai trò | Thanh điều hướng | Việc chính |
 |---|---|---|
-| Khách chưa đăng nhập | Khám phá | Xem cơ sở, tìm phòng trống theo ngày, chi tiết phòng |
+| Khách chưa đăng nhập | Khám phá | Xem cơ sở, tìm phòng trống theo ngày, chi tiết phòng, đăng ký làm chủ khách sạn |
 | Khách hàng | Khám phá · Đơn của tôi · Yêu thích · Tài khoản | Đặt phòng, thanh toán VNPay, huỷ đơn, đánh giá, gắn hồ sơ từng đặt tại quầy |
 | Nhân viên | Quầy · Phòng · Khách · Thêm | Quầy lễ tân, đặt tại quầy, xác nhận/thu tiền/hoàn tất đơn, phòng, tiện ích, dịch vụ |
 | Quản lý cơ sở | Tổng quan · Quầy · Phòng · Báo cáo · Thêm | Như nhân viên, thêm nhân viên, bảng lương, thông tin cơ sở, báo cáo và xuất Excel |
-| Chủ khách sạn | Tổng quan · Cơ sở · Báo cáo · Thêm | Tạo chuỗi, mở/đóng cơ sở, giao quản lý, báo cáo toàn chuỗi, vào quản lý từng cơ sở |
-| Quản trị | Tổng quan · Tài khoản · Danh mục · Hệ thống | Tài khoản, loại phòng và chức vụ, tra cứu dữ liệu toàn hệ thống |
+| Chủ khách sạn (chờ duyệt) | Màn trạng thái hồ sơ | Theo dõi xét duyệt, sửa hồ sơ, gửi lại khi bị từ chối |
+| Chủ khách sạn (đã duyệt) | Tổng quan · Cơ sở · Báo cáo · Thêm | Tạo quản lý, mở/đóng cơ sở, báo cáo toàn chuỗi, vào quản lý từng cơ sở để thêm phòng, tiện ích, dịch vụ |
+| Quản trị | Tổng quan · Xét duyệt · Tài khoản · Danh mục · Hệ thống | Duyệt/từ chối chủ khách sạn, khoá/mở tài khoản, loại phòng và chức vụ, xem toàn bộ dữ liệu (không tạo tài khoản, phòng, tiện ích, dịch vụ) |
 
 ## Chạy app
 
@@ -33,7 +34,9 @@ flutter run --dart-define=API_BASE_URL=http://192.168.1.10:8080/booking-app/api/
 ```
 
 Mỗi khi sửa lớp có `@RoutePage`, `@injectable` hoặc `@RestApi`, chạy lại
-build_runner (hoặc để `dart run build_runner watch` chạy nền).
+build_runner (hoặc để `dart run build_runner watch` chạy nền). Thêm plugin có mã
+native (Firebase, app_links, connectivity_plus…) thì phải dừng hẳn app rồi
+`flutter run` lại — hot restart không nạp plugin mới.
 
 **Bản web:** BE chưa bật CORS trong Spring Security nên trình duyệt bị chặn ở
 preflight `OPTIONS` (401). Muốn chạy web, BE cần `http.cors(...)` và cho phép
@@ -44,7 +47,7 @@ preflight `OPTIONS` (401). Muốn chạy web, BE cần `http.cors(...)` và cho 
 
 ```
 lib/
-├── main.dart, app.dart   # DI, locale tiếng Việt, router, xử lý phiên hết hạn
+├── main.dart, app.dart   # DI, Firebase, locale tiếng Việt, router, phiên hết hạn, thông báo
 ├── core/
 │   ├── bloc/        # LoadState, LoadCubit, PagedCubit, ActionResult
 │   ├── color/       # AppColors — bảng màu duy nhất; StatusTone cho trạng thái
@@ -69,11 +72,58 @@ lib/
 
 Tính năng: `auth`, `splash`, `shell` (khung tab từng vai trò), `hotel`, `room`,
 `booking`, `payment`, `feedback`, `favorite`, `customer`, `amenity`, `service`,
-`employee`, `payroll`, `report`, `hotel_chain`, `account`, `catalog`, `admin`.
+`employee`, `payroll`, `report`, `hotel_chain`, `partner` (đăng ký và xét duyệt chủ
+khách sạn), `notification` (hộp thông báo, push, deep link), `account`, `catalog`, `admin`.
 
 Quy ước giao diện: màn hình không tự đặt mã màu, cỡ chữ hay câu chữ — lấy từ
 `core/color`, `core/style`, `core/text` và ghép từ `core/component`, để mọi màn
 đồng nhất và đổi thiết kế chỉ cần sửa một chỗ.
+
+## Đăng ký chủ khách sạn và xét duyệt
+
+1. Khách vãng lai vào tab **Tài khoản → Đăng ký chủ khách sạn** (`OwnerRegisterScreen`):
+   bước 1 tạo tài khoản, bước 2 nhập thông tin khách sạn → **Gửi đăng ký**.
+2. App đăng nhập luôn bằng tài khoản vừa tạo và mở **màn chờ duyệt**
+   (`OwnerStatusScreen`). Màn này tự hỏi lại máy chủ mỗi 30 giây, khi quay lại app và
+   khi có thông báo mới.
+3. Quản trị viên mở tab **Xét duyệt** (`OwnerApprovalsScreen`) → chi tiết hồ sơ →
+   **Duyệt** hoặc **Từ chối** kèm lý do.
+4. Chủ khách sạn nhận thông báo (trong app, push và email). Bị từ chối thì màn chờ
+   duyệt hiện lý do và nút **Cập nhật & gửi lại**; được duyệt thì app tự chuyển vào
+   khung chủ khách sạn.
+5. Mở app lại hoặc chạm nút trong email: phiên đăng nhập vẫn còn, `SessionNavigator`
+   hỏi lại trạng thái và đưa thẳng tới đúng màn.
+
+`SessionNavigator.goHome` chọn màn cho chủ khách sạn: chưa có chuỗi → gửi hồ sơ
+(`CreateChainScreen`), chưa duyệt → màn chờ duyệt, đã duyệt → `OwnerShellScreen`.
+
+Quản trị viên chỉ xem dữ liệu của cơ sở: màn Phòng, Tiện ích, Dịch vụ, Nhân viên ẩn
+nút thêm/sửa/xoá và hiện dải "Chế độ xem" (`Role.canEditBranchContent`).
+
+## Thông báo, push và deep link
+
+- **Trong app:** chuông ở đầu các màn quản trị/chờ duyệt (`NotificationBell`), hộp
+  thông báo `NotificationsScreen`. `AppEventsListener` (bọc `MaterialApp` trong
+  `app.dart`) đếm thông báo chưa đọc mỗi 45 giây và khi quay lại app, có thông báo
+  mới thì hiện toast — hoạt động cả khi chưa cấu hình Firebase và trên web.
+- **Push (Firebase Cloud Messaging):** `PushService` tự tắt nếu thiếu cấu hình. Để bật
+  trên Android:
+  1. Tạo project Firebase, thêm app Android package `com.example.booking_app_demo`.
+  2. Tải `google-services.json` đặt vào `android/app/` (plugin Google Services chỉ được
+     áp dụng khi file này tồn tại). Hoặc truyền `--dart-define=FIREBASE_API_KEY=… 
+     FIREBASE_APP_ID=… FIREBASE_MESSAGING_SENDER_ID=… FIREBASE_PROJECT_ID=…`.
+  3. Cấu hình `FIREBASE_CREDENTIALS` cho BE (xem README BE) rồi `flutter run` lại.
+  Sau khi đăng nhập, app xin quyền thông báo và gửi token lên `POST /notifications/devices`;
+  đăng xuất thì gỡ token. Web không nhận push, chỉ có thông báo trong app.
+- **Deep link `bookingapp://`:** khai báo trong `AndroidManifest.xml` và `Info.plist`,
+  nhận bằng `app_links` (`DeepLinkService`) và mở màn bằng `AppLinkNavigator`
+  (`owner-status`, `notifications`, `owner-registrations/{id}`). Email chứa link
+  `http(s)` tới trang `/app-links/...` của BE, trang đó chuyển sang `bookingapp://`.
+  Thử trên emulator:
+
+  ```bash
+  adb shell am start -W -a android.intent.action.VIEW -d "bookingapp://owner-status" com.example.booking_app_demo
+  ```
 
 ## Màn lỗi hệ thống, mất mạng, dữ liệu trống
 

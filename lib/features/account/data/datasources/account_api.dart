@@ -10,6 +10,7 @@ part 'account_api.g.dart';
 abstract class AccountApi {
   factory AccountApi(Dio dio, {String? baseUrl}) = _AccountApi;
 
+  /// Chủ khách sạn đã được duyệt tạo tài khoản quản lý.
   @POST('/accounts')
   Future<ApiResponse> create(@Body() Map<String, dynamic> body);
 
@@ -24,9 +25,6 @@ abstract class AccountApi {
 
   @GET('/accounts')
   Future<ApiResponse> getAll(@Query('page') int page, @Query('size') int size);
-
-  @DELETE('/accounts/{id}')
-  Future<ApiResponse> delete(@Path('id') String id);
 }
 
 @module

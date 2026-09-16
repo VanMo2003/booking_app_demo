@@ -2,6 +2,7 @@ abstract final class ValidationStrings {
   static const required = 'Không được để trống';
   static const selectOne = 'Chọn một giá trị';
   static const phone = 'Số điện thoại gồm 10 số, bắt đầu bằng 0';
+  static const email = 'Email không đúng định dạng';
   static const usernameLength = 'Tên đăng nhập tối thiểu 6 ký tự';
   static const usernameSpaces = 'Tên đăng nhập không được chứa dấu cách';
   static const passwordLength = 'Mật khẩu tối thiểu 6 ký tự';

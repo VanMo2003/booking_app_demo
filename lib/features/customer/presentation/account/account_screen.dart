@@ -12,6 +12,7 @@ import '../../../../core/text/app_strings.dart';
 import '../../../../core/text/auth_strings.dart';
 import '../../../../core/text/enum_labels.dart';
 import '../../../../core/text/explore_strings.dart';
+import '../../../../core/text/partner_strings.dart';
 import '../../../auth/domain/entities/session.dart';
 import '../../../auth/presentation/session/session_cubit.dart';
 import '../../../auth/presentation/session/session_navigator.dart';
@@ -90,6 +91,20 @@ class AccountScreen extends StatelessWidget {
                             icon: Icons.favorite_border_rounded,
                             title: ExploreStrings.tabFavorites,
                             onTap: () => tabs.setActiveIndex(2),
+                          ),
+                        ],
+                      ),
+                      const Gap(AppSpacing.md),
+                    ],
+                    if (session == null) ...[
+                      MenuGroup(
+                        title: PartnerStrings.groupPartner,
+                        children: [
+                          MenuTile(
+                            icon: Icons.add_business_outlined,
+                            title: PartnerStrings.becomeOwner,
+                            subtitle: PartnerStrings.becomeOwnerHint,
+                            onTap: () => context.rootRouter.push(const OwnerRegisterRoute()),
                           ),
                         ],
                       ),

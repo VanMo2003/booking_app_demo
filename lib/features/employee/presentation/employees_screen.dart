@@ -12,6 +12,7 @@ import '../../../core/text/app_strings.dart';
 import '../../../core/text/workspace_strings.dart';
 import '../../../core/utils/external_actions.dart';
 import '../../../core/utils/formatters.dart';
+import '../../auth/presentation/session/session_cubit.dart';
 import '../domain/entities/employee.dart';
 import '../domain/usecases/employee_usecases.dart';
 
@@ -33,7 +34,8 @@ class EmployeesCubit extends LoadCubit<List<Employee>> {
 
 enum _EmployeeAction { edit, call, delete }
 
-/// Nhân viên của cơ sở — quản lý trở lên.
+/// Nhân viên của cơ sở — quản lý trở lên. Quản trị viên chỉ xem (tạo nhân viên
+/// là tạo tài khoản đăng nhập).
 @RoutePage()
 class EmployeesScreen extends StatelessWidget {
   const EmployeesScreen({super.key, required this.hotelId});
@@ -61,29 +63,37 @@ class _EmployeesView extends StatelessWidget {
     if (saved == true && context.mounted) await context.read<EmployeesCubit>().load();
   }
 
-  Future<void> _showActions(BuildContext context, Employee employee) async {
-    final action = await AppDialogs.choose<_EmployeeAction>(
-      context,
-      title: employee.fullName,
-      choices: [
+  Future<void> _showActions(
+    BuildContext context,
+    Employee employee, {
+    required bool canEdit,
+  }) async {
+    final choices = [
+      if (canEdit)
         const AppChoice(
           value: _EmployeeAction.edit,
           label: WorkspaceStrings.editEmployee,
           icon: Icons.edit_outlined,
         ),
-        if (employee.phoneNumber.isNotEmpty)
-          AppChoice(
-            value: _EmployeeAction.call,
-            label: '${AppStrings.call} ${employee.phoneNumber}',
-            icon: Icons.call_outlined,
-          ),
+      if (employee.phoneNumber.isNotEmpty)
+        AppChoice(
+          value: _EmployeeAction.call,
+          label: '${AppStrings.call} ${employee.phoneNumber}',
+          icon: Icons.call_outlined,
+        ),
+      if (canEdit)
         const AppChoice(
           value: _EmployeeAction.delete,
           label: AppStrings.delete,
           icon: Icons.delete_outline_rounded,
           destructive: true,
         ),
-      ],
+    ];
+    if (choices.isEmpty) return;
+    final action = await AppDialogs.choose<_EmployeeAction>(
+      context,
+      title: employee.fullName,
+      choices: choices,
     );
     if (action == null || !context.mounted) return;
     switch (action) {
@@ -115,13 +125,16 @@ class _EmployeesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final canEdit = context.select(
+      (SessionCubit cubit) => cubit.state.role?.canEditBranchContent ?? false,
+    );
     return BlocBuilder<EmployeesCubit, LoadState<List<Employee>>>(
       builder: (context, state) {
         final cubit = context.read<EmployeesCubit>();
         return AppPage(
           title: WorkspaceStrings.employeesTitle,
           subtitle: state.hasData ? WorkspaceStrings.employeesCount(state.data!.length) : null,
-          floatingActionButton: state.data?.isEmpty ?? true
+          floatingActionButton: !canEdit || (state.data?.isEmpty ?? true)
               ? null
               : FloatingActionButton.extended(
                   onPressed: () => _openForm(context),
@@ -136,18 +149,27 @@ class _EmployeesView extends StatelessWidget {
               icon: Icons.badge_outlined,
               title: WorkspaceStrings.employeesEmpty,
               addLabel: WorkspaceStrings.addEmployee,
-              onAdd: () => _openForm(context),
+              onAdd: canEdit ? () => _openForm(context) : null,
             ),
             builder: (context, employees) => RefreshIndicator(
               onRefresh: cubit.load,
               child: ListView.separated(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, AppSpacing.bottomBarClearance),
-                itemCount: employees.length,
+                itemCount: employees.length + (canEdit ? 0 : 1),
                 separatorBuilder: (_, __) => const Gap(AppSpacing.xs),
-                itemBuilder: (context, index) => _EmployeeTile(
-                  employee: employees[index],
-                  onTap: () => _showActions(context, employees[index]),
-                ),
+                itemBuilder: (context, index) {
+                  if (!canEdit && index == 0) {
+                    return const NoticeBanner(
+                      text: WorkspaceStrings.readOnlyNotice,
+                      icon: Icons.visibility_outlined,
+                    );
+                  }
+                  final employee = employees[canEdit ? index : index - 1];
+                  return _EmployeeTile(
+                    employee: employee,
+                    onTap: () => _showActions(context, employee, canEdit: canEdit),
+                  );
+                },
               ),
             ),
           ),

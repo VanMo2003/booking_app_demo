@@ -19,13 +19,35 @@ abstract final class ErrorStrings {
   static const fileTooLarge = 'Ảnh quá lớn. Hãy chọn ảnh dung lượng nhỏ hơn.';
   static const platformUnsupported =
       'Thiết bị này chưa hỗ trợ thao tác. Hãy thử trên ứng dụng di động.';
+  static const usernameTaken = 'Tên đăng nhập đã tồn tại.';
+  static const ownerNotApproved =
+      'Tài khoản chủ khách sạn đang chờ quản trị viên duyệt.';
+  static const adminReadOnly =
+      'Quản trị viên chỉ được xem, không tạo hay sửa dữ liệu này.';
 
   /// Mẫu thông báo BE (so khớp không phân biệt hoa thường) → câu tiếng Việt.
   static const List<(String, String)> _known = [
     ('Incorrect account or password', wrongCredentials),
     ('Unauthenticated', unauthenticated),
     ('You do not have permission', forbidden),
-    ('Account existed with username', 'Tên đăng nhập đã tồn tại.'),
+    ('Account existed with username', usernameTaken),
+    ('Hotel owner account is not approved yet', ownerNotApproved),
+    ('Admin can only view this data', adminReadOnly),
+    ('Registration is not waiting for review', 'Hồ sơ này đã được xử lý trước đó.'),
+    (
+      'Registration has already been approved',
+      'Hồ sơ đã được duyệt nên không cần gửi lại.'
+    ),
+    (
+      'Hotel owner accounts must register',
+      'Chủ khách sạn tự đăng ký tài khoản đối tác trong ứng dụng.'
+    ),
+    ('Admin accounts cannot be created', forbidden),
+    ('Account role cannot be changed', 'Không thể đổi vai trò của tài khoản.'),
+    ('Only ADMIN can lock or unlock', forbidden),
+    ('Only the account holder can change', forbidden),
+    ('Hotel chain not found for this account', 'Tài khoản chưa có hồ sơ khách sạn.'),
+    ('Account already owns a hotel chain', 'Tài khoản đã có hồ sơ khách sạn.'),
     (
       'is already booked',
       'Phòng đã có người đặt trong khoảng ngày này. Hãy chọn phòng hoặc ngày khác.'
@@ -96,6 +118,11 @@ abstract final class ErrorStrings {
     'rating': 'Điểm đánh giá',
     'accountId': 'Tài khoản',
     'role': 'Vai trò',
+    'ownerName': 'Họ tên người đại diện',
+    'email': 'Email',
+    'hotelName': 'Tên khách sạn',
+    'description': 'Giới thiệu',
+    'reason': 'Lý do',
   };
 
   /// Chuyển thông báo thô của BE thành câu tiếng Việt cho người dùng.

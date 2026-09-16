@@ -193,4 +193,9 @@ abstract final class WorkspaceStrings {
   static const salaryLabel = 'Lương cơ bản';
   static const noUpcoming = 'Chưa có khách sắp đến';
   static String employeesCount(int n) => '$n nhân viên';
+
+  // Quản trị viên xem cơ sở
+  static const readOnlyNotice =
+      'Chế độ xem — quản trị viên không tạo, sửa hay xoá dữ liệu của cơ sở.';
+  static const viewAmenities = 'Xem tiện ích';
 }

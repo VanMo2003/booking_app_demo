@@ -10,6 +10,4 @@ abstract interface class AccountRepository {
   Future<Account> getById(String id);
 
   Future<Paged<Account>> getAll({required int page, required int size});
-
-  Future<void> delete(String id);
 }

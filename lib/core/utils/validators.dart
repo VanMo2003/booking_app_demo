@@ -23,6 +23,14 @@ abstract final class Validators {
     return _phonePattern.hasMatch(text) ? null : ValidationStrings.phone;
   }
 
+  static final RegExp _emailPattern = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+
+  static String? email(String? value) {
+    final text = value?.trim() ?? '';
+    if (text.isEmpty) return ValidationStrings.required;
+    return _emailPattern.hasMatch(text) ? null : ValidationStrings.email;
+  }
+
   static String? username(String? value) {
     final text = value?.trim() ?? '';
     if (text.isEmpty) return ValidationStrings.required;

@@ -15,6 +15,7 @@ import '../../data/models/hotel_chain_models.dart';
 import '../entities/hotel_chain.dart';
 import '../repositories/hotel_chain_repository.dart';
 
+/// Chuỗi mới luôn chờ quản trị viên duyệt, như lúc đăng ký chủ khách sạn.
 @injectable
 class CreateHotelChain {
   const CreateHotelChain(this._repository);
@@ -22,16 +23,11 @@ class CreateHotelChain {
   final HotelChainRepository _repository;
 
   Future<HotelChain> call({
-    required String name,
-    required String description,
+    required HotelChainProfile profile,
     required String ownerAccountId,
   }) =>
       _repository.create(
-        HotelChainRequest(
-          name: name.trim(),
-          description: description.trim(),
-          accountId: ownerAccountId,
-        ),
+        HotelChainRequest.fromProfile(profile, accountId: ownerAccountId),
       );
 }
 

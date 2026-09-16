@@ -27,7 +27,4 @@ class AccountRepositoryImpl implements AccountRepository {
   @override
   Future<Paged<Account>> getAll({required int page, required int size}) async =>
       (await _api.getAll(page, size)).parsePage(AccountModel.fromJson);
-
-  @override
-  Future<void> delete(String id) async => (await _api.delete(id)).ensureSuccess();
 }

@@ -5,6 +5,8 @@ export 'enum_labels.dart';
 export 'error_strings.dart';
 export 'explore_strings.dart';
 export 'management_strings.dart';
+export 'notification_strings.dart';
+export 'partner_strings.dart';
 export 'report_strings.dart';
 export 'state_strings.dart';
 export 'validation_strings.dart';

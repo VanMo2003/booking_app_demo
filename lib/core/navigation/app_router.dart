@@ -21,6 +21,9 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: ProfileSetupRoute.page),
         AutoRoute(page: ProfileEditRoute.page),
 
+        // Thông báo — mọi vai trò
+        AutoRoute(page: NotificationsRoute.page),
+
         // Khách vãng lai & khách hàng
         AutoRoute(
           page: CustomerShellRoute.page,
@@ -65,7 +68,12 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: PayrollRoute.page),
         AutoRoute(page: BranchInfoRoute.page),
 
-        // Chủ khách sạn
+        // Đối tác: đăng ký chủ khách sạn, chờ duyệt, sửa / gửi lại hồ sơ
+        AutoRoute(page: OwnerRegisterRoute.page),
+        AutoRoute(page: OwnerStatusRoute.page),
+        AutoRoute(page: OwnerProfileFormRoute.page),
+
+        // Chủ khách sạn (đã được duyệt)
         AutoRoute(page: CreateChainRoute.page),
         AutoRoute(
           page: OwnerShellRoute.page,
@@ -80,15 +88,17 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: ManagersRoute.page),
         AutoRoute(page: ChainInfoRoute.page),
 
-        // Quản trị hệ thống
+        // Quản trị hệ thống — xem và xét duyệt
         AutoRoute(
           page: AdminShellRoute.page,
           children: [
             AutoRoute(page: AdminOverviewRoute.page),
+            AutoRoute(page: OwnerApprovalsRoute.page),
             AutoRoute(page: AccountsRoute.page),
             AutoRoute(page: CatalogRoute.page),
             AutoRoute(page: SystemDataRoute.page),
           ],
         ),
+        AutoRoute(page: OwnerRegistrationDetailRoute.page),
       ];
 }

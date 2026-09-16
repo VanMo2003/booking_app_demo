@@ -35,7 +35,7 @@ class RoomsManageCubit extends LoadCubit<List<Room>> {
   Future<void> load() => guard(() => _getRooms(_hotelId));
 }
 
-/// Tab Phòng của không gian làm việc.
+/// Tab Phòng của không gian làm việc. Quản trị viên chỉ xem.
 @RoutePage()
 class RoomsManageScreen extends StatelessWidget {
   const RoomsManageScreen({super.key});
@@ -94,6 +94,7 @@ class _RoomsManageViewState extends State<_RoomsManageView> {
   @override
   Widget build(BuildContext context) {
     final branchName = context.branchName;
+    final canEdit = WorkspaceScope.of(context).role.canEditBranchContent;
     return BlocBuilder<RoomsManageCubit, LoadState<List<Room>>>(
       builder: (context, state) {
         final cubit = context.read<RoomsManageCubit>();
@@ -113,7 +114,7 @@ class _RoomsManageViewState extends State<_RoomsManageView> {
             ),
           ],
           // Khi chưa có phòng, nút thêm nằm ngay trong trạng thái rỗng.
-          floatingActionButton: rooms.isEmpty
+          floatingActionButton: rooms.isEmpty || !canEdit
               ? null
               : FloatingActionButton.extended(
                   onPressed: _addRoom,
@@ -122,6 +123,14 @@ class _RoomsManageViewState extends State<_RoomsManageView> {
                 ),
           body: Column(
             children: [
+              if (!canEdit)
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  child: NoticeBanner(
+                    text: WorkspaceStrings.readOnlyNotice,
+                    icon: Icons.visibility_outlined,
+                  ),
+                ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
                 child: AppSearchField(
@@ -151,9 +160,9 @@ class _RoomsManageViewState extends State<_RoomsManageView> {
                   empty: AppEmptyView(
                     icon: Icons.bed_outlined,
                     title: WorkspaceStrings.roomsEmpty,
-                    message: WorkspaceStrings.roomsEmptyHint,
+                    message: canEdit ? WorkspaceStrings.roomsEmptyHint : null,
                     addLabel: WorkspaceStrings.addRoom,
-                    onAdd: _addRoom,
+                    onAdd: canEdit ? _addRoom : null,
                   ),
                   builder: (context, _) => RefreshIndicator(
                     onRefresh: cubit.load,

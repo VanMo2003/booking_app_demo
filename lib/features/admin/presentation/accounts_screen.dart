@@ -13,11 +13,9 @@ import '../../../core/enums/app_enums.dart';
 import '../../../core/network/paged.dart';
 import '../../../core/style/style.dart';
 import '../../../core/text/app_strings.dart';
-import '../../../core/text/auth_strings.dart';
 import '../../../core/text/enum_labels.dart';
 import '../../../core/text/management_strings.dart';
 import '../../../core/utils/formatters.dart';
-import '../../../core/utils/validators.dart';
 import '../../account/domain/entities/account.dart';
 import '../../account/domain/usecases/account_usecases.dart';
 import '../../auth/presentation/session/session_cubit.dart';
@@ -33,7 +31,8 @@ class AccountsCubit extends PagedCubit<Account> {
       _getPage(page: page, size: size);
 }
 
-/// Tab Tài khoản của quản trị viên.
+/// Tab Tài khoản của quản trị viên: tra cứu và khoá/mở tài khoản. Quản trị viên
+/// không tạo tài khoản — chủ khách sạn tự đăng ký, quản lý do chủ khách sạn tạo.
 @RoutePage()
 class AccountsScreen extends StatelessWidget {
   const AccountsScreen({super.key});
@@ -71,18 +70,7 @@ class _AccountsViewState extends State<_AccountsView> {
         (query.isEmpty || account.username.toLowerCase().contains(query));
   }
 
-  Future<void> _create() async {
-    final created = await AppDialogs.sheet<bool>(
-      context,
-      title: ManagementStrings.createAccount,
-      builder: (_) => const AccountFormSheet(),
-    );
-    if (created != true || !mounted) return;
-    AppToast.success(context, ManagementStrings.accountSaved);
-    await context.read<AccountsCubit>().load();
-  }
-
-  Future<void> _edit(Account account) async {
+  Future<void> _review(Account account) async {
     final changed = await AppDialogs.sheet<bool>(
       context,
       title: ManagementStrings.editAccount,
@@ -106,13 +94,6 @@ class _AccountsViewState extends State<_AccountsView> {
               icon: const Icon(Icons.refresh_rounded),
             ),
           ],
-          floatingActionButton: state.status == ViewStatus.success && state.items.isEmpty
-              ? null
-              : FloatingActionButton.extended(
-                  onPressed: _create,
-                  icon: const Icon(Icons.person_add_alt_1_rounded),
-                  label: const Text(ManagementStrings.createAccount),
-                ),
           body: Column(
             children: [
               Padding(
@@ -136,14 +117,13 @@ class _AccountsViewState extends State<_AccountsView> {
                   onRefresh: cubit.load,
                   onLoadMore: cubit.loadMore,
                   filter: _matches,
-                  empty: AppEmptyView(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, AppSpacing.xl),
+                  empty: const AppEmptyView(
                     icon: Icons.manage_accounts_outlined,
                     title: ManagementStrings.accountsEmpty,
-                    addLabel: ManagementStrings.createAccount,
-                    onAdd: _create,
                   ),
                   itemBuilder: (context, account) => AppCard(
-                    onTap: () => _edit(account),
+                    onTap: () => _review(account),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     child: AccountSummaryRow(account: account),
                   ),
@@ -207,112 +187,7 @@ class AccountSummaryRow extends StatelessWidget {
   }
 }
 
-/// Tạo tài khoản quản trị / chủ khách sạn / quản lý. Trả `true` khi đã tạo.
-class AccountFormSheet extends StatefulWidget {
-  const AccountFormSheet({super.key, this.initialRole = Role.hotelOwner});
-
-  final Role initialRole;
-
-  @override
-  State<AccountFormSheet> createState() => _AccountFormSheetState();
-}
-
-class _AccountFormSheetState extends State<AccountFormSheet> {
-  static const _roles = [Role.hotelOwner, Role.hotelManager, Role.admin];
-
-  final _form = GlobalKey<FormState>();
-  final _username = TextEditingController();
-  final _password = TextEditingController();
-  late Role _role = widget.initialRole;
-  bool _saving = false;
-  String? _error;
-
-  @override
-  void dispose() {
-    _username.dispose();
-    _password.dispose();
-    super.dispose();
-  }
-
-  Future<void> _submit() async {
-    if (!_form.currentState!.validate()) return;
-    setState(() {
-      _saving = true;
-      _error = null;
-    });
-    final result = await runAction(
-      () => getIt<CreateAccount>()(
-        username: _username.text.trim(),
-        password: _password.text,
-        role: _role,
-      ),
-    );
-    if (!mounted) return;
-    if (result.isSuccess) {
-      Navigator.of(context).pop(true);
-    } else {
-      setState(() {
-        _saving = false;
-        _error = result.error;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: _form,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          AppTextField(
-            controller: _username,
-            label: AuthStrings.username,
-            helper: AuthStrings.usernameHint,
-            prefixIcon: Icons.person_outline_rounded,
-            textInputAction: TextInputAction.next,
-            validator: Validators.username,
-          ),
-          const Gap(AppSpacing.sm),
-          AppPasswordField(
-            controller: _password,
-            label: AuthStrings.password,
-            validator: Validators.password,
-          ),
-          const Gap(AppSpacing.sm),
-          AppDropdownField<Role>(
-            label: ManagementStrings.role,
-            prefixIcon: Icons.shield_outlined,
-            items: _roles,
-            value: _role,
-            itemLabel: (role) => role.label,
-            onChanged: (role) => setState(() => _role = role ?? _role),
-          ),
-          const Gap(AppSpacing.xs),
-          const IconText(
-            icon: Icons.info_outline_rounded,
-            text: ManagementStrings.staffAccountNote,
-            maxLines: 2,
-          ),
-          if (_error != null) ...[
-            const Gap(AppSpacing.sm),
-            Text(_error!, style: AppTextStyles.bodySmall.colored(AppColors.danger)),
-          ],
-          const Gap(AppSpacing.lg),
-          AppButton(
-            label: ManagementStrings.createAccount,
-            expand: true,
-            loading: _saving,
-            onPressed: _submit,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Đổi vai trò, khoá/mở hoặc xoá một tài khoản. Trả `true` khi có thay đổi.
+/// Khoá hoặc mở một tài khoản. Trả `true` khi có thay đổi.
 class AccountEditSheet extends StatefulWidget {
   const AccountEditSheet({super.key, required this.account});
 
@@ -323,60 +198,25 @@ class AccountEditSheet extends StatefulWidget {
 }
 
 class _AccountEditSheetState extends State<AccountEditSheet> {
-  late Role _role = widget.account.role;
   late bool _active = widget.account.active;
   bool _busy = false;
   String? _error;
 
-  /// Nhân viên và khách hàng có hồ sơ riêng — không đổi vai trò tại đây.
-  bool get _roleLocked =>
-      widget.account.role == Role.staff || widget.account.role == Role.customer;
-
-  List<Role> get _roles =>
-      {Role.admin, Role.hotelOwner, Role.hotelManager, widget.account.role}.toList();
-
   Future<void> _save() async {
+    if (_active == widget.account.active) {
+      Navigator.of(context).pop(false);
+      return;
+    }
     setState(() {
       _busy = true;
       _error = null;
     });
-    final account = widget.account;
     final result = await runAction(
-      () => getIt<UpdateAccount>()(
-        account.id,
-        role: _role == account.role ? null : _role,
-        active: _active == account.active ? null : _active,
-      ),
+      () => getIt<SetAccountActive>()(widget.account.id, active: _active),
     );
     if (!mounted) return;
     if (result.isSuccess) {
       AppToast.success(context, ManagementStrings.accountSaved);
-      Navigator.of(context).pop(true);
-    } else {
-      setState(() {
-        _busy = false;
-        _error = result.error;
-      });
-    }
-  }
-
-  Future<void> _delete() async {
-    final confirmed = await AppDialogs.confirm(
-      context,
-      title: AppStrings.deleteTitle,
-      message: AppStrings.deleteMessage(widget.account.username),
-      confirmLabel: AppStrings.delete,
-      destructive: true,
-    );
-    if (!confirmed || !mounted) return;
-    setState(() {
-      _busy = true;
-      _error = null;
-    });
-    final result = await runAction(() => getIt<DeleteAccount>()(widget.account.id));
-    if (!mounted) return;
-    if (result.isSuccess) {
-      AppToast.success(context, ManagementStrings.accountDeleted);
       Navigator.of(context).pop(true);
     } else {
       setState(() {
@@ -405,20 +245,10 @@ class _AccountEditSheetState extends State<AccountEditSheet> {
             maxLines: 3,
           )
         else ...[
-          AppDropdownField<Role>(
-            label: ManagementStrings.role,
-            prefixIcon: Icons.shield_outlined,
-            items: _roles,
-            value: _role,
-            enabled: !_roleLocked,
-            itemLabel: (role) => role.label,
-            onChanged: (role) => setState(() => _role = role ?? _role),
-          ),
-          const Gap(AppSpacing.xs),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             value: _active,
-            onChanged: (value) => setState(() => _active = value),
+            onChanged: _busy ? null : (value) => setState(() => _active = value),
             title: Text(ManagementStrings.accountActive, style: AppTextStyles.bodyMedium),
             subtitle: Text(ManagementStrings.accountStatusNote, style: AppTextStyles.caption),
           ),
@@ -426,26 +256,14 @@ class _AccountEditSheetState extends State<AccountEditSheet> {
             const Gap(AppSpacing.xs),
             Text(_error!, style: AppTextStyles.bodySmall.colored(AppColors.danger)),
           ],
+          const Gap(AppSpacing.sm),
+          const NoticeBanner(text: ManagementStrings.accountsReviewNote),
           const Gap(AppSpacing.md),
-          Row(
-            children: [
-              Expanded(
-                child: AppButton(
-                  variant: AppButtonVariant.dangerOutline,
-                  label: AppStrings.delete,
-                  icon: Icons.delete_outline_rounded,
-                  onPressed: _busy ? null : _delete,
-                ),
-              ),
-              const Gap(AppSpacing.sm),
-              Expanded(
-                child: AppButton(
-                  label: AppStrings.save,
-                  loading: _busy,
-                  onPressed: _save,
-                ),
-              ),
-            ],
+          AppButton(
+            label: AppStrings.save,
+            expand: true,
+            loading: _busy,
+            onPressed: _save,
           ),
         ],
       ],

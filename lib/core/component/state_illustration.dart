@@ -21,6 +21,18 @@ enum AppIllustrationType {
 
   /// Cần đăng nhập.
   login,
+
+  /// Hồ sơ đang chờ quản trị viên duyệt.
+  pending,
+
+  /// Hồ sơ đã được duyệt.
+  approved,
+
+  /// Hồ sơ bị từ chối.
+  rejected,
+
+  /// Hộp thông báo trống.
+  notifications,
 }
 
 /// Ảnh minh hoạ vẽ bằng widget, không cần file ảnh: nền tròn theo tông trạng thái,
@@ -156,6 +168,26 @@ class _IllustrationSpec {
         AppIllustrationType.login => const _IllustrationSpec(
             Icons.lock_outline_rounded,
             Icons.person_rounded,
+            StatusTone.brand,
+          ),
+        AppIllustrationType.pending => const _IllustrationSpec(
+            Icons.storefront_rounded,
+            Icons.hourglass_top_rounded,
+            StatusTone.warning,
+          ),
+        AppIllustrationType.approved => const _IllustrationSpec(
+            Icons.storefront_rounded,
+            Icons.check_rounded,
+            StatusTone.success,
+          ),
+        AppIllustrationType.rejected => const _IllustrationSpec(
+            Icons.assignment_late_outlined,
+            Icons.close_rounded,
+            StatusTone.danger,
+          ),
+        AppIllustrationType.notifications => const _IllustrationSpec(
+            Icons.notifications_none_rounded,
+            Icons.done_rounded,
             StatusTone.brand,
           ),
       };

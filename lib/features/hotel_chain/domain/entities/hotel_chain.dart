@@ -1,8 +1,10 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/enums/app_enums.dart';
 import '../../../hotel/domain/entities/hotel.dart';
 
-/// Chuỗi khách sạn — thuộc đúng một tài khoản chủ khách sạn.
+/// Chuỗi khách sạn — thuộc đúng một tài khoản chủ khách sạn. Kiêm hồ sơ đăng
+/// ký đối tác: thông tin liên hệ và trạng thái xét duyệt của quản trị viên.
 class HotelChain extends Equatable {
   const HotelChain({
     required this.id,
@@ -10,6 +12,15 @@ class HotelChain extends Equatable {
     this.description = '',
     this.pathImage,
     this.accountId,
+    this.ownerUsername,
+    this.ownerName = '',
+    this.email = '',
+    this.phone = '',
+    this.address = '',
+    this.approvalStatus = ApprovalStatus.approved,
+    this.rejectionReason,
+    this.submittedAt,
+    this.reviewedAt,
   });
 
   final int id;
@@ -17,9 +28,37 @@ class HotelChain extends Equatable {
   final String description;
   final String? pathImage;
   final String? accountId;
+  final String? ownerUsername;
+  final String ownerName;
+  final String email;
+  final String phone;
+  final String address;
+  final ApprovalStatus approvalStatus;
+
+  /// Lý do lần từ chối gần nhất — vẫn còn sau khi chủ khách sạn gửi lại hồ sơ.
+  final String? rejectionReason;
+  final DateTime? submittedAt;
+  final DateTime? reviewedAt;
+
+  bool get isApproved => approvalStatus == ApprovalStatus.approved;
 
   @override
-  List<Object?> get props => [id, name, description, pathImage, accountId];
+  List<Object?> get props => [
+        id,
+        name,
+        description,
+        pathImage,
+        accountId,
+        ownerUsername,
+        ownerName,
+        email,
+        phone,
+        address,
+        approvalStatus,
+        rejectionReason,
+        submittedAt,
+        reviewedAt,
+      ];
 }
 
 class HotelChainDetail extends Equatable {

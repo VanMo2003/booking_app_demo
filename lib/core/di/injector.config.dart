@@ -31,6 +31,10 @@ import 'package:booking_app_mobile/features/admin/presentation/admin_overview_sc
     as _i1048;
 import 'package:booking_app_mobile/features/admin/presentation/catalog_screen.dart'
     as _i1018;
+import 'package:booking_app_mobile/features/admin/presentation/owner_approvals_screen.dart'
+    as _i922;
+import 'package:booking_app_mobile/features/admin/presentation/owner_registration_detail_screen.dart'
+    as _i750;
 import 'package:booking_app_mobile/features/admin/presentation/system_data_screen.dart'
     as _i489;
 import 'package:booking_app_mobile/features/amenity/data/datasources/amenity_api.dart'
@@ -147,6 +151,34 @@ import 'package:booking_app_mobile/features/hotel_chain/domain/usecases/hotel_ch
     as _i782;
 import 'package:booking_app_mobile/features/hotel_chain/presentation/chain_cubits.dart'
     as _i1;
+import 'package:booking_app_mobile/features/notification/data/datasources/notification_api.dart'
+    as _i367;
+import 'package:booking_app_mobile/features/notification/data/repositories/notification_repository_impl.dart'
+    as _i247;
+import 'package:booking_app_mobile/features/notification/domain/repositories/notification_repository.dart'
+    as _i129;
+import 'package:booking_app_mobile/features/notification/domain/usecases/notification_usecases.dart'
+    as _i398;
+import 'package:booking_app_mobile/features/notification/presentation/notification_badge_cubit.dart'
+    as _i534;
+import 'package:booking_app_mobile/features/notification/presentation/notifications_screen.dart'
+    as _i25;
+import 'package:booking_app_mobile/features/notification/services/deep_link_service.dart'
+    as _i847;
+import 'package:booking_app_mobile/features/notification/services/notification_events.dart'
+    as _i622;
+import 'package:booking_app_mobile/features/notification/services/push_service.dart'
+    as _i966;
+import 'package:booking_app_mobile/features/partner/data/datasources/partner_api.dart'
+    as _i635;
+import 'package:booking_app_mobile/features/partner/data/repositories/partner_repository_impl.dart'
+    as _i867;
+import 'package:booking_app_mobile/features/partner/domain/repositories/partner_repository.dart'
+    as _i479;
+import 'package:booking_app_mobile/features/partner/domain/usecases/partner_usecases.dart'
+    as _i387;
+import 'package:booking_app_mobile/features/partner/presentation/owner_register_cubit.dart'
+    as _i1026;
 import 'package:booking_app_mobile/features/payment/data/datasources/payment_api.dart'
     as _i219;
 import 'package:booking_app_mobile/features/payment/data/repositories/payment_repository_impl.dart'
@@ -232,6 +264,8 @@ extension GetItInjectableX on _i174.GetIt {
     final feedbackApiModule = _$FeedbackApiModule();
     final hotelApiModule = _$HotelApiModule();
     final hotelChainApiModule = _$HotelChainApiModule();
+    final notificationApiModule = _$NotificationApiModule();
+    final partnerApiModule = _$PartnerApiModule();
     final paymentApiModule = _$PaymentApiModule();
     final payrollApiModule = _$PayrollApiModule();
     final roomApiModule = _$RoomApiModule();
@@ -246,6 +280,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i432.SessionEvents(),
       dispose: (i) => i.dispose(),
     );
+    gh.lazySingleton<_i847.DeepLinkService>(() => _i847.DeepLinkService());
+    gh.lazySingleton<_i622.NotificationEvents>(
+        () => _i622.NotificationEvents());
     gh.lazySingleton<_i381.PayrollSessionStore>(
         () => _i381.PayrollSessionStore());
     gh.lazySingleton<_i774.AppPreferences>(
@@ -285,6 +322,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => hotelApiModule.hotelApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i502.HotelChainApi>(
         () => hotelChainApiModule.hotelChainApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i367.NotificationApi>(
+        () => notificationApiModule.notificationApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i635.PartnerApi>(
+        () => partnerApiModule.partnerApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i219.PaymentApi>(
         () => paymentApiModule.paymentApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i981.PayrollApi>(
@@ -293,6 +334,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => roomApiModule.roomApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i17.ServiceApi>(
         () => serviceApiModule.serviceApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i479.PartnerRepository>(
+        () => _i867.PartnerRepositoryImpl(gh<_i635.PartnerApi>()));
     gh.lazySingleton<_i797.ReportRemoteDataSource>(
         () => _i797.ReportRemoteDataSource(gh<_i361.Dio>()));
     gh.lazySingleton<_i900.FeedbackRepository>(
@@ -369,6 +412,22 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i406.IsBookingReviewed(gh<_i900.FeedbackRepository>()));
     gh.lazySingleton<_i1057.HotelChainRepository>(
         () => _i430.HotelChainRepositoryImpl(gh<_i502.HotelChainApi>()));
+    gh.factory<_i387.RegisterOwner>(
+        () => _i387.RegisterOwner(gh<_i479.PartnerRepository>()));
+    gh.factory<_i387.RefreshOwnerStatus>(
+        () => _i387.RefreshOwnerStatus(gh<_i479.PartnerRepository>()));
+    gh.factory<_i387.ResubmitOwnerProfile>(
+        () => _i387.ResubmitOwnerProfile(gh<_i479.PartnerRepository>()));
+    gh.factory<_i387.GetOwnerRegistrations>(
+        () => _i387.GetOwnerRegistrations(gh<_i479.PartnerRepository>()));
+    gh.factory<_i387.GetOwnerRegistration>(
+        () => _i387.GetOwnerRegistration(gh<_i479.PartnerRepository>()));
+    gh.factory<_i387.ApproveOwner>(
+        () => _i387.ApproveOwner(gh<_i479.PartnerRepository>()));
+    gh.factory<_i387.RejectOwner>(
+        () => _i387.RejectOwner(gh<_i479.PartnerRepository>()));
+    gh.factory<_i387.CountPendingOwners>(
+        () => _i387.CountPendingOwners(gh<_i479.PartnerRepository>()));
     gh.lazySingleton<_i12.ReportRepository>(
         () => _i903.ReportRepositoryImpl(gh<_i797.ReportRemoteDataSource>()));
     gh.lazySingleton<_i545.PaymentRepository>(
@@ -404,6 +463,8 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i412.FavoriteStore>(),
           gh<_i642.SessionCubit>(),
         ));
+    gh.lazySingleton<_i922.PendingOwnersCubit>(
+        () => _i922.PendingOwnersCubit(gh<_i387.CountPendingOwners>()));
     gh.factory<_i358.GetBranchServices>(
         () => _i358.GetBranchServices(gh<_i324.HotelServiceRepository>()));
     gh.factory<_i358.SaveService>(
@@ -414,16 +475,14 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i275.GetAccountsPage(gh<_i654.AccountRepository>()));
     gh.factory<_i275.GetAccount>(
         () => _i275.GetAccount(gh<_i654.AccountRepository>()));
-    gh.factory<_i275.CreateAccount>(
-        () => _i275.CreateAccount(gh<_i654.AccountRepository>()));
-    gh.factory<_i275.UpdateAccount>(
-        () => _i275.UpdateAccount(gh<_i654.AccountRepository>()));
-    gh.factory<_i275.DeleteAccount>(
-        () => _i275.DeleteAccount(gh<_i654.AccountRepository>()));
+    gh.factory<_i275.SetAccountActive>(
+        () => _i275.SetAccountActive(gh<_i654.AccountRepository>()));
     gh.factory<_i728.BranchCubit>(
         () => _i728.BranchCubit(gh<_i672.GetHotelDetail>()));
     gh.factory<_i1019.HotelDetailCubit>(
         () => _i1019.HotelDetailCubit(gh<_i672.GetHotelDetail>()));
+    gh.lazySingleton<_i129.NotificationRepository>(
+        () => _i247.NotificationRepositoryImpl(gh<_i367.NotificationApi>()));
     gh.factory<_i109.LoadBranchDashboard>(() => _i109.LoadBranchDashboard(
           gh<_i12.ReportRepository>(),
           gh<_i299.BookingRepository>(),
@@ -466,6 +525,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i320.DeleteEmployee(gh<_i83.EmployeeRepository>()));
     gh.factory<_i320.GetEmployeesPage>(
         () => _i320.GetEmployeesPage(gh<_i83.EmployeeRepository>()));
+    gh.factory<_i750.OwnerRegistrationCubit>(
+        () => _i750.OwnerRegistrationCubit(gh<_i387.GetOwnerRegistration>()));
     gh.factory<_i836.LoginCubit>(() => _i836.LoginCubit(
           gh<_i856.Login>(),
           gh<_i642.SessionCubit>(),
@@ -535,12 +596,31 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i823.CustomerBookingsCubit(gh<_i750.GetBranchBookings>()));
     gh.factory<_i134.SavePayroll>(
         () => _i134.SavePayroll(gh<_i625.PayrollRepository>()));
+    gh.factory<_i1026.OwnerRegisterCubit>(() => _i1026.OwnerRegisterCubit(
+          gh<_i387.RegisterOwner>(),
+          gh<_i856.Login>(),
+          gh<_i642.SessionCubit>(),
+        ));
     gh.factory<_i508.RoomsManageCubit>(
         () => _i508.RoomsManageCubit(gh<_i643.GetBranchRooms>()));
     gh.factory<_i836.RegisterCubit>(() => _i836.RegisterCubit(
           gh<_i856.RegisterCustomer>(),
           gh<_i642.SessionCubit>(),
         ));
+    gh.factory<_i398.GetNotificationsPage>(
+        () => _i398.GetNotificationsPage(gh<_i129.NotificationRepository>()));
+    gh.factory<_i398.GetUnreadNotificationCount>(() =>
+        _i398.GetUnreadNotificationCount(gh<_i129.NotificationRepository>()));
+    gh.factory<_i398.MarkNotificationRead>(
+        () => _i398.MarkNotificationRead(gh<_i129.NotificationRepository>()));
+    gh.factory<_i398.MarkAllNotificationsRead>(() =>
+        _i398.MarkAllNotificationsRead(gh<_i129.NotificationRepository>()));
+    gh.factory<_i398.RegisterPushDevice>(
+        () => _i398.RegisterPushDevice(gh<_i129.NotificationRepository>()));
+    gh.factory<_i398.UnregisterPushDevice>(
+        () => _i398.UnregisterPushDevice(gh<_i129.NotificationRepository>()));
+    gh.factory<_i922.OwnerRegistrationsCubit>(
+        () => _i922.OwnerRegistrationsCubit(gh<_i387.GetOwnerRegistrations>()));
     gh.factory<_i782.CreateHotelChain>(
         () => _i782.CreateHotelChain(gh<_i1057.HotelChainRepository>()));
     gh.factory<_i782.UpdateHotelChain>(
@@ -555,6 +635,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i999.BranchCustomersCubit(gh<_i57.GetBranchCustomers>()));
     gh.factory<_i785.RoomAdminCubit>(
         () => _i785.RoomAdminCubit(gh<_i643.GetRoomDetail>()));
+    gh.lazySingleton<_i966.PushService>(() => _i966.PushService(
+          gh<_i398.RegisterPushDevice>(),
+          gh<_i398.UnregisterPushDevice>(),
+        ));
     gh.factory<_i102.PayrollCubit>(() => _i102.PayrollCubit(
           gh<_i320.GetBranchEmployees>(),
           gh<_i134.SavePayroll>(),
@@ -572,6 +656,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i811.MyBookingsCubit>(() => _i811.MyBookingsCubit(
           gh<_i750.GetCustomerBookings>(),
           gh<_i642.SessionCubit>(),
+        ));
+    gh.factory<_i25.NotificationsCubit>(() => _i25.NotificationsCubit(
+          gh<_i398.GetNotificationsPage>(),
+          gh<_i398.MarkNotificationRead>(),
+          gh<_i398.MarkAllNotificationsRead>(),
         ));
     gh.factory<_i978.ReportsCubit>(() => _i978.ReportsCubit(
           gh<_i109.LoadRevenueReport>(),
@@ -594,6 +683,11 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i57.FindCustomersByPhone>(),
           gh<_i57.CreateWalkInCustomer>(),
         ));
+    gh.lazySingleton<_i534.NotificationBadgeCubit>(
+        () => _i534.NotificationBadgeCubit(
+              gh<_i398.GetUnreadNotificationCount>(),
+              gh<_i398.GetNotificationsPage>(),
+            ));
     gh.factory<_i41.EmployeesCubit>(
         () => _i41.EmployeesCubit(gh<_i320.GetBranchEmployees>()));
     gh.factory<_i955.RoomDetailCubit>(() => _i955.RoomDetailCubit(
@@ -641,6 +735,10 @@ class _$FeedbackApiModule extends _i621.FeedbackApiModule {}
 class _$HotelApiModule extends _i1009.HotelApiModule {}
 
 class _$HotelChainApiModule extends _i502.HotelChainApiModule {}
+
+class _$NotificationApiModule extends _i367.NotificationApiModule {}
+
+class _$PartnerApiModule extends _i635.PartnerApiModule {}
 
 class _$PaymentApiModule extends _i219.PaymentApiModule {}
 

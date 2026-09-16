@@ -22,6 +22,10 @@ enum Role {
       this == Role.admin || this == Role.hotelOwner || this == Role.hotelManager;
 
   bool get isBackOffice => this != Role.customer;
+
+  /// Quản trị viên chỉ xem và xét duyệt — không tạo, sửa, xoá phòng, tiện ích,
+  /// dịch vụ hay nhân viên của cơ sở.
+  bool get canEditBranchContent => this != Role.admin;
 }
 
 enum BookingStatus {
@@ -115,4 +119,35 @@ enum PayrollStatus {
   const PayrollStatus(this.value);
 
   final String value;
+}
+
+/// Trạng thái xét duyệt hồ sơ chủ khách sạn (`HotelChain.approvalStatus`).
+enum ApprovalStatus {
+  pending('PENDING'),
+  approved('APPROVED'),
+  rejected('REJECTED');
+
+  const ApprovalStatus(this.value);
+
+  final String value;
+
+  /// Chuỗi tạo trước khi có quy trình duyệt không mang trạng thái — coi như đã duyệt.
+  static ApprovalStatus parse(String? raw) =>
+      ApprovalStatus.values.firstWhereOrNull((e) => e.value == raw) ??
+      ApprovalStatus.approved;
+}
+
+enum NotificationType {
+  ownerRegistered('OWNER_REGISTERED'),
+  ownerApproved('OWNER_APPROVED'),
+  ownerRejected('OWNER_REJECTED'),
+  other('');
+
+  const NotificationType(this.value);
+
+  final String value;
+
+  static NotificationType parse(String? raw) =>
+      NotificationType.values.firstWhereOrNull((e) => e.value == raw) ??
+      NotificationType.other;
 }

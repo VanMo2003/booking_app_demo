@@ -8,15 +8,17 @@ import '../../../core/color/app_colors.dart';
 import '../../../core/color/status_colors.dart';
 import '../../../core/component/component.dart';
 import '../../../core/di/injector.dart';
-import '../../../core/enums/app_enums.dart';
 import '../../../core/style/style.dart';
 import '../../../core/text/app_strings.dart';
 import '../../../core/text/management_strings.dart';
+import '../../../core/text/partner_strings.dart';
 import '../../../core/utils/formatters.dart';
 import '../../auth/presentation/session/session_cubit.dart';
 import '../../auth/presentation/session/session_navigator.dart';
+import '../../notification/presentation/notification_bell.dart';
 import '../domain/usecases/load_system_overview.dart';
 import 'accounts_screen.dart';
+import 'owner_approvals_screen.dart';
 
 @injectable
 class SystemOverviewCubit extends LoadCubit<SystemOverview> {
@@ -26,6 +28,13 @@ class SystemOverviewCubit extends LoadCubit<SystemOverview> {
 
   @override
   Future<void> load() => guard(() => _loadOverview());
+}
+
+/// Vị trí các tab trong khung quản trị (khớp `AdminShellScreen`).
+abstract final class _AdminTab {
+  static const approvals = 1;
+  static const accounts = 2;
+  static const system = 4;
 }
 
 /// Tab Tổng quan của quản trị viên.
@@ -56,15 +65,10 @@ class _AdminOverviewView extends StatelessWidget {
     if (confirmed && context.mounted) await SessionNavigator.logout(context);
   }
 
-  Future<void> _createOwner(BuildContext context) async {
-    final created = await AppDialogs.sheet<bool>(
-      context,
-      title: ManagementStrings.createOwner,
-      builder: (_) => const AccountFormSheet(initialRole: Role.hotelOwner),
-    );
-    if (created != true || !context.mounted) return;
-    AppToast.success(context, ManagementStrings.accountSaved);
+  Future<void> _refresh(BuildContext context) async {
+    final pending = context.read<PendingOwnersCubit>();
     await context.read<SystemOverviewCubit>().load();
+    await pending.refresh();
   }
 
   @override
@@ -73,10 +77,9 @@ class _AdminOverviewView extends StatelessWidget {
     final onDarkMuted = AppColors.onPrimary.withValues(alpha: 0.82);
     return BlocBuilder<SystemOverviewCubit, LoadState<SystemOverview>>(
       builder: (context, state) {
-        final cubit = context.read<SystemOverviewCubit>();
         return Scaffold(
           body: RefreshIndicator(
-            onRefresh: cubit.load,
+            onRefresh: () => _refresh(context),
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
@@ -102,6 +105,7 @@ class _AdminOverviewView extends StatelessWidget {
                           ],
                         ),
                       ),
+                      const NotificationBell(onDark: true),
                       IconButton(
                         tooltip: AppStrings.logout,
                         onPressed: () => _logout(context),
@@ -113,7 +117,7 @@ class _AdminOverviewView extends StatelessWidget {
                 if (state.isLoading && state.hasData) const LinearProgressIndicator(minHeight: 2),
                 Padding(
                   padding: AppSpacing.page,
-                  child: _content(context, state, cubit),
+                  child: _content(context, state),
                 ),
               ],
             ),
@@ -123,24 +127,26 @@ class _AdminOverviewView extends StatelessWidget {
     );
   }
 
-  Widget _content(
-    BuildContext context,
-    LoadState<SystemOverview> state,
-    SystemOverviewCubit cubit,
-  ) {
+  Widget _content(BuildContext context, LoadState<SystemOverview> state) {
     final data = state.data;
     if (data == null) {
       return state.isFailure
-          ? AppFailureView.fromState(state, onRetry: cubit.load)
+          ? AppFailureView.fromState(state, onRetry: () => _refresh(context))
           : const Padding(
               padding: EdgeInsets.only(top: AppSpacing.xxl),
               child: AppLoadingView(),
             );
     }
     final tabs = AutoTabsRouter.of(context);
+    final pending = context.watch<PendingOwnersCubit>().state;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        _PendingOwnersCard(
+          count: pending,
+          onReview: () => tabs.setActiveIndex(_AdminTab.approvals),
+        ),
+        const Gap(AppSpacing.md),
         IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -150,7 +156,7 @@ class _AdminOverviewView extends StatelessWidget {
                   label: ManagementStrings.countAccounts,
                   value: Fmt.number(data.accounts),
                   icon: Icons.manage_accounts_outlined,
-                  onTap: () => tabs.setActiveIndex(1),
+                  onTap: () => tabs.setActiveIndex(_AdminTab.accounts),
                 ),
               ),
               const Gap(AppSpacing.sm),
@@ -160,7 +166,7 @@ class _AdminOverviewView extends StatelessWidget {
                   value: Fmt.number(data.chains),
                   icon: Icons.apartment_rounded,
                   tone: StatusTone.warning,
-                  onTap: () => tabs.setActiveIndex(3),
+                  onTap: () => tabs.setActiveIndex(_AdminTab.system),
                 ),
               ),
             ],
@@ -177,7 +183,7 @@ class _AdminOverviewView extends StatelessWidget {
                   value: Fmt.number(data.branches),
                   icon: Icons.storefront_outlined,
                   tone: StatusTone.info,
-                  onTap: () => tabs.setActiveIndex(3),
+                  onTap: () => tabs.setActiveIndex(_AdminTab.system),
                 ),
               ),
               const Gap(AppSpacing.sm),
@@ -187,7 +193,7 @@ class _AdminOverviewView extends StatelessWidget {
                   value: Fmt.number(data.customers),
                   icon: Icons.groups_outlined,
                   tone: StatusTone.success,
-                  onTap: () => tabs.setActiveIndex(3),
+                  onTap: () => tabs.setActiveIndex(_AdminTab.system),
                 ),
               ),
             ],
@@ -199,20 +205,13 @@ class _AdminOverviewView extends StatelessWidget {
           value: Fmt.number(data.employees),
           icon: Icons.badge_outlined,
           tone: StatusTone.neutral,
-          onTap: () => tabs.setActiveIndex(3),
-        ),
-        const Gap(AppSpacing.lg),
-        AppButton.tonal(
-          label: ManagementStrings.createOwner,
-          icon: Icons.person_add_alt_1_rounded,
-          expand: true,
-          onPressed: () => _createOwner(context),
+          onTap: () => tabs.setActiveIndex(_AdminTab.system),
         ),
         const Gap(AppSpacing.lg),
         SectionHeader(
           title: ManagementStrings.recentAccounts,
           actionLabel: AppStrings.seeAll,
-          onAction: () => tabs.setActiveIndex(1),
+          onAction: () => tabs.setActiveIndex(_AdminTab.accounts),
         ),
         const Gap(AppSpacing.sm),
         if (data.recentAccounts.isEmpty)
@@ -230,6 +229,67 @@ class _AdminOverviewView extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+/// Việc chính của quản trị viên: hồ sơ chủ khách sạn đang chờ duyệt.
+class _PendingOwnersCard extends StatelessWidget {
+  const _PendingOwnersCard({required this.count, required this.onReview});
+
+  final int count;
+  final VoidCallback onReview;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasPending = count > 0;
+    final colors = (hasPending ? StatusTone.warning : StatusTone.success).colors;
+    return AppCard(
+      onTap: onReview,
+      borderColor: hasPending ? colors.foreground.withValues(alpha: 0.35) : null,
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: colors.background,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              hasPending ? Icons.fact_check_outlined : Icons.task_alt_rounded,
+              color: colors.foreground,
+            ),
+          ),
+          const Gap(AppSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  hasPending ? PartnerStrings.pendingCount(count) : PartnerStrings.noPending,
+                  style: AppTextStyles.bodyStrong,
+                ),
+                Text(
+                  hasPending ? PartnerStrings.pendingCountHint : PartnerStrings.noPendingHint,
+                  style: AppTextStyles.caption,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+          const Gap(AppSpacing.xs),
+          if (hasPending)
+            AppButton(
+              label: PartnerStrings.reviewNow,
+              size: AppButtonSize.small,
+              onPressed: onReview,
+            )
+          else
+            const Icon(Icons.chevron_right_rounded, color: AppColors.inkTertiary),
+        ],
+      ),
     );
   }
 }

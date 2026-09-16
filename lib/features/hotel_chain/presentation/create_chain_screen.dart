@@ -10,12 +10,13 @@ import '../../../core/navigation/app_router.dart';
 import '../../../core/style/style.dart';
 import '../../../core/text/app_strings.dart';
 import '../../../core/text/management_strings.dart';
-import '../../../core/utils/validators.dart';
 import '../../auth/presentation/session/session_cubit.dart';
 import '../../auth/presentation/session/session_navigator.dart';
+import '../../partner/presentation/widgets/hotel_profile_fields.dart';
 import '../domain/usecases/hotel_chain_usecases.dart';
 
-/// Chủ khách sạn chưa có chuỗi: tạo chuỗi trước khi mở cơ sở.
+/// Chủ khách sạn chưa có chuỗi (ví dụ đã xoá chuỗi cũ): gửi hồ sơ khách sạn
+/// mới và chờ quản trị viên duyệt như lúc đăng ký.
 @RoutePage()
 class CreateChainScreen extends StatefulWidget {
   const CreateChainScreen({super.key});
@@ -26,19 +27,18 @@ class CreateChainScreen extends StatefulWidget {
 
 class _CreateChainScreenState extends State<CreateChainScreen> {
   final _form = GlobalKey<FormState>();
-  final _name = TextEditingController();
-  final _description = TextEditingController();
+  final _fields = HotelProfileControllers();
   bool _saving = false;
 
   @override
   void dispose() {
-    _name.dispose();
-    _description.dispose();
+    _fields.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
     if (!_form.currentState!.validate()) return;
+    FocusScope.of(context).unfocus();
     final sessionCubit = context.read<SessionCubit>();
     final session = sessionCubit.session;
     final accountId = session?.resolvedAccountId;
@@ -49,8 +49,7 @@ class _CreateChainScreenState extends State<CreateChainScreen> {
     setState(() => _saving = true);
     final result = await runAction(
       () => getIt<CreateHotelChain>()(
-        name: _name.text,
-        description: _description.text,
+        profile: _fields.toProfile(),
         ownerAccountId: accountId,
       ),
     );
@@ -63,7 +62,7 @@ class _CreateChainScreenState extends State<CreateChainScreen> {
     await sessionCubit.update(session.copyWith(hotelChain: result.value));
     if (!mounted) return;
     AppToast.success(context, ManagementStrings.chainCreated);
-    await context.router.replaceAll([const OwnerShellRoute()]);
+    await context.router.replaceAll([const OwnerStatusRoute()]);
   }
 
   Future<void> _logout() async {
@@ -128,26 +127,11 @@ class _CreateChainScreenState extends State<CreateChainScreen> {
                   children: [
                     Text(ManagementStrings.createChainTitle, style: AppTextStyles.title),
                     const Gap(AppSpacing.md),
-                    AppTextField(
-                      controller: _name,
-                      label: ManagementStrings.chainName,
-                      prefixIcon: Icons.apartment_rounded,
-                      textCapitalization: TextCapitalization.words,
-                      textInputAction: TextInputAction.next,
-                      validator: Validators.required(),
-                    ),
-                    const Gap(AppSpacing.sm),
-                    AppTextField(
-                      controller: _description,
-                      label: ManagementStrings.chainDescription,
-                      minLines: 3,
-                      maxLines: 6,
-                      textCapitalization: TextCapitalization.sentences,
-                    ),
+                    HotelProfileFields(fields: _fields),
                     const Gap(AppSpacing.lg),
                     AppButton(
                       label: ManagementStrings.createChainAction,
-                      icon: Icons.add_business_rounded,
+                      icon: Icons.send_rounded,
                       expand: true,
                       loading: _saving,
                       onPressed: _submit,

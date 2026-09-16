@@ -5,6 +5,12 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Thông báo đẩy: tải google-services.json từ Firebase console đặt vào thư mục này.
+// Chưa có file thì app vẫn build và chạy, thông báo chỉ hiện trong app.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+}
+
 android {
     namespace = "com.example.booking_app_demo"
     compileSdk = flutter.compileSdkVersion

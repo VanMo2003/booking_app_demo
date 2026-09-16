@@ -6,15 +6,15 @@ abstract final class ManagementStrings {
   static const tabReports = 'Báo cáo';
   static const tabMore = 'Thêm';
 
-  // Tạo chuỗi
-  static const createChainTitle = 'Tạo chuỗi khách sạn';
-  static const createChainHeadline = 'Bắt đầu với chuỗi của bạn';
+  // Gửi hồ sơ chuỗi (chủ khách sạn chưa có chuỗi, ví dụ sau khi xoá chuỗi cũ)
+  static const createChainTitle = 'Hồ sơ khách sạn';
+  static const createChainHeadline = 'Hoàn tất hồ sơ khách sạn';
   static const createChainSubtitle =
-      'Đặt tên chuỗi, sau đó mở các cơ sở và giao cho quản lý.';
+      'Tài khoản chưa có khách sạn. Gửi thông tin để quản trị viên xét duyệt trước khi bạn mở cơ sở.';
   static const chainName = 'Tên chuỗi';
   static const chainDescription = 'Giới thiệu';
-  static const createChainAction = 'Tạo chuỗi';
-  static const chainCreated = 'Đã tạo chuỗi khách sạn';
+  static const createChainAction = 'Gửi hồ sơ xét duyệt';
+  static const chainCreated = 'Đã gửi hồ sơ, đang chờ xét duyệt';
 
   // Tổng quan chuỗi
   static String branchesCount(int n) => '$n cơ sở';
@@ -66,7 +66,7 @@ abstract final class ManagementStrings {
   static const chainSaved = 'Đã lưu thông tin chuỗi';
   static const deleteChain = 'Xoá chuỗi khách sạn';
   static const deleteChainMessage =
-      'Xoá chuỗi và mọi cơ sở bên trong. Không thể hoàn tác.';
+      'Xoá chuỗi và mọi cơ sở bên trong. Muốn kinh doanh lại, bạn cần gửi hồ sơ mới để được duyệt.';
   static const dangerZone = 'Vùng nguy hiểm';
 
   // Quản trị — điều hướng
@@ -83,19 +83,16 @@ abstract final class ManagementStrings {
   static const countCustomers = 'Khách hàng';
   static const countEmployees = 'Nhân viên';
   static const recentAccounts = 'Tài khoản mới tạo';
-  static const createOwner = 'Tạo tài khoản chủ khách sạn';
 
   // Quản trị — tài khoản
   static const accountsTitle = 'Tài khoản';
-  static const createAccount = 'Tạo tài khoản';
-  static const editAccount = 'Cập nhật tài khoản';
-  static const role = 'Vai trò';
+  static const editAccount = 'Khoá / mở tài khoản';
   static const accountActive = 'Đang hoạt động';
   static const accountLocked = 'Đã khoá';
   static const accountStatusNote =
       'Lưu ý: máy chủ chưa chặn đăng nhập với tài khoản bị khoá.';
-  static const staffAccountNote =
-      'Tài khoản nhân viên được tạo trong màn Nhân viên của từng cơ sở.';
+  static const accountsReviewNote =
+      'Quản trị viên chỉ xem và khoá/mở tài khoản. Chủ khách sạn tự đăng ký và chờ duyệt ở tab Xét duyệt; quản lý và nhân viên do chủ khách sạn tạo.';
   static const accountSaved = 'Đã lưu tài khoản';
   static const accountsEmpty = 'Chưa có tài khoản';
 
@@ -125,8 +122,7 @@ abstract final class ManagementStrings {
   static const noManagersYet =
       'Chưa có tài khoản quản lý nào — chọn "Tạo tài khoản quản lý mới".';
   static const searchUsername = 'Tìm theo tên đăng nhập';
-  static const accountDeleted = 'Đã xoá tài khoản';
   static const cannotEditSelf =
-      'Đây là tài khoản đang đăng nhập — không đổi vai trò, khoá hay xoá tại đây.';
+      'Đây là tài khoản đang đăng nhập — không khoá được tại đây.';
   static String createdOn(String date) => 'Tạo ngày $date';
 }

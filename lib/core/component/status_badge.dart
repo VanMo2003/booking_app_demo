@@ -35,6 +35,9 @@ class StatusBadge extends StatelessWidget {
   factory StatusBadge.payroll(PayrollStatus status, {bool dense = false}) =>
       StatusBadge(label: status.label, tone: status.tone, dense: dense);
 
+  factory StatusBadge.approval(ApprovalStatus status, {bool dense = false}) =>
+      StatusBadge(label: status.label, tone: status.tone, dense: dense);
+
   final String label;
   final StatusTone tone;
   final IconData? icon;

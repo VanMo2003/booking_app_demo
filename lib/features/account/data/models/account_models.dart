@@ -32,15 +32,13 @@ class AccountCreateRequest {
       };
 }
 
-/// Không gửi mật khẩu: BE hiện lưu mật khẩu cập nhật mà không mã hoá.
+/// Quản trị viên chỉ khoá/mở tài khoản — vai trò không đổi được.
 class AccountUpdateRequest {
-  const AccountUpdateRequest({this.role, this.active});
+  const AccountUpdateRequest({this.active});
 
-  final Role? role;
   final bool? active;
 
   Map<String, dynamic> toJson() => {
-        if (role != null) 'role': role!.value,
         if (active != null) 'status': active,
       };
 }
