@@ -195,12 +195,10 @@ class _RoomManageDetailView extends StatelessWidget {
               : BottomActionBar(
                   child: Row(
                     children: [
-                      Expanded(
-                        child: AppButton.secondary(
-                          label: AppStrings.edit,
-                          icon: Icons.edit_outlined,
-                          onPressed: () => _edit(context, room),
-                        ),
+                      AppButton.secondary(
+                        label: AppStrings.edit,
+                        icon: Icons.edit_outlined,
+                        onPressed: () => _edit(context, room),
                       ),
                       if (canToggle) ...[
                         const Gap(AppSpacing.sm),
