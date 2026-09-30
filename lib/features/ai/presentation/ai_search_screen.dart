@@ -160,14 +160,21 @@ class _Examples extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const GroupLabel(AiStrings.examplesTitle),
+        // Thẻ thay vì chip: câu mẫu dài vẫn xuống dòng, không bị cắt trên màn hẹp.
         for (final example in AiStrings.examples) ...[
-          ActionChip(
-            avatar: const Icon(Icons.north_west_rounded, size: 16),
-            label: Text(example),
-            onPressed: () => onPick(example),
+          AppCard(
+            onTap: () => onPick(example),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: IconText(
+              icon: Icons.north_west_rounded,
+              iconColor: AppColors.primary,
+              text: example,
+              maxLines: 3,
+              style: AppTextStyles.bodyMedium,
+            ),
           ),
           const Gap(AppSpacing.xs),
         ],

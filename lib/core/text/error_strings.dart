@@ -89,6 +89,14 @@ abstract final class ErrorStrings {
       'AI assistant is unavailable',
       'Trợ lý AI đang bận hoặc chưa được bật trên máy chủ. Thử lại sau.'
     ),
+    (
+      'AI model is overloaded',
+      'Máy chủ AI của Google đang quá tải. Thử lại sau ít phút.'
+    ),
+    (
+      'AI quota exceeded',
+      'Đã hết lượt AI miễn phí (theo phút hoặc theo ngày). Thử lại sau.'
+    ),
     ('Too many AI requests', 'Bạn dùng AI hơi nhiều, thử lại sau vài phút nhé.'),
     ("The guest hasn't written anything yet", 'Khách chưa gửi tin nào để trả lời.'),
     ('Invalid signature', 'Kết quả thanh toán không hợp lệ.'),

@@ -72,7 +72,8 @@ lib/
 
 Tính năng: `auth`, `splash`, `shell` (khung tab từng vai trò), `hotel`, `room`,
 `booking`, `payment`, `feedback`, `favorite`, `customer`, `amenity`, `service`,
-`dish` (thực đơn món ăn), `chat` (nhắn tin khách ↔ cơ sở), `employee`, `payroll`, `report`, `hotel_chain`, `partner` (đăng ký và xét duyệt chủ
+`dish` (thực đơn món ăn), `chat` (nhắn tin khách ↔ cơ sở), `ai` (tìm phòng bằng AI, trợ lý lễ tân),
+`employee`, `payroll`, `report`, `hotel_chain`, `partner` (đăng ký và xét duyệt chủ
 khách sạn), `notification` (hộp thông báo, push, deep link), `account`, `catalog`, `admin`.
 
 Quy ước giao diện: màn hình không tự đặt mã màu, cỡ chữ hay câu chữ — lấy từ
@@ -116,6 +117,21 @@ nút thêm/sửa/xoá và hiện dải "Chế độ xem" (`Role.canEditBranchCon
   hiện đỏ, chạm để gửi lại hoặc xoá.
 - Chạy bản web sau proxy: proxy phải chuyển tiếp cả WebSocket (header `Upgrade`), không thì màn chat
   hiện dải "Đang kết nối lại" (gửi tin vẫn được).
+
+## Tính năng AI
+
+App không giữ API key: mọi lời gọi AI đi qua BE (mặc định Google Gemini, gói miễn phí — xem README
+của BE). Lúc mở app, `AiAvailability` hỏi `GET /ai/status`; máy chủ chưa có key thì mọi nút AI tự ẩn.
+
+- **Tìm phòng bằng AI** (`AiSearchScreen`): ô "Hỏi AI tìm phòng" dưới ô tìm kiếm ở trang Khám phá.
+  Gõ câu tự nhiên → màn hiện điều kiện AI hiểu được (ngày, số khách, giá, khu vực, tiện ích), ghi chú
+  điều kiện bị bỏ và các cơ sở phù hợp kèm số phòng trống, giá từ; chạm để mở cơ sở với đúng ngày.
+- **Trợ lý lễ tân trong chat** (phía cơ sở):
+  - Nút ✨ cạnh ô nhập tin: AI soạn bản nháp vào ô, người dùng sửa rồi mới gửi.
+  - Đầu **Tin nhắn khách hàng**: chủ khách sạn / quản lý bật **Trợ lý AI tự trả lời** (`AiAutoReplyBar`);
+    nhân viên chỉ thấy dải báo đang bật.
+  - Tin AI gửi mang nhãn "✨ Trợ lý AI"; cuộc AI đã chuyển cho nhân viên có nhãn **Cần nhân viên** ở
+    hộp thư và dải lý do trong màn chat (khách không thấy).
 
 ## Thực đơn món ăn
 
