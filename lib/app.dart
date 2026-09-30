@@ -9,6 +9,7 @@ import 'core/text/app_strings.dart';
 import 'core/text/auth_strings.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/session/session_cubit.dart';
+import 'features/chat/presentation/chat_hub.dart';
 import 'features/favorite/presentation/favorites_cubit.dart';
 import 'features/notification/presentation/app_events_listener.dart';
 import 'features/notification/presentation/notification_badge_cubit.dart';
@@ -31,6 +32,7 @@ class _BookingAppState extends State<BookingApp> {
         BlocProvider.value(value: session),
         BlocProvider.value(value: getIt<FavoritesCubit>()),
         BlocProvider.value(value: getIt<NotificationBadgeCubit>()),
+        BlocProvider.value(value: getIt<ChatUnreadCubit>()),
       ],
       child: BlocListener<SessionCubit, SessionState>(
         listenWhen: (previous, current) =>

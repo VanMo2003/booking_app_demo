@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show DateUtils;
 import 'package:intl/intl.dart';
 
 /// Định dạng hiển thị: tiền VND, ngày theo kiểu Việt Nam, phần trăm.
@@ -38,6 +39,23 @@ abstract final class Fmt {
 
   static String dateTime(DateTime? d) =>
       d == null ? '' : DateFormat('HH:mm · dd/MM/yyyy').format(d);
+
+  /// "14:05"
+  static String time(DateTime d) => DateFormat('HH:mm').format(d);
+
+  /// Mốc thời gian gọn cho danh sách tin nhắn: "14:05", "Hôm qua", "T5",
+  /// "02/10", "02/10/25".
+  static String chatTime(DateTime? d, {DateTime? now}) {
+    if (d == null) return '';
+    final today = DateUtils.dateOnly(now ?? DateTime.now());
+    final day = DateUtils.dateOnly(d);
+    final days = today.difference(day).inDays;
+    if (days <= 0) return time(d);
+    if (days == 1) return 'Hôm qua';
+    if (days < 7) return _weekdayShort(d.weekday);
+    if (d.year == today.year) return DateFormat('dd/MM').format(d);
+    return DateFormat('dd/MM/yy').format(d);
+  }
 
   /// Định dạng gửi lên API: "2026-10-02".
   static String apiDate(DateTime d) => DateFormat('yyyy-MM-dd').format(d);

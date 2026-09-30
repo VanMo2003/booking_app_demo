@@ -5,7 +5,9 @@ import 'package:flutter/widgets.dart';
 import '../../../core/component/feedback.dart';
 import '../../../core/di/injector.dart';
 import '../../../core/navigation/app_router.dart';
+import '../../ai/domain/usecases/ai_usecases.dart';
 import '../../auth/presentation/session/session_cubit.dart';
+import '../../chat/presentation/chat_hub.dart';
 import '../services/app_link.dart';
 import '../services/deep_link_service.dart';
 import '../services/notification_events.dart';
@@ -17,7 +19,8 @@ import 'notification_badge_cubit.dart';
 /// - vừa đăng nhập: đăng ký thiết bị nhận push, đếm thông báo chưa đọc;
 /// - app đang mở: có thông báo mới (push, hoặc kiểm tra định kỳ khi không có
 ///   Firebase) thì hiện toast và báo các màn liên quan tải lại;
-/// - chạm thông báo / mở link từ email: tới đúng màn.
+/// - chạm thông báo / mở link từ email: tới đúng màn;
+/// - kênh chat realtime mở/đóng theo phiên và theo app đang mở hay chạy nền.
 class AppEventsListener extends StatefulWidget {
   const AppEventsListener({super.key, required this.router, required this.child});
 
@@ -35,6 +38,7 @@ class _AppEventsListenerState extends State<AppEventsListener> with WidgetsBindi
   final _badge = getIt<NotificationBadgeCubit>();
   final _push = getIt<PushService>();
   final _events = getIt<NotificationEvents>();
+  final _chat = getIt<ChatHub>();
   final _subscriptions = <StreamSubscription<Object?>>[];
   late final _links = AppLinkNavigator(widget.router, _session);
   Timer? _poll;
@@ -53,6 +57,8 @@ class _AppEventsListenerState extends State<AppEventsListener> with WidgetsBindi
     final initialLink = _push.takeInitialLink();
     if (initialLink != null) _openLink(initialLink);
     _onSession(_session.state);
+    // Máy chủ có bật AI không — để hiện/ẩn các nút AI.
+    getIt<AiAvailability>().refresh();
   }
 
   @override
@@ -69,6 +75,7 @@ class _AppEventsListenerState extends State<AppEventsListener> with WidgetsBindi
     final username = state.session?.username;
     if (username == _signedInUser) return;
     _signedInUser = username;
+    _chat.onSession(state.session);
     _poll?.cancel();
     _poll = null;
     _badge.reset();
@@ -86,6 +93,13 @@ class _AppEventsListenerState extends State<AppEventsListener> with WidgetsBindi
   }
 
   void _onForegroundMessage(PushMessage message) {
+    if (AppLink.parse(message.link) case ChatLink(:final conversationId)) {
+      // Tin nhắn chỉ được đẩy khi kênh chat đang ngắt; đang xem đúng cuộc đó thì bỏ qua toast.
+      getIt<ChatUnreadCubit>().refresh();
+      if (_chat.isViewing(conversationId)) return;
+      AppToast.infoGlobal(message.body.isEmpty ? message.title : '${message.title}: ${message.body}');
+      return;
+    }
     _badge.refresh();
     if (message.title.isNotEmpty) AppToast.infoGlobal(message.title);
     _events.notifyChanged();
@@ -93,6 +107,7 @@ class _AppEventsListenerState extends State<AppEventsListener> with WidgetsBindi
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    _chat.onLifecycle(state);
     if (state != AppLifecycleState.resumed || _signedInUser == null) return;
     _checkForNew();
     _events.notifyChanged();

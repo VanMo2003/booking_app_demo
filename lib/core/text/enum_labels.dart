@@ -72,6 +72,17 @@ extension PayrollStatusLabel on PayrollStatus {
       };
 }
 
+extension DishCategoryLabel on DishCategory {
+  String get label => switch (this) {
+        DishCategory.appetizer => 'Khai vị',
+        DishCategory.mainCourse => 'Món chính',
+        DishCategory.sideDish => 'Món phụ',
+        DishCategory.dessert => 'Tráng miệng',
+        DishCategory.drink => 'Đồ uống',
+        DishCategory.other => 'Khác',
+      };
+}
+
 extension ApprovalStatusLabel on ApprovalStatus {
   String get label => switch (this) {
         ApprovalStatus.pending => 'Chờ duyệt',

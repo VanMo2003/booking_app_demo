@@ -26,6 +26,9 @@ enum Role {
   /// Quản trị viên chỉ xem và xét duyệt — không tạo, sửa, xoá phòng, tiện ích,
   /// dịch vụ hay nhân viên của cơ sở.
   bool get canEditBranchContent => this != Role.admin;
+
+  /// Thực đơn do chủ khách sạn và quản lý cơ sở soạn; nhân viên, quản trị viên chỉ xem.
+  bool get canManageMenu => this == Role.hotelOwner || this == Role.hotelManager;
 }
 
 enum BookingStatus {
@@ -135,6 +138,38 @@ enum ApprovalStatus {
   static ApprovalStatus parse(String? raw) =>
       ApprovalStatus.values.firstWhereOrNull((e) => e.value == raw) ??
       ApprovalStatus.approved;
+}
+
+/// Nhóm món trên thực đơn, theo thứ tự đọc thực đơn (`Dish.category`).
+enum DishCategory {
+  appetizer('APPETIZER'),
+  mainCourse('MAIN_COURSE'),
+  sideDish('SIDE_DISH'),
+  dessert('DESSERT'),
+  drink('DRINK'),
+  other('OTHER');
+
+  const DishCategory(this.value);
+
+  final String value;
+
+  static DishCategory parse(String? raw) =>
+      DishCategory.values.firstWhereOrNull((e) => e.value == raw) ??
+      DishCategory.other;
+}
+
+/// Hai phía của một cuộc trò chuyện: khách hàng, hoặc cả đội ngũ cơ sở (chủ
+/// khách sạn, quản lý, nhân viên dùng chung một hộp thư).
+enum ChatSide {
+  customer('CUSTOMER'),
+  hotel('HOTEL');
+
+  const ChatSide(this.value);
+
+  final String value;
+
+  static ChatSide parse(String? raw) =>
+      ChatSide.values.firstWhereOrNull((e) => e.value == raw) ?? ChatSide.customer;
 }
 
 enum NotificationType {

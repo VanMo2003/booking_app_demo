@@ -6,11 +6,13 @@ import '../../../core/color/app_colors.dart';
 import '../../../core/component/component.dart';
 import '../../../core/di/injector.dart';
 import '../../../core/navigation/app_router.dart';
+import '../../../core/text/chat_strings.dart';
 import '../../../core/text/management_strings.dart';
 import '../../auth/presentation/session/session_cubit.dart';
+import '../../chat/presentation/chat_entry.dart';
 import '../../hotel_chain/presentation/chain_cubits.dart';
 
-/// Khung cho chủ khách sạn: Tổng quan · Cơ sở · Báo cáo · Thêm.
+/// Khung cho chủ khách sạn: Tổng quan · Cơ sở · Báo cáo · Tin nhắn · Thêm.
 @RoutePage()
 class OwnerShellScreen extends StatelessWidget {
   const OwnerShellScreen({super.key});
@@ -29,6 +31,7 @@ class OwnerShellScreen extends StatelessWidget {
           ChainOverviewRoute(),
           ChainBranchesRoute(),
           ChainReportsRoute(),
+          ChatInboxRoute(),
           OwnerMoreRoute(),
         ],
         transitionBuilder: (context, child, animation) =>
@@ -59,6 +62,11 @@ class OwnerShellScreen extends StatelessWidget {
                     icon: Icon(Icons.insights_outlined),
                     selectedIcon: Icon(Icons.insights_rounded),
                     label: ManagementStrings.tabReports,
+                  ),
+                  NavigationDestination(
+                    icon: ChatBadge(child: Icon(Icons.chat_bubble_outline_rounded)),
+                    selectedIcon: ChatBadge(child: Icon(Icons.chat_bubble_rounded)),
+                    label: ChatStrings.tabChats,
                   ),
                   NavigationDestination(
                     icon: Icon(Icons.grid_view_outlined),

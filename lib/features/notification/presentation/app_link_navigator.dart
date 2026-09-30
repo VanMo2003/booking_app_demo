@@ -6,6 +6,7 @@ import '../../../core/navigation/app_router.dart';
 import '../../auth/domain/entities/session.dart';
 import '../../auth/presentation/session/session_cubit.dart';
 import '../../auth/presentation/session/session_navigator.dart';
+import '../../chat/presentation/chat_hub.dart';
 import '../../partner/domain/usecases/partner_usecases.dart';
 import '../services/app_link.dart';
 
@@ -31,6 +32,13 @@ class AppLinkNavigator {
       case OwnerRegistrationLink(:final chainId):
         if (session?.role == Role.admin) {
           await _router.push(OwnerRegistrationDetailRoute(chainId: chainId));
+        }
+      case ChatLink(:final conversationId):
+        if (session == null) {
+          await _router.push(LoginRoute());
+        } else if (session.role != Role.admin &&
+            !getIt<ChatHub>().isViewing(conversationId)) {
+          await _router.push(ChatRoute(conversationId: conversationId));
         }
     }
   }

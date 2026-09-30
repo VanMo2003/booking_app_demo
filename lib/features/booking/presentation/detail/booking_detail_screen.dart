@@ -11,10 +11,12 @@ import '../../../../core/navigation/app_router.dart';
 import '../../../../core/style/style.dart';
 import '../../../../core/text/app_strings.dart';
 import '../../../../core/text/booking_strings.dart';
+import '../../../../core/text/chat_strings.dart';
 import '../../../../core/text/enum_labels.dart';
 import '../../../../core/utils/external_actions.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../auth/presentation/session/session_cubit.dart';
+import '../../../chat/presentation/chat_entry.dart';
 import '../../../feedback/domain/usecases/feedback_usecases.dart';
 import '../../../payment/presentation/payment_flow.dart';
 import '../../domain/entities/booking.dart';
@@ -142,6 +144,13 @@ class _BookingDetailView extends StatelessWidget {
           title: BookingStrings.code(bookingId),
           subtitle: booking?.status.label,
           actions: [
+            // Khách hỏi cơ sở về đơn này (đổi giờ nhận phòng, xuất hoá đơn…).
+            if (!backOffice && booking?.hotel != null)
+              IconButton(
+                tooltip: ChatStrings.messageHotel,
+                onPressed: () => context.openHotelChat(booking!.hotel!.id),
+                icon: const Icon(Icons.chat_bubble_outline_rounded),
+              ),
             if (backOffice && booking != null)
               PopupMenuButton<String>(
                 onSelected: (value) async {

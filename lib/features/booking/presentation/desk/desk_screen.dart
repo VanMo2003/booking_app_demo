@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/component/component.dart';
 import '../../../../core/di/injector.dart';
+import '../../../../core/enums/app_enums.dart';
 import '../../../../core/navigation/app_router.dart';
 import '../../../../core/navigation/router_extensions.dart';
 import '../../../../core/style/style.dart';
@@ -11,6 +12,7 @@ import '../../../../core/text/app_strings.dart';
 import '../../../../core/text/booking_strings.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../chat/presentation/chat_entry.dart';
 import '../../../shell/presentation/workspace_scope.dart';
 import '../../domain/entities/booking.dart';
 import '../widgets/booking_card.dart';
@@ -85,6 +87,8 @@ class _DeskViewState extends State<_DeskView> {
             '${Fmt.weekdayLong(today)}, ${Fmt.date(today)}',
           ].join(' · '),
           actions: [
+            if (WorkspaceScope.of(context).role != Role.admin)
+              ChatInboxButton(hotelId: widget.hotelId, branchName: branchName),
             IconButton(
               tooltip: AppStrings.refresh,
               onPressed: cubit.load,

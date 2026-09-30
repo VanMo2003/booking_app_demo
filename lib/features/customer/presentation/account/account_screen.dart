@@ -10,6 +10,7 @@ import '../../../../core/navigation/router_extensions.dart';
 import '../../../../core/style/style.dart';
 import '../../../../core/text/app_strings.dart';
 import '../../../../core/text/auth_strings.dart';
+import '../../../../core/text/chat_strings.dart';
 import '../../../../core/text/enum_labels.dart';
 import '../../../../core/text/explore_strings.dart';
 import '../../../../core/text/partner_strings.dart';
@@ -91,6 +92,11 @@ class AccountScreen extends StatelessWidget {
                             icon: Icons.favorite_border_rounded,
                             title: ExploreStrings.tabFavorites,
                             onTap: () => tabs.setActiveIndex(2),
+                          ),
+                          MenuTile(
+                            icon: Icons.chat_bubble_outline_rounded,
+                            title: ChatStrings.title,
+                            onTap: () => tabs.setActiveIndex(3),
                           ),
                         ],
                       ),

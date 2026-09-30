@@ -10,10 +10,13 @@ import '../../../../core/di/injector.dart';
 import '../../../../core/navigation/app_router.dart';
 import '../../../../core/style/style.dart';
 import '../../../../core/text/app_strings.dart';
+import '../../../../core/text/chat_strings.dart';
 import '../../../../core/text/explore_strings.dart';
 import '../../../../core/utils/external_actions.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../auth/presentation/session/auth_gate.dart';
+import '../../../chat/presentation/chat_entry.dart';
+import '../../../dish/presentation/widgets/hotel_menu_preview.dart';
 import '../../../favorite/presentation/favorite_button.dart';
 import '../../../room/presentation/widgets/room_tile.dart';
 import '../../domain/entities/hotel.dart';
@@ -222,22 +225,30 @@ class _HotelBody extends StatelessWidget {
             text: hotel.address,
             maxLines: 2,
           ),
-          if (hotel.phone.isNotEmpty) ...[
-            const Gap(4),
-            Row(
-              children: [
-                Expanded(
-                  child: IconText(icon: Icons.call_outlined, text: hotel.phone),
-                ),
+          const Gap(4),
+          Row(
+            children: [
+              Expanded(
+                child: hotel.phone.isEmpty
+                    ? const SizedBox.shrink()
+                    : IconText(icon: Icons.call_outlined, text: hotel.phone),
+              ),
+              if (hotel.phone.isNotEmpty)
                 AppButton.text(
                   label: AppStrings.call,
                   size: AppButtonSize.small,
                   icon: Icons.phone_in_talk_outlined,
                   onPressed: () => ExternalActions.call(hotel.phone),
                 ),
-              ],
-            ),
-          ],
+              // Hỏi phòng, giá, dịch vụ — cả đội ngũ cơ sở nhận được tin.
+              AppButton.text(
+                label: ChatStrings.messageAction,
+                size: AppButtonSize.small,
+                icon: Icons.chat_bubble_outline_rounded,
+                onPressed: () => context.openHotelChat(detail.id),
+              ),
+            ],
+          ),
           if (!hotel.active) ...[
             const Gap(AppSpacing.sm),
             const _Banner(text: ExploreStrings.branchClosed),
@@ -301,6 +312,7 @@ class _HotelBody extends StatelessWidget {
               ),
             ),
           ],
+          HotelMenuPreview(hotelId: detail.id, hotelName: hotel.name),
           const Gap(AppSpacing.xl),
           SectionHeader(
             title: ExploreStrings.rooms,

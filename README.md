@@ -6,12 +6,12 @@ nhập, app tự đưa người dùng tới khung làm việc của vai trò đ�
 
 | Vai trò | Thanh điều hướng | Việc chính |
 |---|---|---|
-| Khách chưa đăng nhập | Khám phá | Xem cơ sở, tìm phòng trống theo ngày, chi tiết phòng, đăng ký làm chủ khách sạn |
-| Khách hàng | Khám phá · Đơn của tôi · Yêu thích · Tài khoản | Đặt phòng, thanh toán VNPay, huỷ đơn, đánh giá, gắn hồ sơ từng đặt tại quầy |
-| Nhân viên | Quầy · Phòng · Khách · Thêm | Quầy lễ tân, đặt tại quầy, xác nhận/thu tiền/hoàn tất đơn, phòng, tiện ích, dịch vụ |
-| Quản lý cơ sở | Tổng quan · Quầy · Phòng · Báo cáo · Thêm | Như nhân viên, thêm nhân viên, bảng lương, thông tin cơ sở, báo cáo và xuất Excel |
+| Khách chưa đăng nhập | Khám phá | Xem cơ sở, thực đơn, tìm phòng trống theo ngày, chi tiết phòng, đăng ký làm chủ khách sạn |
+| Khách hàng | Khám phá · Đơn của tôi · Yêu thích · Tin nhắn · Tài khoản | Đặt phòng, thanh toán VNPay, huỷ đơn, đánh giá, nhắn tin với cơ sở, gắn hồ sơ từng đặt tại quầy |
+| Nhân viên | Quầy · Phòng · Khách · Thêm | Quầy lễ tân, đặt tại quầy, xác nhận/thu tiền/hoàn tất đơn, trả lời tin nhắn khách, phòng, tiện ích, dịch vụ, xem thực đơn |
+| Quản lý cơ sở | Tổng quan · Quầy · Phòng · Báo cáo · Thêm | Như nhân viên, thêm nhân viên, bảng lương, soạn thực đơn món ăn, thông tin cơ sở, báo cáo và xuất Excel |
 | Chủ khách sạn (chờ duyệt) | Màn trạng thái hồ sơ | Theo dõi xét duyệt, sửa hồ sơ, gửi lại khi bị từ chối |
-| Chủ khách sạn (đã duyệt) | Tổng quan · Cơ sở · Báo cáo · Thêm | Tạo quản lý, mở/đóng cơ sở, báo cáo toàn chuỗi, vào quản lý từng cơ sở để thêm phòng, tiện ích, dịch vụ |
+| Chủ khách sạn (đã duyệt) | Tổng quan · Cơ sở · Báo cáo · Tin nhắn · Thêm | Tạo quản lý, mở/đóng cơ sở, báo cáo toàn chuỗi, vào quản lý từng cơ sở để thêm phòng, tiện ích, dịch vụ, thực đơn |
 | Quản trị | Tổng quan · Xét duyệt · Tài khoản · Danh mục · Hệ thống | Duyệt/từ chối chủ khách sạn, khoá/mở tài khoản, loại phòng và chức vụ, xem toàn bộ dữ liệu (không tạo tài khoản, phòng, tiện ích, dịch vụ) |
 
 ## Chạy app
@@ -72,7 +72,7 @@ lib/
 
 Tính năng: `auth`, `splash`, `shell` (khung tab từng vai trò), `hotel`, `room`,
 `booking`, `payment`, `feedback`, `favorite`, `customer`, `amenity`, `service`,
-`employee`, `payroll`, `report`, `hotel_chain`, `partner` (đăng ký và xét duyệt chủ
+`dish` (thực đơn món ăn), `chat` (nhắn tin khách ↔ cơ sở), `employee`, `payroll`, `report`, `hotel_chain`, `partner` (đăng ký và xét duyệt chủ
 khách sạn), `notification` (hộp thông báo, push, deep link), `account`, `catalog`, `admin`.
 
 Quy ước giao diện: màn hình không tự đặt mã màu, cỡ chữ hay câu chữ — lấy từ
@@ -99,6 +99,35 @@ Quy ước giao diện: màn hình không tự đặt mã màu, cỡ chữ hay c
 
 Quản trị viên chỉ xem dữ liệu của cơ sở: màn Phòng, Tiện ích, Dịch vụ, Nhân viên ẩn
 nút thêm/sửa/xoá và hiện dải "Chế độ xem" (`Role.canEditBranchContent`).
+
+## Nhắn tin khách hàng ↔ khách sạn
+
+- **Khách hàng** bấm **Nhắn tin** ở trang chi tiết cơ sở (hoặc biểu tượng tin nhắn ở chi tiết đơn)
+  → `ChatScreen`. Tab **Tin nhắn** liệt kê các cuộc trò chuyện, có số tin chưa đọc trên tab.
+  Cần đăng nhập và có hồ sơ khách hàng.
+- **Phía cơ sở dùng chung hộp thư**: nhân viên và quản lý mở **Thêm → Tin nhắn khách hàng** hoặc
+  biểu tượng tin nhắn ở màn **Quầy** (`BranchChatInboxScreen`); chủ khách sạn có tab **Tin nhắn**
+  gộp mọi cơ sở. Quản trị viên không có tin nhắn.
+- **Realtime:** `ChatSocket` giữ một kết nối WebSocket `…/ws/chat?token=…` (gói `web_socket_channel`,
+  URL suy ra từ `API_BASE_URL`), tự nối lại khi mất mạng và tải lại phần tin có thể đã lỡ. Gửi tin
+  vẫn qua REST. `ChatHub` mở/đóng kết nối theo phiên đăng nhập và khi app chạy nền — lúc đó máy chủ
+  gửi thông báo đẩy, chạm vào mở đúng cuộc trò chuyện (`bookingapp://chat/{id}`).
+- Tin mới ở màn khác hiện toast; đang mở đúng cuộc trò chuyện thì tự đánh dấu đã đọc. Tin gửi lỗi
+  hiện đỏ, chạm để gửi lại hoặc xoá.
+- Chạy bản web sau proxy: proxy phải chuyển tiếp cả WebSocket (header `Upgrade`), không thì màn chat
+  hiện dải "Đang kết nối lại" (gửi tin vẫn được).
+
+## Thực đơn món ăn
+
+- **Quản lý:** không gian làm việc → **Thêm → Thực đơn** (`DishesScreen`). Lọc theo nhóm
+  món (Khai vị → Món chính → Món phụ → Tráng miệng → Đồ uống → Khác), menu ⋮ của từng món để
+  sửa, **Đánh dấu tạm hết / Phục vụ trở lại**, xoá. Chỉ chủ khách sạn và quản lý cơ sở được
+  sửa (`Role.canManageMenu`); nhân viên và quản trị viên thấy dải "Chế độ xem".
+- **Thêm/sửa món** (`DishFormScreen`): chọn ảnh từ máy (tải lên sau khi lưu món) hoặc dán
+  link ảnh `http(s)://`, tên, nhóm, giá, mô tả, công tắc còn phục vụ.
+- **Phía khách:** trang chi tiết cơ sở có mục **Thực đơn** với vài món đầu (`HotelMenuPreview`,
+  tự ẩn khi cơ sở chưa có món hoặc tải lỗi) và nút **Xem thực đơn** mở `HotelMenuScreen`. Món
+  tạm hết vẫn hiện nhưng mờ kèm nhãn "Tạm hết". Không cần đăng nhập.
 
 ## Thông báo, push và deep link
 

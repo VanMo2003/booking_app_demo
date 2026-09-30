@@ -20,6 +20,7 @@ sealed class AppLink extends Equatable {
       ['notifications'] => const NotificationsLink(),
       ['owner-registrations', final id] when int.tryParse(id) != null =>
         OwnerRegistrationLink(int.parse(id)),
+      ['chat', final id] when int.tryParse(id) != null => ChatLink(int.parse(id)),
       _ => null,
     };
   }
@@ -35,6 +36,16 @@ final class OwnerStatusLink extends AppLink {
 
 final class NotificationsLink extends AppLink {
   const NotificationsLink();
+}
+
+/// Cuộc trò chuyện giữa khách và cơ sở (thông báo đẩy khi có tin nhắn mới).
+final class ChatLink extends AppLink {
+  const ChatLink(this.conversationId);
+
+  final int conversationId;
+
+  @override
+  List<Object?> get props => [conversationId];
 }
 
 /// Hồ sơ đăng ký chờ quản trị viên xét duyệt.

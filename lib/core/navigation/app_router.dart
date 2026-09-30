@@ -21,8 +21,10 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: ProfileSetupRoute.page),
         AutoRoute(page: ProfileEditRoute.page),
 
-        // Thông báo — mọi vai trò
+        // Thông báo, tin nhắn — mọi vai trò (trừ quản trị viên với tin nhắn)
         AutoRoute(page: NotificationsRoute.page),
+        AutoRoute(page: ChatRoute.page),
+        AutoRoute(page: BranchChatInboxRoute.page),
 
         // Khách vãng lai & khách hàng
         AutoRoute(
@@ -31,12 +33,15 @@ class AppRouter extends RootStackRouter {
             AutoRoute(page: ExploreRoute.page),
             AutoRoute(page: MyBookingsRoute.page),
             AutoRoute(page: FavoritesRoute.page),
+            AutoRoute(page: ChatInboxRoute.page),
             AutoRoute(page: AccountRoute.page),
           ],
         ),
         AutoRoute(page: SearchResultsRoute.page),
+        AutoRoute(page: AiSearchRoute.page),
         AutoRoute(page: HotelDetailRoute.page),
         AutoRoute(page: RoomDetailRoute.page),
+        AutoRoute(page: HotelMenuRoute.page),
         AutoRoute(page: BookingCreateRoute.page),
         AutoRoute(page: BookingDetailRoute.page),
         AutoRoute(page: PaymentWebViewRoute.page),
@@ -61,6 +66,8 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: RoomManageDetailRoute.page),
         AutoRoute(page: AmenitiesRoute.page),
         AutoRoute(page: ServicesRoute.page),
+        AutoRoute(page: DishesRoute.page),
+        AutoRoute(page: DishFormRoute.page),
         AutoRoute(page: CustomerDirectoryRoute.page),
         AutoRoute(page: CustomerDetailRoute.page),
         AutoRoute(page: EmployeesRoute.page),
@@ -81,6 +88,7 @@ class AppRouter extends RootStackRouter {
             AutoRoute(page: ChainOverviewRoute.page),
             AutoRoute(page: ChainBranchesRoute.page),
             AutoRoute(page: ChainReportsRoute.page),
+            AutoRoute(page: ChatInboxRoute.page),
             AutoRoute(page: OwnerMoreRoute.page),
           ],
         ),

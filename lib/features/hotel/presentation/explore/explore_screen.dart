@@ -11,6 +11,7 @@ import '../../../../core/navigation/router_extensions.dart';
 import '../../../../core/style/style.dart';
 import '../../../../core/text/app_strings.dart';
 import '../../../../core/text/explore_strings.dart';
+import '../../../ai/presentation/ai_widgets.dart';
 import '../../../auth/presentation/session/session_cubit.dart';
 import '../widgets/hotel_card.dart';
 import 'explore_cubit.dart';
@@ -197,6 +198,7 @@ class _ExploreHeader extends StatelessWidget {
                           ),
                         ),
                       ),
+                      const AiSearchEntry(),
                     ],
                   ),
                 ),
@@ -247,7 +249,7 @@ class _GreetingRow extends StatelessWidget {
               )
             else
               GestureDetector(
-                onTap: () => AutoTabsRouter.of(context).setActiveIndex(3),
+                onTap: () => AutoTabsRouter.of(context).setActiveIndex(4),
                 child: Container(
                   padding: const EdgeInsets.all(2),
                   decoration: BoxDecoration(

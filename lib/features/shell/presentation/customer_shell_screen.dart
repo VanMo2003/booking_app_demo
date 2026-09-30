@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 
 import '../../../core/color/app_colors.dart';
 import '../../../core/navigation/app_router.dart';
+import '../../../core/text/chat_strings.dart';
 import '../../../core/text/explore_strings.dart';
+import '../../chat/presentation/chat_entry.dart';
 
-/// Khung cho khách vãng lai và khách hàng: 4 tab dưới đáy.
+/// Khung cho khách vãng lai và khách hàng: 5 tab dưới đáy.
 @RoutePage()
 class CustomerShellScreen extends StatelessWidget {
   const CustomerShellScreen({super.key});
@@ -17,6 +19,7 @@ class CustomerShellScreen extends StatelessWidget {
         ExploreRoute(),
         MyBookingsRoute(),
         FavoritesRoute(),
+        ChatInboxRoute(),
         AccountRoute(),
       ],
       transitionBuilder: (context, child, animation) =>
@@ -47,6 +50,11 @@ class CustomerShellScreen extends StatelessWidget {
                   icon: Icon(Icons.favorite_border_rounded),
                   selectedIcon: Icon(Icons.favorite_rounded),
                   label: ExploreStrings.tabFavorites,
+                ),
+                NavigationDestination(
+                  icon: ChatBadge(child: Icon(Icons.chat_bubble_outline_rounded)),
+                  selectedIcon: ChatBadge(child: Icon(Icons.chat_bubble_rounded)),
+                  label: ChatStrings.tabChats,
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.person_outline_rounded),

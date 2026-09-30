@@ -8,6 +8,7 @@ import '../../../core/enums/app_enums.dart';
 import '../../../core/navigation/app_router.dart';
 import '../../../core/text/workspace_strings.dart';
 import '../../auth/presentation/session/session_cubit.dart';
+import '../../chat/presentation/chat_entry.dart';
 import 'workspace_scope.dart';
 
 /// Không gian làm việc tại một cơ sở. Nhân viên: Quầy · Phòng · Khách · Thêm.
@@ -84,9 +85,14 @@ class WorkspaceShellScreen extends StatelessWidget {
                         selectedIcon: Icon(Icons.groups_rounded),
                         label: WorkspaceStrings.tabCustomers,
                       ),
-                    const NavigationDestination(
-                      icon: Icon(Icons.grid_view_outlined),
-                      selectedIcon: Icon(Icons.grid_view_rounded),
+                    // Tin nhắn khách nằm trong tab Thêm; số chưa đọc hiện ngay trên tab.
+                    NavigationDestination(
+                      icon: role == Role.admin
+                          ? const Icon(Icons.grid_view_outlined)
+                          : const ChatBadge(child: Icon(Icons.grid_view_outlined)),
+                      selectedIcon: role == Role.admin
+                          ? const Icon(Icons.grid_view_rounded)
+                          : const ChatBadge(child: Icon(Icons.grid_view_rounded)),
                       label: WorkspaceStrings.tabMore,
                     ),
                   ],

@@ -81,6 +81,16 @@ abstract final class ErrorStrings {
       'Staff accounts must be created',
       'Tài khoản nhân viên phải được tạo trong màn Nhân viên.'
     ),
+    (
+      'Create your customer profile before chatting',
+      'Hãy tạo hồ sơ khách hàng trước khi nhắn tin.'
+    ),
+    (
+      'AI assistant is unavailable',
+      'Trợ lý AI đang bận hoặc chưa được bật trên máy chủ. Thử lại sau.'
+    ),
+    ('Too many AI requests', 'Bạn dùng AI hơi nhiều, thử lại sau vài phút nhé.'),
+    ("The guest hasn't written anything yet", 'Khách chưa gửi tin nào để trả lời.'),
     ('Invalid signature', 'Kết quả thanh toán không hợp lệ.'),
     ('Upload failed', 'Tải ảnh lên thất bại. Vui lòng thử lại.'),
     ('File quá lớn', fileTooLarge),
@@ -123,6 +133,8 @@ abstract final class ErrorStrings {
     'hotelName': 'Tên khách sạn',
     'description': 'Giới thiệu',
     'reason': 'Lý do',
+    'content': 'Nội dung tin nhắn',
+    'query': 'Câu tìm kiếm',
   };
 
   /// Chuyển thông báo thô của BE thành câu tiếng Việt cho người dùng.

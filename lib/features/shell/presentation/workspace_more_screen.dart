@@ -9,10 +9,13 @@ import '../../../core/navigation/app_router.dart';
 import '../../../core/navigation/router_extensions.dart';
 import '../../../core/style/style.dart';
 import '../../../core/text/app_strings.dart';
+import '../../../core/text/chat_strings.dart';
 import '../../../core/text/enum_labels.dart';
+import '../../../core/text/menu_strings.dart';
 import '../../../core/text/workspace_strings.dart';
 import '../../auth/presentation/session/session_cubit.dart';
 import '../../auth/presentation/session/session_navigator.dart';
+import '../../chat/presentation/chat_hub.dart';
 import 'workspace_scope.dart';
 
 @RoutePage()
@@ -70,6 +73,27 @@ class WorkspaceMoreScreen extends StatelessWidget {
           MenuGroup(
             title: WorkspaceStrings.groupOperations,
             children: [
+              if (session.role != Role.admin)
+                MenuTile(
+                  icon: Icons.chat_bubble_outline_rounded,
+                  title: ChatStrings.branchInbox,
+                  trailing: BlocBuilder<ChatUnreadCubit, int>(
+                    builder: (context, unread) => Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (unread > 0)
+                          Badge(
+                            backgroundColor: AppColors.danger,
+                            label: Text(ChatStrings.unreadCount(unread)),
+                          ),
+                        const Icon(Icons.chevron_right_rounded, color: AppColors.inkTertiary),
+                      ],
+                    ),
+                  ),
+                  onTap: () => router.push(
+                    BranchChatInboxRoute(hotelId: hotelId, branchName: branchName),
+                  ),
+                ),
               MenuTile(
                 icon: Icons.add_business_outlined,
                 title: WorkspaceStrings.menuWalkIn,
@@ -84,6 +108,11 @@ class WorkspaceMoreScreen extends StatelessWidget {
                 icon: Icons.room_service_outlined,
                 title: WorkspaceStrings.menuServices,
                 onTap: () => router.push(ServicesRoute(hotelId: hotelId)),
+              ),
+              MenuTile(
+                icon: Icons.restaurant_menu_rounded,
+                title: MenuStrings.title,
+                onTap: () => router.push(DishesRoute(hotelId: hotelId)),
               ),
               if (scope.canManage)
                 MenuTile(
