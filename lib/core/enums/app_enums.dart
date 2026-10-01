@@ -29,6 +29,9 @@ enum Role {
 
   /// Thực đơn do chủ khách sạn và quản lý cơ sở soạn; nhân viên, quản trị viên chỉ xem.
   bool get canManageMenu => this == Role.hotelOwner || this == Role.hotelManager;
+
+  /// Tour tham quan: cùng quy tắc với thực đơn.
+  bool get canManageTours => canManageMenu;
 }
 
 enum BookingStatus {

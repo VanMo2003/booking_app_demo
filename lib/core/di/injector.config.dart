@@ -271,6 +271,16 @@ import 'package:booking_app_mobile/features/service/domain/usecases/hotel_servic
     as _i358;
 import 'package:booking_app_mobile/features/service/presentation/services_screen.dart'
     as _i1049;
+import 'package:booking_app_mobile/features/tour/data/datasources/tour_api.dart'
+    as _i424;
+import 'package:booking_app_mobile/features/tour/data/repositories/tour_repository_impl.dart'
+    as _i697;
+import 'package:booking_app_mobile/features/tour/domain/repositories/tour_repository.dart'
+    as _i954;
+import 'package:booking_app_mobile/features/tour/domain/usecases/tour_usecases.dart'
+    as _i1001;
+import 'package:booking_app_mobile/features/tour/presentation/tours_screen.dart'
+    as _i203;
 import 'package:connectivity_plus/connectivity_plus.dart' as _i895;
 import 'package:dio/dio.dart' as _i361;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
@@ -309,6 +319,7 @@ extension GetItInjectableX on _i174.GetIt {
     final dishApiModule = _$DishApiModule();
     final chatApiModule = _$ChatApiModule();
     final aiApiModule = _$AiApiModule();
+    final tourApiModule = _$TourApiModule();
     await gh.factoryAsync<_i460.SharedPreferences>(
       () => appModule.preferences,
       preResolve: true,
@@ -380,10 +391,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i204.ChatApi>(
         () => chatApiModule.chatApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i431.AiApi>(() => aiApiModule.aiApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i424.TourApi>(
+        () => tourApiModule.tourApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i479.PartnerRepository>(
         () => _i867.PartnerRepositoryImpl(gh<_i635.PartnerApi>()));
     gh.lazySingleton<_i797.ReportRemoteDataSource>(
         () => _i797.ReportRemoteDataSource(gh<_i361.Dio>()));
+    gh.lazySingleton<_i954.TourRepository>(
+        () => _i697.TourRepositoryImpl(gh<_i424.TourApi>()));
     gh.lazySingleton<_i900.FeedbackRepository>(
         () => _i267.FeedbackRepositoryImpl(
               gh<_i621.FeedbackApi>(),
@@ -418,10 +433,20 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i672.DeleteBranch(gh<_i16.HotelRepository>()));
     gh.factory<_i672.UploadBranchImages>(
         () => _i672.UploadBranchImages(gh<_i16.HotelRepository>()));
+    gh.factory<_i1001.GetBranchTours>(
+        () => _i1001.GetBranchTours(gh<_i954.TourRepository>()));
+    gh.factory<_i1001.SaveTour>(
+        () => _i1001.SaveTour(gh<_i954.TourRepository>()));
+    gh.factory<_i1001.SetTourAvailable>(
+        () => _i1001.SetTourAvailable(gh<_i954.TourRepository>()));
+    gh.factory<_i1001.DeleteTour>(
+        () => _i1001.DeleteTour(gh<_i954.TourRepository>()));
     gh.factory<_i856.RefreshManagerBranches>(
         () => _i856.RefreshManagerBranches(gh<_i16.HotelRepository>()));
     gh.lazySingleton<_i128.CatalogRepository>(
         () => _i682.CatalogRepositoryImpl(gh<_i477.CatalogApi>()));
+    gh.factory<_i203.ToursCubit>(
+        () => _i203.ToursCubit(gh<_i1001.GetBranchTours>()));
     gh.factory<_i856.Login>(() => _i856.Login(gh<_i619.AuthRepository>()));
     gh.factory<_i856.RegisterCustomer>(
         () => _i856.RegisterCustomer(gh<_i619.AuthRepository>()));
@@ -859,3 +884,5 @@ class _$DishApiModule extends _i725.DishApiModule {}
 class _$ChatApiModule extends _i204.ChatApiModule {}
 
 class _$AiApiModule extends _i431.AiApiModule {}
+
+class _$TourApiModule extends _i424.TourApiModule {}

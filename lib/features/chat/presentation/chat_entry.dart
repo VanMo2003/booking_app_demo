@@ -14,7 +14,8 @@ import 'chat_hub.dart';
 
 extension ChatLauncher on BuildContext {
   /// Khách hàng mở cuộc trò chuyện với cơ sở (đăng nhập / tạo hồ sơ nếu cần).
-  Future<void> openHotelChat(int hotelId) async {
+  /// [draft] điền sẵn vào ô nhập — khách sửa rồi mới gửi.
+  Future<void> openHotelChat(int hotelId, {String? draft}) async {
     final customer = await ensureCustomer();
     if (customer == null || !mounted) return;
     final result = await AppAction.run(
@@ -23,7 +24,9 @@ extension ChatLauncher on BuildContext {
     );
     final conversation = result.value;
     if (conversation == null || !mounted) return;
-    await rootRouter.push(ChatRoute(conversationId: conversation.id, initial: conversation));
+    await rootRouter.push(
+      ChatRoute(conversationId: conversation.id, initial: conversation, draft: draft),
+    );
   }
 }
 

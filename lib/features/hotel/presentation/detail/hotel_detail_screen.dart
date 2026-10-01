@@ -17,6 +17,7 @@ import '../../../../core/utils/formatters.dart';
 import '../../../auth/presentation/session/auth_gate.dart';
 import '../../../chat/presentation/chat_entry.dart';
 import '../../../dish/presentation/widgets/hotel_menu_preview.dart';
+import '../../../tour/presentation/widgets/hotel_tours_section.dart';
 import '../../../favorite/presentation/favorite_button.dart';
 import '../../../room/presentation/widgets/room_tile.dart';
 import '../../domain/entities/hotel.dart';
@@ -313,6 +314,7 @@ class _HotelBody extends StatelessWidget {
             ),
           ],
           HotelMenuPreview(hotelId: detail.id, hotelName: hotel.name),
+          HotelToursSection(hotelId: detail.id, hotelName: hotel.name),
           const Gap(AppSpacing.xl),
           SectionHeader(
             title: ExploreStrings.rooms,

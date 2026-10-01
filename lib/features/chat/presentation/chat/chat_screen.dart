@@ -23,24 +23,29 @@ import 'message_bubble.dart';
 /// Một cuộc trò chuyện — dùng chung cho khách hàng và đội ngũ cơ sở.
 @RoutePage()
 class ChatScreen extends StatelessWidget {
-  const ChatScreen({super.key, required this.conversationId, this.initial});
+  const ChatScreen({super.key, required this.conversationId, this.initial, this.draft});
 
   final int conversationId;
 
   /// Bản tóm tắt đã có ở danh sách, để tiêu đề hiện ngay trong lúc tải.
   final Conversation? initial;
 
+  /// Nội dung điền sẵn vào ô nhập (ví dụ câu hỏi về một tour).
+  final String? draft;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => getIt<ChatCubit>()..start(conversationId, initial: initial),
-      child: const _ChatView(),
+      child: _ChatView(draft: draft),
     );
   }
 }
 
 class _ChatView extends StatelessWidget {
-  const _ChatView();
+  const _ChatView({this.draft});
+
+  final String? draft;
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +95,7 @@ class _ChatView extends StatelessWidget {
               if (conversation != null && state.status == ViewStatus.success)
                 _Composer(
                   onSend: cubit.send,
+                  initialText: draft,
                   // Chỉ đội ngũ cơ sở được AI soạn nháp; khách thì không.
                   suggestFor: conversation.isCustomerView ? null : conversation.id,
                 ),
@@ -415,9 +421,10 @@ class _EmptyChat extends StatelessWidget {
 }
 
 class _Composer extends StatefulWidget {
-  const _Composer({required this.onSend, this.suggestFor});
+  const _Composer({required this.onSend, this.suggestFor, this.initialText});
 
   final ValueChanged<String> onSend;
+  final String? initialText;
 
   /// Id cuộc trò chuyện để xin AI soạn nháp; `null` = không có nút gợi ý.
   final int? suggestFor;
@@ -428,7 +435,7 @@ class _Composer extends StatefulWidget {
 
 class _ComposerState extends State<_Composer> {
   static const _maxLength = 2000;
-  final _controller = TextEditingController();
+  late final _controller = TextEditingController(text: widget.initialText);
   bool _suggesting = false;
   String? _aiNote;
 

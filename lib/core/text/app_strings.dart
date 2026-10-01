@@ -13,6 +13,13 @@ abstract final class AppStrings {
   static const confirm = 'Xác nhận';
   static const delete = 'Xoá';
   static const edit = 'Sửa';
+
+  // Ô chọn một ảnh (món ăn, tour…)
+  static const photoPick = 'Chọn ảnh';
+  static const photoChange = 'Đổi ảnh';
+  static const photoRemove = 'Xoá ảnh';
+  static const photoUrl = 'Hoặc dán link ảnh';
+  static const photoUrlInvalid = 'Link ảnh phải bắt đầu bằng http:// hoặc https://';
   static const add = 'Thêm';
   static const create = 'Tạo';
   static const close = 'Đóng';

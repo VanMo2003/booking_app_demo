@@ -12,6 +12,7 @@ export 'image_picker_gallery.dart';
 export 'layout_widgets.dart';
 export 'media_widgets.dart';
 export 'paged_list_view.dart';
+export 'photo_picker_field.dart';
 export 'section_header.dart';
 export 'state_illustration.dart';
 export 'state_views.dart';

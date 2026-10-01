@@ -12,5 +12,6 @@ export 'notification_strings.dart';
 export 'partner_strings.dart';
 export 'report_strings.dart';
 export 'state_strings.dart';
+export 'tour_strings.dart';
 export 'validation_strings.dart';
 export 'workspace_strings.dart';

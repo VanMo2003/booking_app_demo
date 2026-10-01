@@ -12,6 +12,7 @@ import '../../../core/text/app_strings.dart';
 import '../../../core/text/chat_strings.dart';
 import '../../../core/text/enum_labels.dart';
 import '../../../core/text/menu_strings.dart';
+import '../../../core/text/tour_strings.dart';
 import '../../../core/text/workspace_strings.dart';
 import '../../auth/presentation/session/session_cubit.dart';
 import '../../auth/presentation/session/session_navigator.dart';
@@ -113,6 +114,11 @@ class WorkspaceMoreScreen extends StatelessWidget {
                 icon: Icons.restaurant_menu_rounded,
                 title: MenuStrings.title,
                 onTap: () => router.push(DishesRoute(hotelId: hotelId)),
+              ),
+              MenuTile(
+                icon: Icons.tour_outlined,
+                title: TourStrings.title,
+                onTap: () => router.push(ToursRoute(hotelId: hotelId)),
               ),
               if (scope.canManage)
                 MenuTile(

@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 /// `flutter run --dart-define=API_BASE_URL=http://192.168.1.10:8080/booking-app/api/v1`
 abstract final class AppConfig {
   static const String _baseUrlFromEnv = String.fromEnvironment('API_BASE_URL');
-  tháng sau
+
   static String get baseUrl {
     if (_baseUrlFromEnv.isNotEmpty) return _baseUrlFromEnv;
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {

@@ -6,12 +6,12 @@ nhập, app tự đưa người dùng tới khung làm việc của vai trò đ�
 
 | Vai trò | Thanh điều hướng | Việc chính |
 |---|---|---|
-| Khách chưa đăng nhập | Khám phá | Xem cơ sở, thực đơn, tìm phòng trống theo ngày, chi tiết phòng, đăng ký làm chủ khách sạn |
+| Khách chưa đăng nhập | Khám phá | Xem cơ sở, thực đơn, tour tham quan, tìm phòng trống theo ngày, chi tiết phòng, đăng ký làm chủ khách sạn |
 | Khách hàng | Khám phá · Đơn của tôi · Yêu thích · Tin nhắn · Tài khoản | Đặt phòng, thanh toán VNPay, huỷ đơn, đánh giá, nhắn tin với cơ sở, gắn hồ sơ từng đặt tại quầy |
-| Nhân viên | Quầy · Phòng · Khách · Thêm | Quầy lễ tân, đặt tại quầy, xác nhận/thu tiền/hoàn tất đơn, trả lời tin nhắn khách, phòng, tiện ích, dịch vụ, xem thực đơn |
-| Quản lý cơ sở | Tổng quan · Quầy · Phòng · Báo cáo · Thêm | Như nhân viên, thêm nhân viên, bảng lương, soạn thực đơn món ăn, thông tin cơ sở, báo cáo và xuất Excel |
+| Nhân viên | Quầy · Phòng · Khách · Thêm | Quầy lễ tân, đặt tại quầy, xác nhận/thu tiền/hoàn tất đơn, trả lời tin nhắn khách, phòng, tiện ích, dịch vụ, xem thực đơn và tour |
+| Quản lý cơ sở | Tổng quan · Quầy · Phòng · Báo cáo · Thêm | Như nhân viên, thêm nhân viên, bảng lương, soạn thực đơn món ăn, tour tham quan, thông tin cơ sở, báo cáo và xuất Excel |
 | Chủ khách sạn (chờ duyệt) | Màn trạng thái hồ sơ | Theo dõi xét duyệt, sửa hồ sơ, gửi lại khi bị từ chối |
-| Chủ khách sạn (đã duyệt) | Tổng quan · Cơ sở · Báo cáo · Tin nhắn · Thêm | Tạo quản lý, mở/đóng cơ sở, báo cáo toàn chuỗi, vào quản lý từng cơ sở để thêm phòng, tiện ích, dịch vụ, thực đơn |
+| Chủ khách sạn (đã duyệt) | Tổng quan · Cơ sở · Báo cáo · Tin nhắn · Thêm | Tạo quản lý, mở/đóng cơ sở, báo cáo toàn chuỗi, vào quản lý từng cơ sở để thêm phòng, tiện ích, dịch vụ, thực đơn, tour |
 | Quản trị | Tổng quan · Xét duyệt · Tài khoản · Danh mục · Hệ thống | Duyệt/từ chối chủ khách sạn, khoá/mở tài khoản, loại phòng và chức vụ, xem toàn bộ dữ liệu (không tạo tài khoản, phòng, tiện ích, dịch vụ) |
 
 ## Chạy app
@@ -72,7 +72,7 @@ lib/
 
 Tính năng: `auth`, `splash`, `shell` (khung tab từng vai trò), `hotel`, `room`,
 `booking`, `payment`, `feedback`, `favorite`, `customer`, `amenity`, `service`,
-`dish` (thực đơn món ăn), `chat` (nhắn tin khách ↔ cơ sở), `ai` (tìm phòng bằng AI, trợ lý lễ tân),
+`dish` (thực đơn món ăn), `tour` (tour tham quan), `chat` (nhắn tin khách ↔ cơ sở), `ai` (tìm phòng bằng AI, trợ lý lễ tân),
 `employee`, `payroll`, `report`, `hotel_chain`, `partner` (đăng ký và xét duyệt chủ
 khách sạn), `notification` (hộp thông báo, push, deep link), `account`, `catalog`, `admin`.
 
@@ -132,6 +132,8 @@ của BE). Lúc mở app, `AiAvailability` hỏi `GET /ai/status`; máy chủ ch
     nhân viên chỉ thấy dải báo đang bật.
   - Tin AI gửi mang nhãn "✨ Trợ lý AI"; cuộc AI đã chuyển cho nhân viên có nhãn **Cần nhân viên** ở
     hộp thư và dải lý do trong màn chat (khách không thấy).
+  - Trợ lý biết các tour của cơ sở: khách hỏi đi chơi, ăn uống quanh khu vực thì AI gợi ý tour; muốn
+    đặt tour thì AI hỏi ngày, số khách rồi chuyển nhân viên.
 
 ## Thực đơn món ăn
 
@@ -140,10 +142,25 @@ của BE). Lúc mở app, `AiAvailability` hỏi `GET /ai/status`; máy chủ ch
   sửa, **Đánh dấu tạm hết / Phục vụ trở lại**, xoá. Chỉ chủ khách sạn và quản lý cơ sở được
   sửa (`Role.canManageMenu`); nhân viên và quản trị viên thấy dải "Chế độ xem".
 - **Thêm/sửa món** (`DishFormScreen`): chọn ảnh từ máy (tải lên sau khi lưu món) hoặc dán
-  link ảnh `http(s)://`, tên, nhóm, giá, mô tả, công tắc còn phục vụ.
+  link ảnh `http(s)://`, tên, nhóm, giá, mô tả, công tắc còn phục vụ. Ô ảnh là
+  `PhotoPickerField` + `PhotoPickerController` dùng chung (`core/component`), form tour dùng lại.
 - **Phía khách:** trang chi tiết cơ sở có mục **Thực đơn** với vài món đầu (`HotelMenuPreview`,
   tự ẩn khi cơ sở chưa có món hoặc tải lỗi) và nút **Xem thực đơn** mở `HotelMenuScreen`. Món
   tạm hết vẫn hiện nhưng mờ kèm nhãn "Tạm hết". Không cần đăng nhập.
+
+## Tour tham quan
+
+- **Quản lý:** không gian làm việc → **Thêm → Tour tham quan** (`ToursScreen`). Menu ⋮ của từng
+  tour để sửa, **Tạm ngừng tour / Mở lại tour**, xoá. Chỉ chủ khách sạn và quản lý cơ sở được sửa
+  (`Role.canManageTours`); nhân viên và quản trị viên thấy dải "Chế độ xem".
+- **Thêm/sửa tour** (`TourFormScreen`): ảnh (chọn từ máy hoặc dán link), tên, giá mỗi khách, thời
+  lượng, số khách tối đa (bỏ trống = không giới hạn), giờ khởi hành, giá đã gồm, mô tả/lịch trình,
+  công tắc đang nhận khách.
+- **Phía khách:** trang chi tiết cơ sở có mục **Tour tham quan** (`HotelToursSection`, tối đa 3
+  tour, tự ẩn khi cơ sở chưa có tour) và **Xem tất cả** mở `HotelToursScreen`. Chạm tour mở
+  `TourDetailScreen`; nút **Hỏi khách sạn về tour này** mở chat với cơ sở, ô nhập điền sẵn câu hỏi
+  về tour (`openHotelChat(hotelId, draft: …)`; chưa đăng nhập thì đăng nhập trước). App chưa đặt tour
+  trực tiếp — nhân viên xác nhận qua chat.
 
 ## Thông báo, push và deep link
 

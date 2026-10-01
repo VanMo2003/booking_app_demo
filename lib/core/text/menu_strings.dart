@@ -30,11 +30,6 @@ abstract final class MenuStrings {
   static const description = 'Mô tả';
   static const descriptionHint = 'Nguyên liệu, khẩu phần, hương vị…';
   static const photo = 'Ảnh món';
-  static const pickPhoto = 'Chọn ảnh';
-  static const changePhoto = 'Đổi ảnh';
-  static const removePhoto = 'Xoá ảnh';
-  static const photoUrl = 'Hoặc dán link ảnh';
-  static const photoUrlInvalid = 'Link ảnh phải bắt đầu bằng http:// hoặc https://';
   static const photoHint = 'Ảnh vuông hoặc ngang, món ăn chiếm phần lớn khung hình.';
   static const availableHint = 'Tắt khi bếp tạm hết — món vẫn hiện trên thực đơn.';
 
