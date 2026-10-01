@@ -166,15 +166,20 @@ Phía cơ sở đổi phương thức trong màn **Sửa đơn** như trước.
   tour để sửa, **Tạm ngừng tour / Mở lại tour**, xoá. Chỉ chủ khách sạn và quản lý cơ sở được sửa
   (`Role.canManageTours`); nhân viên và quản trị viên thấy dải "Chế độ xem".
 - **Thêm/sửa tour** (`TourFormScreen`): ảnh (chọn từ máy hoặc dán link), tên, giá mỗi khách, thời
-  lượng, số khách tối đa (bỏ trống = không giới hạn), giờ khởi hành, giá đã gồm, mô tả/lịch trình,
-  công tắc đang nhận khách.
+  lượng, số chỗ mỗi chuyến (bỏ trống = không giới hạn), giờ khởi hành, giá đã gồm, mô tả/lịch trình,
+  công tắc đang nhận khách, và mục **Phòng kèm tour**: số đêm ở + chọn các phòng của gói (danh sách phòng
+  cơ sở xếp theo giá; không chọn phòng nào = chỉ bán tour).
 - **Phía khách:** trang chi tiết cơ sở có mục **Tour tham quan** (`HotelToursSection`, tối đa 3
   tour, tự ẩn khi cơ sở chưa có tour) và **Xem tất cả** mở `HotelToursScreen`. Chạm tour mở
-  `TourDetailScreen`; nút **Nhắn khách sạn để đặt tour** mở chat với cơ sở, ô nhập điền sẵn
-  `Mình muốn đặt tour "…" ngày ` (`openHotelChat(hotelId, draft: …)`; chưa đăng nhập thì đăng nhập trước).
+  `TourDetailScreen` (có mục **Phòng kèm tour**: số đêm và các phòng của gói, giá mỗi đêm). Cuối trang:
+  **Hỏi khách sạn** (mở chat, điền sẵn `Mình muốn đặt tour "…" ngày `) và **Đặt tour**.
+- **Đặt tour trong app** (`TourBookingFormScreen`, cần đăng nhập khách hàng có hồ sơ): chọn ngày đi, số
+  khách, các phòng của gói còn trống đêm đó (`GET /tours/{id}/rooms/available`, tải lại khi đổi ngày),
+  ghi chú; bảng tiền tour + tiền phòng + tổng. Đặt xong mở chi tiết đơn tour.
 - **Đặt tour qua tin nhắn:** trợ lý AI gửi tóm tắt (tour, ngày, số khách, tổng tiền), khách nhắn
   "Đồng ý" là đơn tour được tạo và khách sạn nhận thông báo.
-- **Đơn tour** (`TourBookingsScreen` + `TourBookingDetailScreen`, dùng chung hai phía):
+- **Đơn tour** (`TourBookingsScreen` + `TourBookingDetailScreen`, dùng chung hai phía). Đơn kèm phòng
+  có mục **Phòng ở kèm** (ngày nhận/trả, phòng) và nút **Xem đơn phòng #…** mở đơn đặt phòng đi kèm:
   - Khách: **Đơn của tôi → nút "Đơn tour"** ở góc trên (kèm chuông thông báo) — xem trạng thái, huỷ
     đơn còn mở, nhắn khách sạn.
   - Đội ngũ cơ sở: **Thêm → Đơn tour** — lọc theo trạng thái, **Xác nhận đơn** → **Hoàn tất**, hoặc

@@ -22,6 +22,10 @@ abstract class TourApi {
     @Body() Map<String, dynamic> body,
   );
 
+  /// Phòng của gói còn trống cho kỳ ở bắt đầu từ ngày đi tour.
+  @GET('/tours/{id}/rooms/available')
+  Future<ApiResponse> availableRooms(@Path('id') int id, @Query('date') String date);
+
   @DELETE('/tours/{id}')
   Future<ApiResponse> delete(@Path('id') int id);
 

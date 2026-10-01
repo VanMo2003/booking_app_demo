@@ -12,6 +12,10 @@ class TourBookingRepositoryImpl implements TourBookingRepository {
   final TourBookingApi _api;
 
   @override
+  Future<TourBooking> create(TourBookingRequest request) async =>
+      (await _api.create(request.toJson())).parse(TourBookingModel.fromJson);
+
+  @override
   Future<List<TourBooking>> mine() async => (await _api.mine()).parseList(TourBookingModel.fromJson);
 
   @override

@@ -3,6 +3,9 @@ import '../../data/models/tour_models.dart';
 import '../entities/tour.dart';
 
 abstract interface class TourRepository {
+  /// Kỳ ở kèm tour từ ngày [date] và các phòng của gói còn trống.
+  Future<TourStay> availableRooms(int tourId, DateTime date);
+
   /// Tour đang nhận khách trước, rẻ trước.
   Future<List<Tour>> byHotel(int hotelId);
 

@@ -450,6 +450,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i672.UploadBranchImages(gh<_i16.HotelRepository>()));
     gh.factory<_i1001.GetBranchTours>(
         () => _i1001.GetBranchTours(gh<_i954.TourRepository>()));
+    gh.factory<_i1001.GetTourStay>(
+        () => _i1001.GetTourStay(gh<_i954.TourRepository>()));
     gh.factory<_i1001.SaveTour>(
         () => _i1001.SaveTour(gh<_i954.TourRepository>()));
     gh.factory<_i1001.SetTourAvailable>(
@@ -673,6 +675,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i643.DeleteDish(gh<_i941.DishRepository>()));
     gh.factory<_i1048.SystemOverviewCubit>(
         () => _i1048.SystemOverviewCubit(gh<_i962.LoadSystemOverview>()));
+    gh.factory<_i987.PlaceTourBooking>(
+        () => _i987.PlaceTourBooking(gh<_i695.TourBookingRepository>()));
     gh.factory<_i987.GetTourBookings>(
         () => _i987.GetTourBookings(gh<_i695.TourBookingRepository>()));
     gh.factory<_i987.GetTourBooking>(

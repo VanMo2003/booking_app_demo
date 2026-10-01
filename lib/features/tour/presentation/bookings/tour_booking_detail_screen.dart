@@ -264,6 +264,37 @@ class _Body extends StatelessWidget {
           callLabel: forGuest ? TourBookingStrings.callBranch : TourBookingStrings.callGuest,
           forGuest: forGuest,
         ),
+        if (booking.withRooms) ...[
+          const Gap(AppSpacing.md),
+          const SectionHeader(title: TourBookingStrings.stay),
+          const Gap(AppSpacing.xs),
+          AppCard(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                InfoRow(label: TourBookingStrings.checkin, value: Fmt.weekdayDate(booking.tourDate)),
+                if (booking.stayCheckout != null)
+                  InfoRow(label: TourBookingStrings.checkout, value: Fmt.weekdayDate(booking.stayCheckout!)),
+                for (final room in booking.rooms)
+                  InfoRow(
+                    icon: Icons.bed_outlined,
+                    label: 'Phòng ${room.roomNumber} · ${room.roomTypeName}',
+                    value: '${Fmt.money(room.price)}${TourStrings.perNight}',
+                  ),
+                if (booking.bookingId != null)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton.icon(
+                      onPressed: () => context.router.push(BookingDetailRoute(bookingId: booking.bookingId!)),
+                      icon: const Icon(Icons.receipt_long_outlined, size: 18),
+                      label: Text(TourBookingStrings.viewRoomBooking(booking.bookingId!)),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
         const Gap(AppSpacing.md),
         AppCard(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -275,6 +306,10 @@ class _Body extends StatelessWidget {
               if (booking.tourDuration != null) InfoRow(label: TourStrings.duration, value: booking.tourDuration!),
               InfoRow(label: TourBookingStrings.guestCount, value: TourBookingStrings.guests(booking.guests)),
               InfoRow(label: TourBookingStrings.unitPrice, value: Fmt.money(booking.unitPrice)),
+              if (booking.tourAmount != null)
+                InfoRow(label: TourBookingStrings.tourAmount, value: Fmt.money(booking.tourAmount)),
+              if (booking.roomAmount > 0)
+                InfoRow(label: TourBookingStrings.roomAmount, value: Fmt.money(booking.roomAmount)),
               const Divider(),
               InfoRow(
                 label: TourBookingStrings.total,

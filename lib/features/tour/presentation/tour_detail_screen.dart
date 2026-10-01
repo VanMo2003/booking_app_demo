@@ -7,18 +7,25 @@ import '../../../core/navigation/app_router.dart';
 import '../../../core/style/style.dart';
 import '../../../core/text/tour_strings.dart';
 import '../../../core/utils/formatters.dart';
+import '../../auth/presentation/session/auth_gate.dart';
 import '../../chat/presentation/chat_entry.dart';
 import '../domain/entities/tour.dart';
 import 'widgets/tour_card.dart';
 
-/// Chi tiết một tour cho khách tham khảo. App chưa đặt tour trực tiếp: nút cuối trang
-/// mở tin nhắn tới cơ sở với câu hỏi soạn sẵn để nhân viên xác nhận.
+/// Chi tiết một tour cho khách: thông tin tour, các phòng của gói (đặt tour là đặt luôn phòng ở
+/// từ ngày đi tour). Cuối trang: "Đặt tour" (chọn ngày, phòng trong ứng dụng) hoặc hỏi khách sạn qua tin nhắn.
 @RoutePage()
 class TourDetailScreen extends StatelessWidget {
   const TourDetailScreen({super.key, required this.tour, this.hotelName});
 
   final Tour tour;
   final String? hotelName;
+
+  Future<void> _book(BuildContext context) async {
+    final customer = await context.ensureCustomer();
+    if (customer == null || !context.mounted) return;
+    await context.router.push(TourBookingFormRoute(tour: tour, hotelName: hotelName));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +76,52 @@ class TourDetailScreen extends StatelessWidget {
               ],
             ),
           ),
+          const Gap(AppSpacing.lg),
+          const SectionHeader(title: TourStrings.roomsSection),
+          const Gap(AppSpacing.xs),
+          if (tour.withRooms) ...[
+            Text(TourStrings.stayInfo(tour.stayNights), style: AppTextStyles.bodySmall),
+            const Gap(AppSpacing.xs),
+            AppCard(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              child: Column(
+                children: [
+                  for (var i = 0; i < tour.rooms.length; i++) ...[
+                    if (i > 0) const Divider(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        children: [
+                          AppNetworkImage(
+                            path: tour.rooms[i].pathImage,
+                            width: 44,
+                            height: 44,
+                            borderRadius: AppRadius.smAll,
+                            placeholderIcon: Icons.bed_rounded,
+                          ),
+                          const Gap(AppSpacing.sm),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Phòng ${tour.rooms[i].roomNumber} · ${tour.rooms[i].roomTypeName}',
+                                  style: AppTextStyles.bodyStrong,
+                                ),
+                                Text(TourStrings.capacity(tour.rooms[i].capacity), style: AppTextStyles.caption),
+                              ],
+                            ),
+                          ),
+                          PriceText(tour.rooms[i].price, unit: TourStrings.perNight),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ] else
+            Text(TourStrings.withoutRooms, style: AppTextStyles.bodySmall),
           if (tour.includes != null) ...[
             const Gap(AppSpacing.lg),
             const SectionHeader(title: TourStrings.includes),
@@ -86,11 +139,24 @@ class TourDetailScreen extends StatelessWidget {
         ],
       ),
       bottomBar: BottomActionBar(
-        child: AppButton(
-          label: TourStrings.ask,
-          icon: Icons.chat_bubble_outline_rounded,
-          expand: true,
-          onPressed: () => context.openHotelChat(tour.hotelId, draft: TourStrings.askDraft(tour.name)),
+        child: Row(
+          children: [
+            Expanded(
+              child: AppButton.tonal(
+                label: TourStrings.askShort,
+                icon: Icons.chat_bubble_outline_rounded,
+                onPressed: () => context.openHotelChat(tour.hotelId, draft: TourStrings.askDraft(tour.name)),
+              ),
+            ),
+            const Gap(AppSpacing.sm),
+            Expanded(
+              child: AppButton(
+                label: TourStrings.book,
+                icon: Icons.event_available_rounded,
+                onPressed: paused ? null : () => _book(context),
+              ),
+            ),
+          ],
         ),
       ),
     );

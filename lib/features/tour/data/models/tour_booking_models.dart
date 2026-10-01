@@ -1,7 +1,9 @@
 import '../../../../core/enums/app_enums.dart';
 import '../../../../core/network/json_reader.dart';
 import '../../../../core/utils/date_utils.dart';
+import '../../../../core/utils/formatters.dart';
 import '../../domain/entities/tour_booking.dart';
+import 'tour_models.dart';
 
 /// JSON `TourBookingResponse` ↔ [TourBooking].
 abstract final class TourBookingModel {
@@ -28,5 +30,35 @@ abstract final class TourBookingModel {
         canceledByGuest: json.strOrNull('canceledBy') == 'CUSTOMER',
         createdByAi: json.flag('createdByAi'),
         createdAt: json.dateTime('onCreate'),
+        tourAmount: json['tourAmount'] == null ? null : json.decimal('tourAmount'),
+        roomAmount: json.decimal('roomAmount'),
+        bookingId: json.intOrNull('bookingId'),
+        stayCheckout: json.date('stayCheckout'),
+        rooms: TourRoomModel.listFrom(json, 'rooms'),
       );
+}
+
+/// Khách đặt tour trong ứng dụng.
+class TourBookingRequest {
+  const TourBookingRequest({
+    required this.tourId,
+    required this.tourDate,
+    required this.guests,
+    this.roomIds = const [],
+    this.note = '',
+  });
+
+  final int tourId;
+  final DateTime tourDate;
+  final int guests;
+  final List<int> roomIds;
+  final String note;
+
+  Map<String, dynamic> toJson() => {
+        'tourId': tourId,
+        'tourDate': Fmt.apiDate(tourDate),
+        'guests': guests,
+        if (roomIds.isNotEmpty) 'roomIds': roomIds,
+        if (note.trim().isNotEmpty) 'note': note.trim(),
+      };
 }

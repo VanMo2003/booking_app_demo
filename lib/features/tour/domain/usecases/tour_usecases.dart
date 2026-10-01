@@ -14,6 +14,16 @@ class GetBranchTours {
   Future<List<Tour>> call(int hotelId) => _repository.byHotel(hotelId);
 }
 
+/// Phòng của gói còn trống cho ngày đi tour.
+@injectable
+class GetTourStay {
+  const GetTourStay(this._repository);
+
+  final TourRepository _repository;
+
+  Future<TourStay> call(int tourId, DateTime date) => _repository.availableRooms(tourId, date);
+}
+
 @injectable
 class SaveTour {
   const SaveTour(this._repository);

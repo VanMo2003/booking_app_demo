@@ -9,6 +9,8 @@ import '../../../core/style/style.dart';
 import '../../../core/text/app_strings.dart';
 import '../../../core/text/tour_strings.dart';
 import '../../../core/utils/validators.dart';
+import '../../room/domain/entities/room.dart';
+import '../../room/domain/usecases/room_usecases.dart';
 import '../data/models/tour_models.dart';
 import '../domain/entities/tour.dart';
 import '../domain/usecases/tour_usecases.dart';
@@ -35,6 +37,10 @@ class _TourFormScreenState extends State<TourFormScreen> {
   late final _maxGuests = TextEditingController(text: widget.tour?.maxGuests?.toString());
   late final _description = TextEditingController(text: widget.tour?.description);
   late final _photo = PhotoPickerController(initialPath: widget.tour?.pathImage);
+  late final _stayNights = TextEditingController(text: '${widget.tour?.stayNights ?? 1}');
+  late final _roomIds = <int>{...?widget.tour?.rooms.map((room) => room.roomId)};
+  late final Future<List<Room>> _branchRooms = getIt<GetBranchRooms>()(widget.hotelId)
+      .then((rooms) => [...rooms]..sort((a, b) => a.price.compareTo(b.price)));
   late bool _available = widget.tour?.available ?? true;
   bool _saving = false;
 
@@ -42,7 +48,7 @@ class _TourFormScreenState extends State<TourFormScreen> {
 
   @override
   void dispose() {
-    for (final controller in [_name, _price, _duration, _departure, _includes, _maxGuests, _description]) {
+    for (final controller in [_name, _price, _duration, _departure, _includes, _maxGuests, _description, _stayNights]) {
       controller.dispose();
     }
     _photo.dispose();
@@ -53,6 +59,12 @@ class _TourFormScreenState extends State<TourFormScreen> {
     final text = value?.trim() ?? '';
     if (text.isEmpty) return null;
     return Validators.positiveInt(text);
+  }
+
+  String? _validateNights(String? value) {
+    final nights = int.tryParse(value?.trim() ?? '');
+    if (nights == null || nights < 1 || nights > 30) return 'Từ 1 đến 30 đêm';
+    return null;
   }
 
   Future<void> _submit() async {
@@ -69,6 +81,8 @@ class _TourFormScreenState extends State<TourFormScreen> {
       pathImage: _photo.pathForRequest,
       available: _available,
       hotelId: _isEdit ? null : widget.hotelId,
+      stayNights: int.parse(_stayNights.text.trim()),
+      roomIds: _roomIds.toList(),
     );
     final result = await runAction(
       () => getIt<SaveTour>()(request, id: widget.tour?.id, image: _photo.picked),
@@ -166,7 +180,61 @@ class _TourFormScreenState extends State<TourFormScreen> {
               maxLines: 8,
               textCapitalization: TextCapitalization.sentences,
             ),
+            const Gap(AppSpacing.xl),
+            const GroupLabel(TourStrings.roomsSection),
+            Text(TourStrings.roomsHint, style: AppTextStyles.caption),
+            const Gap(AppSpacing.sm),
+            AppTextField(
+              controller: _stayNights,
+              label: TourStrings.stayNights,
+              hint: TourStrings.stayNightsHint,
+              prefixIcon: Icons.nights_stay_outlined,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              validator: _validateNights,
+            ),
             const Gap(AppSpacing.xs),
+            FutureBuilder<List<Room>>(
+              future: _branchRooms,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text(TourStrings.roomsLoadFailed, style: AppTextStyles.caption);
+                }
+                final rooms = snapshot.data;
+                if (rooms == null) {
+                  return const Padding(
+                    padding: EdgeInsets.all(AppSpacing.md),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (final room in rooms)
+                      CheckboxListTile(
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        value: _roomIds.contains(room.id),
+                        onChanged: _saving
+                            ? null
+                            : (checked) => setState(() {
+                                  if (checked ?? false) {
+                                    _roomIds.add(room.id);
+                                  } else {
+                                    _roomIds.remove(room.id);
+                                  }
+                                }),
+                        title: Text('Phòng ${room.roomNumber} · ${room.roomTypeName}', style: AppTextStyles.bodyMedium),
+                        subtitle: Text(TourStrings.capacity(room.capacity), style: AppTextStyles.caption),
+                        secondary: PriceText(room.price, unit: TourStrings.perNight),
+                      ),
+                    Text(TourStrings.roomsSelected(_roomIds.length), style: AppTextStyles.captionStrong),
+                  ],
+                );
+              },
+            ),
+            const Gap(AppSpacing.md),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
               value: _available,

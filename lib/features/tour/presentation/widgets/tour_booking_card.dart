@@ -58,6 +58,14 @@ class TourBookingCard extends StatelessWidget {
             text: '${Fmt.weekdayDate(booking.tourDate)} · ${TourBookingStrings.guests(booking.guests)}'
                 '${booking.tourDeparture == null ? '' : ' · ${booking.tourDeparture}'}',
           ),
+          if (booking.withRooms) ...[
+            const Gap(4),
+            IconText(
+              icon: Icons.bed_outlined,
+              text: 'Phòng ${booking.roomNumbers}'
+                  '${booking.stayCheckout == null ? '' : ' · trả phòng ${Fmt.dayMonth(booking.stayCheckout)}'}',
+            ),
+          ],
           const Gap(AppSpacing.sm),
           Wrap(
             spacing: 6,

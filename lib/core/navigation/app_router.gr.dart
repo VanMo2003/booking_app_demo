@@ -10,7 +10,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 
-import 'package:auto_route/auto_route.dart' as _i67;
+import 'package:auto_route/auto_route.dart' as _i68;
 import 'package:booking_app_mobile/features/admin/presentation/accounts_screen.dart'
     as _i2;
 import 'package:booking_app_mobile/features/admin/presentation/admin_overview_screen.dart'
@@ -44,15 +44,15 @@ import 'package:booking_app_mobile/features/booking/presentation/edit/booking_ed
 import 'package:booking_app_mobile/features/booking/presentation/my_bookings/my_bookings_screen.dart'
     as _i37;
 import 'package:booking_app_mobile/features/booking/presentation/walk_in/walk_in_booking_screen.dart'
-    as _i64;
+    as _i65;
 import 'package:booking_app_mobile/features/chat/domain/entities/chat.dart'
-    as _i70;
+    as _i71;
 import 'package:booking_app_mobile/features/chat/presentation/chat/chat_screen.dart'
     as _i20;
 import 'package:booking_app_mobile/features/chat/presentation/inbox/chat_inbox_screen.dart'
     as _i10;
 import 'package:booking_app_mobile/features/customer/domain/entities/customer.dart'
-    as _i71;
+    as _i72;
 import 'package:booking_app_mobile/features/customer/presentation/account/account_screen.dart'
     as _i1;
 import 'package:booking_app_mobile/features/customer/presentation/branch/branch_customers_screen.dart'
@@ -62,7 +62,7 @@ import 'package:booking_app_mobile/features/customer/presentation/branch/custome
 import 'package:booking_app_mobile/features/customer/presentation/profile/profile_edit_screen.dart'
     as _i48;
 import 'package:booking_app_mobile/features/dish/domain/entities/dish.dart'
-    as _i72;
+    as _i73;
 import 'package:booking_app_mobile/features/dish/presentation/dish_form_screen.dart'
     as _i26;
 import 'package:booking_app_mobile/features/dish/presentation/dishes_screen.dart'
@@ -70,7 +70,7 @@ import 'package:booking_app_mobile/features/dish/presentation/dishes_screen.dart
 import 'package:booking_app_mobile/features/dish/presentation/hotel_menu_screen.dart'
     as _i33;
 import 'package:booking_app_mobile/features/employee/domain/entities/employee.dart'
-    as _i73;
+    as _i74;
 import 'package:booking_app_mobile/features/employee/presentation/employee_form_screen.dart'
     as _i28;
 import 'package:booking_app_mobile/features/employee/presentation/employees_screen.dart'
@@ -88,7 +88,7 @@ import 'package:booking_app_mobile/features/hotel/presentation/explore/explore_s
 import 'package:booking_app_mobile/features/hotel/presentation/search/search_results_screen.dart'
     as _i56;
 import 'package:booking_app_mobile/features/hotel_chain/domain/entities/hotel_chain.dart'
-    as _i75;
+    as _i76;
 import 'package:booking_app_mobile/features/hotel_chain/presentation/branch_form_screen.dart'
     as _i12;
 import 'package:booking_app_mobile/features/hotel_chain/presentation/chain_branches_screen.dart'
@@ -118,7 +118,7 @@ import 'package:booking_app_mobile/features/report/presentation/dashboard/dashbo
 import 'package:booking_app_mobile/features/report/presentation/reports/report_screens.dart'
     as _i15;
 import 'package:booking_app_mobile/features/room/domain/entities/room.dart'
-    as _i76;
+    as _i77;
 import 'package:booking_app_mobile/features/room/presentation/detail/room_detail_screen.dart'
     as _i52;
 import 'package:booking_app_mobile/features/room/presentation/manage/room_form_screen.dart'
@@ -140,35 +140,37 @@ import 'package:booking_app_mobile/features/shell/presentation/owner_more_screen
 import 'package:booking_app_mobile/features/shell/presentation/owner_shell_screen.dart'
     as _i44;
 import 'package:booking_app_mobile/features/shell/presentation/workspace_more_screen.dart'
-    as _i65;
-import 'package:booking_app_mobile/features/shell/presentation/workspace_shell_screen.dart'
     as _i66;
+import 'package:booking_app_mobile/features/shell/presentation/workspace_shell_screen.dart'
+    as _i67;
 import 'package:booking_app_mobile/features/splash/presentation/splash_screen.dart'
     as _i58;
 import 'package:booking_app_mobile/features/tour/domain/entities/tour.dart'
-    as _i74;
+    as _i75;
 import 'package:booking_app_mobile/features/tour/presentation/bookings/tour_booking_detail_screen.dart'
     as _i60;
-import 'package:booking_app_mobile/features/tour/presentation/bookings/tour_bookings_screen.dart'
+import 'package:booking_app_mobile/features/tour/presentation/bookings/tour_booking_form_screen.dart'
     as _i61;
+import 'package:booking_app_mobile/features/tour/presentation/bookings/tour_bookings_screen.dart'
+    as _i62;
 import 'package:booking_app_mobile/features/tour/presentation/tour_detail_screen.dart'
     as _i34;
 import 'package:booking_app_mobile/features/tour/presentation/tour_form_screen.dart'
-    as _i62;
-import 'package:booking_app_mobile/features/tour/presentation/tours_screen.dart'
     as _i63;
-import 'package:collection/collection.dart' as _i69;
-import 'package:flutter/material.dart' as _i68;
+import 'package:booking_app_mobile/features/tour/presentation/tours_screen.dart'
+    as _i64;
+import 'package:collection/collection.dart' as _i70;
+import 'package:flutter/material.dart' as _i69;
 
 /// generated route for
 /// [_i1.AccountScreen]
-class AccountRoute extends _i67.PageRouteInfo<void> {
-  const AccountRoute({List<_i67.PageRouteInfo>? children})
+class AccountRoute extends _i68.PageRouteInfo<void> {
+  const AccountRoute({List<_i68.PageRouteInfo>? children})
       : super(AccountRoute.name, initialChildren: children);
 
   static const String name = 'AccountRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i1.AccountScreen();
@@ -178,13 +180,13 @@ class AccountRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i2.AccountsScreen]
-class AccountsRoute extends _i67.PageRouteInfo<void> {
-  const AccountsRoute({List<_i67.PageRouteInfo>? children})
+class AccountsRoute extends _i68.PageRouteInfo<void> {
+  const AccountsRoute({List<_i68.PageRouteInfo>? children})
       : super(AccountsRoute.name, initialChildren: children);
 
   static const String name = 'AccountsRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i2.AccountsScreen();
@@ -194,13 +196,13 @@ class AccountsRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i3.AdminOverviewScreen]
-class AdminOverviewRoute extends _i67.PageRouteInfo<void> {
-  const AdminOverviewRoute({List<_i67.PageRouteInfo>? children})
+class AdminOverviewRoute extends _i68.PageRouteInfo<void> {
+  const AdminOverviewRoute({List<_i68.PageRouteInfo>? children})
       : super(AdminOverviewRoute.name, initialChildren: children);
 
   static const String name = 'AdminOverviewRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i3.AdminOverviewScreen();
@@ -210,13 +212,13 @@ class AdminOverviewRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i4.AdminShellScreen]
-class AdminShellRoute extends _i67.PageRouteInfo<void> {
-  const AdminShellRoute({List<_i67.PageRouteInfo>? children})
+class AdminShellRoute extends _i68.PageRouteInfo<void> {
+  const AdminShellRoute({List<_i68.PageRouteInfo>? children})
       : super(AdminShellRoute.name, initialChildren: children);
 
   static const String name = 'AdminShellRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i4.AdminShellScreen();
@@ -226,11 +228,11 @@ class AdminShellRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i5.AiSearchScreen]
-class AiSearchRoute extends _i67.PageRouteInfo<AiSearchRouteArgs> {
+class AiSearchRoute extends _i68.PageRouteInfo<AiSearchRouteArgs> {
   AiSearchRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     String? initialQuery,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           AiSearchRoute.name,
           args: AiSearchRouteArgs(key: key, initialQuery: initialQuery),
@@ -239,7 +241,7 @@ class AiSearchRoute extends _i67.PageRouteInfo<AiSearchRouteArgs> {
 
   static const String name = 'AiSearchRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<AiSearchRouteArgs>(
@@ -253,7 +255,7 @@ class AiSearchRoute extends _i67.PageRouteInfo<AiSearchRouteArgs> {
 class AiSearchRouteArgs {
   const AiSearchRouteArgs({this.key, this.initialQuery});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final String? initialQuery;
 
@@ -275,11 +277,11 @@ class AiSearchRouteArgs {
 
 /// generated route for
 /// [_i6.AmenitiesScreen]
-class AmenitiesRoute extends _i67.PageRouteInfo<AmenitiesRouteArgs> {
+class AmenitiesRoute extends _i68.PageRouteInfo<AmenitiesRouteArgs> {
   AmenitiesRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           AmenitiesRoute.name,
           args: AmenitiesRouteArgs(key: key, hotelId: hotelId),
@@ -288,7 +290,7 @@ class AmenitiesRoute extends _i67.PageRouteInfo<AmenitiesRouteArgs> {
 
   static const String name = 'AmenitiesRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<AmenitiesRouteArgs>();
@@ -300,7 +302,7 @@ class AmenitiesRoute extends _i67.PageRouteInfo<AmenitiesRouteArgs> {
 class AmenitiesRouteArgs {
   const AmenitiesRouteArgs({this.key, required this.hotelId});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
@@ -322,14 +324,14 @@ class AmenitiesRouteArgs {
 
 /// generated route for
 /// [_i7.BookingCreateScreen]
-class BookingCreateRoute extends _i67.PageRouteInfo<BookingCreateRouteArgs> {
+class BookingCreateRoute extends _i68.PageRouteInfo<BookingCreateRouteArgs> {
   BookingCreateRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
     required DateTime checkin,
     required DateTime checkout,
     List<int> preselectedRoomIds = const [],
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           BookingCreateRoute.name,
           args: BookingCreateRouteArgs(
@@ -344,7 +346,7 @@ class BookingCreateRoute extends _i67.PageRouteInfo<BookingCreateRouteArgs> {
 
   static const String name = 'BookingCreateRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<BookingCreateRouteArgs>();
@@ -368,7 +370,7 @@ class BookingCreateRouteArgs {
     this.preselectedRoomIds = const [],
   });
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
@@ -391,7 +393,7 @@ class BookingCreateRouteArgs {
         hotelId == other.hotelId &&
         checkin == other.checkin &&
         checkout == other.checkout &&
-        const _i69.ListEquality().equals(
+        const _i70.ListEquality().equals(
           preselectedRoomIds,
           other.preselectedRoomIds,
         );
@@ -403,16 +405,16 @@ class BookingCreateRouteArgs {
       hotelId.hashCode ^
       checkin.hashCode ^
       checkout.hashCode ^
-      const _i69.ListEquality().hash(preselectedRoomIds);
+      const _i70.ListEquality().hash(preselectedRoomIds);
 }
 
 /// generated route for
 /// [_i8.BookingDetailScreen]
-class BookingDetailRoute extends _i67.PageRouteInfo<BookingDetailRouteArgs> {
+class BookingDetailRoute extends _i68.PageRouteInfo<BookingDetailRouteArgs> {
   BookingDetailRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int bookingId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           BookingDetailRoute.name,
           args: BookingDetailRouteArgs(key: key, bookingId: bookingId),
@@ -421,7 +423,7 @@ class BookingDetailRoute extends _i67.PageRouteInfo<BookingDetailRouteArgs> {
 
   static const String name = 'BookingDetailRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<BookingDetailRouteArgs>();
@@ -433,7 +435,7 @@ class BookingDetailRoute extends _i67.PageRouteInfo<BookingDetailRouteArgs> {
 class BookingDetailRouteArgs {
   const BookingDetailRouteArgs({this.key, required this.bookingId});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int bookingId;
 
@@ -455,11 +457,11 @@ class BookingDetailRouteArgs {
 
 /// generated route for
 /// [_i9.BookingEditScreen]
-class BookingEditRoute extends _i67.PageRouteInfo<BookingEditRouteArgs> {
+class BookingEditRoute extends _i68.PageRouteInfo<BookingEditRouteArgs> {
   BookingEditRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int bookingId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           BookingEditRoute.name,
           args: BookingEditRouteArgs(key: key, bookingId: bookingId),
@@ -468,7 +470,7 @@ class BookingEditRoute extends _i67.PageRouteInfo<BookingEditRouteArgs> {
 
   static const String name = 'BookingEditRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<BookingEditRouteArgs>();
@@ -480,7 +482,7 @@ class BookingEditRoute extends _i67.PageRouteInfo<BookingEditRouteArgs> {
 class BookingEditRouteArgs {
   const BookingEditRouteArgs({this.key, required this.bookingId});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int bookingId;
 
@@ -503,12 +505,12 @@ class BookingEditRouteArgs {
 /// generated route for
 /// [_i10.BranchChatInboxScreen]
 class BranchChatInboxRoute
-    extends _i67.PageRouteInfo<BranchChatInboxRouteArgs> {
+    extends _i68.PageRouteInfo<BranchChatInboxRouteArgs> {
   BranchChatInboxRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
     String? branchName,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           BranchChatInboxRoute.name,
           args: BranchChatInboxRouteArgs(
@@ -521,7 +523,7 @@ class BranchChatInboxRoute
 
   static const String name = 'BranchChatInboxRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<BranchChatInboxRouteArgs>();
@@ -541,7 +543,7 @@ class BranchChatInboxRouteArgs {
     this.branchName,
   });
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
@@ -567,13 +569,13 @@ class BranchChatInboxRouteArgs {
 
 /// generated route for
 /// [_i11.BranchCustomersScreen]
-class BranchCustomersRoute extends _i67.PageRouteInfo<void> {
-  const BranchCustomersRoute({List<_i67.PageRouteInfo>? children})
+class BranchCustomersRoute extends _i68.PageRouteInfo<void> {
+  const BranchCustomersRoute({List<_i68.PageRouteInfo>? children})
       : super(BranchCustomersRoute.name, initialChildren: children);
 
   static const String name = 'BranchCustomersRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i11.BranchCustomersScreen();
@@ -583,11 +585,11 @@ class BranchCustomersRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i12.BranchFormScreen]
-class BranchFormRoute extends _i67.PageRouteInfo<BranchFormRouteArgs> {
+class BranchFormRoute extends _i68.PageRouteInfo<BranchFormRouteArgs> {
   BranchFormRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int chainId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           BranchFormRoute.name,
           args: BranchFormRouteArgs(key: key, chainId: chainId),
@@ -596,7 +598,7 @@ class BranchFormRoute extends _i67.PageRouteInfo<BranchFormRouteArgs> {
 
   static const String name = 'BranchFormRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<BranchFormRouteArgs>();
@@ -608,7 +610,7 @@ class BranchFormRoute extends _i67.PageRouteInfo<BranchFormRouteArgs> {
 class BranchFormRouteArgs {
   const BranchFormRouteArgs({this.key, required this.chainId});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int chainId;
 
@@ -630,11 +632,11 @@ class BranchFormRouteArgs {
 
 /// generated route for
 /// [_i13.BranchInfoScreen]
-class BranchInfoRoute extends _i67.PageRouteInfo<BranchInfoRouteArgs> {
+class BranchInfoRoute extends _i68.PageRouteInfo<BranchInfoRouteArgs> {
   BranchInfoRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           BranchInfoRoute.name,
           args: BranchInfoRouteArgs(key: key, hotelId: hotelId),
@@ -643,7 +645,7 @@ class BranchInfoRoute extends _i67.PageRouteInfo<BranchInfoRouteArgs> {
 
   static const String name = 'BranchInfoRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<BranchInfoRouteArgs>();
@@ -655,7 +657,7 @@ class BranchInfoRoute extends _i67.PageRouteInfo<BranchInfoRouteArgs> {
 class BranchInfoRouteArgs {
   const BranchInfoRouteArgs({this.key, required this.hotelId});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
@@ -677,13 +679,13 @@ class BranchInfoRouteArgs {
 
 /// generated route for
 /// [_i14.BranchPickerScreen]
-class BranchPickerRoute extends _i67.PageRouteInfo<void> {
-  const BranchPickerRoute({List<_i67.PageRouteInfo>? children})
+class BranchPickerRoute extends _i68.PageRouteInfo<void> {
+  const BranchPickerRoute({List<_i68.PageRouteInfo>? children})
       : super(BranchPickerRoute.name, initialChildren: children);
 
   static const String name = 'BranchPickerRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i14.BranchPickerScreen();
@@ -693,13 +695,13 @@ class BranchPickerRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i15.BranchReportsScreen]
-class BranchReportsRoute extends _i67.PageRouteInfo<void> {
-  const BranchReportsRoute({List<_i67.PageRouteInfo>? children})
+class BranchReportsRoute extends _i68.PageRouteInfo<void> {
+  const BranchReportsRoute({List<_i68.PageRouteInfo>? children})
       : super(BranchReportsRoute.name, initialChildren: children);
 
   static const String name = 'BranchReportsRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i15.BranchReportsScreen();
@@ -709,13 +711,13 @@ class BranchReportsRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i16.CatalogScreen]
-class CatalogRoute extends _i67.PageRouteInfo<void> {
-  const CatalogRoute({List<_i67.PageRouteInfo>? children})
+class CatalogRoute extends _i68.PageRouteInfo<void> {
+  const CatalogRoute({List<_i68.PageRouteInfo>? children})
       : super(CatalogRoute.name, initialChildren: children);
 
   static const String name = 'CatalogRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i16.CatalogScreen();
@@ -725,13 +727,13 @@ class CatalogRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i17.ChainBranchesScreen]
-class ChainBranchesRoute extends _i67.PageRouteInfo<void> {
-  const ChainBranchesRoute({List<_i67.PageRouteInfo>? children})
+class ChainBranchesRoute extends _i68.PageRouteInfo<void> {
+  const ChainBranchesRoute({List<_i68.PageRouteInfo>? children})
       : super(ChainBranchesRoute.name, initialChildren: children);
 
   static const String name = 'ChainBranchesRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i17.ChainBranchesScreen();
@@ -741,11 +743,11 @@ class ChainBranchesRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i18.ChainInfoScreen]
-class ChainInfoRoute extends _i67.PageRouteInfo<ChainInfoRouteArgs> {
+class ChainInfoRoute extends _i68.PageRouteInfo<ChainInfoRouteArgs> {
   ChainInfoRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int chainId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           ChainInfoRoute.name,
           args: ChainInfoRouteArgs(key: key, chainId: chainId),
@@ -754,7 +756,7 @@ class ChainInfoRoute extends _i67.PageRouteInfo<ChainInfoRouteArgs> {
 
   static const String name = 'ChainInfoRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<ChainInfoRouteArgs>();
@@ -766,7 +768,7 @@ class ChainInfoRoute extends _i67.PageRouteInfo<ChainInfoRouteArgs> {
 class ChainInfoRouteArgs {
   const ChainInfoRouteArgs({this.key, required this.chainId});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int chainId;
 
@@ -788,13 +790,13 @@ class ChainInfoRouteArgs {
 
 /// generated route for
 /// [_i19.ChainOverviewScreen]
-class ChainOverviewRoute extends _i67.PageRouteInfo<void> {
-  const ChainOverviewRoute({List<_i67.PageRouteInfo>? children})
+class ChainOverviewRoute extends _i68.PageRouteInfo<void> {
+  const ChainOverviewRoute({List<_i68.PageRouteInfo>? children})
       : super(ChainOverviewRoute.name, initialChildren: children);
 
   static const String name = 'ChainOverviewRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i19.ChainOverviewScreen();
@@ -804,13 +806,13 @@ class ChainOverviewRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i15.ChainReportsScreen]
-class ChainReportsRoute extends _i67.PageRouteInfo<void> {
-  const ChainReportsRoute({List<_i67.PageRouteInfo>? children})
+class ChainReportsRoute extends _i68.PageRouteInfo<void> {
+  const ChainReportsRoute({List<_i68.PageRouteInfo>? children})
       : super(ChainReportsRoute.name, initialChildren: children);
 
   static const String name = 'ChainReportsRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i15.ChainReportsScreen();
@@ -820,13 +822,13 @@ class ChainReportsRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i10.ChatInboxScreen]
-class ChatInboxRoute extends _i67.PageRouteInfo<void> {
-  const ChatInboxRoute({List<_i67.PageRouteInfo>? children})
+class ChatInboxRoute extends _i68.PageRouteInfo<void> {
+  const ChatInboxRoute({List<_i68.PageRouteInfo>? children})
       : super(ChatInboxRoute.name, initialChildren: children);
 
   static const String name = 'ChatInboxRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i10.ChatInboxScreen();
@@ -836,13 +838,13 @@ class ChatInboxRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i20.ChatScreen]
-class ChatRoute extends _i67.PageRouteInfo<ChatRouteArgs> {
+class ChatRoute extends _i68.PageRouteInfo<ChatRouteArgs> {
   ChatRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int conversationId,
-    _i70.Conversation? initial,
+    _i71.Conversation? initial,
     String? draft,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           ChatRoute.name,
           args: ChatRouteArgs(
@@ -856,7 +858,7 @@ class ChatRoute extends _i67.PageRouteInfo<ChatRouteArgs> {
 
   static const String name = 'ChatRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<ChatRouteArgs>();
@@ -878,11 +880,11 @@ class ChatRouteArgs {
     this.draft,
   });
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int conversationId;
 
-  final _i70.Conversation? initial;
+  final _i71.Conversation? initial;
 
   final String? draft;
 
@@ -911,13 +913,13 @@ class ChatRouteArgs {
 
 /// generated route for
 /// [_i21.CreateChainScreen]
-class CreateChainRoute extends _i67.PageRouteInfo<void> {
-  const CreateChainRoute({List<_i67.PageRouteInfo>? children})
+class CreateChainRoute extends _i68.PageRouteInfo<void> {
+  const CreateChainRoute({List<_i68.PageRouteInfo>? children})
       : super(CreateChainRoute.name, initialChildren: children);
 
   static const String name = 'CreateChainRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i21.CreateChainScreen();
@@ -927,12 +929,12 @@ class CreateChainRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i22.CustomerDetailScreen]
-class CustomerDetailRoute extends _i67.PageRouteInfo<CustomerDetailRouteArgs> {
+class CustomerDetailRoute extends _i68.PageRouteInfo<CustomerDetailRouteArgs> {
   CustomerDetailRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
-    required _i71.Customer customer,
-    List<_i67.PageRouteInfo>? children,
+    required _i72.Customer customer,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           CustomerDetailRoute.name,
           args: CustomerDetailRouteArgs(
@@ -945,7 +947,7 @@ class CustomerDetailRoute extends _i67.PageRouteInfo<CustomerDetailRouteArgs> {
 
   static const String name = 'CustomerDetailRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<CustomerDetailRouteArgs>();
@@ -965,11 +967,11 @@ class CustomerDetailRouteArgs {
     required this.customer,
   });
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
-  final _i71.Customer customer;
+  final _i72.Customer customer;
 
   @override
   String toString() {
@@ -992,11 +994,11 @@ class CustomerDetailRouteArgs {
 /// generated route for
 /// [_i11.CustomerDirectoryScreen]
 class CustomerDirectoryRoute
-    extends _i67.PageRouteInfo<CustomerDirectoryRouteArgs> {
+    extends _i68.PageRouteInfo<CustomerDirectoryRouteArgs> {
   CustomerDirectoryRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           CustomerDirectoryRoute.name,
           args: CustomerDirectoryRouteArgs(key: key, hotelId: hotelId),
@@ -1005,7 +1007,7 @@ class CustomerDirectoryRoute
 
   static const String name = 'CustomerDirectoryRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<CustomerDirectoryRouteArgs>();
@@ -1017,7 +1019,7 @@ class CustomerDirectoryRoute
 class CustomerDirectoryRouteArgs {
   const CustomerDirectoryRouteArgs({this.key, required this.hotelId});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
@@ -1039,13 +1041,13 @@ class CustomerDirectoryRouteArgs {
 
 /// generated route for
 /// [_i23.CustomerShellScreen]
-class CustomerShellRoute extends _i67.PageRouteInfo<void> {
-  const CustomerShellRoute({List<_i67.PageRouteInfo>? children})
+class CustomerShellRoute extends _i68.PageRouteInfo<void> {
+  const CustomerShellRoute({List<_i68.PageRouteInfo>? children})
       : super(CustomerShellRoute.name, initialChildren: children);
 
   static const String name = 'CustomerShellRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i23.CustomerShellScreen();
@@ -1055,13 +1057,13 @@ class CustomerShellRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i24.DashboardScreen]
-class DashboardRoute extends _i67.PageRouteInfo<void> {
-  const DashboardRoute({List<_i67.PageRouteInfo>? children})
+class DashboardRoute extends _i68.PageRouteInfo<void> {
+  const DashboardRoute({List<_i68.PageRouteInfo>? children})
       : super(DashboardRoute.name, initialChildren: children);
 
   static const String name = 'DashboardRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i24.DashboardScreen();
@@ -1071,13 +1073,13 @@ class DashboardRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i25.DeskScreen]
-class DeskRoute extends _i67.PageRouteInfo<void> {
-  const DeskRoute({List<_i67.PageRouteInfo>? children})
+class DeskRoute extends _i68.PageRouteInfo<void> {
+  const DeskRoute({List<_i68.PageRouteInfo>? children})
       : super(DeskRoute.name, initialChildren: children);
 
   static const String name = 'DeskRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i25.DeskScreen();
@@ -1087,12 +1089,12 @@ class DeskRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i26.DishFormScreen]
-class DishFormRoute extends _i67.PageRouteInfo<DishFormRouteArgs> {
+class DishFormRoute extends _i68.PageRouteInfo<DishFormRouteArgs> {
   DishFormRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
-    _i72.Dish? dish,
-    List<_i67.PageRouteInfo>? children,
+    _i73.Dish? dish,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           DishFormRoute.name,
           args: DishFormRouteArgs(key: key, hotelId: hotelId, dish: dish),
@@ -1101,7 +1103,7 @@ class DishFormRoute extends _i67.PageRouteInfo<DishFormRouteArgs> {
 
   static const String name = 'DishFormRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<DishFormRouteArgs>();
@@ -1117,11 +1119,11 @@ class DishFormRoute extends _i67.PageRouteInfo<DishFormRouteArgs> {
 class DishFormRouteArgs {
   const DishFormRouteArgs({this.key, required this.hotelId, this.dish});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
-  final _i72.Dish? dish;
+  final _i73.Dish? dish;
 
   @override
   String toString() {
@@ -1141,11 +1143,11 @@ class DishFormRouteArgs {
 
 /// generated route for
 /// [_i27.DishesScreen]
-class DishesRoute extends _i67.PageRouteInfo<DishesRouteArgs> {
+class DishesRoute extends _i68.PageRouteInfo<DishesRouteArgs> {
   DishesRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           DishesRoute.name,
           args: DishesRouteArgs(key: key, hotelId: hotelId),
@@ -1154,7 +1156,7 @@ class DishesRoute extends _i67.PageRouteInfo<DishesRouteArgs> {
 
   static const String name = 'DishesRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<DishesRouteArgs>();
@@ -1166,7 +1168,7 @@ class DishesRoute extends _i67.PageRouteInfo<DishesRouteArgs> {
 class DishesRouteArgs {
   const DishesRouteArgs({this.key, required this.hotelId});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
@@ -1188,12 +1190,12 @@ class DishesRouteArgs {
 
 /// generated route for
 /// [_i28.EmployeeFormScreen]
-class EmployeeFormRoute extends _i67.PageRouteInfo<EmployeeFormRouteArgs> {
+class EmployeeFormRoute extends _i68.PageRouteInfo<EmployeeFormRouteArgs> {
   EmployeeFormRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
-    _i73.Employee? employee,
-    List<_i67.PageRouteInfo>? children,
+    _i74.Employee? employee,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           EmployeeFormRoute.name,
           args: EmployeeFormRouteArgs(
@@ -1206,7 +1208,7 @@ class EmployeeFormRoute extends _i67.PageRouteInfo<EmployeeFormRouteArgs> {
 
   static const String name = 'EmployeeFormRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<EmployeeFormRouteArgs>();
@@ -1222,11 +1224,11 @@ class EmployeeFormRoute extends _i67.PageRouteInfo<EmployeeFormRouteArgs> {
 class EmployeeFormRouteArgs {
   const EmployeeFormRouteArgs({this.key, required this.hotelId, this.employee});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
-  final _i73.Employee? employee;
+  final _i74.Employee? employee;
 
   @override
   String toString() {
@@ -1248,11 +1250,11 @@ class EmployeeFormRouteArgs {
 
 /// generated route for
 /// [_i29.EmployeesScreen]
-class EmployeesRoute extends _i67.PageRouteInfo<EmployeesRouteArgs> {
+class EmployeesRoute extends _i68.PageRouteInfo<EmployeesRouteArgs> {
   EmployeesRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           EmployeesRoute.name,
           args: EmployeesRouteArgs(key: key, hotelId: hotelId),
@@ -1261,7 +1263,7 @@ class EmployeesRoute extends _i67.PageRouteInfo<EmployeesRouteArgs> {
 
   static const String name = 'EmployeesRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<EmployeesRouteArgs>();
@@ -1273,7 +1275,7 @@ class EmployeesRoute extends _i67.PageRouteInfo<EmployeesRouteArgs> {
 class EmployeesRouteArgs {
   const EmployeesRouteArgs({this.key, required this.hotelId});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
@@ -1295,13 +1297,13 @@ class EmployeesRouteArgs {
 
 /// generated route for
 /// [_i30.ExploreScreen]
-class ExploreRoute extends _i67.PageRouteInfo<void> {
-  const ExploreRoute({List<_i67.PageRouteInfo>? children})
+class ExploreRoute extends _i68.PageRouteInfo<void> {
+  const ExploreRoute({List<_i68.PageRouteInfo>? children})
       : super(ExploreRoute.name, initialChildren: children);
 
   static const String name = 'ExploreRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i30.ExploreScreen();
@@ -1311,13 +1313,13 @@ class ExploreRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i31.FavoritesScreen]
-class FavoritesRoute extends _i67.PageRouteInfo<void> {
-  const FavoritesRoute({List<_i67.PageRouteInfo>? children})
+class FavoritesRoute extends _i68.PageRouteInfo<void> {
+  const FavoritesRoute({List<_i68.PageRouteInfo>? children})
       : super(FavoritesRoute.name, initialChildren: children);
 
   static const String name = 'FavoritesRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i31.FavoritesScreen();
@@ -1327,13 +1329,13 @@ class FavoritesRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i32.HotelDetailScreen]
-class HotelDetailRoute extends _i67.PageRouteInfo<HotelDetailRouteArgs> {
+class HotelDetailRoute extends _i68.PageRouteInfo<HotelDetailRouteArgs> {
   HotelDetailRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
     DateTime? checkin,
     DateTime? checkout,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           HotelDetailRoute.name,
           args: HotelDetailRouteArgs(
@@ -1347,7 +1349,7 @@ class HotelDetailRoute extends _i67.PageRouteInfo<HotelDetailRouteArgs> {
 
   static const String name = 'HotelDetailRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<HotelDetailRouteArgs>();
@@ -1369,7 +1371,7 @@ class HotelDetailRouteArgs {
     this.checkout,
   });
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
@@ -1399,12 +1401,12 @@ class HotelDetailRouteArgs {
 
 /// generated route for
 /// [_i33.HotelMenuScreen]
-class HotelMenuRoute extends _i67.PageRouteInfo<HotelMenuRouteArgs> {
+class HotelMenuRoute extends _i68.PageRouteInfo<HotelMenuRouteArgs> {
   HotelMenuRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
     String? hotelName,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           HotelMenuRoute.name,
           args: HotelMenuRouteArgs(
@@ -1417,7 +1419,7 @@ class HotelMenuRoute extends _i67.PageRouteInfo<HotelMenuRouteArgs> {
 
   static const String name = 'HotelMenuRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<HotelMenuRouteArgs>();
@@ -1433,7 +1435,7 @@ class HotelMenuRoute extends _i67.PageRouteInfo<HotelMenuRouteArgs> {
 class HotelMenuRouteArgs {
   const HotelMenuRouteArgs({this.key, required this.hotelId, this.hotelName});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
@@ -1459,12 +1461,12 @@ class HotelMenuRouteArgs {
 
 /// generated route for
 /// [_i34.HotelToursScreen]
-class HotelToursRoute extends _i67.PageRouteInfo<HotelToursRouteArgs> {
+class HotelToursRoute extends _i68.PageRouteInfo<HotelToursRouteArgs> {
   HotelToursRoute({
-    _i68.Key? key,
-    required List<_i74.Tour> tours,
+    _i69.Key? key,
+    required List<_i75.Tour> tours,
     String? hotelName,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           HotelToursRoute.name,
           args: HotelToursRouteArgs(
@@ -1477,7 +1479,7 @@ class HotelToursRoute extends _i67.PageRouteInfo<HotelToursRouteArgs> {
 
   static const String name = 'HotelToursRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<HotelToursRouteArgs>();
@@ -1493,9 +1495,9 @@ class HotelToursRoute extends _i67.PageRouteInfo<HotelToursRouteArgs> {
 class HotelToursRouteArgs {
   const HotelToursRouteArgs({this.key, required this.tours, this.hotelName});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
-  final List<_i74.Tour> tours;
+  final List<_i75.Tour> tours;
 
   final String? hotelName;
 
@@ -1509,22 +1511,22 @@ class HotelToursRouteArgs {
     if (identical(this, other)) return true;
     if (other is! HotelToursRouteArgs) return false;
     return key == other.key &&
-        const _i69.ListEquality().equals(tours, other.tours) &&
+        const _i70.ListEquality().equals(tours, other.tours) &&
         hotelName == other.hotelName;
   }
 
   @override
   int get hashCode =>
-      key.hashCode ^ const _i69.ListEquality().hash(tours) ^ hotelName.hashCode;
+      key.hashCode ^ const _i70.ListEquality().hash(tours) ^ hotelName.hashCode;
 }
 
 /// generated route for
 /// [_i35.LoginScreen]
-class LoginRoute extends _i67.PageRouteInfo<LoginRouteArgs> {
+class LoginRoute extends _i68.PageRouteInfo<LoginRouteArgs> {
   LoginRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     bool returnResult = false,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           LoginRoute.name,
           args: LoginRouteArgs(key: key, returnResult: returnResult),
@@ -1533,7 +1535,7 @@ class LoginRoute extends _i67.PageRouteInfo<LoginRouteArgs> {
 
   static const String name = 'LoginRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<LoginRouteArgs>(
@@ -1547,7 +1549,7 @@ class LoginRoute extends _i67.PageRouteInfo<LoginRouteArgs> {
 class LoginRouteArgs {
   const LoginRouteArgs({this.key, this.returnResult = false});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final bool returnResult;
 
@@ -1569,11 +1571,11 @@ class LoginRouteArgs {
 
 /// generated route for
 /// [_i36.ManagersScreen]
-class ManagersRoute extends _i67.PageRouteInfo<ManagersRouteArgs> {
+class ManagersRoute extends _i68.PageRouteInfo<ManagersRouteArgs> {
   ManagersRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int chainId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           ManagersRoute.name,
           args: ManagersRouteArgs(key: key, chainId: chainId),
@@ -1582,7 +1584,7 @@ class ManagersRoute extends _i67.PageRouteInfo<ManagersRouteArgs> {
 
   static const String name = 'ManagersRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<ManagersRouteArgs>();
@@ -1594,7 +1596,7 @@ class ManagersRoute extends _i67.PageRouteInfo<ManagersRouteArgs> {
 class ManagersRouteArgs {
   const ManagersRouteArgs({this.key, required this.chainId});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int chainId;
 
@@ -1616,13 +1618,13 @@ class ManagersRouteArgs {
 
 /// generated route for
 /// [_i37.MyBookingsScreen]
-class MyBookingsRoute extends _i67.PageRouteInfo<void> {
-  const MyBookingsRoute({List<_i67.PageRouteInfo>? children})
+class MyBookingsRoute extends _i68.PageRouteInfo<void> {
+  const MyBookingsRoute({List<_i68.PageRouteInfo>? children})
       : super(MyBookingsRoute.name, initialChildren: children);
 
   static const String name = 'MyBookingsRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i37.MyBookingsScreen();
@@ -1632,13 +1634,13 @@ class MyBookingsRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i38.NotificationsScreen]
-class NotificationsRoute extends _i67.PageRouteInfo<void> {
-  const NotificationsRoute({List<_i67.PageRouteInfo>? children})
+class NotificationsRoute extends _i68.PageRouteInfo<void> {
+  const NotificationsRoute({List<_i68.PageRouteInfo>? children})
       : super(NotificationsRoute.name, initialChildren: children);
 
   static const String name = 'NotificationsRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i38.NotificationsScreen();
@@ -1648,13 +1650,13 @@ class NotificationsRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i39.OwnerApprovalsScreen]
-class OwnerApprovalsRoute extends _i67.PageRouteInfo<void> {
-  const OwnerApprovalsRoute({List<_i67.PageRouteInfo>? children})
+class OwnerApprovalsRoute extends _i68.PageRouteInfo<void> {
+  const OwnerApprovalsRoute({List<_i68.PageRouteInfo>? children})
       : super(OwnerApprovalsRoute.name, initialChildren: children);
 
   static const String name = 'OwnerApprovalsRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i39.OwnerApprovalsScreen();
@@ -1664,13 +1666,13 @@ class OwnerApprovalsRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i40.OwnerMoreScreen]
-class OwnerMoreRoute extends _i67.PageRouteInfo<void> {
-  const OwnerMoreRoute({List<_i67.PageRouteInfo>? children})
+class OwnerMoreRoute extends _i68.PageRouteInfo<void> {
+  const OwnerMoreRoute({List<_i68.PageRouteInfo>? children})
       : super(OwnerMoreRoute.name, initialChildren: children);
 
   static const String name = 'OwnerMoreRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i40.OwnerMoreScreen();
@@ -1680,13 +1682,13 @@ class OwnerMoreRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i41.OwnerProfileFormScreen]
-class OwnerProfileFormRoute extends _i67.PageRouteInfo<void> {
-  const OwnerProfileFormRoute({List<_i67.PageRouteInfo>? children})
+class OwnerProfileFormRoute extends _i68.PageRouteInfo<void> {
+  const OwnerProfileFormRoute({List<_i68.PageRouteInfo>? children})
       : super(OwnerProfileFormRoute.name, initialChildren: children);
 
   static const String name = 'OwnerProfileFormRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i41.OwnerProfileFormScreen();
@@ -1696,13 +1698,13 @@ class OwnerProfileFormRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i42.OwnerRegisterScreen]
-class OwnerRegisterRoute extends _i67.PageRouteInfo<void> {
-  const OwnerRegisterRoute({List<_i67.PageRouteInfo>? children})
+class OwnerRegisterRoute extends _i68.PageRouteInfo<void> {
+  const OwnerRegisterRoute({List<_i68.PageRouteInfo>? children})
       : super(OwnerRegisterRoute.name, initialChildren: children);
 
   static const String name = 'OwnerRegisterRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i42.OwnerRegisterScreen();
@@ -1713,12 +1715,12 @@ class OwnerRegisterRoute extends _i67.PageRouteInfo<void> {
 /// generated route for
 /// [_i43.OwnerRegistrationDetailScreen]
 class OwnerRegistrationDetailRoute
-    extends _i67.PageRouteInfo<OwnerRegistrationDetailRouteArgs> {
+    extends _i68.PageRouteInfo<OwnerRegistrationDetailRouteArgs> {
   OwnerRegistrationDetailRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int chainId,
-    _i75.HotelChain? initial,
-    List<_i67.PageRouteInfo>? children,
+    _i76.HotelChain? initial,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           OwnerRegistrationDetailRoute.name,
           args: OwnerRegistrationDetailRouteArgs(
@@ -1731,7 +1733,7 @@ class OwnerRegistrationDetailRoute
 
   static const String name = 'OwnerRegistrationDetailRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<OwnerRegistrationDetailRouteArgs>();
@@ -1751,11 +1753,11 @@ class OwnerRegistrationDetailRouteArgs {
     this.initial,
   });
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int chainId;
 
-  final _i75.HotelChain? initial;
+  final _i76.HotelChain? initial;
 
   @override
   String toString() {
@@ -1777,13 +1779,13 @@ class OwnerRegistrationDetailRouteArgs {
 
 /// generated route for
 /// [_i44.OwnerShellScreen]
-class OwnerShellRoute extends _i67.PageRouteInfo<void> {
-  const OwnerShellRoute({List<_i67.PageRouteInfo>? children})
+class OwnerShellRoute extends _i68.PageRouteInfo<void> {
+  const OwnerShellRoute({List<_i68.PageRouteInfo>? children})
       : super(OwnerShellRoute.name, initialChildren: children);
 
   static const String name = 'OwnerShellRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i44.OwnerShellScreen();
@@ -1793,13 +1795,13 @@ class OwnerShellRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i45.OwnerStatusScreen]
-class OwnerStatusRoute extends _i67.PageRouteInfo<void> {
-  const OwnerStatusRoute({List<_i67.PageRouteInfo>? children})
+class OwnerStatusRoute extends _i68.PageRouteInfo<void> {
+  const OwnerStatusRoute({List<_i68.PageRouteInfo>? children})
       : super(OwnerStatusRoute.name, initialChildren: children);
 
   static const String name = 'OwnerStatusRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i45.OwnerStatusScreen();
@@ -1809,11 +1811,11 @@ class OwnerStatusRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i46.PaymentWebViewScreen]
-class PaymentWebViewRoute extends _i67.PageRouteInfo<PaymentWebViewRouteArgs> {
+class PaymentWebViewRoute extends _i68.PageRouteInfo<PaymentWebViewRouteArgs> {
   PaymentWebViewRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required String paymentUrl,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           PaymentWebViewRoute.name,
           args: PaymentWebViewRouteArgs(key: key, paymentUrl: paymentUrl),
@@ -1822,7 +1824,7 @@ class PaymentWebViewRoute extends _i67.PageRouteInfo<PaymentWebViewRouteArgs> {
 
   static const String name = 'PaymentWebViewRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<PaymentWebViewRouteArgs>();
@@ -1837,7 +1839,7 @@ class PaymentWebViewRoute extends _i67.PageRouteInfo<PaymentWebViewRouteArgs> {
 class PaymentWebViewRouteArgs {
   const PaymentWebViewRouteArgs({this.key, required this.paymentUrl});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final String paymentUrl;
 
@@ -1859,11 +1861,11 @@ class PaymentWebViewRouteArgs {
 
 /// generated route for
 /// [_i47.PayrollScreen]
-class PayrollRoute extends _i67.PageRouteInfo<PayrollRouteArgs> {
+class PayrollRoute extends _i68.PageRouteInfo<PayrollRouteArgs> {
   PayrollRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           PayrollRoute.name,
           args: PayrollRouteArgs(key: key, hotelId: hotelId),
@@ -1872,7 +1874,7 @@ class PayrollRoute extends _i67.PageRouteInfo<PayrollRouteArgs> {
 
   static const String name = 'PayrollRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<PayrollRouteArgs>();
@@ -1884,7 +1886,7 @@ class PayrollRoute extends _i67.PageRouteInfo<PayrollRouteArgs> {
 class PayrollRouteArgs {
   const PayrollRouteArgs({this.key, required this.hotelId});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
@@ -1906,11 +1908,11 @@ class PayrollRouteArgs {
 
 /// generated route for
 /// [_i48.ProfileEditScreen]
-class ProfileEditRoute extends _i67.PageRouteInfo<ProfileEditRouteArgs> {
+class ProfileEditRoute extends _i68.PageRouteInfo<ProfileEditRouteArgs> {
   ProfileEditRoute({
-    _i68.Key? key,
-    required _i71.Customer customer,
-    List<_i67.PageRouteInfo>? children,
+    _i69.Key? key,
+    required _i72.Customer customer,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           ProfileEditRoute.name,
           args: ProfileEditRouteArgs(key: key, customer: customer),
@@ -1919,7 +1921,7 @@ class ProfileEditRoute extends _i67.PageRouteInfo<ProfileEditRouteArgs> {
 
   static const String name = 'ProfileEditRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<ProfileEditRouteArgs>();
@@ -1931,9 +1933,9 @@ class ProfileEditRoute extends _i67.PageRouteInfo<ProfileEditRouteArgs> {
 class ProfileEditRouteArgs {
   const ProfileEditRouteArgs({this.key, required this.customer});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
-  final _i71.Customer customer;
+  final _i72.Customer customer;
 
   @override
   String toString() {
@@ -1953,11 +1955,11 @@ class ProfileEditRouteArgs {
 
 /// generated route for
 /// [_i49.ProfileSetupScreen]
-class ProfileSetupRoute extends _i67.PageRouteInfo<ProfileSetupRouteArgs> {
+class ProfileSetupRoute extends _i68.PageRouteInfo<ProfileSetupRouteArgs> {
   ProfileSetupRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     bool returnResult = false,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           ProfileSetupRoute.name,
           args: ProfileSetupRouteArgs(key: key, returnResult: returnResult),
@@ -1966,7 +1968,7 @@ class ProfileSetupRoute extends _i67.PageRouteInfo<ProfileSetupRouteArgs> {
 
   static const String name = 'ProfileSetupRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<ProfileSetupRouteArgs>(
@@ -1983,7 +1985,7 @@ class ProfileSetupRoute extends _i67.PageRouteInfo<ProfileSetupRouteArgs> {
 class ProfileSetupRouteArgs {
   const ProfileSetupRouteArgs({this.key, this.returnResult = false});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final bool returnResult;
 
@@ -2005,11 +2007,11 @@ class ProfileSetupRouteArgs {
 
 /// generated route for
 /// [_i50.RegisterScreen]
-class RegisterRoute extends _i67.PageRouteInfo<RegisterRouteArgs> {
+class RegisterRoute extends _i68.PageRouteInfo<RegisterRouteArgs> {
   RegisterRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     bool returnResult = false,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           RegisterRoute.name,
           args: RegisterRouteArgs(key: key, returnResult: returnResult),
@@ -2018,7 +2020,7 @@ class RegisterRoute extends _i67.PageRouteInfo<RegisterRouteArgs> {
 
   static const String name = 'RegisterRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<RegisterRouteArgs>(
@@ -2035,7 +2037,7 @@ class RegisterRoute extends _i67.PageRouteInfo<RegisterRouteArgs> {
 class RegisterRouteArgs {
   const RegisterRouteArgs({this.key, this.returnResult = false});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final bool returnResult;
 
@@ -2057,13 +2059,13 @@ class RegisterRouteArgs {
 
 /// generated route for
 /// [_i51.ReviewScreen]
-class ReviewRoute extends _i67.PageRouteInfo<ReviewRouteArgs> {
+class ReviewRoute extends _i68.PageRouteInfo<ReviewRouteArgs> {
   ReviewRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int bookingId,
     required int customerId,
     required String hotelName,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           ReviewRoute.name,
           args: ReviewRouteArgs(
@@ -2077,7 +2079,7 @@ class ReviewRoute extends _i67.PageRouteInfo<ReviewRouteArgs> {
 
   static const String name = 'ReviewRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<ReviewRouteArgs>();
@@ -2099,7 +2101,7 @@ class ReviewRouteArgs {
     required this.hotelName,
   });
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int bookingId;
 
@@ -2132,14 +2134,14 @@ class ReviewRouteArgs {
 
 /// generated route for
 /// [_i52.RoomDetailScreen]
-class RoomDetailRoute extends _i67.PageRouteInfo<RoomDetailRouteArgs> {
+class RoomDetailRoute extends _i68.PageRouteInfo<RoomDetailRouteArgs> {
   RoomDetailRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int roomId,
     required int hotelId,
     DateTime? checkin,
     DateTime? checkout,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           RoomDetailRoute.name,
           args: RoomDetailRouteArgs(
@@ -2154,7 +2156,7 @@ class RoomDetailRoute extends _i67.PageRouteInfo<RoomDetailRouteArgs> {
 
   static const String name = 'RoomDetailRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<RoomDetailRouteArgs>();
@@ -2178,7 +2180,7 @@ class RoomDetailRouteArgs {
     this.checkout,
   });
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int roomId;
 
@@ -2215,12 +2217,12 @@ class RoomDetailRouteArgs {
 
 /// generated route for
 /// [_i53.RoomFormScreen]
-class RoomFormRoute extends _i67.PageRouteInfo<RoomFormRouteArgs> {
+class RoomFormRoute extends _i68.PageRouteInfo<RoomFormRouteArgs> {
   RoomFormRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
-    _i76.Room? room,
-    List<_i67.PageRouteInfo>? children,
+    _i77.Room? room,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           RoomFormRoute.name,
           args: RoomFormRouteArgs(key: key, hotelId: hotelId, room: room),
@@ -2229,7 +2231,7 @@ class RoomFormRoute extends _i67.PageRouteInfo<RoomFormRouteArgs> {
 
   static const String name = 'RoomFormRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<RoomFormRouteArgs>();
@@ -2245,11 +2247,11 @@ class RoomFormRoute extends _i67.PageRouteInfo<RoomFormRouteArgs> {
 class RoomFormRouteArgs {
   const RoomFormRouteArgs({this.key, required this.hotelId, this.room});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
-  final _i76.Room? room;
+  final _i77.Room? room;
 
   @override
   String toString() {
@@ -2270,12 +2272,12 @@ class RoomFormRouteArgs {
 /// generated route for
 /// [_i54.RoomManageDetailScreen]
 class RoomManageDetailRoute
-    extends _i67.PageRouteInfo<RoomManageDetailRouteArgs> {
+    extends _i68.PageRouteInfo<RoomManageDetailRouteArgs> {
   RoomManageDetailRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
     required int roomId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           RoomManageDetailRoute.name,
           args: RoomManageDetailRouteArgs(
@@ -2288,7 +2290,7 @@ class RoomManageDetailRoute
 
   static const String name = 'RoomManageDetailRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<RoomManageDetailRouteArgs>();
@@ -2308,7 +2310,7 @@ class RoomManageDetailRouteArgs {
     required this.roomId,
   });
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
@@ -2334,13 +2336,13 @@ class RoomManageDetailRouteArgs {
 
 /// generated route for
 /// [_i55.RoomsManageScreen]
-class RoomsManageRoute extends _i67.PageRouteInfo<void> {
-  const RoomsManageRoute({List<_i67.PageRouteInfo>? children})
+class RoomsManageRoute extends _i68.PageRouteInfo<void> {
+  const RoomsManageRoute({List<_i68.PageRouteInfo>? children})
       : super(RoomsManageRoute.name, initialChildren: children);
 
   static const String name = 'RoomsManageRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i55.RoomsManageScreen();
@@ -2350,12 +2352,12 @@ class RoomsManageRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i56.SearchResultsScreen]
-class SearchResultsRoute extends _i67.PageRouteInfo<SearchResultsRouteArgs> {
+class SearchResultsRoute extends _i68.PageRouteInfo<SearchResultsRouteArgs> {
   SearchResultsRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required DateTime checkin,
     required DateTime checkout,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           SearchResultsRoute.name,
           args: SearchResultsRouteArgs(
@@ -2368,7 +2370,7 @@ class SearchResultsRoute extends _i67.PageRouteInfo<SearchResultsRouteArgs> {
 
   static const String name = 'SearchResultsRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<SearchResultsRouteArgs>();
@@ -2388,7 +2390,7 @@ class SearchResultsRouteArgs {
     required this.checkout,
   });
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final DateTime checkin;
 
@@ -2414,11 +2416,11 @@ class SearchResultsRouteArgs {
 
 /// generated route for
 /// [_i57.ServicesScreen]
-class ServicesRoute extends _i67.PageRouteInfo<ServicesRouteArgs> {
+class ServicesRoute extends _i68.PageRouteInfo<ServicesRouteArgs> {
   ServicesRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           ServicesRoute.name,
           args: ServicesRouteArgs(key: key, hotelId: hotelId),
@@ -2427,7 +2429,7 @@ class ServicesRoute extends _i67.PageRouteInfo<ServicesRouteArgs> {
 
   static const String name = 'ServicesRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<ServicesRouteArgs>();
@@ -2439,7 +2441,7 @@ class ServicesRoute extends _i67.PageRouteInfo<ServicesRouteArgs> {
 class ServicesRouteArgs {
   const ServicesRouteArgs({this.key, required this.hotelId});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
@@ -2461,13 +2463,13 @@ class ServicesRouteArgs {
 
 /// generated route for
 /// [_i58.SplashScreen]
-class SplashRoute extends _i67.PageRouteInfo<void> {
-  const SplashRoute({List<_i67.PageRouteInfo>? children})
+class SplashRoute extends _i68.PageRouteInfo<void> {
+  const SplashRoute({List<_i68.PageRouteInfo>? children})
       : super(SplashRoute.name, initialChildren: children);
 
   static const String name = 'SplashRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i58.SplashScreen();
@@ -2477,13 +2479,13 @@ class SplashRoute extends _i67.PageRouteInfo<void> {
 
 /// generated route for
 /// [_i59.SystemDataScreen]
-class SystemDataRoute extends _i67.PageRouteInfo<void> {
-  const SystemDataRoute({List<_i67.PageRouteInfo>? children})
+class SystemDataRoute extends _i68.PageRouteInfo<void> {
+  const SystemDataRoute({List<_i68.PageRouteInfo>? children})
       : super(SystemDataRoute.name, initialChildren: children);
 
   static const String name = 'SystemDataRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       return const _i59.SystemDataScreen();
@@ -2494,11 +2496,11 @@ class SystemDataRoute extends _i67.PageRouteInfo<void> {
 /// generated route for
 /// [_i60.TourBookingDetailScreen]
 class TourBookingDetailRoute
-    extends _i67.PageRouteInfo<TourBookingDetailRouteArgs> {
+    extends _i68.PageRouteInfo<TourBookingDetailRouteArgs> {
   TourBookingDetailRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int bookingId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           TourBookingDetailRoute.name,
           args: TourBookingDetailRouteArgs(key: key, bookingId: bookingId),
@@ -2507,7 +2509,7 @@ class TourBookingDetailRoute
 
   static const String name = 'TourBookingDetailRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<TourBookingDetailRouteArgs>();
@@ -2522,7 +2524,7 @@ class TourBookingDetailRoute
 class TourBookingDetailRouteArgs {
   const TourBookingDetailRouteArgs({this.key, required this.bookingId});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int bookingId;
 
@@ -2543,12 +2545,77 @@ class TourBookingDetailRouteArgs {
 }
 
 /// generated route for
-/// [_i61.TourBookingsScreen]
-class TourBookingsRoute extends _i67.PageRouteInfo<TourBookingsRouteArgs> {
+/// [_i61.TourBookingFormScreen]
+class TourBookingFormRoute
+    extends _i68.PageRouteInfo<TourBookingFormRouteArgs> {
+  TourBookingFormRoute({
+    _i69.Key? key,
+    required _i75.Tour tour,
+    String? hotelName,
+    List<_i68.PageRouteInfo>? children,
+  }) : super(
+          TourBookingFormRoute.name,
+          args: TourBookingFormRouteArgs(
+            key: key,
+            tour: tour,
+            hotelName: hotelName,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'TourBookingFormRoute';
+
+  static _i68.PageInfo page = _i68.PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<TourBookingFormRouteArgs>();
+      return _i61.TourBookingFormScreen(
+        key: args.key,
+        tour: args.tour,
+        hotelName: args.hotelName,
+      );
+    },
+  );
+}
+
+class TourBookingFormRouteArgs {
+  const TourBookingFormRouteArgs({
+    this.key,
+    required this.tour,
+    this.hotelName,
+  });
+
+  final _i69.Key? key;
+
+  final _i75.Tour tour;
+
+  final String? hotelName;
+
+  @override
+  String toString() {
+    return 'TourBookingFormRouteArgs{key: $key, tour: $tour, hotelName: $hotelName}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! TourBookingFormRouteArgs) return false;
+    return key == other.key &&
+        tour == other.tour &&
+        hotelName == other.hotelName;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ tour.hashCode ^ hotelName.hashCode;
+}
+
+/// generated route for
+/// [_i62.TourBookingsScreen]
+class TourBookingsRoute extends _i68.PageRouteInfo<TourBookingsRouteArgs> {
   TourBookingsRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     int? hotelId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           TourBookingsRoute.name,
           args: TourBookingsRouteArgs(key: key, hotelId: hotelId),
@@ -2557,13 +2624,13 @@ class TourBookingsRoute extends _i67.PageRouteInfo<TourBookingsRouteArgs> {
 
   static const String name = 'TourBookingsRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<TourBookingsRouteArgs>(
         orElse: () => const TourBookingsRouteArgs(),
       );
-      return _i61.TourBookingsScreen(key: args.key, hotelId: args.hotelId);
+      return _i62.TourBookingsScreen(key: args.key, hotelId: args.hotelId);
     },
   );
 }
@@ -2571,7 +2638,7 @@ class TourBookingsRoute extends _i67.PageRouteInfo<TourBookingsRouteArgs> {
 class TourBookingsRouteArgs {
   const TourBookingsRouteArgs({this.key, this.hotelId});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int? hotelId;
 
@@ -2593,12 +2660,12 @@ class TourBookingsRouteArgs {
 
 /// generated route for
 /// [_i34.TourDetailScreen]
-class TourDetailRoute extends _i67.PageRouteInfo<TourDetailRouteArgs> {
+class TourDetailRoute extends _i68.PageRouteInfo<TourDetailRouteArgs> {
   TourDetailRoute({
-    _i68.Key? key,
-    required _i74.Tour tour,
+    _i69.Key? key,
+    required _i75.Tour tour,
     String? hotelName,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           TourDetailRoute.name,
           args: TourDetailRouteArgs(key: key, tour: tour, hotelName: hotelName),
@@ -2607,7 +2674,7 @@ class TourDetailRoute extends _i67.PageRouteInfo<TourDetailRouteArgs> {
 
   static const String name = 'TourDetailRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<TourDetailRouteArgs>();
@@ -2623,9 +2690,9 @@ class TourDetailRoute extends _i67.PageRouteInfo<TourDetailRouteArgs> {
 class TourDetailRouteArgs {
   const TourDetailRouteArgs({this.key, required this.tour, this.hotelName});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
-  final _i74.Tour tour;
+  final _i75.Tour tour;
 
   final String? hotelName;
 
@@ -2648,13 +2715,13 @@ class TourDetailRouteArgs {
 }
 
 /// generated route for
-/// [_i62.TourFormScreen]
-class TourFormRoute extends _i67.PageRouteInfo<TourFormRouteArgs> {
+/// [_i63.TourFormScreen]
+class TourFormRoute extends _i68.PageRouteInfo<TourFormRouteArgs> {
   TourFormRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
-    _i74.Tour? tour,
-    List<_i67.PageRouteInfo>? children,
+    _i75.Tour? tour,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           TourFormRoute.name,
           args: TourFormRouteArgs(key: key, hotelId: hotelId, tour: tour),
@@ -2663,11 +2730,11 @@ class TourFormRoute extends _i67.PageRouteInfo<TourFormRouteArgs> {
 
   static const String name = 'TourFormRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<TourFormRouteArgs>();
-      return _i62.TourFormScreen(
+      return _i63.TourFormScreen(
         key: args.key,
         hotelId: args.hotelId,
         tour: args.tour,
@@ -2679,11 +2746,11 @@ class TourFormRoute extends _i67.PageRouteInfo<TourFormRouteArgs> {
 class TourFormRouteArgs {
   const TourFormRouteArgs({this.key, required this.hotelId, this.tour});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
-  final _i74.Tour? tour;
+  final _i75.Tour? tour;
 
   @override
   String toString() {
@@ -2702,12 +2769,12 @@ class TourFormRouteArgs {
 }
 
 /// generated route for
-/// [_i63.ToursScreen]
-class ToursRoute extends _i67.PageRouteInfo<ToursRouteArgs> {
+/// [_i64.ToursScreen]
+class ToursRoute extends _i68.PageRouteInfo<ToursRouteArgs> {
   ToursRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           ToursRoute.name,
           args: ToursRouteArgs(key: key, hotelId: hotelId),
@@ -2716,11 +2783,11 @@ class ToursRoute extends _i67.PageRouteInfo<ToursRouteArgs> {
 
   static const String name = 'ToursRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<ToursRouteArgs>();
-      return _i63.ToursScreen(key: args.key, hotelId: args.hotelId);
+      return _i64.ToursScreen(key: args.key, hotelId: args.hotelId);
     },
   );
 }
@@ -2728,7 +2795,7 @@ class ToursRoute extends _i67.PageRouteInfo<ToursRouteArgs> {
 class ToursRouteArgs {
   const ToursRouteArgs({this.key, required this.hotelId});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
@@ -2749,12 +2816,12 @@ class ToursRouteArgs {
 }
 
 /// generated route for
-/// [_i64.WalkInBookingScreen]
-class WalkInBookingRoute extends _i67.PageRouteInfo<WalkInBookingRouteArgs> {
+/// [_i65.WalkInBookingScreen]
+class WalkInBookingRoute extends _i68.PageRouteInfo<WalkInBookingRouteArgs> {
   WalkInBookingRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           WalkInBookingRoute.name,
           args: WalkInBookingRouteArgs(key: key, hotelId: hotelId),
@@ -2763,11 +2830,11 @@ class WalkInBookingRoute extends _i67.PageRouteInfo<WalkInBookingRouteArgs> {
 
   static const String name = 'WalkInBookingRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<WalkInBookingRouteArgs>();
-      return _i64.WalkInBookingScreen(key: args.key, hotelId: args.hotelId);
+      return _i65.WalkInBookingScreen(key: args.key, hotelId: args.hotelId);
     },
   );
 }
@@ -2775,7 +2842,7 @@ class WalkInBookingRoute extends _i67.PageRouteInfo<WalkInBookingRouteArgs> {
 class WalkInBookingRouteArgs {
   const WalkInBookingRouteArgs({this.key, required this.hotelId});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 
@@ -2796,28 +2863,28 @@ class WalkInBookingRouteArgs {
 }
 
 /// generated route for
-/// [_i65.WorkspaceMoreScreen]
-class WorkspaceMoreRoute extends _i67.PageRouteInfo<void> {
-  const WorkspaceMoreRoute({List<_i67.PageRouteInfo>? children})
+/// [_i66.WorkspaceMoreScreen]
+class WorkspaceMoreRoute extends _i68.PageRouteInfo<void> {
+  const WorkspaceMoreRoute({List<_i68.PageRouteInfo>? children})
       : super(WorkspaceMoreRoute.name, initialChildren: children);
 
   static const String name = 'WorkspaceMoreRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
-      return const _i65.WorkspaceMoreScreen();
+      return const _i66.WorkspaceMoreScreen();
     },
   );
 }
 
 /// generated route for
-/// [_i66.WorkspaceShellScreen]
-class WorkspaceShellRoute extends _i67.PageRouteInfo<WorkspaceShellRouteArgs> {
+/// [_i67.WorkspaceShellScreen]
+class WorkspaceShellRoute extends _i68.PageRouteInfo<WorkspaceShellRouteArgs> {
   WorkspaceShellRoute({
-    _i68.Key? key,
+    _i69.Key? key,
     required int hotelId,
-    List<_i67.PageRouteInfo>? children,
+    List<_i68.PageRouteInfo>? children,
   }) : super(
           WorkspaceShellRoute.name,
           args: WorkspaceShellRouteArgs(key: key, hotelId: hotelId),
@@ -2826,11 +2893,11 @@ class WorkspaceShellRoute extends _i67.PageRouteInfo<WorkspaceShellRouteArgs> {
 
   static const String name = 'WorkspaceShellRoute';
 
-  static _i67.PageInfo page = _i67.PageInfo(
+  static _i68.PageInfo page = _i68.PageInfo(
     name,
     builder: (data) {
       final args = data.argsAs<WorkspaceShellRouteArgs>();
-      return _i66.WorkspaceShellScreen(key: args.key, hotelId: args.hotelId);
+      return _i67.WorkspaceShellScreen(key: args.key, hotelId: args.hotelId);
     },
   );
 }
@@ -2838,7 +2905,7 @@ class WorkspaceShellRoute extends _i67.PageRouteInfo<WorkspaceShellRouteArgs> {
 class WorkspaceShellRouteArgs {
   const WorkspaceShellRouteArgs({this.key, required this.hotelId});
 
-  final _i68.Key? key;
+  final _i69.Key? key;
 
   final int hotelId;
 

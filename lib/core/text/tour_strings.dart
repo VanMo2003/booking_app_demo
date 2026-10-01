@@ -39,6 +39,14 @@ abstract final class TourStrings {
   static const maxGuestsHint = 'Tổng khách các đơn cùng ngày; để trống nếu không giới hạn';
   static const description = 'Mô tả, lịch trình';
   static const descriptionHint = 'Điểm đến, hoạt động, lưu ý cho khách…';
+  static const roomsSection = 'Phòng kèm tour';
+  static const roomsHint =
+      'Đặt tour là đặt luôn phòng ở từ ngày đi tour. Chọn các phòng của gói (phòng rẻ hay phòng cao cấp) — '
+      'khách chọn một trong các phòng còn trống đêm đó. Không chọn phòng nào thì chỉ bán tour.';
+  static const stayNights = 'Số đêm ở';
+  static const stayNightsHint = 'Tính từ ngày đi tour';
+  static String roomsSelected(int n) => n == 0 ? 'Chưa chọn phòng — chỉ bán tour' : 'Đã chọn $n phòng';
+  static const roomsLoadFailed = 'Không tải được danh sách phòng của cơ sở.';
   static const availableHint =
       'Tắt khi tạm ngừng — tour vẫn hiện nhưng khách thấy "Tạm ngừng" và trợ lý AI không gợi ý.';
 
@@ -47,10 +55,16 @@ abstract final class TourStrings {
   static String viewAll(int n) => 'Xem cả $n tour';
   static String maxGuestsValue(int n) => 'Tối đa $n khách mỗi chuyến';
   static const ask = 'Nhắn khách sạn để đặt tour';
+  static const askShort = 'Hỏi khách sạn';
+  static const book = 'Đặt tour';
+  static const perNight = '/đêm';
+  static String stayInfo(int nights) => 'Ở $nights đêm từ ngày đi tour — chọn một phòng còn trống khi đặt:';
+  static const withoutRooms = 'Tour này không kèm phòng.';
+  static String capacity(int n) => '$n người';
   static String askDraft(String name) => 'Mình muốn đặt tour "$name" ngày ';
   static const bookingNote =
-      'Nhắn ngày đi và số khách, trợ lý của khách sạn gửi tóm tắt; bạn nhắn "Đồng ý" là đơn tour được tạo. '
-      'Khách sạn xác nhận sau, thanh toán tại khách sạn.';
+      'Bấm "Đặt tour" để chọn ngày và phòng, hoặc nhắn khách sạn: trợ lý gửi tóm tắt, bạn nhắn "Đồng ý" '
+      'là đơn được tạo. Khách sạn xác nhận sau, thanh toán tại khách sạn.';
   static const guestEmpty = 'Cơ sở chưa có tour';
 }
 
@@ -68,8 +82,33 @@ abstract final class TourBookingStrings {
       'Đơn tour khách đặt (kể cả qua trợ lý AI trong tin nhắn) sẽ hiện ở đây và được báo cho đội ngũ.';
   static const emptyStatus = 'Không có đơn ở trạng thái này';
 
+  // Đặt tour trong ứng dụng
+  static const formTitle = 'Đặt tour';
+  static const dateAndGuests = 'Ngày đi & số khách';
+  static const date = 'Ngày đi';
+  static const chooseRooms = 'Chọn phòng';
+  static String stayRange(String checkin, String checkout, int nights) =>
+      'Nhận phòng $checkin · trả phòng $checkout · $nights đêm';
+  static const noFreeRooms = 'Các phòng của gói đã kín đêm này. Hãy chọn ngày khác.';
+  static String beds(int beds, int guests) => 'Phòng đã chọn đủ chỗ cho $beds người (đơn có $guests khách)';
+  static const pickRoom = 'Hãy chọn phòng cho tour';
+  static String needMoreRooms(int guests) => 'Chọn thêm phòng cho đủ $guests khách';
+  static const noteForHotel = 'Ghi chú cho khách sạn';
+  static const notePlaceholder = 'Điểm đón, ăn chay, trẻ em…';
+  static String tourPart(String price, int guests) => 'Tiền tour ($price × $guests khách)';
+  static String roomPart(int nights) => 'Tiền phòng ($nights đêm)';
+  static const formNotice = 'Phòng được giữ ngay khi đặt. Khách sạn xác nhận đơn sau, thanh toán tại khách sạn.';
+  static const placed = 'Đã đặt tour — chờ khách sạn xác nhận';
+
   // Chi tiết
   static const tour = 'Tour';
+  static const stay = 'Phòng ở kèm';
+  static const checkin = 'Nhận phòng';
+  static const checkout = 'Trả phòng';
+  static const rooms = 'Phòng';
+  static const tourAmount = 'Tiền tour';
+  static const roomAmount = 'Tiền phòng';
+  static String viewRoomBooking(int id) => 'Xem đơn phòng #$id';
   static const tourDate = 'Ngày đi';
   static const departure = 'Khởi hành';
   static const guestCount = 'Số khách';

@@ -34,4 +34,8 @@ class TourRepositoryImpl implements TourRepository {
 
   @override
   Future<void> delete(int id) async => (await _api.delete(id)).ensureSuccess();
+
+  @override
+  Future<TourStay> availableRooms(int tourId, DateTime date) async =>
+      (await _api.availableRooms(tourId, TourStayModel.queryDate(date))).parse(TourStayModel.fromJson);
 }

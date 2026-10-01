@@ -1,7 +1,17 @@
 import 'package:injectable/injectable.dart';
 
+import '../../data/models/tour_booking_models.dart';
 import '../entities/tour_booking.dart';
 import '../repositories/tour_booking_repository.dart';
+
+@injectable
+class PlaceTourBooking {
+  const PlaceTourBooking(this._repository);
+
+  final TourBookingRepository _repository;
+
+  Future<TourBooking> call(TourBookingRequest request) => _repository.create(request);
+}
 
 /// Đơn tour: của khách đang đăng nhập (`hotelId` null) hoặc của một cơ sở.
 @injectable

@@ -73,6 +73,7 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: ToursRoute.page),
         AutoRoute(page: TourFormRoute.page),
         AutoRoute(page: TourBookingsRoute.page),
+        AutoRoute(page: TourBookingFormRoute.page),
         AutoRoute(page: TourBookingDetailRoute.page),
         AutoRoute(page: CustomerDirectoryRoute.page),
         AutoRoute(page: CustomerDetailRoute.page),

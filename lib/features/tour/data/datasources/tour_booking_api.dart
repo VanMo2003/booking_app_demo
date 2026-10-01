@@ -10,6 +10,9 @@ part 'tour_booking_api.g.dart';
 abstract class TourBookingApi {
   factory TourBookingApi(Dio dio, {String? baseUrl}) = _TourBookingApi;
 
+  @POST('/tour-bookings')
+  Future<ApiResponse> create(@Body() Map<String, dynamic> body);
+
   @GET('/tour-bookings/me')
   Future<ApiResponse> mine();
 
