@@ -57,6 +57,11 @@ abstract final class BookingStrings {
   static const canceled = 'Đã huỷ đơn';
   static const payNow = 'Thanh toán VNPay';
   static const payAgain = 'Thanh toán lại';
+  static const changePaymentMethod = 'Đổi phương thức';
+  static const changePaymentTitle = 'Đổi phương thức thanh toán';
+  static const changePaymentConfirm = 'Xác nhận đổi';
+  static const changePaymentAndPay = 'Đổi và thanh toán VNPay';
+  static String paymentMethodChanged(String method) => 'Đã đổi sang $method';
   static const review = 'Đánh giá';
   static const reviewed = 'Đã đánh giá';
   static const confirmBooking = 'Xác nhận đơn';

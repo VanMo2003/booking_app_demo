@@ -20,6 +20,9 @@ class StatusBadge extends StatelessWidget {
   factory StatusBadge.booking(BookingStatus status, {bool dense = false}) =>
       StatusBadge(label: status.label, tone: status.tone, dense: dense);
 
+  factory StatusBadge.tourBooking(TourBookingStatus status, {bool dense = false}) =>
+      StatusBadge(label: status.label, tone: status.tone, dense: dense);
+
   factory StatusBadge.payment(PaymentStatus status, {bool dense = false}) =>
       StatusBadge(label: status.label, tone: status.tone, dense: dense);
 

@@ -58,6 +58,24 @@ enum BookingStatus {
       this == BookingStatus.pending || this == BookingStatus.paying;
 }
 
+/// Đơn tour: chờ khách sạn xác nhận → đã xác nhận → hoàn tất; còn mở thì một trong hai bên huỷ được.
+enum TourBookingStatus {
+  pending('PENDING'),
+  confirmed('CONFIRMED'),
+  completed('COMPLETED'),
+  canceled('CANCELED');
+
+  const TourBookingStatus(this.value);
+
+  final String value;
+
+  static TourBookingStatus parse(String? raw) =>
+      TourBookingStatus.values.firstWhereOrNull((e) => e.value == raw) ??
+      TourBookingStatus.pending;
+
+  bool get isOpen => this == TourBookingStatus.pending || this == TourBookingStatus.confirmed;
+}
+
 enum PaymentStatus {
   unpaid('UNPAID'),
   pending('PENDING'),
@@ -179,6 +197,9 @@ enum NotificationType {
   ownerRegistered('OWNER_REGISTERED'),
   ownerApproved('OWNER_APPROVED'),
   ownerRejected('OWNER_REJECTED'),
+  tourBookingCreated('TOUR_BOOKING_CREATED'),
+  tourBookingConfirmed('TOUR_BOOKING_CONFIRMED'),
+  tourBookingCanceled('TOUR_BOOKING_CANCELED'),
   other('');
 
   const NotificationType(this.value);

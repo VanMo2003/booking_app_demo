@@ -54,6 +54,10 @@ class BookingRepositoryImpl implements BookingRepository {
       (await _api.complete(id)).parse(BookingModel.fromJson);
 
   @override
+  Future<Booking> changePaymentMethod(int id, PaymentMethod method) async =>
+      (await _api.changePaymentMethod(id, {'paymentMethod': method.value})).parse(BookingModel.fromJson);
+
+  @override
   Future<Booking> markPaid(int id) async {
     final raw = await _api.updatePaymentStatus(id, PaymentStatus.paid.value);
     final json = Map<String, dynamic>.from(raw as Map);

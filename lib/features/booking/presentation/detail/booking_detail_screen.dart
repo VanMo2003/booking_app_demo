@@ -22,6 +22,7 @@ import '../../../payment/presentation/payment_flow.dart';
 import '../../domain/entities/booking.dart';
 import '../../domain/usecases/booking_usecases.dart';
 import '../widgets/payment_countdown.dart';
+import '../widgets/payment_method_sheet.dart';
 import 'booking_detail_cubit.dart';
 
 /// Chi tiết đơn — dùng chung cho khách (thanh toán, huỷ, đánh giá) và
@@ -117,6 +118,21 @@ class _BookingDetailView extends StatelessWidget {
     if (context.mounted) await context.read<BookingDetailCubit>().refresh();
   }
 
+  Future<void> _changePaymentMethod(BuildContext context, Booking booking) async {
+    final method = await PaymentMethodSheet.show(context, booking.paymentMethod);
+    if (method == null || !context.mounted) return;
+    final cubit = context.read<BookingDetailCubit>();
+    final result = await AppAction.run(
+      context,
+      () => cubit.changePaymentMethod(method),
+      successMessage: BookingStrings.paymentMethodChanged(method.label),
+    );
+    // Sang VNPay thì mở cổng thanh toán luôn, giống lúc đặt phòng.
+    if (result.isSuccess && method == PaymentMethod.vnPay && context.mounted) {
+      await _pay(context, result.value!);
+    }
+  }
+
   Future<void> _review(BuildContext context, Booking booking) async {
     final customerId = context.read<SessionCubit>().session?.customer?.id;
     if (customerId == null) return;
@@ -180,7 +196,14 @@ class _BookingDetailView extends StatelessWidget {
             onRetry: () => context.read<BookingDetailCubit>().load(bookingId),
             builder: (context, booking) => RefreshIndicator(
               onRefresh: context.read<BookingDetailCubit>().refresh,
-              child: _BookingBody(booking: booking, backOffice: backOffice),
+              child: _BookingBody(
+                booking: booking,
+                backOffice: backOffice,
+                // Phía cơ sở đổi trong màn sửa đơn.
+                onChangePaymentMethod: !backOffice && booking.canChangePaymentMethod
+                    ? () => _changePaymentMethod(context, booking)
+                    : null,
+              ),
             ),
           ),
           bottomBar: booking == null
@@ -287,10 +310,11 @@ class _BookingDetailView extends StatelessWidget {
 }
 
 class _BookingBody extends StatelessWidget {
-  const _BookingBody({required this.booking, required this.backOffice});
+  const _BookingBody({required this.booking, required this.backOffice, this.onChangePaymentMethod});
 
   final Booking booking;
   final bool backOffice;
+  final VoidCallback? onChangePaymentMethod;
 
   @override
   Widget build(BuildContext context) {
@@ -442,7 +466,11 @@ class _BookingBody extends StatelessWidget {
           ),
         ],
         const Gap(AppSpacing.md),
-        const SectionHeader(title: BookingStrings.payment),
+        SectionHeader(
+          title: BookingStrings.payment,
+          actionLabel: onChangePaymentMethod == null ? null : BookingStrings.changePaymentMethod,
+          onAction: onChangePaymentMethod,
+        ),
         const Gap(AppSpacing.xs),
         AppCard(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),

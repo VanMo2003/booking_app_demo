@@ -43,6 +43,13 @@ abstract class BookingApi {
   @PUT('/bookings/{id}/complete')
   Future<ApiResponse> complete(@Path('id') int id);
 
+  /// Body `{"paymentMethod": "CASH" | "BANK_TRANSFER" | "VN_PAY"}`.
+  @PUT('/bookings/{id}/payment-method')
+  Future<ApiResponse> changePaymentMethod(
+    @Path('id') int id,
+    @Body() Map<String, dynamic> body,
+  );
+
   /// API này trả thẳng object đơn, không có khung `ApiResponse`.
   /// Khai báo `dynamic` vì retrofit sinh sai mã với kiểu `Map<String, dynamic>`.
   @PUT('/bookings/{id}/payment-status')

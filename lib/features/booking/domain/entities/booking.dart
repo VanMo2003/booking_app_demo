@@ -52,6 +52,9 @@ class Booking extends Equatable {
   bool get canPayOnline =>
       paymentMethod == PaymentMethod.vnPay && !isPaid && status.isOpen;
 
+  /// Chưa trả tiền và đơn còn mở thì còn đổi được cách thanh toán.
+  bool get canChangePaymentMethod => !isPaid && status.isOpen;
+
   String get roomNumbers => rooms.map((r) => r.roomNumber).join(', ');
 
   @override

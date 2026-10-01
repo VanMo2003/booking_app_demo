@@ -64,6 +64,15 @@ abstract final class ErrorStrings {
     ('Booking already cancelled', 'Đơn đã bị huỷ.'),
     ('does not use VN_PAY', 'Đơn này không chọn thanh toán VNPay.'),
     ('Booking already paid', 'Đơn đã được thanh toán.'),
+    (
+      'Paid bookings keep their payment method',
+      'Đơn đã thanh toán nên không đổi được phương thức thanh toán.'
+    ),
+    (
+      'Closed bookings keep their payment method',
+      'Đơn đã hoàn tất hoặc đã huỷ nên không đổi được phương thức thanh toán.'
+    ),
+    ('Unknown payment method', 'Phương thức thanh toán không hợp lệ.'),
     ('Booking is cancelled', 'Đơn đã bị huỷ nên không thể thanh toán.'),
     ('Booking is completed', 'Đơn đã hoàn tất nên không thể thanh toán.'),
     ('Room number already exists', 'Số phòng này đã có trong cơ sở.'),

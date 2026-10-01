@@ -33,6 +33,12 @@ class AppLinkNavigator {
         if (session?.role == Role.admin) {
           await _router.push(OwnerRegistrationDetailRoute(chainId: chainId));
         }
+      case TourBookingLink(:final bookingId):
+        if (session == null) {
+          await _router.push(LoginRoute());
+        } else {
+          await _router.push(TourBookingDetailRoute(bookingId: bookingId));
+        }
       case ChatLink(:final conversationId):
         if (session == null) {
           await _router.push(LoginRoute());

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/bloc/load_state.dart';
+import '../../../../core/enums/app_enums.dart';
 import '../../domain/entities/booking.dart';
 import '../../domain/usecases/booking_usecases.dart';
 
@@ -17,11 +18,12 @@ class BookingDetailState extends Equatable {
 
 @injectable
 class BookingDetailCubit extends Cubit<BookingDetailState> {
-  BookingDetailCubit(this._getBooking, this._changeStatus, this._deleteBooking)
+  BookingDetailCubit(this._getBooking, this._changeStatus, this._changePaymentMethod, this._deleteBooking)
       : super(const BookingDetailState());
 
   final GetBooking _getBooking;
   final ChangeBookingStatus _changeStatus;
+  final ChangePaymentMethod _changePaymentMethod;
   final DeleteBooking _deleteBooking;
   late int _bookingId;
 
@@ -48,6 +50,14 @@ class BookingDetailCubit extends Cubit<BookingDetailState> {
       // Response chuyển trạng thái đã đủ dữ liệu; đọc lại để chắc chắn đồng bộ.
       emit(BookingDetailState(booking: state.booking.toSuccess(result.value!)));
       await refresh();
+    }
+    return result;
+  }
+
+  Future<ActionResult<Booking>> changePaymentMethod(PaymentMethod method) async {
+    final result = await runAction(() => _changePaymentMethod(_bookingId, method));
+    if (result.isSuccess && !isClosed) {
+      emit(BookingDetailState(booking: state.booking.toSuccess(result.value!)));
     }
     return result;
   }

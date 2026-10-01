@@ -7,7 +7,7 @@ nhập, app tự đưa người dùng tới khung làm việc của vai trò đ�
 | Vai trò | Thanh điều hướng | Việc chính |
 |---|---|---|
 | Khách chưa đăng nhập | Khám phá | Xem cơ sở, thực đơn, tour tham quan, tìm phòng trống theo ngày, chi tiết phòng, đăng ký làm chủ khách sạn |
-| Khách hàng | Khám phá · Đơn của tôi · Yêu thích · Tin nhắn · Tài khoản | Đặt phòng, thanh toán VNPay, huỷ đơn, đánh giá, nhắn tin với cơ sở, gắn hồ sơ từng đặt tại quầy |
+| Khách hàng | Khám phá · Đơn của tôi · Yêu thích · Tin nhắn · Tài khoản | Đặt phòng, thanh toán VNPay, đổi phương thức thanh toán, huỷ đơn, đánh giá, nhắn tin với cơ sở, gắn hồ sơ từng đặt tại quầy |
 | Nhân viên | Quầy · Phòng · Khách · Thêm | Quầy lễ tân, đặt tại quầy, xác nhận/thu tiền/hoàn tất đơn, trả lời tin nhắn khách, phòng, tiện ích, dịch vụ, xem thực đơn và tour |
 | Quản lý cơ sở | Tổng quan · Quầy · Phòng · Báo cáo · Thêm | Như nhân viên, thêm nhân viên, bảng lương, soạn thực đơn món ăn, tour tham quan, thông tin cơ sở, báo cáo và xuất Excel |
 | Chủ khách sạn (chờ duyệt) | Màn trạng thái hồ sơ | Theo dõi xét duyệt, sửa hồ sơ, gửi lại khi bị từ chối |
@@ -133,7 +133,7 @@ của BE). Lúc mở app, `AiAvailability` hỏi `GET /ai/status`; máy chủ ch
   - Tin AI gửi mang nhãn "✨ Trợ lý AI"; cuộc AI đã chuyển cho nhân viên có nhãn **Cần nhân viên** ở
     hộp thư và dải lý do trong màn chat (khách không thấy).
   - Trợ lý biết các tour của cơ sở: khách hỏi đi chơi, ăn uống quanh khu vực thì AI gợi ý tour; muốn
-    đặt tour thì AI hỏi ngày, số khách rồi chuyển nhân viên.
+    đặt tour thì AI gửi tóm tắt, khách nhắn "Đồng ý" là AI lên đơn tour (xem *Tour tham quan*).
 
 ## Thực đơn món ăn
 
@@ -148,6 +148,18 @@ của BE). Lúc mở app, `AiAvailability` hỏi `GET /ai/status`; máy chủ ch
   tự ẩn khi cơ sở chưa có món hoặc tải lỗi) và nút **Xem thực đơn** mở `HotelMenuScreen`. Món
   tạm hết vẫn hiện nhưng mờ kèm nhãn "Tạm hết". Không cần đăng nhập.
 
+## Đổi phương thức thanh toán
+
+Khách mở **Đơn của tôi → chi tiết đơn → mục Thanh toán → Đổi phương thức** (chỉ hiện khi đơn chưa
+thanh toán và còn mở, `Booking.canChangePaymentMethod`). Sheet `PaymentMethodSheet` dùng lại
+`PaymentMethodPicker` của màn đặt phòng; nút xác nhận khoá khi vẫn chọn cách đang dùng.
+
+- Sang **Tiền mặt / Chuyển khoản**: đơn về "Chưa thanh toán", mất đồng hồ giữ đơn và nút thanh toán.
+- Sang **VNPay**: nút đổi thành **Đổi và thanh toán VNPay** — đổi xong mở cổng VNPay luôn
+  (`PaymentFlow.payBooking`), đơn hiện đồng hồ giữ đơn 15 phút.
+
+Phía cơ sở đổi phương thức trong màn **Sửa đơn** như trước.
+
 ## Tour tham quan
 
 - **Quản lý:** không gian làm việc → **Thêm → Tour tham quan** (`ToursScreen`). Menu ⋮ của từng
@@ -158,9 +170,18 @@ của BE). Lúc mở app, `AiAvailability` hỏi `GET /ai/status`; máy chủ ch
   công tắc đang nhận khách.
 - **Phía khách:** trang chi tiết cơ sở có mục **Tour tham quan** (`HotelToursSection`, tối đa 3
   tour, tự ẩn khi cơ sở chưa có tour) và **Xem tất cả** mở `HotelToursScreen`. Chạm tour mở
-  `TourDetailScreen`; nút **Hỏi khách sạn về tour này** mở chat với cơ sở, ô nhập điền sẵn câu hỏi
-  về tour (`openHotelChat(hotelId, draft: …)`; chưa đăng nhập thì đăng nhập trước). App chưa đặt tour
-  trực tiếp — nhân viên xác nhận qua chat.
+  `TourDetailScreen`; nút **Nhắn khách sạn để đặt tour** mở chat với cơ sở, ô nhập điền sẵn
+  `Mình muốn đặt tour "…" ngày ` (`openHotelChat(hotelId, draft: …)`; chưa đăng nhập thì đăng nhập trước).
+- **Đặt tour qua tin nhắn:** trợ lý AI gửi tóm tắt (tour, ngày, số khách, tổng tiền), khách nhắn
+  "Đồng ý" là đơn tour được tạo và khách sạn nhận thông báo.
+- **Đơn tour** (`TourBookingsScreen` + `TourBookingDetailScreen`, dùng chung hai phía):
+  - Khách: **Đơn của tôi → nút "Đơn tour"** ở góc trên (kèm chuông thông báo) — xem trạng thái, huỷ
+    đơn còn mở, nhắn khách sạn.
+  - Đội ngũ cơ sở: **Thêm → Đơn tour** — lọc theo trạng thái, **Xác nhận đơn** → **Hoàn tất**, hoặc
+    **Huỷ đơn** kèm lý do (chọn nhanh hoặc tự nhập; khách nhận lý do trong thông báo); mở tin nhắn với
+    khách nếu đơn do trợ lý AI lên. Quản trị viên chỉ xem.
+  - **Thêm → Thông báo** (đội ngũ cơ sở) có số chưa đọc; chạm thông báo đơn tour mở đúng đơn
+    (`bookingapp://tour-bookings/{id}`, cả từ thông báo đẩy).
 
 ## Thông báo, push và deep link
 

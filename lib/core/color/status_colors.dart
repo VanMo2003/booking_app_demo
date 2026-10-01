@@ -39,6 +39,15 @@ extension BookingStatusTone on BookingStatus {
       };
 }
 
+extension TourBookingStatusTone on TourBookingStatus {
+  StatusTone get tone => switch (this) {
+        TourBookingStatus.pending => StatusTone.warning,
+        TourBookingStatus.confirmed => StatusTone.info,
+        TourBookingStatus.completed => StatusTone.success,
+        TourBookingStatus.canceled => StatusTone.danger,
+      };
+}
+
 extension PaymentStatusTone on PaymentStatus {
   StatusTone get tone => switch (this) {
         PaymentStatus.unpaid => StatusTone.neutral,

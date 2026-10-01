@@ -273,12 +273,24 @@ import 'package:booking_app_mobile/features/service/presentation/services_screen
     as _i1049;
 import 'package:booking_app_mobile/features/tour/data/datasources/tour_api.dart'
     as _i424;
+import 'package:booking_app_mobile/features/tour/data/datasources/tour_booking_api.dart'
+    as _i497;
+import 'package:booking_app_mobile/features/tour/data/repositories/tour_booking_repository_impl.dart'
+    as _i856;
 import 'package:booking_app_mobile/features/tour/data/repositories/tour_repository_impl.dart'
     as _i697;
+import 'package:booking_app_mobile/features/tour/domain/repositories/tour_booking_repository.dart'
+    as _i695;
 import 'package:booking_app_mobile/features/tour/domain/repositories/tour_repository.dart'
     as _i954;
+import 'package:booking_app_mobile/features/tour/domain/usecases/tour_booking_usecases.dart'
+    as _i987;
 import 'package:booking_app_mobile/features/tour/domain/usecases/tour_usecases.dart'
     as _i1001;
+import 'package:booking_app_mobile/features/tour/presentation/bookings/tour_booking_detail_screen.dart'
+    as _i747;
+import 'package:booking_app_mobile/features/tour/presentation/bookings/tour_bookings_screen.dart'
+    as _i420;
 import 'package:booking_app_mobile/features/tour/presentation/tours_screen.dart'
     as _i203;
 import 'package:connectivity_plus/connectivity_plus.dart' as _i895;
@@ -320,6 +332,7 @@ extension GetItInjectableX on _i174.GetIt {
     final chatApiModule = _$ChatApiModule();
     final aiApiModule = _$AiApiModule();
     final tourApiModule = _$TourApiModule();
+    final tourBookingApiModule = _$TourBookingApiModule();
     await gh.factoryAsync<_i460.SharedPreferences>(
       () => appModule.preferences,
       preResolve: true,
@@ -393,6 +406,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i431.AiApi>(() => aiApiModule.aiApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i424.TourApi>(
         () => tourApiModule.tourApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i497.TourBookingApi>(
+        () => tourBookingApiModule.tourBookingApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i479.PartnerRepository>(
         () => _i867.PartnerRepositoryImpl(gh<_i635.PartnerApi>()));
     gh.lazySingleton<_i797.ReportRemoteDataSource>(
@@ -536,6 +551,8 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.lazySingleton<_i77.RoomRepository>(
         () => _i968.RoomRepositoryImpl(gh<_i679.RoomApi>()));
+    gh.lazySingleton<_i695.TourBookingRepository>(
+        () => _i856.TourBookingRepositoryImpl(gh<_i497.TourBookingApi>()));
     gh.lazySingleton<_i329.FavoritesCubit>(() => _i329.FavoritesCubit(
           gh<_i412.FavoriteStore>(),
           gh<_i642.SessionCubit>(),
@@ -656,6 +673,14 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i643.DeleteDish(gh<_i941.DishRepository>()));
     gh.factory<_i1048.SystemOverviewCubit>(
         () => _i1048.SystemOverviewCubit(gh<_i962.LoadSystemOverview>()));
+    gh.factory<_i987.GetTourBookings>(
+        () => _i987.GetTourBookings(gh<_i695.TourBookingRepository>()));
+    gh.factory<_i987.GetTourBooking>(
+        () => _i987.GetTourBooking(gh<_i695.TourBookingRepository>()));
+    gh.factory<_i987.ChangeTourBookingStatus>(
+        () => _i987.ChangeTourBookingStatus(gh<_i695.TourBookingRepository>()));
+    gh.factory<_i987.CancelTourBooking>(
+        () => _i987.CancelTourBooking(gh<_i695.TourBookingRepository>()));
     gh.factory<_i643.GetBranchRooms>(
         () => _i643.GetBranchRooms(gh<_i77.RoomRepository>()));
     gh.factory<_i643.GetRoomDetail>(
@@ -687,6 +712,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i750.GetBranchBookings(gh<_i299.BookingRepository>()));
     gh.factory<_i750.ChangeBookingStatus>(
         () => _i750.ChangeBookingStatus(gh<_i299.BookingRepository>()));
+    gh.factory<_i750.ChangePaymentMethod>(
+        () => _i750.ChangePaymentMethod(gh<_i299.BookingRepository>()));
     gh.factory<_i750.DeleteBooking>(
         () => _i750.DeleteBooking(gh<_i299.BookingRepository>()));
     gh.factory<_i534.DeskCubit>(
@@ -792,9 +819,16 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.factory<_i770.AccountsCubit>(
         () => _i770.AccountsCubit(gh<_i275.GetAccountsPage>()));
+    gh.factory<_i420.TourBookingsCubit>(
+        () => _i420.TourBookingsCubit(gh<_i987.GetTourBookings>()));
     gh.factory<_i209.WalkInGuestCubit>(() => _i209.WalkInGuestCubit(
           gh<_i57.FindCustomersByPhone>(),
           gh<_i57.CreateWalkInCustomer>(),
+        ));
+    gh.factory<_i747.TourBookingDetailCubit>(() => _i747.TourBookingDetailCubit(
+          gh<_i987.GetTourBooking>(),
+          gh<_i987.ChangeTourBookingStatus>(),
+          gh<_i987.CancelTourBooking>(),
         ));
     gh.lazySingleton<_i534.NotificationBadgeCubit>(
         () => _i534.NotificationBadgeCubit(
@@ -815,11 +849,6 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i643.GetRoomDetail>(),
           gh<_i643.GetRoomsForDates>(),
         ));
-    gh.factory<_i287.BookingDetailCubit>(() => _i287.BookingDetailCubit(
-          gh<_i750.GetBooking>(),
-          gh<_i750.ChangeBookingStatus>(),
-          gh<_i750.DeleteBooking>(),
-        ));
     gh.factory<_i1.ManagersCubit>(() => _i1.ManagersCubit(
           gh<_i782.GetHotelChainDetail>(),
           gh<_i782.GetChainManagers>(),
@@ -828,6 +857,12 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i750.GetBooking>(),
           gh<_i672.GetHotelDetail>(),
           gh<_i750.UpdateBooking>(),
+        ));
+    gh.factory<_i287.BookingDetailCubit>(() => _i287.BookingDetailCubit(
+          gh<_i750.GetBooking>(),
+          gh<_i750.ChangeBookingStatus>(),
+          gh<_i750.ChangePaymentMethod>(),
+          gh<_i750.DeleteBooking>(),
         ));
     gh.factory<_i1050.AiSearchCubit>(
         () => _i1050.AiSearchCubit(gh<_i769.SearchWithAi>()));
@@ -886,3 +921,5 @@ class _$ChatApiModule extends _i204.ChatApiModule {}
 class _$AiApiModule extends _i431.AiApiModule {}
 
 class _$TourApiModule extends _i424.TourApiModule {}
+
+class _$TourBookingApiModule extends _i497.TourBookingApiModule {}

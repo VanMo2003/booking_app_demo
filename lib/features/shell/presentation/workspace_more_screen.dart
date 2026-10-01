@@ -12,11 +12,13 @@ import '../../../core/text/app_strings.dart';
 import '../../../core/text/chat_strings.dart';
 import '../../../core/text/enum_labels.dart';
 import '../../../core/text/menu_strings.dart';
+import '../../../core/text/notification_strings.dart';
 import '../../../core/text/tour_strings.dart';
 import '../../../core/text/workspace_strings.dart';
 import '../../auth/presentation/session/session_cubit.dart';
 import '../../auth/presentation/session/session_navigator.dart';
 import '../../chat/presentation/chat_hub.dart';
+import '../../notification/presentation/notification_badge_cubit.dart';
 import 'workspace_scope.dart';
 
 @RoutePage()
@@ -95,6 +97,26 @@ class WorkspaceMoreScreen extends StatelessWidget {
                     BranchChatInboxRoute(hotelId: hotelId, branchName: branchName),
                   ),
                 ),
+              MenuTile(
+                icon: Icons.confirmation_number_outlined,
+                title: TourBookingStrings.branchTitle,
+                onTap: () => router.push(TourBookingsRoute(hotelId: hotelId)),
+              ),
+              MenuTile(
+                icon: Icons.notifications_none_rounded,
+                title: NotificationStrings.title,
+                trailing: BlocBuilder<NotificationBadgeCubit, int>(
+                  builder: (context, unread) => Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (unread > 0)
+                        Badge(backgroundColor: AppColors.danger, label: Text(unread > 99 ? '99+' : '$unread')),
+                      const Icon(Icons.chevron_right_rounded, color: AppColors.inkTertiary),
+                    ],
+                  ),
+                ),
+                onTap: () => context.rootRouter.push(const NotificationsRoute()),
+              ),
               MenuTile(
                 icon: Icons.add_business_outlined,
                 title: WorkspaceStrings.menuWalkIn,

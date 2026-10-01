@@ -35,20 +35,75 @@ abstract final class TourStrings {
   static const departureHint = 'VD: 8:00 hằng ngày';
   static const includes = 'Giá đã gồm';
   static const includesHint = 'Xe đưa đón, vé tham quan, hướng dẫn viên…';
-  static const maxGuests = 'Số khách tối đa';
-  static const maxGuestsHint = 'Để trống nếu không giới hạn';
+  static const maxGuests = 'Số chỗ mỗi chuyến';
+  static const maxGuestsHint = 'Tổng khách các đơn cùng ngày; để trống nếu không giới hạn';
   static const description = 'Mô tả, lịch trình';
   static const descriptionHint = 'Điểm đến, hoạt động, lưu ý cho khách…';
   static const availableHint =
       'Tắt khi tạm ngừng — tour vẫn hiện nhưng khách thấy "Tạm ngừng" và trợ lý AI không gợi ý.';
 
   // Phía khách
-  static const sectionSubtitle = 'Khách sạn tổ chức, đặt qua lễ tân';
+  static const sectionSubtitle = 'Khách sạn tổ chức · đặt qua tin nhắn';
   static String viewAll(int n) => 'Xem cả $n tour';
-  static String maxGuestsValue(int n) => 'Tối đa $n khách';
-  static const ask = 'Hỏi khách sạn về tour này';
-  static String askDraft(String name) => 'Mình muốn hỏi về tour "$name": ';
+  static String maxGuestsValue(int n) => 'Tối đa $n khách mỗi chuyến';
+  static const ask = 'Nhắn khách sạn để đặt tour';
+  static String askDraft(String name) => 'Mình muốn đặt tour "$name" ngày ';
   static const bookingNote =
-      'Tour đặt qua khách sạn: nhắn tin để nhân viên xác nhận ngày khởi hành và số khách.';
+      'Nhắn ngày đi và số khách, trợ lý của khách sạn gửi tóm tắt; bạn nhắn "Đồng ý" là đơn tour được tạo. '
+      'Khách sạn xác nhận sau, thanh toán tại khách sạn.';
   static const guestEmpty = 'Cơ sở chưa có tour';
+}
+
+/// Đơn tour — khách theo dõi đơn của mình, đội ngũ cơ sở xác nhận / hoàn tất / huỷ.
+abstract final class TourBookingStrings {
+  static const myTitle = 'Đơn tour của tôi';
+  static const branchTitle = 'Đơn tour';
+  static const entry = 'Đơn tour';
+  static String code(int id) => 'Đơn tour #$id';
+  static String guests(int n) => '$n khách';
+  static const empty = 'Chưa có đơn tour';
+  static const emptyMineHint =
+      'Mở trang khách sạn, chọn tour rồi nhắn khách sạn ngày đi và số khách để đặt.';
+  static const emptyBranchHint =
+      'Đơn tour khách đặt (kể cả qua trợ lý AI trong tin nhắn) sẽ hiện ở đây và được báo cho đội ngũ.';
+  static const emptyStatus = 'Không có đơn ở trạng thái này';
+
+  // Chi tiết
+  static const tour = 'Tour';
+  static const tourDate = 'Ngày đi';
+  static const departure = 'Khởi hành';
+  static const guestCount = 'Số khách';
+  static const unitPrice = 'Giá mỗi khách';
+  static const total = 'Tổng tiền';
+  static const payment = 'Thanh toán';
+  static const paymentAtHotel = 'Tại khách sạn';
+  static const note = 'Ghi chú của khách';
+  static const guest = 'Khách đặt';
+  static const branch = 'Khách sạn';
+  static const viaAi = 'Đặt qua trợ lý AI trong tin nhắn';
+  static const createdAt = 'Đặt lúc';
+  static const canceledByGuest = 'Khách đã huỷ';
+  static const canceledByHotel = 'Khách sạn đã huỷ';
+  static const cancelReason = 'Lý do';
+  static const openChat = 'Mở tin nhắn';
+  static const callGuest = 'Gọi khách';
+  static const callBranch = 'Gọi khách sạn';
+  static const tourRemoved = 'Tour này đã bị khách sạn gỡ';
+  static const waitingNotice = 'Khách sạn sẽ xác nhận đơn sớm. Bạn sẽ nhận thông báo khi có kết quả.';
+
+  // Thao tác
+  static const confirm = 'Xác nhận đơn';
+  static const confirmed = 'Đã xác nhận đơn tour';
+  static const complete = 'Hoàn tất';
+  static const completeTitle = 'Hoàn tất đơn tour?';
+  static const completeMessage = 'Dùng sau khi khách đã đi tour và thanh toán.';
+  static const completed = 'Đã hoàn tất đơn tour';
+  static const cancel = 'Huỷ đơn';
+  static const cancelTitle = 'Huỷ đơn tour?';
+  static const cancelMessageGuest = 'Khách sạn sẽ được báo là bạn huỷ đơn này.';
+  static const cancelReasonTitle = 'Lý do huỷ đơn tour';
+  static const cancelReasonHint = 'Khách sẽ nhận được lý do này trong thông báo.';
+  static const cancelReasonRequired = 'Hãy nhập lý do huỷ';
+  static const quickReasons = ['Tour đã kín chỗ', 'Thời tiết xấu', 'Không đủ khách khởi hành', 'Không liên lạc được khách'];
+  static const canceled = 'Đã huỷ đơn tour';
 }

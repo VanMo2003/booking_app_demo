@@ -70,6 +70,15 @@ class ChangeBookingStatus {
 }
 
 @injectable
+class ChangePaymentMethod {
+  const ChangePaymentMethod(this._repository);
+
+  final BookingRepository _repository;
+
+  Future<Booking> call(int id, PaymentMethod method) => _repository.changePaymentMethod(id, method);
+}
+
+@injectable
 class DeleteBooking {
   const DeleteBooking(this._repository);
 

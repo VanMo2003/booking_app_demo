@@ -21,6 +21,7 @@ sealed class AppLink extends Equatable {
       ['owner-registrations', final id] when int.tryParse(id) != null =>
         OwnerRegistrationLink(int.parse(id)),
       ['chat', final id] when int.tryParse(id) != null => ChatLink(int.parse(id)),
+      ['tour-bookings', final id] when int.tryParse(id) != null => TourBookingLink(int.parse(id)),
       _ => null,
     };
   }
@@ -46,6 +47,16 @@ final class ChatLink extends AppLink {
 
   @override
   List<Object?> get props => [conversationId];
+}
+
+/// Đơn tour: đội ngũ cơ sở khi có đơn mới / khách huỷ, khách khi đơn được xác nhận / bị huỷ.
+final class TourBookingLink extends AppLink {
+  const TourBookingLink(this.bookingId);
+
+  final int bookingId;
+
+  @override
+  List<Object?> get props => [bookingId];
 }
 
 /// Hồ sơ đăng ký chờ quản trị viên xét duyệt.

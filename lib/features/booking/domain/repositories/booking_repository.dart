@@ -23,4 +23,7 @@ abstract interface class BookingRepository {
 
   /// Ghi nhận đã thu tiền (tiền mặt / chuyển khoản).
   Future<Booking> markPaid(int id);
+
+  /// Đổi cách trả tiền của đơn chưa thanh toán. Sang VNPay thì BE mở hạn thanh toán 15 phút.
+  Future<Booking> changePaymentMethod(int id, PaymentMethod method);
 }

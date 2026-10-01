@@ -23,6 +23,15 @@ extension BookingStatusLabel on BookingStatus {
       };
 }
 
+extension TourBookingStatusLabel on TourBookingStatus {
+  String get label => switch (this) {
+        TourBookingStatus.pending => 'Chờ xác nhận',
+        TourBookingStatus.confirmed => 'Đã xác nhận',
+        TourBookingStatus.completed => 'Hoàn tất',
+        TourBookingStatus.canceled => 'Đã huỷ',
+      };
+}
+
 extension PaymentStatusLabel on PaymentStatus {
   String get label => switch (this) {
         PaymentStatus.unpaid => 'Chưa thanh toán',

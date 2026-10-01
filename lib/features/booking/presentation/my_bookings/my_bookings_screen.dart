@@ -14,7 +14,9 @@ import '../../../../core/text/app_strings.dart';
 import '../../../../core/text/auth_strings.dart';
 import '../../../../core/text/booking_strings.dart';
 import '../../../../core/text/enum_labels.dart';
+import '../../../../core/text/tour_strings.dart';
 import '../../../auth/presentation/session/session_cubit.dart';
+import '../../../notification/presentation/notification_bell.dart';
 import '../../domain/entities/booking.dart';
 import '../../domain/usecases/booking_usecases.dart';
 import '../widgets/booking_card.dart';
@@ -123,6 +125,14 @@ class _MyBookingsView extends StatelessWidget {
             appBar: AppBar(
               automaticallyImplyLeading: false,
               title: const Text(BookingStrings.myBookingsTitle),
+              actions: [
+                TextButton.icon(
+                  onPressed: () => context.rootRouter.push(TourBookingsRoute()),
+                  icon: const Icon(Icons.tour_outlined, size: 20),
+                  label: const Text(TourBookingStrings.entry),
+                ),
+                const NotificationBell(),
+              ],
               bottom: TabBar(
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,

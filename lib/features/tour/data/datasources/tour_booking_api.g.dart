@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'booking_api.dart';
+part of 'tour_booking_api.dart';
 
 // **************************************************************************
 // RetrofitGenerator
@@ -8,8 +8,8 @@ part of 'booking_api.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations,unused_element_parameter
 
-class _BookingApi implements BookingApi {
-  _BookingApi(this._dio, {this.baseUrl, this.errorLogger});
+class _TourBookingApi implements TourBookingApi {
+  _TourBookingApi(this._dio, {this.baseUrl, this.errorLogger});
 
   final Dio _dio;
 
@@ -18,17 +18,16 @@ class _BookingApi implements BookingApi {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<ApiResponse> create(Map<String, dynamic> body) async {
+  Future<ApiResponse> mine() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(body);
+    const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
+      Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/bookings',
+            '/tour-bookings/me',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -46,17 +45,16 @@ class _BookingApi implements BookingApi {
   }
 
   @override
-  Future<ApiResponse> update(int id, Map<String, dynamic> body) async {
+  Future<ApiResponse> byHotel(int hotelId) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'hotelId': hotelId};
     final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(body);
+    const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse>(
-      Options(method: 'PUT', headers: _headers, extra: _extra)
+      Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/bookings/${id}',
+            '/tour-bookings',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -83,70 +81,7 @@ class _BookingApi implements BookingApi {
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/bookings/${id}',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late ApiResponse _value;
-    try {
-      _value = ApiResponse.fromJson(_result.data!);
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
-  }
-
-  @override
-  Future<ApiResponse> list({
-    int? hotelId,
-    int? customerId,
-    String? bookingStatus,
-  }) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'hotelId': hotelId,
-      r'customerId': customerId,
-      r'bookingStatus': bookingStatus,
-    };
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<ApiResponse>(
-      Options(method: 'GET', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/bookings',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late ApiResponse _value;
-    try {
-      _value = ApiResponse.fromJson(_result.data!);
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
-  }
-
-  @override
-  Future<ApiResponse> delete(int id) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<ApiResponse>(
-      Options(method: 'DELETE', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/bookings/${id}',
+            '/tour-bookings/${id}',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -173,34 +108,7 @@ class _BookingApi implements BookingApi {
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/bookings/${id}/confirm',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late ApiResponse _value;
-    try {
-      _value = ApiResponse.fromJson(_result.data!);
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
-  }
-
-  @override
-  Future<ApiResponse> cancel(int id) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<ApiResponse>(
-      Options(method: 'PUT', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/bookings/${id}/cancel',
+            '/tour-bookings/${id}/confirm',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -227,7 +135,7 @@ class _BookingApi implements BookingApi {
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/bookings/${id}/complete',
+            '/tour-bookings/${id}/complete',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -245,10 +153,7 @@ class _BookingApi implements BookingApi {
   }
 
   @override
-  Future<ApiResponse> changePaymentMethod(
-    int id,
-    Map<String, dynamic> body,
-  ) async {
+  Future<ApiResponse> cancel(int id, Map<String, dynamic> body) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -258,7 +163,7 @@ class _BookingApi implements BookingApi {
       Options(method: 'PUT', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            '/bookings/${id}/payment-method',
+            '/tour-bookings/${id}/cancel',
             queryParameters: queryParameters,
             data: _data,
           )
@@ -272,27 +177,6 @@ class _BookingApi implements BookingApi {
       errorLogger?.logError(e, s, _options);
       rethrow;
     }
-    return _value;
-  }
-
-  @override
-  Future<dynamic> updatePaymentStatus(int id, String status) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'status': status};
-    final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<dynamic>(
-      Options(method: 'PUT', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            '/bookings/${id}/payment-status',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch(_options);
-    final _value = _result.data;
     return _value;
   }
 
