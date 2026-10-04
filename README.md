@@ -26,8 +26,15 @@ flutter run
 ```
 
 Địa chỉ BE mặc định: Android emulator dùng `http://10.0.2.2:8080/booking-app/api/v1`,
-nền tảng khác dùng `http://localhost:8080/booking-app/api/v1`. Chạy trên điện thoại
-thật hoặc trỏ tới máy chủ khác:
+nền tảng khác dùng `http://localhost:8080/booking-app/api/v1`.
+
+**Chạy trên điện thoại thật:** cứ bấm Run / `flutter run` bình thường. Mỗi lần build Android, task
+Gradle `writeDevHost` (`android/app/build.gradle.kts`) chạy `ipconfig` trên laptop, lấy dòng
+`IPv4 Address` của card Wi-Fi (bỏ card ảo VMware/VPN/Bluetooth) ghi vào
+`lib/core/config/dev_host.dart`; điện thoại thật gọi `http://<ipv4>:8080/booking-app/api/v1`, emulator
+vẫn gọi `10.0.2.2`. Đổi mạng Wi-Fi thì dừng app rồi Run lại để lấy IP mới (hot reload không chạy
+Gradle). Địa chỉ đang dùng hiện ở màn Tài khoản và trong log (`BE: http://…`). Điện thoại timeout
+thì kiểm tra Windows Firewall có chặn `java.exe` trên mạng Public không. Trỏ tới máy chủ khác:
 
 ```bash
 flutter run --dart-define=API_BASE_URL=http://192.168.1.10:8080/booking-app/api/v1
@@ -203,6 +210,13 @@ Phía cơ sở đổi phương thức trong màn **Sửa đơn** như trước.
   3. Cấu hình `FIREBASE_CREDENTIALS` cho BE (xem README BE) rồi `flutter run` lại.
   Sau khi đăng nhập, app xin quyền thông báo và gửi token lên `POST /notifications/devices`;
   đăng xuất thì gỡ token. Web không nhận push, chỉ có thông báo trong app.
+- **Khi app chạy nền hoặc đã tắt:** hệ điều hành tự hiện thông báo (BE gửi FCM có khối
+  `notification`, ưu tiên cao). `MainActivity.kt` tạo kênh `booking_app_alerts` mức ưu tiên cao nên
+  thông báo bật lên đầu màn hình kèm âm thanh; icon đơn sắc `ic_stat_notification`, màu chủ đạo
+  (khai báo trong `AndroidManifest.xml`). Chạm thông báo mở đúng màn (tin nhắn, đơn tour…) nhờ
+  `onMessageOpenedApp` / `getInitialMessage`. App đang mở thì hiện toast thay vì thông báo hệ thống.
+  Máy Xiaomi/Oppo/Vivo… cần bật *Tự khởi chạy* và tắt tối ưu pin cho app, nếu không thông báo có thể
+  không tới khi app đã bị vuốt tắt.
 - **Deep link `bookingapp://`:** khai báo trong `AndroidManifest.xml` và `Info.plist`,
   nhận bằng `app_links` (`DeepLinkService`) và mở màn bằng `AppLinkNavigator`
   (`owner-status`, `notifications`, `owner-registrations/{id}`). Email chứa link

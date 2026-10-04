@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Màu chủ đạo của app (AppColors.primary), tô icon thông báo đẩy. -->
+    <color name="notification_color">#0B6A61</color>
+</resources>
