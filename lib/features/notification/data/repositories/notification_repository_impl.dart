@@ -34,4 +34,14 @@ class NotificationRepositoryImpl implements NotificationRepository {
   @override
   Future<void> unregisterDevice(String token) async =>
       (await _api.unregisterDevice(token)).ensureSuccess();
+
+  @override
+  Future<TestPushResult> sendTestPush({int delaySeconds = 10}) async =>
+      (await _api.sendTestPush(delaySeconds)).parse(
+        (json) => TestPushResult(
+          pushEnabled: json.flag('pushEnabled'),
+          devices: json.integer('devices'),
+          delaySeconds: json.integer('delaySeconds', delaySeconds),
+        ),
+      );
 }

@@ -12,6 +12,7 @@ import '../../../core/text/app_strings.dart';
 import '../../../core/text/management_strings.dart';
 import '../../auth/presentation/session/session_cubit.dart';
 import '../../auth/presentation/session/session_navigator.dart';
+import '../../notification/presentation/notification_setup_screen.dart';
 
 /// Tab Thêm của chủ khách sạn.
 @RoutePage()
@@ -90,6 +91,7 @@ class OwnerMoreScreen extends StatelessWidget {
           MenuGroup(
             title: AppStrings.aboutApp,
             children: [
+              const NotificationSetupTile(),
               const MenuTile(
                 icon: Icons.info_outline_rounded,
                 title: AppStrings.appName,

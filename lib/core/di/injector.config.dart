@@ -199,6 +199,8 @@ import 'package:booking_app_mobile/features/notification/presentation/notificati
     as _i534;
 import 'package:booking_app_mobile/features/notification/presentation/notifications_screen.dart'
     as _i25;
+import 'package:booking_app_mobile/features/notification/services/background_delivery.dart'
+    as _i1059;
 import 'package:booking_app_mobile/features/notification/services/deep_link_service.dart'
     as _i847;
 import 'package:booking_app_mobile/features/notification/services/notification_events.dart'
@@ -313,11 +315,14 @@ extension GetItInjectableX on _i174.GetIt {
     );
     final appModule = _$AppModule();
     final accountApiModule = _$AccountApiModule();
+    final aiApiModule = _$AiApiModule();
     final amenityApiModule = _$AmenityApiModule();
     final authApiModule = _$AuthApiModule();
     final bookingApiModule = _$BookingApiModule();
     final catalogApiModule = _$CatalogApiModule();
+    final chatApiModule = _$ChatApiModule();
     final customerApiModule = _$CustomerApiModule();
+    final dishApiModule = _$DishApiModule();
     final employeeApiModule = _$EmployeeApiModule();
     final feedbackApiModule = _$FeedbackApiModule();
     final hotelApiModule = _$HotelApiModule();
@@ -328,9 +333,6 @@ extension GetItInjectableX on _i174.GetIt {
     final payrollApiModule = _$PayrollApiModule();
     final roomApiModule = _$RoomApiModule();
     final serviceApiModule = _$ServiceApiModule();
-    final dishApiModule = _$DishApiModule();
-    final chatApiModule = _$ChatApiModule();
-    final aiApiModule = _$AiApiModule();
     final tourApiModule = _$TourApiModule();
     final tourBookingApiModule = _$TourBookingApiModule();
     await gh.factoryAsync<_i460.SharedPreferences>(
@@ -343,6 +345,8 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i432.SessionEvents(),
       dispose: (i) => i.dispose(),
     );
+    gh.lazySingleton<_i1059.BackgroundDelivery>(
+        () => _i1059.BackgroundDelivery());
     gh.lazySingleton<_i847.DeepLinkService>(() => _i847.DeepLinkService());
     gh.lazySingleton<_i622.NotificationEvents>(
         () => _i622.NotificationEvents());
@@ -369,6 +373,7 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.lazySingleton<_i458.AccountApi>(
         () => accountApiModule.accountApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i431.AiApi>(() => aiApiModule.aiApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i619.AmenityApi>(
         () => amenityApiModule.amenityApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i165.AuthApi>(
@@ -377,8 +382,12 @@ extension GetItInjectableX on _i174.GetIt {
         () => bookingApiModule.bookingApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i477.CatalogApi>(
         () => catalogApiModule.catalogApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i204.ChatApi>(
+        () => chatApiModule.chatApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i294.CustomerApi>(
         () => customerApiModule.customerApi(gh<_i361.Dio>()));
+    gh.lazySingleton<_i725.DishApi>(
+        () => dishApiModule.dishApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i618.EmployeeApi>(
         () => employeeApiModule.employeeApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i621.FeedbackApi>(
@@ -399,11 +408,6 @@ extension GetItInjectableX on _i174.GetIt {
         () => roomApiModule.roomApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i17.ServiceApi>(
         () => serviceApiModule.serviceApi(gh<_i361.Dio>()));
-    gh.lazySingleton<_i725.DishApi>(
-        () => dishApiModule.dishApi(gh<_i361.Dio>()));
-    gh.lazySingleton<_i204.ChatApi>(
-        () => chatApiModule.chatApi(gh<_i361.Dio>()));
-    gh.lazySingleton<_i431.AiApi>(() => aiApiModule.aiApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i424.TourApi>(
         () => tourApiModule.tourApi(gh<_i361.Dio>()));
     gh.lazySingleton<_i497.TourBookingApi>(
@@ -757,6 +761,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i398.MarkNotificationRead(gh<_i129.NotificationRepository>()));
     gh.factory<_i398.MarkAllNotificationsRead>(() =>
         _i398.MarkAllNotificationsRead(gh<_i129.NotificationRepository>()));
+    gh.factory<_i398.SendTestPush>(
+        () => _i398.SendTestPush(gh<_i129.NotificationRepository>()));
     gh.factory<_i398.RegisterPushDevice>(
         () => _i398.RegisterPushDevice(gh<_i129.NotificationRepository>()));
     gh.factory<_i398.UnregisterPushDevice>(
@@ -888,6 +894,8 @@ class _$AppModule extends _i732.AppModule {}
 
 class _$AccountApiModule extends _i458.AccountApiModule {}
 
+class _$AiApiModule extends _i431.AiApiModule {}
+
 class _$AmenityApiModule extends _i619.AmenityApiModule {}
 
 class _$AuthApiModule extends _i165.AuthApiModule {}
@@ -896,7 +904,11 @@ class _$BookingApiModule extends _i691.BookingApiModule {}
 
 class _$CatalogApiModule extends _i477.CatalogApiModule {}
 
+class _$ChatApiModule extends _i204.ChatApiModule {}
+
 class _$CustomerApiModule extends _i294.CustomerApiModule {}
+
+class _$DishApiModule extends _i725.DishApiModule {}
 
 class _$EmployeeApiModule extends _i618.EmployeeApiModule {}
 
@@ -917,12 +929,6 @@ class _$PayrollApiModule extends _i981.PayrollApiModule {}
 class _$RoomApiModule extends _i679.RoomApiModule {}
 
 class _$ServiceApiModule extends _i17.ServiceApiModule {}
-
-class _$DishApiModule extends _i725.DishApiModule {}
-
-class _$ChatApiModule extends _i204.ChatApiModule {}
-
-class _$AiApiModule extends _i431.AiApiModule {}
 
 class _$TourApiModule extends _i424.TourApiModule {}
 

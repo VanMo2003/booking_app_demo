@@ -29,6 +29,10 @@ abstract class NotificationApi {
   /// Gỡ trước khi đăng xuất để thiết bị không nhận thông báo của tài khoản cũ.
   @DELETE('/notifications/devices')
   Future<ApiResponse> unregisterDevice(@Query('token') String token);
+
+  /// Máy chủ gửi một thông báo thử tới các thiết bị của tài khoản sau [delaySeconds] giây.
+  @POST('/notifications/devices/test')
+  Future<ApiResponse> sendTestPush(@Query('delaySeconds') int delaySeconds);
 }
 
 @module

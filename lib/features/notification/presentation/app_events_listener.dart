@@ -1,14 +1,17 @@
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 import '../../../core/component/feedback.dart';
 import '../../../core/di/injector.dart';
 import '../../../core/navigation/app_router.dart';
+import '../../../core/storage/app_preferences.dart';
+import '../../../core/text/notification_strings.dart';
 import '../../ai/domain/usecases/ai_usecases.dart';
 import '../../auth/presentation/session/session_cubit.dart';
 import '../../chat/presentation/chat_hub.dart';
 import '../services/app_link.dart';
+import '../services/background_delivery.dart';
 import '../services/deep_link_service.dart';
 import '../services/notification_events.dart';
 import '../services/push_service.dart';
@@ -33,6 +36,7 @@ class AppEventsListener extends StatefulWidget {
 
 class _AppEventsListenerState extends State<AppEventsListener> with WidgetsBindingObserver {
   static const _pollInterval = Duration(seconds: 45);
+  static const _setupAskedKey = 'notification.background_setup_asked';
 
   final _session = getIt<SessionCubit>();
   final _badge = getIt<NotificationBadgeCubit>();
@@ -81,8 +85,33 @@ class _AppEventsListenerState extends State<AppEventsListener> with WidgetsBindi
     _badge.reset();
     if (username == null) return;
     _push.attach();
+    _askBackgroundSetupOnce();
     _badge.refresh();
     _poll = Timer.periodic(_pollInterval, (_) => _checkForNew());
+  }
+
+  /// Máy (thường Xiaomi/Oppo/Vivo) đang chặn thông báo khi app đã tắt: hỏi một lần, đồng ý thì mở
+  /// màn thiết lập. Sau đó người dùng tự vào "Nhận thông báo khi tắt app" trong menu.
+  Future<void> _askBackgroundSetupOnce() async {
+    final delivery = getIt<BackgroundDelivery>();
+    final prefs = getIt<AppPreferences>();
+    if (!delivery.supported || prefs.getInt(_setupAskedKey) != null) return;
+    // Để màn chính sau đăng nhập hiện xong trước.
+    await Future<void>.delayed(const Duration(seconds: 3));
+    final status = await delivery.status();
+    if (status == null || status.ready || _signedInUser == null) return;
+    await prefs.setInt(_setupAskedKey, 1);
+    final context = widget.router.navigatorKey.currentContext;
+    if (context == null || !context.mounted) return;
+    final setUp = await AppDialogs.confirm(
+      context,
+      title: NotificationStrings.promptTitle,
+      message: NotificationStrings.promptMessage,
+      confirmLabel: NotificationStrings.promptConfirm,
+      cancelLabel: NotificationStrings.promptLater,
+      icon: Icons.notifications_active_outlined,
+    );
+    if (setUp) await widget.router.push(const NotificationSetupRoute());
   }
 
   Future<void> _checkForNew() async {

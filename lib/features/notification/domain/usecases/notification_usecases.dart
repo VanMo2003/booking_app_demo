@@ -41,6 +41,16 @@ class MarkAllNotificationsRead {
   Future<void> call() => _repository.markAllRead();
 }
 
+/// Nút "Gửi thông báo thử": kiểm tra máy vẫn nhận thông báo khi app đã tắt.
+@injectable
+class SendTestPush {
+  const SendTestPush(this._repository);
+
+  final NotificationRepository _repository;
+
+  Future<TestPushResult> call({int delaySeconds = 10}) => _repository.sendTestPush(delaySeconds: delaySeconds);
+}
+
 @injectable
 class RegisterPushDevice {
   const RegisterPushDevice(this._repository);

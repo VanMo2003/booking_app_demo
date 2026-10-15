@@ -19,6 +19,7 @@ import '../../auth/presentation/session/session_cubit.dart';
 import '../../auth/presentation/session/session_navigator.dart';
 import '../../chat/presentation/chat_hub.dart';
 import '../../notification/presentation/notification_badge_cubit.dart';
+import '../../notification/presentation/notification_setup_screen.dart';
 import 'workspace_scope.dart';
 
 @RoutePage()
@@ -117,6 +118,7 @@ class WorkspaceMoreScreen extends StatelessWidget {
                 ),
                 onTap: () => context.rootRouter.push(const NotificationsRoute()),
               ),
+              const NotificationSetupTile(),
               MenuTile(
                 icon: Icons.add_business_outlined,
                 title: WorkspaceStrings.menuWalkIn,

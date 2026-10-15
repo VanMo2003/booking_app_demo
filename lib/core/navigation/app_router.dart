@@ -23,6 +23,7 @@ class AppRouter extends RootStackRouter {
 
         // Thông báo, tin nhắn — mọi vai trò (trừ quản trị viên với tin nhắn)
         AutoRoute(page: NotificationsRoute.page),
+        AutoRoute(page: NotificationSetupRoute.page),
         AutoRoute(page: ChatRoute.page),
         AutoRoute(page: BranchChatInboxRoute.page),
 

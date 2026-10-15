@@ -215,8 +215,15 @@ Phía cơ sở đổi phương thức trong màn **Sửa đơn** như trước.
   thông báo bật lên đầu màn hình kèm âm thanh; icon đơn sắc `ic_stat_notification`, màu chủ đạo
   (khai báo trong `AndroidManifest.xml`). Chạm thông báo mở đúng màn (tin nhắn, đơn tour…) nhờ
   `onMessageOpenedApp` / `getInitialMessage`. App đang mở thì hiện toast thay vì thông báo hệ thống.
-  Máy Xiaomi/Oppo/Vivo… cần bật *Tự khởi chạy* và tắt tối ưu pin cho app, nếu không thông báo có thể
-  không tới khi app đã bị vuốt tắt.
+- **Khi đã vuốt tắt app:** Xiaomi/Redmi/POCO, Oppo/Realme, Vivo, Huawei… chặn thông báo của app đã
+  tắt nếu chưa bật *Tự khởi chạy* và bỏ giới hạn pin. Màn **Nhận thông báo khi tắt app**
+  (`NotificationSetupScreen`, mục trong Tài khoản / Thêm của mọi vai trò, chỉ Android) đọc trạng thái
+  qua kênh native `booking_app/notification_setup` (`NotificationSetup.kt`: quyền thông báo, tối ưu
+  pin, app-op Autostart 10008 của MIUI) và có nút mở đúng trang cài đặt của từng hãng, xin bỏ tối ưu
+  pin, cùng nút **Gửi thông báo thử** (`POST /notifications/devices/test`, tới sau 10 giây — kịp vuốt
+  tắt app để thử). Sau lần đăng nhập đầu, máy còn thiếu quyền thì app hỏi một lần.
+  Lưu ý khi thử: dừng app bằng nút Stop của IDE là *force stop* — Android không giao thông báo cho app
+  đã force stop đến khi mở lại; hãy mở app từ biểu tượng rồi vuốt tắt.
 - **Deep link `bookingapp://`:** khai báo trong `AndroidManifest.xml` và `Info.plist`,
   nhận bằng `app_links` (`DeepLinkService`) và mở màn bằng `AppLinkNavigator`
   (`owner-status`, `notifications`, `owner-registrations/{id}`). Email chứa link

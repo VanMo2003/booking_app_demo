@@ -17,6 +17,7 @@ import '../../../../core/text/partner_strings.dart';
 import '../../../auth/domain/entities/session.dart';
 import '../../../auth/presentation/session/session_cubit.dart';
 import '../../../auth/presentation/session/session_navigator.dart';
+import '../../../notification/presentation/notification_setup_screen.dart';
 
 /// Tab Tài khoản của khách.
 @RoutePage()
@@ -119,6 +120,7 @@ class AccountScreen extends StatelessWidget {
                     MenuGroup(
                       title: AppStrings.aboutApp,
                       children: [
+                        const NotificationSetupTile(),
                         const MenuTile(
                           icon: Icons.info_outline_rounded,
                           title: AppStrings.appName,
