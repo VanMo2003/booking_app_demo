@@ -9,6 +9,8 @@ import '../../../../core/color/status_colors.dart';
 import '../../../../core/component/component.dart';
 import '../../../../core/di/injector.dart';
 import '../../../../core/enums/app_enums.dart';
+import '../../../../core/navigation/app_router.dart';
+import '../../../../core/navigation/router_extensions.dart';
 import '../../../../core/style/style.dart';
 import '../../../../core/text/app_strings.dart';
 import '../../../../core/text/enum_labels.dart';
@@ -792,7 +794,13 @@ class _BranchComparisonState extends State<_BranchComparison> {
         ),
         const Gap(AppSpacing.xs),
         for (var i = 0; i < sorted.length; i++)
-          _BranchRow(rank: i + 1, branch: sorted[i], metric: _metric),
+          InkWell(
+            borderRadius: AppRadius.smAll,
+            onTap: () => context.rootRouter.push(
+              BranchReportDetailRoute(hotelId: sorted[i].hotelId, hotelName: sorted[i].hotelName),
+            ),
+            child: _BranchRow(rank: i + 1, branch: sorted[i], metric: _metric),
+          ),
       ],
     );
   }
@@ -851,6 +859,7 @@ class _BranchRow extends StatelessWidget {
                     ),
                     const Gap(AppSpacing.xs),
                     Text(headline, style: AppTextStyles.tabular.weight(FontWeight.w600)),
+                    const Icon(Icons.chevron_right_rounded, size: 18, color: AppColors.inkTertiary),
                   ],
                 ),
                 const Gap(6),

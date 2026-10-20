@@ -23,6 +23,28 @@ class BranchReportsScreen extends StatelessWidget {
   }
 }
 
+/// Báo cáo một cơ sở, chủ khách sạn mở từ "So sánh cơ sở" của báo cáo chuỗi.
+@RoutePage()
+class BranchReportDetailScreen extends StatelessWidget {
+  const BranchReportDetailScreen({
+    super.key,
+    required this.hotelId,
+    required this.hotelName,
+  });
+
+  final int hotelId;
+  final String hotelName;
+
+  @override
+  Widget build(BuildContext context) {
+    return ReportsView(
+      scope: BranchReportScope(hotelId),
+      title: ReportStrings.branchReportsTitle,
+      subtitle: hotelName,
+    );
+  }
+}
+
 /// Tab Báo cáo của chủ khách sạn — số liệu gộp mọi cơ sở trong chuỗi.
 @RoutePage()
 class ChainReportsScreen extends StatelessWidget {

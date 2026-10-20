@@ -696,6 +696,71 @@ class BranchPickerRoute extends _i69.PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [_i15.BranchReportDetailScreen]
+class BranchReportDetailRoute
+    extends _i69.PageRouteInfo<BranchReportDetailRouteArgs> {
+  BranchReportDetailRoute({
+    _i70.Key? key,
+    required int hotelId,
+    required String hotelName,
+    List<_i69.PageRouteInfo>? children,
+  }) : super(
+          BranchReportDetailRoute.name,
+          args: BranchReportDetailRouteArgs(
+            key: key,
+            hotelId: hotelId,
+            hotelName: hotelName,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'BranchReportDetailRoute';
+
+  static _i69.PageInfo page = _i69.PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<BranchReportDetailRouteArgs>();
+      return _i15.BranchReportDetailScreen(
+        key: args.key,
+        hotelId: args.hotelId,
+        hotelName: args.hotelName,
+      );
+    },
+  );
+}
+
+class BranchReportDetailRouteArgs {
+  const BranchReportDetailRouteArgs({
+    this.key,
+    required this.hotelId,
+    required this.hotelName,
+  });
+
+  final _i70.Key? key;
+
+  final int hotelId;
+
+  final String hotelName;
+
+  @override
+  String toString() {
+    return 'BranchReportDetailRouteArgs{key: $key, hotelId: $hotelId, hotelName: $hotelName}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! BranchReportDetailRouteArgs) return false;
+    return key == other.key &&
+        hotelId == other.hotelId &&
+        hotelName == other.hotelName;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ hotelId.hashCode ^ hotelName.hashCode;
+}
+
+/// generated route for
 /// [_i15.BranchReportsScreen]
 class BranchReportsRoute extends _i69.PageRouteInfo<void> {
   const BranchReportsRoute({List<_i69.PageRouteInfo>? children})

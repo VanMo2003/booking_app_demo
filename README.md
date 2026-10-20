@@ -206,7 +206,8 @@ chọn khoảng 7 ngày / tháng này / tháng trước / năm nay / tuỳ chọ
 - **Theo phương thức thanh toán** và **theo kênh bán** (khách tự đặt trên app / tại quầy / tour).
 - Chỉ ở báo cáo chuỗi: **So sánh cơ sở** (`GET /reports/chain/branches`) theo đúng khoảng ngày đang chọn —
   mỗi cơ sở có thứ hạng, doanh thu, thanh tỷ trọng, lấp đầy, ADR, tỷ lệ huỷ và % tăng giảm so với kỳ trước;
-  chọn xếp theo doanh thu / tăng trưởng / lấp đầy / RevPAR.
+  chọn xếp theo doanh thu / tăng trưởng / lấp đầy / RevPAR. Chạm một cơ sở để mở báo cáo riêng của cơ sở đó
+  (`BranchReportDetailRoute`, đủ 4 tab và xuất Excel cấp cơ sở).
 - **Diễn biến doanh thu phòng** theo ngày / tuần / tháng / năm và bảng chi tiết từng mốc.
 
 Trên màn **Tổng quan**, thẻ **Doanh thu tháng này** (và **Đơn hoàn tất** của quản lý) lấy từ tổng quan kỳ
