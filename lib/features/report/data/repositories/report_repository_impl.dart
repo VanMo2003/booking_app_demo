@@ -110,6 +110,13 @@ class ReportRepositoryImpl implements ReportRepository {
           .parse(ReportModel.cancellation);
 
   @override
+  Future<List<BranchPerformance>> branchPerformance(
+    ChainReportScope scope,
+    ReportRange range,
+  ) async =>
+      (await _remote.get(scope, 'branches', _inclusive(range))).parseList(ReportModel.branch);
+
+  @override
   Future<RevenueSummary> summary(ReportScope scope, ReportRange range) async =>
       (await _remote.get(scope, 'summary', _inclusive(range))).parse(ReportModel.summary);
 

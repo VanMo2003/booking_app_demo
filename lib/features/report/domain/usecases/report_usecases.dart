@@ -5,7 +5,6 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../booking/domain/repositories/booking_repository.dart';
-import '../../../hotel/domain/entities/hotel.dart';
 import '../entities/report_entities.dart';
 import '../entities/report_range.dart';
 import '../entities/report_views.dart';
@@ -171,27 +170,16 @@ class ExportReport {
       );
 }
 
-/// So sánh doanh thu cả năm giữa các cơ sở trong chuỗi.
+/// Các cơ sở của chuỗi trong khoảng đang xem: doanh thu, tỷ trọng, KPI và
+/// tăng trưởng so với kỳ trước của từng cơ sở.
 @injectable
 class LoadBranchComparison {
   const LoadBranchComparison(this._repository);
 
   final ReportRepository _repository;
 
-  Future<List<BranchRevenue>> call(List<Hotel> hotels, int year) async {
-    final results = await Future.wait(
-      hotels.map((hotel) async {
-        final months =
-            await _repository.revenueByMonth(BranchReportScope(hotel.id), year);
-        return BranchRevenue(
-          hotel: hotel,
-          revenue: months.fold(0, (sum, m) => sum + m.revenue),
-          bookings: months.fold(0, (sum, m) => sum + m.bookings),
-        );
-      }),
-    );
-    return results..sort((a, b) => b.revenue.compareTo(a.revenue));
-  }
+  Future<List<BranchPerformance>> call(ChainReportScope scope, ReportRange range) =>
+      _repository.branchPerformance(scope, range);
 }
 
 @injectable

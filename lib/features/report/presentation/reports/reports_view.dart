@@ -323,6 +323,26 @@ class _RevenueTab extends StatelessWidget {
               ],
             ),
           ),
+          if (isChain) ...[
+            const Gap(AppSpacing.md),
+            AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SectionHeader(
+                    title: ReportStrings.branchComparison,
+                    subtitle: ReportStrings.branchComparisonNote,
+                  ),
+                  const Gap(AppSpacing.sm),
+                  _Section<List<BranchPerformance>>(
+                    state: state.comparison,
+                    onRetry: cubit.refresh,
+                    builder: (rows) => _BranchComparison(rows: rows),
+                  ),
+                ],
+              ),
+            ),
+          ],
           const Gap(AppSpacing.md),
           AppCard(
             child: Column(
@@ -380,35 +400,6 @@ class _RevenueTab extends StatelessWidget {
                         ],
                       ),
                     ),
-                ],
-              ),
-            ),
-          ],
-          if (isChain) ...[
-            const Gap(AppSpacing.md),
-            AppCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SectionHeader(
-                    title: ReportStrings.branchComparison,
-                    subtitle: ReportStrings.branchComparisonNote(state.range.to.year),
-                  ),
-                  const Gap(AppSpacing.xs),
-                  _Section<List<BranchRevenue>>(
-                    state: state.comparison,
-                    onRetry: cubit.refresh,
-                    builder: (rows) => RankedBarList(
-                      items: [
-                        for (final row in rows)
-                          RankedBar(
-                            label: row.hotel.name,
-                            value: row.revenue,
-                            caption: AppStrings.bookingsCount(row.bookings),
-                          ),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -748,6 +739,144 @@ class _SharesCard extends StatelessWidget {
             items: [
               for (final share in summary.byChannel) _bar(share, _channelLabel(share.key)),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+enum _BranchMetric { revenue, growth, occupancy, revpar }
+
+/// Bảng xếp hạng cơ sở của chuỗi, chọn chỉ số để xếp.
+class _BranchComparison extends StatefulWidget {
+  const _BranchComparison({required this.rows});
+
+  final List<BranchPerformance> rows;
+
+  @override
+  State<_BranchComparison> createState() => _BranchComparisonState();
+}
+
+class _BranchComparisonState extends State<_BranchComparison> {
+  _BranchMetric _metric = _BranchMetric.revenue;
+
+  static String _label(_BranchMetric metric) => switch (metric) {
+        _BranchMetric.revenue => ReportStrings.sortRevenue,
+        _BranchMetric.growth => ReportStrings.sortGrowth,
+        _BranchMetric.occupancy => ReportStrings.sortOccupancy,
+        _BranchMetric.revpar => ReportStrings.sortRevpar,
+      };
+
+  /// Cơ sở chưa có kỳ trước để so xếp cuối khi xem theo tăng trưởng.
+  double _sortValue(BranchPerformance branch) => switch (_metric) {
+        _BranchMetric.revenue => branch.current.totalRevenue,
+        _BranchMetric.growth => branch.revenueGrowth ?? double.negativeInfinity,
+        _BranchMetric.occupancy => branch.current.occupancyRate,
+        _BranchMetric.revpar => branch.current.revpar,
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.rows.isEmpty) return const _EmptyLine();
+    final sorted = [...widget.rows]..sort((a, b) => _sortValue(b).compareTo(_sortValue(a)));
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ChoiceChipBar<_BranchMetric>(
+          options: _BranchMetric.values,
+          selected: _metric,
+          labelOf: _label,
+          onSelected: (metric) => setState(() => _metric = metric),
+          padding: EdgeInsets.zero,
+        ),
+        const Gap(AppSpacing.xs),
+        for (var i = 0; i < sorted.length; i++)
+          _BranchRow(rank: i + 1, branch: sorted[i], metric: _metric),
+      ],
+    );
+  }
+}
+
+class _BranchRow extends StatelessWidget {
+  const _BranchRow({required this.rank, required this.branch, required this.metric});
+
+  final int rank;
+  final BranchPerformance branch;
+  final _BranchMetric metric;
+
+  @override
+  Widget build(BuildContext context) {
+    final current = branch.current;
+    final podium = rank <= 3;
+    final headline = switch (metric) {
+      _BranchMetric.revenue || _BranchMetric.growth => Fmt.money(current.totalRevenue),
+      _BranchMetric.occupancy => Fmt.percent(current.occupancyRate),
+      _BranchMetric.revpar => Fmt.money(current.revpar),
+    };
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 28,
+            height: 28,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: podium ? AppColors.accentSoft : AppColors.surfaceSunk,
+              shape: BoxShape.circle,
+            ),
+            child: Text(
+              '$rank',
+              style: AppTextStyles.captionStrong.colored(
+                podium ? AppColors.warning : AppColors.inkSecondary,
+              ),
+            ),
+          ),
+          const Gap(AppSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        branch.hotelName,
+                        style: AppTextStyles.bodyMedium,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const Gap(AppSpacing.xs),
+                    Text(headline, style: AppTextStyles.tabular.weight(FontWeight.w600)),
+                  ],
+                ),
+                const Gap(6),
+                ClipRRect(
+                  borderRadius: AppRadius.smAll,
+                  child: LinearProgressIndicator(
+                    value: (branch.revenueShare / 100).clamp(0, 1),
+                    minHeight: 6,
+                    color: AppColors.primary,
+                    backgroundColor: AppColors.surfaceSunk,
+                  ),
+                ),
+                const Gap(6),
+                Text(
+                  ReportStrings.branchCaption(
+                    Fmt.percent(branch.revenueShare),
+                    Fmt.percent(current.occupancyRate),
+                    Fmt.moneyCompact(current.adr),
+                    Fmt.percent(current.cancellationRate),
+                  ),
+                  style: AppTextStyles.caption,
+                ),
+                const Gap(2),
+                _Delta(value: branch.revenueGrowth),
+              ],
+            ),
           ),
         ],
       ),

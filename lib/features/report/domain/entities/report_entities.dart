@@ -328,6 +328,33 @@ class RevenuePeriod extends Equatable {
       ];
 }
 
+/// Một cơ sở của chuỗi trong khoảng đang xem, đặt cạnh kỳ trước của chính nó.
+class BranchPerformance extends Equatable {
+  const BranchPerformance({
+    required this.hotelId,
+    required this.hotelName,
+    required this.current,
+    required this.previousRevenue,
+    required this.revenueShare,
+    this.revenueGrowth,
+  });
+
+  final int hotelId;
+  final String hotelName;
+  final RevenuePeriod current;
+  final double previousRevenue;
+
+  /// `null` khi kỳ trước cơ sở chưa có doanh thu.
+  final double? revenueGrowth;
+
+  /// Phần trăm doanh thu của cả chuỗi, 0–100.
+  final double revenueShare;
+
+  @override
+  List<Object?> get props =>
+      [hotelId, hotelName, current, previousRevenue, revenueGrowth, revenueShare];
+}
+
 /// Một phần doanh thu: theo phương thức thanh toán hoặc theo kênh bán.
 class RevenueShare extends Equatable {
   const RevenueShare({

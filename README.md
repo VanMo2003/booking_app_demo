@@ -204,6 +204,9 @@ chọn khoảng 7 ngày / tháng này / tháng trước / năm nay / tuỳ chọ
   trước cùng số ngày; thanh cơ cấu tiền phòng / dịch vụ / tour; ADR, RevPAR, lấp đầy (chênh lệch tính
   bằng điểm), đơn hoàn tất. Kỳ trước bằng 0 thì hiện "Kỳ trước chưa có số liệu" thay vì %.
 - **Theo phương thức thanh toán** và **theo kênh bán** (khách tự đặt trên app / tại quầy / tour).
+- Chỉ ở báo cáo chuỗi: **So sánh cơ sở** (`GET /reports/chain/branches`) theo đúng khoảng ngày đang chọn —
+  mỗi cơ sở có thứ hạng, doanh thu, thanh tỷ trọng, lấp đầy, ADR, tỷ lệ huỷ và % tăng giảm so với kỳ trước;
+  chọn xếp theo doanh thu / tăng trưởng / lấp đầy / RevPAR.
 - **Diễn biến doanh thu phòng** theo ngày / tuần / tháng / năm và bảng chi tiết từng mốc.
 
 Tab **Cơ cấu** có thêm **Doanh thu theo tour** (`GET /reports/revenue-by-tour`): mỗi tour một thanh, kèm số

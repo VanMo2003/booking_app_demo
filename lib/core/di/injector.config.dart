@@ -798,6 +798,15 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i79.DashboardCubit(gh<_i109.LoadBranchDashboard>()));
     gh.factory<_i1049.ServicesCubit>(
         () => _i1049.ServicesCubit(gh<_i358.GetBranchServices>()));
+    gh.factory<_i978.ReportsCubit>(() => _i978.ReportsCubit(
+          gh<_i109.LoadRevenueReport>(),
+          gh<_i109.LoadRevenueSummary>(),
+          gh<_i109.LoadOccupancyReport>(),
+          gh<_i109.LoadBreakdownReport>(),
+          gh<_i109.LoadPeopleReport>(),
+          gh<_i109.ExportReport>(),
+          gh<_i109.LoadBranchComparison>(),
+        ));
     gh.factory<_i388.ProfileSetupCubit>(() => _i388.ProfileSetupCubit(
           gh<_i57.LinkWalkInProfile>(),
           gh<_i57.CreateCustomerProfile>(),
@@ -832,16 +841,6 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i987.GetTourBooking>(),
           gh<_i987.ChangeTourBookingStatus>(),
           gh<_i987.CancelTourBooking>(),
-        ));
-    gh.factory<_i978.ReportsCubit>(() => _i978.ReportsCubit(
-          gh<_i109.LoadRevenueReport>(),
-          gh<_i109.LoadRevenueSummary>(),
-          gh<_i109.LoadOccupancyReport>(),
-          gh<_i109.LoadBreakdownReport>(),
-          gh<_i109.LoadPeopleReport>(),
-          gh<_i109.ExportReport>(),
-          gh<_i109.LoadBranchComparison>(),
-          gh<_i782.GetHotelChainDetail>(),
         ));
     gh.lazySingleton<_i534.NotificationBadgeCubit>(
         () => _i534.NotificationBadgeCubit(

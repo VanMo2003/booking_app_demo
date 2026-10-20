@@ -56,8 +56,14 @@ abstract final class ReportStrings {
   static String shareCaption(int count, String share) => '$count đơn · $share';
   static String weekLabel(int week) => 'Tuần $week';
   static const branchComparison = 'So sánh cơ sở';
-  static String branchComparisonNote(int year) =>
-      'Doanh thu năm $year của từng cơ sở trong chuỗi';
+  static const branchComparisonNote =
+      'Cùng khoảng ngày đang xem; tăng giảm so với kỳ trước của từng cơ sở.';
+  static const sortRevenue = 'Doanh thu';
+  static const sortGrowth = 'Tăng trưởng';
+  static const sortOccupancy = 'Lấp đầy';
+  static const sortRevpar = 'RevPAR';
+  static String branchCaption(String share, String occupancy, String adr, String cancellation) =>
+      'Tỷ trọng $share · Lấp đầy $occupancy · ADR $adr · Huỷ $cancellation';
 
   // Lấp đầy
   static const occupancyRate = 'Tỷ lệ lấp đầy';

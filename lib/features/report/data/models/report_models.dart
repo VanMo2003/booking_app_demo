@@ -114,6 +114,15 @@ abstract final class ReportModel {
         cancellationRate: json.decimal('cancellationRate'),
       );
 
+  static BranchPerformance branch(Json json) => BranchPerformance(
+        hotelId: json.integer('hotelId'),
+        hotelName: json.str('hotelName'),
+        current: period(json.obj('current') ?? const {}),
+        previousRevenue: json.decimal('previousRevenue'),
+        revenueGrowth: json.decimalOrNull('revenueGrowth'),
+        revenueShare: json.decimal('revenueShare'),
+      );
+
   static RevenueShare share(Json json) => RevenueShare(
         key: json.str('key'),
         count: json.integer('count'),

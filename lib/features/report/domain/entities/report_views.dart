@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../booking/domain/entities/booking.dart';
-import '../../../hotel/domain/entities/hotel.dart';
 import 'report_entities.dart';
 import 'report_range.dart';
 
@@ -89,17 +88,6 @@ class ReportFile {
 
   final String fileName;
   final List<int> bytes;
-}
-
-class BranchRevenue extends Equatable {
-  const BranchRevenue({required this.hotel, required this.revenue, required this.bookings});
-
-  final Hotel hotel;
-  final double revenue;
-  final int bookings;
-
-  @override
-  List<Object?> get props => [hotel, revenue, bookings];
 }
 
 /// Số liệu cho màn Tổng quan của một cơ sở.

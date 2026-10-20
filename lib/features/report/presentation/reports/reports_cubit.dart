@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/bloc/load_state.dart';
-import '../../../hotel/domain/entities/hotel.dart';
-import '../../../hotel_chain/domain/usecases/hotel_chain_usecases.dart';
 import '../../domain/entities/report_entities.dart';
 import '../../domain/entities/report_range.dart';
 import '../../domain/entities/report_views.dart';
@@ -38,7 +36,7 @@ class ReportsState extends Equatable {
   final LoadState<PeopleReport> people;
 
   /// So sánh doanh thu giữa các cơ sở — chỉ có ở báo cáo chuỗi.
-  final LoadState<List<BranchRevenue>> comparison;
+  final LoadState<List<BranchPerformance>> comparison;
 
   ReportsState copyWith({
     RevenueGranularity? granularity,
@@ -47,7 +45,7 @@ class ReportsState extends Equatable {
     LoadState<OccupancyReport>? occupancy,
     LoadState<BreakdownReport>? breakdown,
     LoadState<PeopleReport>? people,
-    LoadState<List<BranchRevenue>>? comparison,
+    LoadState<List<BranchPerformance>>? comparison,
   }) =>
       ReportsState(
         range: range,
@@ -78,7 +76,6 @@ class ReportsCubit extends Cubit<ReportsState> {
     this._people,
     this._export,
     this._comparison,
-    this._chainDetail,
   ) : super(ReportsState(range: ReportRange.preset(ReportPreset.thisMonth)));
 
   final LoadRevenueReport _revenue;
@@ -88,12 +85,10 @@ class ReportsCubit extends Cubit<ReportsState> {
   final LoadPeopleReport _people;
   final ExportReport _export;
   final LoadBranchComparison _comparison;
-  final GetHotelChainDetail _chainDetail;
 
   late ReportScope _scope;
   final Set<ReportTab> _loaded = {};
   ReportTab _current = ReportTab.revenue;
-  List<Hotel>? _chainHotels;
 
   ReportScope get scope => _scope;
 
@@ -184,8 +179,7 @@ class ReportsCubit extends Cubit<ReportsState> {
     final range = state.range;
     emit(state.copyWith(comparison: state.comparison.toLoading()));
     try {
-      final hotels = _chainHotels ??= (await _chainDetail(scope.hotelChainId)).hotels;
-      final rows = await _comparison(hotels, range.to.year);
+      final rows = await _comparison(scope, range);
       if (_isCurrent(range)) {
         emit(state.copyWith(comparison: state.comparison.toSuccess(rows)));
       }

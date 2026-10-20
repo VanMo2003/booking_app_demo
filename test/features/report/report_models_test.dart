@@ -83,4 +83,31 @@ void main() {
     expect(rows.last.tourId, isNull);
     expect(rows.last.packageRoomAmount, 0);
   });
+
+  test('đọc so sánh cơ sở: KPI kỳ này, tỷ trọng, tăng trưởng có thể vắng', () {
+    final rows = [
+      {
+        'hotelId': 7,
+        'hotelName': 'Đà Nẵng',
+        'current': period('2026-10-01', '2026-10-20', total: 3000000),
+        'previousRevenue': 0,
+        'revenueShare': 75.0,
+      },
+      {
+        'hotelId': 6,
+        'hotelName': 'Hoàn Kiếm',
+        'current': period('2026-10-01', '2026-10-20', total: 1000000),
+        'previousRevenue': 500000,
+        'revenueGrowth': 100.0,
+        'revenueShare': 25.0,
+      },
+    ].map(ReportModel.branch).toList();
+
+    expect(rows.first.hotelName, 'Đà Nẵng');
+    expect(rows.first.current.totalRevenue, 3000000);
+    expect(rows.first.revenueGrowth, isNull);
+    expect(rows.last.revenueGrowth, 100);
+    expect(rows.last.previousRevenue, 500000);
+    expect(rows.last.revenueShare, 25);
+  });
 }

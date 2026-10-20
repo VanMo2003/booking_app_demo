@@ -47,6 +47,12 @@ abstract interface class ReportRepository {
 
   Future<CancellationStats> cancellation(ReportScope scope, ReportRange range);
 
+  /// Từng cơ sở của chuỗi trong khoảng đã chọn, nhiều doanh thu nhất trước.
+  Future<List<BranchPerformance>> branchPerformance(
+    ChainReportScope scope,
+    ReportRange range,
+  );
+
   /// KPI của khoảng đã chọn cạnh kỳ liền trước cùng số ngày.
   Future<RevenueSummary> summary(ReportScope scope, ReportRange range);
 
