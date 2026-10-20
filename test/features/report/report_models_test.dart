@@ -110,4 +110,37 @@ void main() {
     expect(rows.last.previousRevenue, 500000);
     expect(rows.last.revenueShare, 25);
   });
+
+  test('đọc doanh thu dự kiến: từng ngày, đã thu trước, quá hạn, chưa thu', () {
+    final outlook = ReportModel.outlook({
+      'from': '2026-10-20',
+      'to': '2026-10-22',
+      'totalExpected': 2900000,
+      'bookingRevenue': 2000000,
+      'bookings': 2,
+      'prepaidRevenue': 1200000,
+      'prepaidBookings': 1,
+      'awaitingConfirmationRevenue': 800000,
+      'awaitingConfirmationBookings': 1,
+      'tourRevenue': 900000,
+      'tours': 1,
+      'byDate': [
+        {'date': '2026-10-20', 'bookingRevenue': 1200000, 'tourRevenue': 0, 'bookings': 1, 'tours': 0},
+        {'date': '2026-10-21', 'bookingRevenue': 0, 'tourRevenue': 0, 'bookings': 0, 'tours': 0},
+        {'date': '2026-10-22', 'bookingRevenue': 800000, 'tourRevenue': 900000, 'bookings': 1, 'tours': 1},
+      ],
+      'overdueRevenue': 500000,
+      'overdueBookings': 1,
+      'outstandingAmount': 300000,
+      'outstandingBookings': 1,
+    });
+
+    expect(outlook.days, 3);
+    expect(outlook.byDate.last.total, 1700000);
+    expect(outlook.byDate.last.date, DateTime(2026, 10, 22));
+    expect(outlook.prepaidRevenue, 1200000);
+    expect(outlook.awaitingConfirmationBookings, 1);
+    expect(outlook.overdueBookings, 1);
+    expect(outlook.outstandingAmount, 300000);
+  });
 }

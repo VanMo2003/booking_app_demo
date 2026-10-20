@@ -65,6 +65,20 @@ abstract final class ReportStrings {
   static String branchCaption(String share, String occupancy, String adr, String cancellation) =>
       'Tỷ trọng $share · Lấp đầy $occupancy · ADR $adr · Huỷ $cancellation';
 
+  // Doanh thu dự kiến
+  static String outlookTitle(int days) => 'Doanh thu dự kiến $days ngày tới';
+  static String outlookNote(String from, String to) =>
+      '$from – $to · đơn chờ và đã xác nhận theo ngày trả phòng, tour theo ngày đi';
+  static const outlookBookings = 'Đơn phòng';
+  static const outlookTours = 'Tour';
+  static const outlookPrepaid = 'Đã thu trước';
+  static String awaitingConfirmation(String amount, int bookings) =>
+      'Trong đó $amount ($bookings đơn) còn chờ xác nhận';
+  static String overdueStays(int bookings, String amount) =>
+      '$bookings đơn quá ngày trả phòng chưa hoàn tất · $amount';
+  static String outstandingPayments(int bookings, String amount) =>
+      '$bookings đơn đã trả phòng chưa ghi nhận thanh toán · $amount';
+
   // Lấp đầy
   static const occupancyRate = 'Tỷ lệ lấp đầy';
   static const totalRooms = 'Số phòng';

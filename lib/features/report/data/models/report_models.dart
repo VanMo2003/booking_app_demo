@@ -114,6 +114,33 @@ abstract final class ReportModel {
         cancellationRate: json.decimal('cancellationRate'),
       );
 
+  static ExpectedRevenue expected(Json json) => ExpectedRevenue(
+        date: json.date('date') ?? DateOnly.today(),
+        bookingRevenue: json.decimal('bookingRevenue'),
+        tourRevenue: json.decimal('tourRevenue'),
+        bookings: json.integer('bookings'),
+        tours: json.integer('tours'),
+      );
+
+  static RevenueOutlook outlook(Json json) => RevenueOutlook(
+        from: json.date('from') ?? DateOnly.today(),
+        to: json.date('to') ?? DateOnly.today(),
+        totalExpected: json.decimal('totalExpected'),
+        bookingRevenue: json.decimal('bookingRevenue'),
+        bookings: json.integer('bookings'),
+        prepaidRevenue: json.decimal('prepaidRevenue'),
+        prepaidBookings: json.integer('prepaidBookings'),
+        awaitingConfirmationRevenue: json.decimal('awaitingConfirmationRevenue'),
+        awaitingConfirmationBookings: json.integer('awaitingConfirmationBookings'),
+        tourRevenue: json.decimal('tourRevenue'),
+        tours: json.integer('tours'),
+        byDate: json.listOf('byDate', expected),
+        overdueRevenue: json.decimal('overdueRevenue'),
+        overdueBookings: json.integer('overdueBookings'),
+        outstandingAmount: json.decimal('outstandingAmount'),
+        outstandingBookings: json.integer('outstandingBookings'),
+      );
+
   static BranchPerformance branch(Json json) => BranchPerformance(
         hotelId: json.integer('hotelId'),
         hotelName: json.str('hotelName'),

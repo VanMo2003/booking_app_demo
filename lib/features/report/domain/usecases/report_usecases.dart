@@ -196,11 +196,13 @@ class LoadBranchDashboard {
     final bookings = _bookings.byHotel(hotelId);
     final occupancy = _optional(_reports.occupancy(scope, month));
     final cancellation = _optional(_reports.cancellation(scope, month));
+    final outlook = _optional(_reports.outlook(scope));
     return BranchDashboard(
       last5Months: [...await last5]..sort((a, b) => a.monthIndex.compareTo(b.monthIndex)),
       bookings: await bookings,
       occupancy: await occupancy,
       cancellation: await cancellation,
+      outlook: await outlook,
     );
   }
 

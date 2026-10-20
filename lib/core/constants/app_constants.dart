@@ -7,6 +7,9 @@ abstract final class AppConstants {
   static const int maxDailyReportDays = 92;
   static const int topCustomersLimit = 10;
 
+  /// Số ngày của thẻ "Doanh thu dự kiến" trên màn Tổng quan (BE cho tối đa 90).
+  static const int outlookDays = 30;
+
   static const List<String> hotelCategories = [
     'Khách sạn',
     'Resort',

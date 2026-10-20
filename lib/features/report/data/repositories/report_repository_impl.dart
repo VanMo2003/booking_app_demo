@@ -117,6 +117,13 @@ class ReportRepositoryImpl implements ReportRepository {
       (await _remote.get(scope, 'branches', _inclusive(range))).parseList(ReportModel.branch);
 
   @override
+  Future<RevenueOutlook> outlook(
+    ReportScope scope, {
+    int days = AppConstants.outlookDays,
+  }) async =>
+      (await _remote.get(scope, 'outlook', {'days': days})).parse(ReportModel.outlook);
+
+  @override
   Future<RevenueSummary> summary(ReportScope scope, ReportRange range) async =>
       (await _remote.get(scope, 'summary', _inclusive(range))).parse(ReportModel.summary);
 

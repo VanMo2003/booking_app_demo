@@ -328,6 +328,98 @@ class RevenuePeriod extends Equatable {
       ];
 }
 
+/// Doanh thu dự kiến của một ngày: đơn mở trả phòng hôm đó, tour mở khởi hành hôm đó.
+class ExpectedRevenue extends Equatable {
+  const ExpectedRevenue({
+    required this.date,
+    required this.bookingRevenue,
+    required this.tourRevenue,
+    required this.bookings,
+    required this.tours,
+  });
+
+  final DateTime date;
+  final double bookingRevenue;
+  final double tourRevenue;
+  final int bookings;
+  final int tours;
+
+  double get total => bookingRevenue + tourRevenue;
+
+  @override
+  List<Object?> get props => [date, bookingRevenue, tourRevenue, bookings, tours];
+}
+
+/// Doanh thu sắp tới (từ hôm nay) và tiền còn phải thu. "Mở" là chờ xác nhận
+/// hoặc đã xác nhận; đơn tính vào ngày trả phòng, tour vào ngày đi.
+class RevenueOutlook extends Equatable {
+  const RevenueOutlook({
+    required this.from,
+    required this.to,
+    required this.totalExpected,
+    required this.bookingRevenue,
+    required this.bookings,
+    required this.prepaidRevenue,
+    required this.prepaidBookings,
+    required this.awaitingConfirmationRevenue,
+    required this.awaitingConfirmationBookings,
+    required this.tourRevenue,
+    required this.tours,
+    required this.byDate,
+    required this.overdueRevenue,
+    required this.overdueBookings,
+    required this.outstandingAmount,
+    required this.outstandingBookings,
+  });
+
+  final DateTime from;
+  final DateTime to;
+  final double totalExpected;
+  final double bookingRevenue;
+  final int bookings;
+
+  /// Phần khách đã thanh toán trước.
+  final double prepaidRevenue;
+  final int prepaidBookings;
+
+  /// Phần cơ sở chưa xác nhận — kém chắc chắn nhất.
+  final double awaitingConfirmationRevenue;
+  final int awaitingConfirmationBookings;
+  final double tourRevenue;
+  final int tours;
+  final List<ExpectedRevenue> byDate;
+
+  /// Đơn còn mở dù đã qua ngày trả phòng.
+  final double overdueRevenue;
+  final int overdueBookings;
+
+  /// Đơn đã hoàn tất nhưng chưa ghi nhận thanh toán.
+  final double outstandingAmount;
+  final int outstandingBookings;
+
+  int get days => byDate.length;
+
+  @override
+  List<Object?> get props => [
+        from,
+        to,
+        totalExpected,
+        bookingRevenue,
+        bookings,
+        prepaidRevenue,
+        prepaidBookings,
+        awaitingConfirmationRevenue,
+        awaitingConfirmationBookings,
+        tourRevenue,
+        tours,
+        byDate,
+        overdueRevenue,
+        overdueBookings,
+        outstandingAmount,
+        outstandingBookings,
+      ];
+}
+
 /// Một cơ sở của chuỗi trong khoảng đang xem, đặt cạnh kỳ trước của chính nó.
 class BranchPerformance extends Equatable {
   const BranchPerformance({

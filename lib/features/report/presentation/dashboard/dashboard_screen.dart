@@ -21,6 +21,7 @@ import '../../../booking/presentation/widgets/booking_card.dart';
 import '../../../shell/presentation/workspace_scope.dart';
 import '../../domain/entities/report_views.dart';
 import '../../domain/usecases/report_usecases.dart';
+import '../widgets/revenue_outlook_card.dart';
 
 @injectable
 class DashboardCubit extends LoadCubit<BranchDashboard> {
@@ -238,6 +239,10 @@ class _DashboardBody extends StatelessWidget {
             ],
           ),
         ),
+        if (data.outlook != null) ...[
+          const Gap(AppSpacing.lg),
+          RevenueOutlookCard(outlook: data.outlook!),
+        ],
         const Gap(AppSpacing.lg),
         AppCard(
           child: Column(

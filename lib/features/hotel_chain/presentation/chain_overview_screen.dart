@@ -19,6 +19,7 @@ import '../../../core/text/workspace_strings.dart';
 import '../../../core/utils/formatters.dart';
 import '../../auth/presentation/session/session_cubit.dart';
 import '../../hotel/domain/entities/hotel.dart';
+import '../../report/presentation/widgets/revenue_outlook_card.dart';
 import '../domain/usecases/hotel_chain_usecases.dart';
 import 'chain_cubits.dart';
 
@@ -201,6 +202,10 @@ class _OverviewBody extends StatelessWidget {
                   ],
                 ),
               ),
+              if (overview.outlook != null) ...[
+                const Gap(AppSpacing.md),
+                RevenueOutlookCard(outlook: overview.outlook!),
+              ],
               const Gap(AppSpacing.md),
               AppCard(
                 child: Column(

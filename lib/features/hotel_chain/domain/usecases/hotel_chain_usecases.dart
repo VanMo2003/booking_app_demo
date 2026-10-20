@@ -81,14 +81,18 @@ class ChainOverview extends Equatable {
     required this.detail,
     required this.last5Months,
     this.occupancy,
+    this.outlook,
   });
 
   final HotelChainDetail detail;
   final List<RevenueByMonth> last5Months;
   final OccupancySummary? occupancy;
 
+  /// Doanh thu dự kiến 30 ngày tới của cả chuỗi; `null` khi không tải được.
+  final RevenueOutlook? outlook;
+
   @override
-  List<Object?> get props => [detail, last5Months, occupancy];
+  List<Object?> get props => [detail, last5Months, occupancy, outlook];
 }
 
 @injectable
@@ -102,6 +106,7 @@ class LoadChainOverview {
     final scope = ChainReportScope(chainId);
     final detail = _chains.getDetail(chainId);
     final last5 = _reports.revenueLast5Months(scope);
+    final outlookFuture = _reports.outlook(scope);
     OccupancySummary? occupancy;
     try {
       occupancy = await _reports.occupancy(
@@ -111,10 +116,17 @@ class LoadChainOverview {
     } catch (_) {
       occupancy = null;
     }
+    RevenueOutlook? outlook;
+    try {
+      outlook = await outlookFuture;
+    } catch (_) {
+      outlook = null;
+    }
     return ChainOverview(
       detail: await detail,
       last5Months: [...await last5]..sort((a, b) => a.monthIndex.compareTo(b.monthIndex)),
       occupancy: occupancy,
+      outlook: outlook,
     );
   }
 }
