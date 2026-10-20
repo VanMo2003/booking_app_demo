@@ -62,4 +62,25 @@ void main() {
     expect(summary.occupancyChange, 0.5);
     expect(summary.byPaymentMethod, isEmpty);
   });
+
+  test('đọc doanh thu theo tour: tour đã xoá không có id, đơn AI, tiền phòng gói', () {
+    final rows = [
+      {
+        'tourId': 7,
+        'tourName': 'Hạ Long',
+        'orders': 2,
+        'guests': 4,
+        'tourRevenue': 1350000,
+        'packageRoomAmount': 1000000,
+        'aiOrders': 1,
+      },
+      {'tourId': null, 'tourName': 'Ninh Bình', 'orders': 1, 'guests': 1, 'tourRevenue': 300000},
+    ].map(ReportModel.tour).toList();
+
+    expect(rows.first.tourId, 7);
+    expect(rows.first.revenue, 1350000);
+    expect(rows.first.aiOrders, 1);
+    expect(rows.last.tourId, isNull);
+    expect(rows.last.packageRoomAmount, 0);
+  });
 }

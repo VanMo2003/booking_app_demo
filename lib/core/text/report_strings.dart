@@ -78,6 +78,12 @@ abstract final class ReportStrings {
   static String bookedRooms(int n) => '$n lượt phòng';
   static String nights(int n) => '$n đêm';
   static String quantity(int n) => '$n lượt';
+  static const byTour = 'Doanh thu theo tour';
+  static const byTourNote =
+      'Tiền tour của đơn hoàn tất, theo ngày đi. Phòng trong gói tính vào doanh thu phòng khi khách trả phòng.';
+  static String tourCaption(int orders, int guests) => '$orders đơn · $guests khách';
+  static String aiOrders(int n) => '$n đơn do AI lên';
+  static String packageRooms(String amount) => 'phòng gói $amount';
   static const roomTypeNote =
       'Doanh thu phòng tính bằng giá phòng hiện tại × số đêm.';
 

@@ -206,6 +206,9 @@ chọn khoảng 7 ngày / tháng này / tháng trước / năm nay / tuỳ chọ
 - **Theo phương thức thanh toán** và **theo kênh bán** (khách tự đặt trên app / tại quầy / tour).
 - **Diễn biến doanh thu phòng** theo ngày / tuần / tháng / năm và bảng chi tiết từng mốc.
 
+Tab **Cơ cấu** có thêm **Doanh thu theo tour** (`GET /reports/revenue-by-tour`): mỗi tour một thanh, kèm số
+đơn, số khách, số đơn do AI lên và tiền phòng gói (phòng gói tính vào doanh thu phòng khi khách trả phòng).
+
 ## Thông báo, push và deep link
 
 - **Trong app:** chuông ở đầu các màn quản trị/chờ duyệt (`NotificationBell`), hộp

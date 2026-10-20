@@ -80,6 +80,10 @@ class ReportRepositoryImpl implements ReportRepository {
           .parseList(ReportModel.service);
 
   @override
+  Future<List<TourRevenue>> revenueByTour(ReportScope scope, ReportRange range) async =>
+      (await _remote.get(scope, 'revenue-by-tour', _inclusive(range))).parseList(ReportModel.tour);
+
+  @override
   Future<List<TopCustomer>> topCustomers(
     ReportScope scope,
     ReportRange range, {

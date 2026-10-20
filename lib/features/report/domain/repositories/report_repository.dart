@@ -31,6 +31,9 @@ abstract interface class ReportRepository {
     ReportRange range,
   );
 
+  /// Đơn tour hoàn tất theo ngày đi, gộp theo tour.
+  Future<List<TourRevenue>> revenueByTour(ReportScope scope, ReportRange range);
+
   Future<List<TopCustomer>> topCustomers(
     ReportScope scope,
     ReportRange range, {

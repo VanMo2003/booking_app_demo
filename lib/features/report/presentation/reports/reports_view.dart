@@ -917,6 +917,35 @@ class _BreakdownTab extends StatelessWidget {
                     ],
                   ),
                 ),
+                const Gap(AppSpacing.md),
+                AppCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SectionHeader(
+                        title: ReportStrings.byTour,
+                        subtitle: ReportStrings.byTourNote,
+                      ),
+                      const Gap(AppSpacing.xs),
+                      RankedBarList(
+                        color: AppColors.info,
+                        items: [
+                          for (final row in report.tours)
+                            RankedBar(
+                              label: row.name,
+                              value: row.revenue,
+                              caption: [
+                                ReportStrings.tourCaption(row.orders, row.guests),
+                                if (row.aiOrders > 0) ReportStrings.aiOrders(row.aiOrders),
+                                if (row.packageRoomAmount > 0)
+                                  ReportStrings.packageRooms(Fmt.moneyCompact(row.packageRoomAmount)),
+                              ].join(' · '),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

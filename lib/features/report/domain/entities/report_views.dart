@@ -55,13 +55,18 @@ class OccupancyReport extends Equatable {
 }
 
 class BreakdownReport extends Equatable {
-  const BreakdownReport({required this.roomTypes, required this.services});
+  const BreakdownReport({
+    required this.roomTypes,
+    required this.services,
+    required this.tours,
+  });
 
   final List<RoomTypeRevenue> roomTypes;
   final List<ServiceRevenue> services;
+  final List<TourRevenue> tours;
 
   @override
-  List<Object?> get props => [roomTypes, services];
+  List<Object?> get props => [roomTypes, services, tours];
 }
 
 class PeopleReport extends Equatable {

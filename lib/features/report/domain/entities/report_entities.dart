@@ -173,6 +173,34 @@ class ServiceRevenue extends Equatable {
   List<Object?> get props => [name, quantity, revenue];
 }
 
+/// Đơn tour hoàn tất của một tour. [packageRoomAmount] chỉ để tham khảo: phòng
+/// trong gói là đơn phòng riêng, tính vào doanh thu phòng khi khách trả phòng.
+class TourRevenue extends Equatable {
+  const TourRevenue({
+    required this.name,
+    required this.orders,
+    required this.guests,
+    required this.revenue,
+    required this.packageRoomAmount,
+    required this.aiOrders,
+    this.tourId,
+  });
+
+  /// `null` khi tour đã bị xoá — đơn vẫn giữ tên tour.
+  final int? tourId;
+  final String name;
+  final int orders;
+  final int guests;
+  final double revenue;
+  final double packageRoomAmount;
+
+  /// Số đơn do trợ lý AI lên sau khi khách đồng ý trong tin nhắn.
+  final int aiOrders;
+
+  @override
+  List<Object?> get props => [tourId, name, orders, guests, revenue, packageRoomAmount, aiOrders];
+}
+
 class TopCustomer extends Equatable {
   const TopCustomer({
     required this.customerId,

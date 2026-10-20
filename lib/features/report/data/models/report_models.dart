@@ -59,6 +59,16 @@ abstract final class ReportModel {
         revenue: json.decimal('totalRevenue'),
       );
 
+  static TourRevenue tour(Json json) => TourRevenue(
+        tourId: json.intOrNull('tourId'),
+        name: json.str('tourName'),
+        orders: json.integer('orders'),
+        guests: json.integer('guests'),
+        revenue: json.decimal('tourRevenue'),
+        packageRoomAmount: json.decimal('packageRoomAmount'),
+        aiOrders: json.integer('aiOrders'),
+      );
+
   static TopCustomer topCustomer(Json json) => TopCustomer(
         customerId: json.integer('customerId'),
         fullName: json.str('fullName'),

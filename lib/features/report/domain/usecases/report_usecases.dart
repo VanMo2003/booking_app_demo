@@ -129,9 +129,11 @@ class LoadBreakdownReport {
   Future<BreakdownReport> call(ReportScope scope, ReportRange range) async {
     final roomTypes = _repository.revenueByRoomType(scope, range);
     final services = _repository.revenueByService(scope, range);
+    final tours = _repository.revenueByTour(scope, range);
     return BreakdownReport(
       roomTypes: (await roomTypes)..sort((a, b) => b.revenue.compareTo(a.revenue)),
       services: (await services)..sort((a, b) => b.revenue.compareTo(a.revenue)),
+      tours: await tours,
     );
   }
 }
