@@ -19,6 +19,7 @@ class ReportsState extends Equatable {
     this.preset = ReportPreset.thisMonth,
     this.granularity = RevenueGranularity.day,
     this.revenue = const LoadState(),
+    this.summary = const LoadState(),
     this.occupancy = const LoadState(),
     this.breakdown = const LoadState(),
     this.people = const LoadState(),
@@ -29,6 +30,9 @@ class ReportsState extends Equatable {
   final ReportRange range;
   final RevenueGranularity granularity;
   final LoadState<RevenueReport> revenue;
+
+  /// Tổng quan kỳ đang xem cạnh kỳ trước — không đổi theo độ chi tiết.
+  final LoadState<RevenueSummary> summary;
   final LoadState<OccupancyReport> occupancy;
   final LoadState<BreakdownReport> breakdown;
   final LoadState<PeopleReport> people;
@@ -39,6 +43,7 @@ class ReportsState extends Equatable {
   ReportsState copyWith({
     RevenueGranularity? granularity,
     LoadState<RevenueReport>? revenue,
+    LoadState<RevenueSummary>? summary,
     LoadState<OccupancyReport>? occupancy,
     LoadState<BreakdownReport>? breakdown,
     LoadState<PeopleReport>? people,
@@ -49,6 +54,7 @@ class ReportsState extends Equatable {
         preset: preset,
         granularity: granularity ?? this.granularity,
         revenue: revenue ?? this.revenue,
+        summary: summary ?? this.summary,
         occupancy: occupancy ?? this.occupancy,
         breakdown: breakdown ?? this.breakdown,
         people: people ?? this.people,
@@ -57,7 +63,7 @@ class ReportsState extends Equatable {
 
   @override
   List<Object?> get props =>
-      [preset, range, granularity, revenue, occupancy, breakdown, people, comparison];
+      [preset, range, granularity, revenue, summary, occupancy, breakdown, people, comparison];
 }
 
 /// Báo cáo dùng chung cho cơ sở và chuỗi. Mỗi tab chỉ tải khi được mở;
@@ -66,6 +72,7 @@ class ReportsState extends Equatable {
 class ReportsCubit extends Cubit<ReportsState> {
   ReportsCubit(
     this._revenue,
+    this._summary,
     this._occupancy,
     this._breakdown,
     this._people,
@@ -75,6 +82,7 @@ class ReportsCubit extends Cubit<ReportsState> {
   ) : super(ReportsState(range: ReportRange.preset(ReportPreset.thisMonth)));
 
   final LoadRevenueReport _revenue;
+  final LoadRevenueSummary _summary;
   final LoadOccupancyReport _occupancy;
   final LoadBreakdownReport _breakdown;
   final LoadPeopleReport _people;
@@ -100,7 +108,7 @@ class ReportsCubit extends Cubit<ReportsState> {
     if (!isNew && !force) return;
     switch (tab) {
       case ReportTab.revenue:
-        await Future.wait([_loadRevenue(), _loadComparison()]);
+        await Future.wait([_loadSummary(), _loadRevenue(), _loadComparison()]);
       case ReportTab.occupancy:
         await _loadOccupancy();
       case ReportTab.breakdown:
@@ -156,6 +164,17 @@ class ReportsCubit extends Cubit<ReportsState> {
       }
     } catch (error) {
       if (_isCurrent(range)) emit(state.copyWith(revenue: state.revenue.toError(error)));
+    }
+  }
+
+  Future<void> _loadSummary() async {
+    final range = state.range;
+    emit(state.copyWith(summary: state.summary.toLoading()));
+    try {
+      final summary = await _summary(_scope, range);
+      if (_isCurrent(range)) emit(state.copyWith(summary: state.summary.toSuccess(summary)));
+    } catch (error) {
+      if (_isCurrent(range)) emit(state.copyWith(summary: state.summary.toError(error)));
     }
   }
 

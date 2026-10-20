@@ -195,6 +195,17 @@ Phía cơ sở đổi phương thức trong màn **Sửa đơn** như trước.
   - **Thêm → Thông báo** (đội ngũ cơ sở) có số chưa đọc; chạm thông báo đơn tour mở đúng đơn
     (`bookingapp://tour-bookings/{id}`, cả từ thông báo đẩy).
 
+## Báo cáo doanh thu
+
+Quản lý cơ sở (tab **Báo cáo**) và chủ khách sạn (tab **Báo cáo**, cả chuỗi) dùng chung `ReportsView`,
+chọn khoảng 7 ngày / tháng này / tháng trước / năm nay / tuỳ chọn. Tab **Doanh thu**:
+
+- **Tổng quan kỳ** (`GET /reports/summary`): tổng doanh thu gồm cả tour, kèm % tăng giảm so với kỳ liền
+  trước cùng số ngày; thanh cơ cấu tiền phòng / dịch vụ / tour; ADR, RevPAR, lấp đầy (chênh lệch tính
+  bằng điểm), đơn hoàn tất. Kỳ trước bằng 0 thì hiện "Kỳ trước chưa có số liệu" thay vì %.
+- **Theo phương thức thanh toán** và **theo kênh bán** (khách tự đặt trên app / tại quầy / tour).
+- **Diễn biến doanh thu phòng** theo ngày / tuần / tháng / năm và bảng chi tiết từng mốc.
+
 ## Thông báo, push và deep link
 
 - **Trong app:** chuông ở đầu các màn quản trị/chờ duyệt (`NotificationBell`), hộp

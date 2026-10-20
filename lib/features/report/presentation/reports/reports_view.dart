@@ -1,12 +1,17 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/bloc/load_state.dart';
 import '../../../../core/color/app_colors.dart';
+import '../../../../core/color/status_colors.dart';
 import '../../../../core/component/component.dart';
 import '../../../../core/di/injector.dart';
+import '../../../../core/enums/app_enums.dart';
 import '../../../../core/style/style.dart';
 import '../../../../core/text/app_strings.dart';
+import '../../../../core/text/enum_labels.dart';
 import '../../../../core/text/report_strings.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../../core/utils/file_saver.dart';
@@ -299,100 +304,86 @@ class _RevenueTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<ReportsCubit>();
+    final report = state.revenue.data;
+    final nonEmpty = report?.buckets.where((bucket) => bucket.revenue > 0).toList() ?? const [];
     return RefreshIndicator(
       onRefresh: cubit.refresh,
       child: ListView(
         padding: AppSpacing.page,
         children: [
-          ChoiceChipBar<RevenueGranularity>(
-            options: RevenueGranularity.values,
-            selected: state.granularity,
-            labelOf: _granularityLabel,
-            onSelected: cubit.setGranularity,
-            padding: EdgeInsets.zero,
-          ),
-          const Gap(AppSpacing.sm),
-          _Section<RevenueReport>(
-            state: state.revenue,
+          _Section<RevenueSummary>(
+            state: state.summary,
             onRetry: cubit.refresh,
-            builder: (report) {
-              final nonEmpty = report.buckets.where((bucket) => bucket.revenue > 0).toList();
-              return Column(
+            builder: (summary) => Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _SummaryCard(summary: summary),
+                const Gap(AppSpacing.md),
+                _SharesCard(summary: summary),
+              ],
+            ),
+          ),
+          const Gap(AppSpacing.md),
+          AppCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SectionHeader(
+                  title: ReportStrings.trendTitle,
+                  subtitle: ReportStrings.revenueNote,
+                ),
+                const Gap(AppSpacing.sm),
+                ChoiceChipBar<RevenueGranularity>(
+                  options: RevenueGranularity.values,
+                  selected: state.granularity,
+                  labelOf: _granularityLabel,
+                  onSelected: cubit.setGranularity,
+                  padding: EdgeInsets.zero,
+                ),
+                const Gap(AppSpacing.md),
+                _Section<RevenueReport>(
+                  state: state.revenue,
+                  onRetry: cubit.refresh,
+                  builder: (report) => AppBarChart(
+                    points: [
+                      for (final bucket in report.buckets) _point(bucket, report.granularity),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (report != null && nonEmpty.isNotEmpty) ...[
+            const Gap(AppSpacing.md),
+            AppCard(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  AppCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(ReportStrings.totalRevenue, style: AppTextStyles.caption),
-                        const Gap(4),
-                        Text(
-                          Fmt.money(report.totalRevenue),
-                          style: AppTextStyles.moneyLarge.colored(AppColors.primaryDark),
-                        ),
-                        const Gap(AppSpacing.sm),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _MiniStat(
-                                label: ReportStrings.completedBookings,
-                                value: Fmt.number(report.totalBookings),
-                              ),
-                            ),
-                            Expanded(
-                              child: _MiniStat(
-                                label: ReportStrings.averagePerBooking,
-                                value: Fmt.money(report.averagePerBooking),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Gap(AppSpacing.lg),
-                        AppBarChart(
-                          points: [
-                            for (final bucket in report.buckets) _point(bucket, report.granularity),
-                          ],
-                        ),
-                        const Gap(AppSpacing.xs),
-                        Text(ReportStrings.revenueNote, style: AppTextStyles.caption),
-                      ],
-                    ),
-                  ),
-                  if (nonEmpty.isNotEmpty) ...[
-                    const Gap(AppSpacing.md),
-                    AppCard(
-                      padding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                  const SectionHeader(title: ReportStrings.detailTitle),
+                  const Gap(AppSpacing.xs),
+                  for (final bucket in nonEmpty)
+                    InfoRow(
+                      label: _bucketLabel(bucket, report.granularity),
+                      value: '',
+                      valueWidget: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          const SectionHeader(title: ReportStrings.detailTitle),
-                          const Gap(AppSpacing.xs),
-                          for (final bucket in nonEmpty)
-                            InfoRow(
-                              label: _bucketLabel(bucket, report.granularity),
-                              value: '',
-                              valueWidget: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    Fmt.money(bucket.revenue),
-                                    style: AppTextStyles.tabular.weight(FontWeight.w600),
-                                  ),
-                                  Text(
-                                    AppStrings.bookingsCount(bucket.bookings),
-                                    style: AppTextStyles.caption,
-                                  ),
-                                ],
-                              ),
-                            ),
+                          Text(
+                            Fmt.money(bucket.revenue),
+                            style: AppTextStyles.tabular.weight(FontWeight.w600),
+                          ),
+                          Text(
+                            AppStrings.bookingsCount(bucket.bookings),
+                            style: AppTextStyles.caption,
+                          ),
                         ],
                       ),
                     ),
-                  ],
                 ],
-              );
-            },
-          ),
+              ),
+            ),
+          ],
           if (isChain) ...[
             const Gap(AppSpacing.md),
             AppCard(
@@ -422,6 +413,342 @@ class _RevenueTab extends StatelessWidget {
               ),
             ),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Tổng doanh thu kỳ (gồm tour), cơ cấu phòng / dịch vụ / tour và các KPI
+/// buồng phòng, mỗi số kèm mức tăng giảm so với kỳ trước.
+class _SummaryCard extends StatelessWidget {
+  const _SummaryCard({required this.summary});
+
+  final RevenueSummary summary;
+
+  @override
+  Widget build(BuildContext context) {
+    final current = summary.current;
+    final previous = summary.previous;
+    final parts = <_Part>[
+      (
+        label: ReportStrings.roomRevenue,
+        detail: ReportStrings.soldNights(current.roomNightsSold),
+        value: current.roomRevenue,
+        color: AppColors.primary,
+      ),
+      (
+        label: ReportStrings.serviceRevenue,
+        detail: null,
+        value: current.serviceRevenue,
+        color: AppColors.accent,
+      ),
+      (
+        label: ReportStrings.tourRevenue,
+        detail: ReportStrings.tourOrders(current.completedTours, current.tourGuests),
+        value: current.tourRevenue,
+        color: AppColors.info,
+      ),
+    ];
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(ReportStrings.totalRevenue, style: AppTextStyles.caption),
+          const Gap(4),
+          Row(
+            children: [
+              Expanded(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    Fmt.money(current.totalRevenue),
+                    style: AppTextStyles.moneyLarge.colored(AppColors.primaryDark),
+                  ),
+                ),
+              ),
+              const Gap(AppSpacing.sm),
+              _Delta(value: summary.revenueGrowth, pill: true),
+            ],
+          ),
+          const Gap(2),
+          Text(
+            ReportStrings.previousPeriod(
+              Fmt.date(previous.from),
+              Fmt.date(previous.to),
+              Fmt.money(previous.totalRevenue),
+            ),
+            style: AppTextStyles.caption,
+          ),
+          const Gap(AppSpacing.md),
+          _CompositionBar(parts: parts),
+          const Gap(AppSpacing.sm),
+          for (final part in parts) _LegendRow(part: part, total: current.totalRevenue),
+          const Gap(AppSpacing.sm),
+          const Divider(height: 1, color: AppColors.lineSoft),
+          const Gap(AppSpacing.md),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _Kpi(
+                  label: ReportStrings.adr,
+                  value: Fmt.money(current.adr),
+                  delta: summary.adrGrowth,
+                ),
+              ),
+              const Gap(AppSpacing.sm),
+              Expanded(
+                child: _Kpi(
+                  label: ReportStrings.revpar,
+                  value: Fmt.money(current.revpar),
+                  delta: summary.revparGrowth,
+                ),
+              ),
+            ],
+          ),
+          const Gap(AppSpacing.md),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _Kpi(
+                  label: ReportStrings.occupancyShort,
+                  value: Fmt.percent(current.occupancyRate),
+                  // lấp đầy so theo điểm phần trăm; kỳ trước chưa có phòng thì không so
+                  delta: previous.availableRoomNights == 0 ? null : summary.occupancyChange,
+                  points: true,
+                ),
+              ),
+              const Gap(AppSpacing.sm),
+              Expanded(
+                child: _Kpi(
+                  label: ReportStrings.completedBookings,
+                  value: Fmt.number(current.completedBookings),
+                  delta: summary.bookingGrowth,
+                ),
+              ),
+            ],
+          ),
+          const Gap(AppSpacing.md),
+          Text(ReportStrings.summaryNote, style: AppTextStyles.caption),
+        ],
+      ),
+    );
+  }
+}
+
+typedef _Part = ({String label, String? detail, double value, Color color});
+
+/// Thanh ngang chia theo tỷ trọng từng phần doanh thu.
+class _CompositionBar extends StatelessWidget {
+  const _CompositionBar({required this.parts});
+
+  final List<_Part> parts;
+
+  @override
+  Widget build(BuildContext context) {
+    final total = parts.fold<double>(0, (sum, part) => sum + part.value);
+    return ClipRRect(
+      borderRadius: AppRadius.smAll,
+      child: SizedBox(
+        height: 10,
+        child: total <= 0
+            ? const ColoredBox(color: AppColors.surfaceSunk)
+            : Row(
+                spacing: 2,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (final part in parts)
+                    if (part.value > 0)
+                      Expanded(
+                        flex: math.max(1, (part.value / total * 1000).round()),
+                        child: ColoredBox(color: part.color),
+                      ),
+                ],
+              ),
+      ),
+    );
+  }
+}
+
+class _LegendRow extends StatelessWidget {
+  const _LegendRow({required this.part, required this.total});
+
+  final _Part part;
+  final double total;
+
+  @override
+  Widget build(BuildContext context) {
+    final share = total <= 0 ? 0.0 : part.value / total * 100;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        children: [
+          Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(color: part.color, borderRadius: BorderRadius.circular(3)),
+          ),
+          const Gap(AppSpacing.sm),
+          Expanded(
+            child: Text.rich(
+              TextSpan(
+                text: part.label,
+                style: AppTextStyles.bodySmall,
+                children: [
+                  if (part.detail != null)
+                    TextSpan(text: ' · ${part.detail}', style: AppTextStyles.caption),
+                ],
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const Gap(AppSpacing.xs),
+          Text(Fmt.money(part.value), style: AppTextStyles.tabular.weight(FontWeight.w600)),
+          SizedBox(
+            width: 52,
+            child: Text(
+              Fmt.percent(share),
+              textAlign: TextAlign.right,
+              style: AppTextStyles.caption,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Kpi extends StatelessWidget {
+  const _Kpi({
+    required this.label,
+    required this.value,
+    required this.delta,
+    this.points = false,
+  });
+
+  final String label;
+  final String value;
+  final double? delta;
+
+  /// Chênh lệch tính bằng điểm phần trăm (lấp đầy) thay vì phần trăm thay đổi.
+  final bool points;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: AppTextStyles.caption),
+        const Gap(2),
+        Text(value, style: AppTextStyles.tabular.weight(FontWeight.w600)),
+        const Gap(2),
+        _Delta(value: delta, points: points),
+      ],
+    );
+  }
+}
+
+/// Mức tăng giảm so với kỳ trước: xanh khi tăng, đỏ khi giảm.
+class _Delta extends StatelessWidget {
+  const _Delta({required this.value, this.points = false, this.pill = false});
+
+  final double? value;
+  final bool points;
+  final bool pill;
+
+  @override
+  Widget build(BuildContext context) {
+    final delta = value;
+    if (delta == null) {
+      return Text(ReportStrings.noComparison, style: AppTextStyles.caption);
+    }
+    final tone = delta > 0
+        ? StatusTone.success
+        : delta < 0
+            ? StatusTone.danger
+            : StatusTone.neutral;
+    final colors = tone.colors;
+    final sign = delta > 0
+        ? '+'
+        : delta < 0
+            ? '−'
+            : '';
+    final magnitude = Fmt.decimal(delta.abs());
+    final text = points
+        ? ReportStrings.pointDelta(sign, magnitude)
+        : ReportStrings.percentDelta(sign, magnitude);
+    final icon = delta > 0
+        ? Icons.arrow_upward_rounded
+        : delta < 0
+            ? Icons.arrow_downward_rounded
+            : Icons.remove_rounded;
+    final content = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 14, color: colors.foreground),
+        const Gap(2),
+        Text(text, style: AppTextStyles.captionStrong.colored(colors.foreground)),
+      ],
+    );
+    if (!pill) return content;
+    return DecoratedBox(
+      decoration: BoxDecoration(color: colors.background, borderRadius: AppRadius.smAll),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: content,
+      ),
+    );
+  }
+}
+
+/// Doanh thu chia theo phương thức thanh toán và theo kênh bán.
+class _SharesCard extends StatelessWidget {
+  const _SharesCard({required this.summary});
+
+  final RevenueSummary summary;
+
+  static String _channelLabel(String key) => switch (key) {
+        'SELF_SERVICE' => ReportStrings.channelSelfService,
+        'FRONT_DESK' => ReportStrings.channelFrontDesk,
+        _ => ReportStrings.channelTour,
+      };
+
+  static RankedBar _bar(RevenueShare share, String label) => RankedBar(
+        label: label,
+        value: share.revenue,
+        caption: ReportStrings.shareCaption(share.count, Fmt.percent(share.share)),
+      );
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SectionHeader(
+            title: ReportStrings.byPaymentMethod,
+            subtitle: ReportStrings.byPaymentMethodNote,
+          ),
+          const Gap(AppSpacing.xs),
+          RankedBarList(
+            items: [
+              for (final share in summary.byPaymentMethod)
+                _bar(share, PaymentMethod.parse(share.key).label),
+            ],
+          ),
+          const Gap(AppSpacing.md),
+          const SectionHeader(title: ReportStrings.byChannel),
+          const Gap(AppSpacing.xs),
+          RankedBarList(
+            color: AppColors.accent,
+            items: [
+              for (final share in summary.byChannel) _bar(share, _channelLabel(share.key)),
+            ],
+          ),
         ],
       ),
     );

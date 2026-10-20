@@ -25,6 +25,9 @@ abstract final class Fmt {
   /// 66.67 → "66,7%"
   static String percent(num? value) => '${_oneDecimal.format(value ?? 0)}%';
 
+  /// 4.25 → "4,3" — số lẻ một chữ số, không kèm đơn vị.
+  static String decimal(num? value) => _oneDecimal.format(value ?? 0);
+
   static String date(DateTime? d) =>
       d == null ? '--/--/----' : DateFormat('dd/MM/yyyy').format(d);
 

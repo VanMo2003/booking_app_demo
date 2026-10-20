@@ -44,5 +44,8 @@ abstract interface class ReportRepository {
 
   Future<CancellationStats> cancellation(ReportScope scope, ReportRange range);
 
+  /// KPI của khoảng đã chọn cạnh kỳ liền trước cùng số ngày.
+  Future<RevenueSummary> summary(ReportScope scope, ReportRange range);
+
   Future<List<int>> export(ReportScope scope, ReportRange range);
 }

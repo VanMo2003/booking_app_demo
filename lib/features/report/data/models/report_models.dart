@@ -82,4 +82,44 @@ abstract final class ReportModel {
         completed: json.integer('completedBooking'),
         rate: json.decimal('cancellationRate'),
       );
+
+  static RevenuePeriod period(Json json) => RevenuePeriod(
+        from: json.date('from') ?? DateOnly.today(),
+        to: json.date('to') ?? DateOnly.today(),
+        totalRevenue: json.decimal('totalRevenue'),
+        roomRevenue: json.decimal('roomRevenue'),
+        serviceRevenue: json.decimal('serviceRevenue'),
+        tourRevenue: json.decimal('tourRevenue'),
+        completedBookings: json.integer('completedBookings'),
+        completedTours: json.integer('completedTours'),
+        tourGuests: json.integer('tourGuests'),
+        roomNightsSold: json.integer('roomNightsSold'),
+        availableRoomNights: json.integer('availableRoomNights'),
+        occupancyRate: json.decimal('occupancyRate'),
+        adr: json.decimal('adr'),
+        revpar: json.decimal('revpar'),
+        averagePerBooking: json.decimal('averagePerBooking'),
+        totalBookings: json.integer('totalBookings'),
+        canceledBookings: json.integer('canceledBookings'),
+        cancellationRate: json.decimal('cancellationRate'),
+      );
+
+  static RevenueShare share(Json json) => RevenueShare(
+        key: json.str('key'),
+        count: json.integer('count'),
+        revenue: json.decimal('revenue'),
+        share: json.decimal('share'),
+      );
+
+  static RevenueSummary summary(Json json) => RevenueSummary(
+        current: period(json.obj('current') ?? const {}),
+        previous: period(json.obj('previous') ?? const {}),
+        revenueGrowth: json.decimalOrNull('revenueGrowth'),
+        bookingGrowth: json.decimalOrNull('bookingGrowth'),
+        adrGrowth: json.decimalOrNull('adrGrowth'),
+        revparGrowth: json.decimalOrNull('revparGrowth'),
+        occupancyChange: json.decimalOrNull('occupancyChange'),
+        byPaymentMethod: json.listOf('byPaymentMethod', share),
+        byChannel: json.listOf('byChannel', share),
+      );
 }

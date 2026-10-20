@@ -106,6 +106,10 @@ class ReportRepositoryImpl implements ReportRepository {
           .parse(ReportModel.cancellation);
 
   @override
+  Future<RevenueSummary> summary(ReportScope scope, ReportRange range) async =>
+      (await _remote.get(scope, 'summary', _inclusive(range))).parse(ReportModel.summary);
+
+  @override
   Future<List<int>> export(ReportScope scope, ReportRange range) =>
       _remote.export(scope, _inclusive(range));
 }

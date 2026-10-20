@@ -92,6 +92,17 @@ class LoadRevenueReport {
   }
 }
 
+/// Tổng quan kỳ: tổng doanh thu gồm cả tour, ADR/RevPAR và so sánh kỳ trước.
+@injectable
+class LoadRevenueSummary {
+  const LoadRevenueSummary(this._repository);
+
+  final ReportRepository _repository;
+
+  Future<RevenueSummary> call(ReportScope scope, ReportRange range) =>
+      _repository.summary(scope, range);
+}
+
 @injectable
 class LoadOccupancyReport {
   const LoadOccupancyReport(this._repository);

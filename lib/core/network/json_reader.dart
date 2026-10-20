@@ -24,11 +24,13 @@ extension JsonReader on Json {
     return null;
   }
 
-  double decimal(String key, [double fallback = 0]) {
+  double decimal(String key, [double fallback = 0]) => decimalOrNull(key) ?? fallback;
+
+  double? decimalOrNull(String key) {
     final value = this[key];
     if (value is num) return value.toDouble();
-    if (value is String) return double.tryParse(value) ?? fallback;
-    return fallback;
+    if (value is String) return double.tryParse(value);
+    return null;
   }
 
   bool flag(String key, [bool fallback = false]) {

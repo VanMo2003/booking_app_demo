@@ -229,3 +229,135 @@ class CancellationStats extends Equatable {
   @override
   List<Object?> get props => [total, canceled, completed, rate];
 }
+
+/// KPI doanh thu của một kỳ, tính cả hai đầu. Phòng và dịch vụ ghi nhận theo
+/// ngày trả phòng của đơn hoàn tất, tour theo ngày đi của đơn tour hoàn tất.
+class RevenuePeriod extends Equatable {
+  const RevenuePeriod({
+    required this.from,
+    required this.to,
+    required this.totalRevenue,
+    required this.roomRevenue,
+    required this.serviceRevenue,
+    required this.tourRevenue,
+    required this.completedBookings,
+    required this.completedTours,
+    required this.tourGuests,
+    required this.roomNightsSold,
+    required this.availableRoomNights,
+    required this.occupancyRate,
+    required this.adr,
+    required this.revpar,
+    required this.averagePerBooking,
+    required this.totalBookings,
+    required this.canceledBookings,
+    required this.cancellationRate,
+  });
+
+  final DateTime from;
+  final DateTime to;
+  final double totalRevenue;
+  final double roomRevenue;
+  final double serviceRevenue;
+  final double tourRevenue;
+  final int completedBookings;
+  final int completedTours;
+  final int tourGuests;
+  final int roomNightsSold;
+  final int availableRoomNights;
+  final double occupancyRate;
+
+  /// Giá phòng bình quân mỗi đêm đã bán.
+  final double adr;
+
+  /// Doanh thu phòng trên mỗi đêm phòng khả dụng.
+  final double revpar;
+  final double averagePerBooking;
+  final int totalBookings;
+  final int canceledBookings;
+  final double cancellationRate;
+
+  @override
+  List<Object?> get props => [
+        from,
+        to,
+        totalRevenue,
+        roomRevenue,
+        serviceRevenue,
+        tourRevenue,
+        completedBookings,
+        completedTours,
+        tourGuests,
+        roomNightsSold,
+        availableRoomNights,
+        occupancyRate,
+        adr,
+        revpar,
+        averagePerBooking,
+        totalBookings,
+        canceledBookings,
+        cancellationRate,
+      ];
+}
+
+/// Một phần doanh thu: theo phương thức thanh toán hoặc theo kênh bán.
+class RevenueShare extends Equatable {
+  const RevenueShare({
+    required this.key,
+    required this.count,
+    required this.revenue,
+    required this.share,
+  });
+
+  /// `CASH` / `BANK_TRANSFER` / `VN_PAY` hoặc `SELF_SERVICE` / `FRONT_DESK` / `TOUR`.
+  final String key;
+  final int count;
+  final double revenue;
+
+  /// Phần trăm trên tổng các phần, 0–100.
+  final double share;
+
+  @override
+  List<Object?> get props => [key, count, revenue, share];
+}
+
+/// Kỳ đang xem đặt cạnh kỳ liền trước cùng số ngày. Mức tăng trưởng là phần
+/// trăm, `null` khi kỳ trước không có gì để so.
+class RevenueSummary extends Equatable {
+  const RevenueSummary({
+    required this.current,
+    required this.previous,
+    required this.byPaymentMethod,
+    required this.byChannel,
+    this.revenueGrowth,
+    this.bookingGrowth,
+    this.adrGrowth,
+    this.revparGrowth,
+    this.occupancyChange,
+  });
+
+  final RevenuePeriod current;
+  final RevenuePeriod previous;
+  final double? revenueGrowth;
+  final double? bookingGrowth;
+  final double? adrGrowth;
+  final double? revparGrowth;
+
+  /// Chênh lệch lấp đầy, tính bằng điểm phần trăm.
+  final double? occupancyChange;
+  final List<RevenueShare> byPaymentMethod;
+  final List<RevenueShare> byChannel;
+
+  @override
+  List<Object?> get props => [
+        current,
+        previous,
+        revenueGrowth,
+        bookingGrowth,
+        adrGrowth,
+        revparGrowth,
+        occupancyChange,
+        byPaymentMethod,
+        byChannel,
+      ];
+}

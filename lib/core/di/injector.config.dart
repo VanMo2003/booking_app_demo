@@ -589,6 +589,8 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.factory<_i109.LoadRevenueReport>(
         () => _i109.LoadRevenueReport(gh<_i12.ReportRepository>()));
+    gh.factory<_i109.LoadRevenueSummary>(
+        () => _i109.LoadRevenueSummary(gh<_i12.ReportRepository>()));
     gh.factory<_i109.LoadOccupancyReport>(
         () => _i109.LoadOccupancyReport(gh<_i12.ReportRepository>()));
     gh.factory<_i109.LoadBreakdownReport>(
@@ -812,15 +814,6 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.lazySingleton<_i493.ChatUnreadCubit>(
         () => _i493.ChatUnreadCubit(gh<_i209.GetChatUnreadCount>()));
-    gh.factory<_i978.ReportsCubit>(() => _i978.ReportsCubit(
-          gh<_i109.LoadRevenueReport>(),
-          gh<_i109.LoadOccupancyReport>(),
-          gh<_i109.LoadBreakdownReport>(),
-          gh<_i109.LoadPeopleReport>(),
-          gh<_i109.ExportReport>(),
-          gh<_i109.LoadBranchComparison>(),
-          gh<_i782.GetHotelChainDetail>(),
-        ));
     gh.factory<_i489.ChainsPageCubit>(
         () => _i489.ChainsPageCubit(gh<_i782.GetHotelChainsPage>()));
     gh.factory<_i625.BookingCreateCubit>(() => _i625.BookingCreateCubit(
@@ -839,6 +832,16 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i987.GetTourBooking>(),
           gh<_i987.ChangeTourBookingStatus>(),
           gh<_i987.CancelTourBooking>(),
+        ));
+    gh.factory<_i978.ReportsCubit>(() => _i978.ReportsCubit(
+          gh<_i109.LoadRevenueReport>(),
+          gh<_i109.LoadRevenueSummary>(),
+          gh<_i109.LoadOccupancyReport>(),
+          gh<_i109.LoadBreakdownReport>(),
+          gh<_i109.LoadPeopleReport>(),
+          gh<_i109.ExportReport>(),
+          gh<_i109.LoadBranchComparison>(),
+          gh<_i782.GetHotelChainDetail>(),
         ));
     gh.lazySingleton<_i534.NotificationBadgeCubit>(
         () => _i534.NotificationBadgeCubit(

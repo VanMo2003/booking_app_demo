@@ -26,7 +26,34 @@ abstract final class ReportStrings {
   static const completedBookings = 'Đơn hoàn tất';
   static const averagePerBooking = 'Trung bình mỗi đơn';
   static const revenueNote =
-      'Chỉ tính đơn đã hoàn tất, theo ngày trả phòng.';
+      'Đơn phòng đã hoàn tất (gồm dịch vụ), theo ngày trả phòng.';
+  static const trendTitle = 'Diễn biến doanh thu phòng';
+
+  // Tổng quan kỳ
+  static String previousPeriod(String from, String to, String amount) =>
+      'Kỳ trước $from – $to: $amount';
+  static const noComparison = 'Kỳ trước chưa có số liệu';
+  static const roomRevenue = 'Tiền phòng';
+  static const serviceRevenue = 'Dịch vụ';
+  static const tourRevenue = 'Tour';
+  static String soldNights(int n) => '$n đêm đã bán';
+  static String tourOrders(int orders, int guests) => '$orders đơn · $guests khách';
+  static const adr = 'Giá TB/đêm (ADR)';
+  static const revpar = 'RevPAR';
+  static const occupancyShort = 'Lấp đầy';
+  static String percentDelta(String sign, String value) => '$sign$value%';
+  static String pointDelta(String sign, String value) => '$sign$value điểm';
+  static const summaryNote =
+      'Phòng và dịch vụ tính theo ngày trả phòng của đơn hoàn tất, tour theo ngày đi của đơn tour hoàn tất. '
+      'ADR = tiền phòng / đêm đã bán; RevPAR = tiền phòng / đêm phòng khả dụng. '
+      'Kỳ trước là khoảng cùng số ngày ngay trước kỳ đang xem.';
+  static const byPaymentMethod = 'Theo phương thức thanh toán';
+  static const byPaymentMethodNote = 'Đơn phòng hoàn tất. Tour trả tại khách sạn nên không tính ở đây.';
+  static const byChannel = 'Theo kênh bán';
+  static const channelSelfService = 'Khách tự đặt trên app';
+  static const channelFrontDesk = 'Đặt tại quầy';
+  static const channelTour = 'Tour';
+  static String shareCaption(int count, String share) => '$count đơn · $share';
   static String weekLabel(int week) => 'Tuần $week';
   static const branchComparison = 'So sánh cơ sở';
   static String branchComparisonNote(int year) =>
