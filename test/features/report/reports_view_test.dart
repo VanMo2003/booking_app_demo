@@ -138,6 +138,9 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text('4.000.000 ₫'), findsOneWidget);
+    // chi tiết cơ cấu hiện trọn vẹn trên dòng riêng
+    expect(find.text(ReportStrings.soldNights(4)), findsOneWidget);
+    expect(find.text(ReportStrings.tourOrders(1, 2)), findsOneWidget);
     expect(find.text('+100%'), findsWidgets);
     expect(find.text('−20%'), findsOneWidget);
     expect(find.text('+2,5 điểm'), findsOneWidget);

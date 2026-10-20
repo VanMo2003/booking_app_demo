@@ -585,18 +585,14 @@ class _LegendRow extends StatelessWidget {
             decoration: BoxDecoration(color: part.color, borderRadius: BorderRadius.circular(3)),
           ),
           const Gap(AppSpacing.sm),
+          // chi tiết xuống dòng riêng: chung một dòng thì bị cắt ở khổ điện thoại
           Expanded(
-            child: Text.rich(
-              TextSpan(
-                text: part.label,
-                style: AppTextStyles.bodySmall,
-                children: [
-                  if (part.detail != null)
-                    TextSpan(text: ' · ${part.detail}', style: AppTextStyles.caption),
-                ],
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(part.label, style: AppTextStyles.bodySmall),
+                if (part.detail != null) Text(part.detail!, style: AppTextStyles.caption),
+              ],
             ),
           ),
           const Gap(AppSpacing.xs),
