@@ -19,6 +19,7 @@ import '../../../core/text/workspace_strings.dart';
 import '../../../core/utils/formatters.dart';
 import '../../auth/presentation/session/session_cubit.dart';
 import '../../hotel/domain/entities/hotel.dart';
+import '../../report/presentation/widgets/growth_text.dart';
 import '../../report/presentation/widgets/revenue_outlook_card.dart';
 import '../domain/usecases/hotel_chain_usecases.dart';
 import 'chain_cubits.dart';
@@ -98,6 +99,7 @@ class _OverviewBody extends StatelessWidget {
     final current = months.isEmpty ? null : months.last;
     final previous = months.length < 2 ? null : months[months.length - 2];
     final occupancy = overview.occupancy;
+    final summary = overview.monthSummary;
     final onDarkMuted = AppColors.onPrimary.withValues(alpha: 0.82);
 
     return ListView(
@@ -172,16 +174,23 @@ class _OverviewBody extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Expanded(
+                      // tổng quan tháng (gồm tour, so với kỳ trước cùng số ngày); không tải được thì dùng 5 tháng gần nhất
                       child: StatCard(
                         label: ManagementStrings.revenueThisMonth,
-                        value: Fmt.moneyCompact(current?.revenue ?? 0),
+                        value: Fmt.moneyCompact(summary?.current.totalRevenue ?? current?.revenue ?? 0),
                         icon: Icons.payments_outlined,
                         tone: StatusTone.success,
-                        caption: previous == null
-                            ? null
-                            : WorkspaceStrings.previousMonth(
-                                Fmt.moneyCompact(previous.revenue),
-                              ),
+                        caption: summary != null
+                            ? versusPrevious(
+                                summary,
+                                growth: summary.revenueGrowth,
+                                previousValue: Fmt.moneyCompact(summary.previous.totalRevenue),
+                              )
+                            : previous == null
+                                ? null
+                                : WorkspaceStrings.previousMonth(
+                                    Fmt.moneyCompact(previous.revenue),
+                                  ),
                       ),
                     ),
                     const Gap(AppSpacing.sm),

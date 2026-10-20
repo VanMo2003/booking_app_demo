@@ -21,6 +21,7 @@ import '../../../booking/presentation/widgets/booking_card.dart';
 import '../../../shell/presentation/workspace_scope.dart';
 import '../../domain/entities/report_views.dart';
 import '../../domain/usecases/report_usecases.dart';
+import '../widgets/growth_text.dart';
 import '../widgets/revenue_outlook_card.dart';
 
 @injectable
@@ -112,6 +113,7 @@ class _DashboardBody extends StatelessWidget {
     final previous = data.previousMonth;
     final occupancy = data.occupancy;
     final cancellation = data.cancellation;
+    final summary = data.monthSummary;
     int countOf(DeskFilter filter) => data.bookings
         .where((booking) => DeskState.matchesFilter(booking, filter, today))
         .length;
@@ -180,26 +182,39 @@ class _DashboardBody extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // tổng quan tháng (gồm tour, so với kỳ trước cùng số ngày); không tải được thì dùng 5 tháng gần nhất
               Expanded(
                 child: StatCard(
                   label: WorkspaceStrings.kpiRevenue,
-                  value: Fmt.moneyCompact(current?.revenue ?? 0),
+                  value: Fmt.moneyCompact(summary?.current.totalRevenue ?? current?.revenue ?? 0),
                   icon: Icons.payments_outlined,
                   tone: StatusTone.success,
-                  caption: previous == null
-                      ? null
-                      : WorkspaceStrings.previousMonth(Fmt.moneyCompact(previous.revenue)),
+                  caption: summary != null
+                      ? versusPrevious(
+                          summary,
+                          growth: summary.revenueGrowth,
+                          previousValue: Fmt.moneyCompact(summary.previous.totalRevenue),
+                        )
+                      : previous == null
+                          ? null
+                          : WorkspaceStrings.previousMonth(Fmt.moneyCompact(previous.revenue)),
                 ),
               ),
               const Gap(AppSpacing.sm),
               Expanded(
                 child: StatCard(
                   label: WorkspaceStrings.kpiCompleted,
-                  value: Fmt.number(current?.bookings ?? 0),
+                  value: Fmt.number(summary?.current.completedBookings ?? current?.bookings ?? 0),
                   icon: Icons.task_alt_rounded,
-                  caption: previous == null
-                      ? null
-                      : WorkspaceStrings.previousMonth(Fmt.number(previous.bookings)),
+                  caption: summary != null
+                      ? versusPrevious(
+                          summary,
+                          growth: summary.bookingGrowth,
+                          previousValue: Fmt.number(summary.previous.completedBookings),
+                        )
+                      : previous == null
+                          ? null
+                          : WorkspaceStrings.previousMonth(Fmt.number(previous.bookings)),
                 ),
               ),
             ],

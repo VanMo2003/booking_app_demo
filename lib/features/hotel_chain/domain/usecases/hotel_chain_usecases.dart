@@ -82,6 +82,7 @@ class ChainOverview extends Equatable {
     required this.last5Months,
     this.occupancy,
     this.outlook,
+    this.monthSummary,
   });
 
   final HotelChainDetail detail;
@@ -91,8 +92,11 @@ class ChainOverview extends Equatable {
   /// Doanh thu dự kiến 30 ngày tới của cả chuỗi; `null` khi không tải được.
   final RevenueOutlook? outlook;
 
+  /// Tổng quan từ đầu tháng đến hôm nay (gồm tour) cạnh kỳ trước cùng số ngày.
+  final RevenueSummary? monthSummary;
+
   @override
-  List<Object?> get props => [detail, last5Months, occupancy, outlook];
+  List<Object?> get props => [detail, last5Months, occupancy, outlook, monthSummary];
 }
 
 @injectable
@@ -106,28 +110,26 @@ class LoadChainOverview {
     final scope = ChainReportScope(chainId);
     final detail = _chains.getDetail(chainId);
     final last5 = _reports.revenueLast5Months(scope);
-    final outlookFuture = _reports.outlook(scope);
-    OccupancySummary? occupancy;
-    try {
-      occupancy = await _reports.occupancy(
-        scope,
-        ReportRange.preset(ReportPreset.thisMonth),
-      );
-    } catch (_) {
-      occupancy = null;
-    }
-    RevenueOutlook? outlook;
-    try {
-      outlook = await outlookFuture;
-    } catch (_) {
-      outlook = null;
-    }
+    final month = ReportRange.preset(ReportPreset.thisMonth);
+    final occupancy = _optional(_reports.occupancy(scope, month));
+    final outlook = _optional(_reports.outlook(scope));
+    final monthSummary = _optional(_reports.summary(scope, month));
     return ChainOverview(
       detail: await detail,
       last5Months: [...await last5]..sort((a, b) => a.monthIndex.compareTo(b.monthIndex)),
-      occupancy: occupancy,
-      outlook: outlook,
+      occupancy: await occupancy,
+      outlook: await outlook,
+      monthSummary: await monthSummary,
     );
+  }
+
+  /// Số liệu phụ: lỗi thì để trống thay vì làm hỏng cả màn.
+  Future<T?> _optional<T>(Future<T> future) async {
+    try {
+      return await future;
+    } catch (_) {
+      return null;
+    }
   }
 }
 

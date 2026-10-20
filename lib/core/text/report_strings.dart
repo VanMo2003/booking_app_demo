@@ -65,6 +65,10 @@ abstract final class ReportStrings {
   static String branchCaption(String share, String occupancy, String adr, String cancellation) =>
       'Tỷ trọng $share · Lấp đầy $occupancy · ADR $adr · Huỷ $cancellation';
 
+  // Thẻ số liệu trên màn Tổng quan
+  static String versusPreviousDays(String delta, int days) => '$delta so với $days ngày trước đó';
+  static String previousDaysValue(int days, String value) => '$days ngày trước đó: $value';
+
   // Doanh thu dự kiến
   static String outlookTitle(int days) => 'Doanh thu dự kiến $days ngày tới';
   static String outlookNote(String from, String to) =>

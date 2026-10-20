@@ -209,6 +209,11 @@ chọn khoảng 7 ngày / tháng này / tháng trước / năm nay / tuỳ chọ
   chọn xếp theo doanh thu / tăng trưởng / lấp đầy / RevPAR.
 - **Diễn biến doanh thu phòng** theo ngày / tuần / tháng / năm và bảng chi tiết từng mốc.
 
+Trên màn **Tổng quan**, thẻ **Doanh thu tháng này** (và **Đơn hoàn tất** của quản lý) lấy từ tổng quan kỳ
+nên đã gồm tour, kèm chú thích tăng giảm, ví dụ "+12,5% so với 20 ngày trước đó". Nút **Xuất Excel** ở
+màn báo cáo tải file có thêm các sheet KPI so với kỳ trước, thanh toán & kênh bán, doanh thu theo tour
+(và so sánh cơ sở ở báo cáo chuỗi).
+
 Màn **Tổng quan** của quản lý cơ sở và của chủ chuỗi có thẻ **Doanh thu dự kiến 30 ngày tới**
 (`GET /reports/outlook`): tổng dự kiến, đơn phòng / tour / đã thu trước, phần còn chờ xác nhận, biểu đồ
 từng ngày, và cảnh báo khi có đơn quá ngày trả phòng chưa hoàn tất hoặc đơn đã trả phòng chưa ghi nhận
