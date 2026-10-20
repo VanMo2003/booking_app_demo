@@ -256,7 +256,7 @@ class _DashboardBody extends StatelessWidget {
         ),
         if (data.outlook != null) ...[
           const Gap(AppSpacing.lg),
-          RevenueOutlookCard(outlook: data.outlook!),
+          RevenueOutlookCard(outlook: data.outlook!, onOpenDesk: () => _openDesk(context)),
         ],
         const Gap(AppSpacing.lg),
         AppCard(

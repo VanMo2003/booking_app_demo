@@ -12,9 +12,12 @@ import '../../domain/entities/report_entities.dart';
 /// Doanh thu sắp tới và những khoản cần xử lý, cho màn Tổng quan của quản lý
 /// cơ sở và của chủ chuỗi.
 class RevenueOutlookCard extends StatelessWidget {
-  const RevenueOutlookCard({super.key, required this.outlook});
+  const RevenueOutlookCard({super.key, required this.outlook, this.onOpenDesk});
 
   final RevenueOutlook outlook;
+
+  /// Mở màn xử lý đơn (tab Quầy của quản lý) khi chạm vào cảnh báo; `null` thì cảnh báo chỉ để đọc.
+  final VoidCallback? onOpenDesk;
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +90,7 @@ class RevenueOutlookCard extends StatelessWidget {
               tone: StatusTone.warning,
               icon: Icons.schedule_rounded,
               text: ReportStrings.overdueStays(outlook.overdueBookings, Fmt.money(outlook.overdueRevenue)),
+              onTap: onOpenDesk,
             ),
           ],
           if (outlook.outstandingBookings > 0) ...[
@@ -98,6 +102,7 @@ class RevenueOutlookCard extends StatelessWidget {
                 outlook.outstandingBookings,
                 Fmt.money(outlook.outstandingAmount),
               ),
+              onTap: onOpenDesk,
             ),
           ],
         ],
@@ -129,27 +134,34 @@ class _Figure extends StatelessWidget {
 
 /// Một việc cần xử lý: đơn quá hạn trả phòng, tiền chưa thu.
 class _Alert extends StatelessWidget {
-  const _Alert({required this.tone, required this.icon, required this.text});
+  const _Alert({required this.tone, required this.icon, required this.text, this.onTap});
 
   final StatusTone tone;
   final IconData icon;
   final String text;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = tone.colors;
-    return DecoratedBox(
-      decoration: BoxDecoration(color: colors.background, borderRadius: AppRadius.smAll),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        child: Row(
-          children: [
-            Icon(icon, size: 18, color: colors.foreground),
-            const Gap(AppSpacing.xs),
-            Expanded(
-              child: Text(text, style: AppTextStyles.bodySmall.colored(colors.foreground)),
-            ),
-          ],
+    return Material(
+      color: colors.background,
+      borderRadius: AppRadius.smAll,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: AppRadius.smAll,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          child: Row(
+            children: [
+              Icon(icon, size: 18, color: colors.foreground),
+              const Gap(AppSpacing.xs),
+              Expanded(
+                child: Text(text, style: AppTextStyles.bodySmall.colored(colors.foreground)),
+              ),
+              if (onTap != null) Icon(Icons.chevron_right_rounded, size: 18, color: colors.foreground),
+            ],
+          ),
         ),
       ),
     );
