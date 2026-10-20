@@ -200,8 +200,9 @@ Phía cơ sở đổi phương thức trong màn **Sửa đơn** như trước.
 Quản lý cơ sở (tab **Báo cáo**) và chủ khách sạn (tab **Báo cáo**, cả chuỗi) dùng chung `ReportsView`,
 chọn khoảng 7 ngày / tháng này / tháng trước / năm nay / tuỳ chọn. Tab **Doanh thu**:
 
-- **Tổng quan kỳ** (`GET /reports/summary`): tổng doanh thu gồm cả tour, kèm % tăng giảm so với kỳ liền
-  trước cùng số ngày; thanh cơ cấu tiền phòng / dịch vụ / tour; ADR, RevPAR, lấp đầy (chênh lệch tính
+- **Tổng quan kỳ** (`GET /reports/summary`): tổng doanh thu gồm cả tour, kèm % tăng giảm so với kỳ
+  trước theo lịch (tháng này so với cùng ngày tháng trước, năm nay so với cùng kỳ năm trước, khoảng khác so
+  với cùng số ngày ngay trước đó); thanh cơ cấu tiền phòng / dịch vụ / tour; ADR, RevPAR, lấp đầy (chênh lệch tính
   bằng điểm), đơn hoàn tất. Kỳ trước bằng 0 thì hiện "Kỳ trước chưa có số liệu" thay vì %.
 - **Theo phương thức thanh toán** và **theo kênh bán** (khách tự đặt trên app / tại quầy / tour).
 - Chỉ ở báo cáo chuỗi: **So sánh cơ sở** (`GET /reports/chain/branches`) theo đúng khoảng ngày đang chọn —
@@ -211,7 +212,7 @@ chọn khoảng 7 ngày / tháng này / tháng trước / năm nay / tuỳ chọ
 - **Diễn biến doanh thu phòng** theo ngày / tuần / tháng / năm và bảng chi tiết từng mốc.
 
 Trên màn **Tổng quan**, thẻ **Doanh thu tháng này** (và **Đơn hoàn tất** của quản lý) lấy từ tổng quan kỳ
-nên đã gồm tour, kèm chú thích tăng giảm, ví dụ "+12,5% so với 20 ngày trước đó". Nút **Xuất Excel** ở
+nên đã gồm tour, kèm chú thích tăng giảm, ví dụ "+12,5% so với 01/09–20/09". Nút **Xuất Excel** ở
 màn báo cáo tải file có thêm các sheet KPI so với kỳ trước, thanh toán & kênh bán, doanh thu theo tour
 (và so sánh cơ sở ở báo cáo chuỗi).
 

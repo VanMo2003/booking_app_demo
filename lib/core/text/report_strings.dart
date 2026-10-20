@@ -46,7 +46,8 @@ abstract final class ReportStrings {
   static const summaryNote =
       'Phòng và dịch vụ tính theo ngày trả phòng của đơn hoàn tất, tour theo ngày đi của đơn tour hoàn tất. '
       'ADR = tiền phòng / đêm đã bán; RevPAR = tiền phòng / đêm phòng khả dụng. '
-      'Kỳ trước là khoảng cùng số ngày ngay trước kỳ đang xem.';
+      'Kỳ trước: tháng (hoặc từ đầu tháng) so với cùng ngày tháng trước, từ đầu năm so với cùng kỳ năm trước, '
+      'khoảng khác so với cùng số ngày ngay trước đó.';
   static const byPaymentMethod = 'Theo phương thức thanh toán';
   static const byPaymentMethodNote = 'Đơn phòng hoàn tất. Tour trả tại khách sạn nên không tính ở đây.';
   static const byChannel = 'Theo kênh bán';
@@ -66,8 +67,8 @@ abstract final class ReportStrings {
       'Tỷ trọng $share · Lấp đầy $occupancy · ADR $adr · Huỷ $cancellation';
 
   // Thẻ số liệu trên màn Tổng quan
-  static String versusPreviousDays(String delta, int days) => '$delta so với $days ngày trước đó';
-  static String previousDaysValue(int days, String value) => '$days ngày trước đó: $value';
+  static String versusPreviousRange(String delta, String from, String to) => '$delta so với $from–$to';
+  static String previousRangeValue(String from, String to, String value) => '$from–$to: $value';
 
   // Doanh thu dự kiến
   static String outlookTitle(int days) => 'Doanh thu dự kiến $days ngày tới';

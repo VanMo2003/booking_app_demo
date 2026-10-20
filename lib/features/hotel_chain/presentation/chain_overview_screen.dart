@@ -174,7 +174,7 @@ class _OverviewBody extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Expanded(
-                      // tổng quan tháng (gồm tour, so với kỳ trước cùng số ngày); không tải được thì dùng 5 tháng gần nhất
+                      // tổng quan tháng (gồm tour, so với cùng ngày tháng trước); không tải được thì dùng 5 tháng gần nhất
                       child: StatCard(
                         label: ManagementStrings.revenueThisMonth,
                         value: Fmt.moneyCompact(summary?.current.totalRevenue ?? current?.revenue ?? 0),

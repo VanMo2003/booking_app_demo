@@ -182,7 +182,7 @@ class _DashboardBody extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // tổng quan tháng (gồm tour, so với kỳ trước cùng số ngày); không tải được thì dùng 5 tháng gần nhất
+              // tổng quan tháng (gồm tour, so với cùng ngày tháng trước); không tải được thì dùng 5 tháng gần nhất
               Expanded(
                 child: StatCard(
                   label: WorkspaceStrings.kpiRevenue,

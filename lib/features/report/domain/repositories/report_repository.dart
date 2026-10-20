@@ -56,7 +56,7 @@ abstract interface class ReportRepository {
   /// Doanh thu dự kiến [days] ngày tới (tính cả hôm nay) và tiền còn phải thu.
   Future<RevenueOutlook> outlook(ReportScope scope, {int days});
 
-  /// KPI của khoảng đã chọn cạnh kỳ liền trước cùng số ngày.
+  /// KPI của khoảng đã chọn cạnh kỳ trước (BE chọn theo lịch, xem [RevenueSummary]).
   Future<RevenueSummary> summary(ReportScope scope, ReportRange range);
 
   Future<List<int>> export(ReportScope scope, ReportRange range);

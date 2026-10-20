@@ -12,12 +12,13 @@ String signedPercent(double value) {
   return '$sign${Fmt.decimal(value.abs())}%';
 }
 
-/// Chú thích cho thẻ số liệu của kỳ [summary]: mức tăng giảm so với kỳ liền
-/// trước cùng số ngày, hoặc giá trị kỳ trước khi kỳ trước bằng 0.
+/// Chú thích cho thẻ số liệu của kỳ [summary]: mức tăng giảm so với kỳ trước
+/// (BE chọn theo lịch, ví dụ cùng ngày tháng trước), hoặc giá trị kỳ trước khi
+/// kỳ trước bằng 0.
 String versusPrevious(RevenueSummary summary, {required double? growth, required String previousValue}) {
-  final current = summary.current;
-  final days = current.to.difference(current.from).inDays + 1;
+  final from = Fmt.dayMonth(summary.previous.from);
+  final to = Fmt.dayMonth(summary.previous.to);
   return growth == null
-      ? ReportStrings.previousDaysValue(days, previousValue)
-      : ReportStrings.versusPreviousDays(signedPercent(growth), days);
+      ? ReportStrings.previousRangeValue(from, to, previousValue)
+      : ReportStrings.versusPreviousRange(signedPercent(growth), from, to);
 }

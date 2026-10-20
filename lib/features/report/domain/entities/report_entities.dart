@@ -468,7 +468,9 @@ class RevenueShare extends Equatable {
   List<Object?> get props => [key, count, revenue, share];
 }
 
-/// Kỳ đang xem đặt cạnh kỳ liền trước cùng số ngày. Mức tăng trưởng là phần
+/// Kỳ đang xem đặt cạnh kỳ trước do BE chọn theo lịch: tháng (hoặc từ đầu
+/// tháng) so với cùng ngày tháng trước, từ đầu năm so với cùng kỳ năm trước,
+/// khoảng khác so với cùng số ngày ngay trước đó. Mức tăng trưởng là phần
 /// trăm, `null` khi kỳ trước không có gì để so.
 class RevenueSummary extends Equatable {
   const RevenueSummary({

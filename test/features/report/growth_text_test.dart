@@ -9,21 +9,21 @@ void main() {
     expect(signedPercent(0), '0%');
   });
 
-  test('chú thích so với kỳ trước cùng số ngày, kỳ trước bằng 0 thì ghi giá trị kỳ trước', () {
+  test('chú thích ghi đúng khoảng ngày của kỳ trước; kỳ trước bằng 0 thì ghi giá trị kỳ trước', () {
     Map<String, dynamic> period(String from, String to) => {'from': from, 'to': to};
     final summary = ReportModel.summary({
       'current': period('2026-10-01', '2026-10-20'),
-      'previous': period('2026-09-11', '2026-09-30'),
+      'previous': period('2026-09-01', '2026-09-20'),
       'revenueGrowth': 12.5,
     });
 
     expect(
       versusPrevious(summary, growth: summary.revenueGrowth, previousValue: '2 tr'),
-      '+12,5% so với 20 ngày trước đó',
+      '+12,5% so với 01/09–20/09',
     );
     expect(
       versusPrevious(summary, growth: summary.bookingGrowth, previousValue: '0'),
-      '20 ngày trước đó: 0',
+      '01/09–20/09: 0',
     );
   });
 }

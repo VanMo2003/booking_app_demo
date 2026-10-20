@@ -92,7 +92,7 @@ class ChainOverview extends Equatable {
   /// Doanh thu dự kiến 30 ngày tới của cả chuỗi; `null` khi không tải được.
   final RevenueOutlook? outlook;
 
-  /// Tổng quan từ đầu tháng đến hôm nay (gồm tour) cạnh kỳ trước cùng số ngày.
+  /// Tổng quan từ đầu tháng đến hôm nay (gồm tour) cạnh cùng các ngày của tháng trước.
   final RevenueSummary? monthSummary;
 
   @override
