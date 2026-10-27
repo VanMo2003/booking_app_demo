@@ -104,6 +104,11 @@ abstract final class ReportStrings {
   static const occupancyNote =
       'Tính mọi đơn chưa huỷ, số đêm giao với khoảng đã chọn.';
   static const dailyOccupancy = 'Lấp đầy theo ngày';
+  static const byRoom = 'Theo từng phòng';
+  static const byRoomNote = 'Tỷ lệ đêm có khách; doanh thu = giá phòng × số đêm của lượt ở đã hoàn tất.';
+  static String roomLabel(String number, String type) => type.isEmpty ? 'Phòng $number' : 'Phòng $number · $type';
+  static String roomCaption(int nights, String revenue) => '$nights đêm có khách · $revenue';
+  static String idleRooms(String numbers) => 'Chưa có khách trong kỳ: $numbers';
   static const dailyOccupancyTooLong =
       'Chọn khoảng tối đa 92 ngày để xem lấp đầy theo ngày.';
   static const dailyOccupancyChainOnly =

@@ -1046,10 +1046,54 @@ class _OccupancyTab extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (report.rooms != null) ...[
+                    const Gap(AppSpacing.md),
+                    _RoomsCard(rooms: report.rooms!),
+                  ],
                 ],
               );
             },
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Từng phòng của cơ sở: lấp đầy và doanh thu, kèm danh sách phòng không có khách.
+class _RoomsCard extends StatelessWidget {
+  const _RoomsCard({required this.rooms});
+
+  final List<RoomPerformance> rooms;
+
+  @override
+  Widget build(BuildContext context) {
+    final busy = rooms.where((room) => !room.idle).toList();
+    final idle = rooms.where((room) => room.idle).toList();
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SectionHeader(title: ReportStrings.byRoom, subtitle: ReportStrings.byRoomNote),
+          const Gap(AppSpacing.xs),
+          RankedBarList(
+            valueFormatter: Fmt.percent,
+            items: [
+              for (final room in busy)
+                RankedBar(
+                  label: ReportStrings.roomLabel(room.roomNumber, room.roomTypeName),
+                  value: room.occupancyRate,
+                  caption: ReportStrings.roomCaption(room.occupiedNights, Fmt.money(room.revenue)),
+                ),
+            ],
+          ),
+          if (idle.isNotEmpty) ...[
+            const Gap(AppSpacing.sm),
+            IconText(
+              icon: Icons.bedroom_child_outlined,
+              text: ReportStrings.idleRooms(idle.map((room) => room.roomNumber).join(', ')),
+            ),
+          ],
         ],
       ),
     );

@@ -106,6 +106,38 @@ class _FakeReports implements ReportRepository {
       ];
 
   @override
+  Future<OccupancySummary> occupancy(ReportScope scope, ReportRange range) async => ReportModel.occupancy(
+        {'totalRooms': 2, 'roomNights': 40, 'occupiedRoomNights': 6, 'occupancyRate': 15.0},
+      );
+
+  @override
+  Future<List<DailyOccupancy>> occupancyDaily(BranchReportScope scope, ReportRange range) async => [];
+
+  @override
+  Future<List<RoomPerformance>> roomPerformance(BranchReportScope scope, ReportRange range) async => [
+        ReportModel.room({
+          'roomId': 1,
+          'roomNumber': '101',
+          'roomTypeName': 'Deluxe',
+          'price': 600000,
+          'occupiedNights': 6,
+          'occupancyRate': 30.0,
+          'completedStays': 2,
+          'revenue': 3600000,
+        }),
+        ReportModel.room({
+          'roomId': 2,
+          'roomNumber': '102',
+          'roomTypeName': 'Deluxe',
+          'price': 600000,
+          'occupiedNights': 0,
+          'occupancyRate': 0,
+          'completedStays': 0,
+          'revenue': 0,
+        }),
+      ];
+
+  @override
   dynamic noSuchMethod(Invocation invocation) => throw UnimplementedError('${invocation.memberName}');
 }
 
@@ -124,6 +156,26 @@ void main() {
         LoadBranchComparison(fake),
       ),
     );
+  });
+
+  testWidgets('tab Lấp đầy của cơ sở: từng phòng, phòng chưa có khách', (tester) async {
+    tester.view.physicalSize = const Size(390 * 3, 3000 * 3);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: ReportsView(scope: BranchReportScope(6), title: ReportStrings.branchReportsTitle),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(Tab, ReportStrings.tabOccupancy));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text(ReportStrings.byRoom), findsOneWidget);
+    expect(find.text(ReportStrings.roomLabel('101', 'Deluxe')), findsOneWidget);
+    expect(find.text(ReportStrings.roomCaption(6, '3.600.000 ₫')), findsOneWidget);
+    expect(find.text(ReportStrings.idleRooms('102')), findsOneWidget);
   });
 
   Future<void> pumpChainReports(WidgetTester tester) async {

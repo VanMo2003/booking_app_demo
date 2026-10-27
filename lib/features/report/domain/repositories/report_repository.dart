@@ -53,6 +53,9 @@ abstract interface class ReportRepository {
     ReportRange range,
   );
 
+  /// Từng phòng của cơ sở trong khoảng đã chọn (chỉ cấp cơ sở).
+  Future<List<RoomPerformance>> roomPerformance(BranchReportScope scope, ReportRange range);
+
   /// Doanh thu dự kiến [days] ngày tới (tính cả hôm nay) và tiền còn phải thu.
   Future<RevenueOutlook> outlook(ReportScope scope, {int days});
 

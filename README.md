@@ -223,6 +223,9 @@ Màn **Tổng quan** của quản lý cơ sở và của chủ chuỗi có thẻ
 từng ngày, và cảnh báo khi có đơn quá ngày trả phòng chưa hoàn tất hoặc đơn đã trả phòng chưa ghi nhận
 thanh toán (`RevenueOutlookCard`, dùng chung hai màn).
 
+Tab **Lấp đầy** của báo cáo cơ sở có thêm thẻ **Theo từng phòng** (`GET /reports/rooms`): mỗi phòng một thanh
+tỷ lệ lấp đầy kèm số đêm có khách và doanh thu, và dòng liệt kê các phòng chưa có khách trong kỳ.
+
 Tab **Cơ cấu** có thêm **Doanh thu theo tour** (`GET /reports/revenue-by-tour`): mỗi tour một thanh, kèm số
 đơn, số khách, số đơn do AI lên và tiền phòng gói (phòng gói tính vào doanh thu phòng khi khách trả phòng).
 

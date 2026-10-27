@@ -120,6 +120,17 @@ abstract final class ReportModel {
         profitMargin: json.decimal('profitMargin'),
       );
 
+  static RoomPerformance room(Json json) => RoomPerformance(
+        roomId: json.integer('roomId'),
+        roomNumber: json.str('roomNumber'),
+        roomTypeName: json.str('roomTypeName'),
+        price: json.decimal('price'),
+        occupiedNights: json.integer('occupiedNights'),
+        occupancyRate: json.decimal('occupancyRate'),
+        completedStays: json.integer('completedStays'),
+        revenue: json.decimal('revenue'),
+      );
+
   static ExpectedRevenue expected(Json json) => ExpectedRevenue(
         date: json.date('date') ?? DateOnly.today(),
         bookingRevenue: json.decimal('bookingRevenue'),

@@ -42,15 +42,18 @@ class RevenueReport extends Equatable {
 }
 
 class OccupancyReport extends Equatable {
-  const OccupancyReport({required this.summary, this.daily});
+  const OccupancyReport({required this.summary, this.daily, this.rooms});
 
   final OccupancySummary summary;
 
   /// `null` khi xem cả chuỗi hoặc khoảng quá 92 ngày.
   final List<DailyOccupancy>? daily;
 
+  /// Từng phòng của cơ sở, đông khách nhất trước; `null` khi xem cả chuỗi.
+  final List<RoomPerformance>? rooms;
+
   @override
-  List<Object?> get props => [summary, daily];
+  List<Object?> get props => [summary, daily, rooms];
 }
 
 class BreakdownReport extends Equatable {

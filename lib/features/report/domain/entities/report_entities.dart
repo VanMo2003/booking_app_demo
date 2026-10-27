@@ -359,6 +359,41 @@ class RevenuePeriod extends Equatable {
       ];
 }
 
+/// Một phòng của cơ sở trong khoảng đang xem.
+class RoomPerformance extends Equatable {
+  const RoomPerformance({
+    required this.roomId,
+    required this.roomNumber,
+    required this.roomTypeName,
+    required this.price,
+    required this.occupiedNights,
+    required this.occupancyRate,
+    required this.completedStays,
+    required this.revenue,
+  });
+
+  final int roomId;
+  final String roomNumber;
+  final String roomTypeName;
+  final double price;
+
+  /// Số đêm trong kỳ có đơn chưa huỷ.
+  final int occupiedNights;
+  final double occupancyRate;
+
+  /// Lượt ở đã hoàn tất, trả phòng trong kỳ.
+  final int completedStays;
+
+  /// Giá phòng × số đêm của các lượt hoàn tất.
+  final double revenue;
+
+  bool get idle => occupiedNights == 0;
+
+  @override
+  List<Object?> get props =>
+      [roomId, roomNumber, roomTypeName, price, occupiedNights, occupancyRate, completedStays, revenue];
+}
+
 /// Doanh thu dự kiến của một ngày: đơn mở trả phòng hôm đó, tour mở khởi hành hôm đó.
 class ExpectedRevenue extends Equatable {
   const ExpectedRevenue({
