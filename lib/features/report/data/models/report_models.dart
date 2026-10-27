@@ -75,6 +75,7 @@ abstract final class ReportModel {
         phoneNumber: json.str('phoneNumber'),
         bookings: json.integer('totalBooking'),
         spend: json.decimal('totalSpend'),
+        tours: json.integer('tours'),
       );
 
   static StaffPerformance staff(Json json) => StaffPerformance(

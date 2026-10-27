@@ -1350,7 +1350,12 @@ class _PeopleTab extends StatelessWidget {
                               rank: i + 1,
                               name: report.topCustomers[i].fullName,
                               detail:
-                                  '${report.topCustomers[i].phoneNumber} · ${AppStrings.bookingsCount(report.topCustomers[i].bookings)}',
+                                  [
+                                    report.topCustomers[i].phoneNumber,
+                                    AppStrings.bookingsCount(report.topCustomers[i].bookings),
+                                    if (report.topCustomers[i].tours > 0)
+                                      ReportStrings.staffTours(report.topCustomers[i].tours),
+                                  ].join(' · '),
                               amount: report.topCustomers[i].spend,
                             ),
                       ],

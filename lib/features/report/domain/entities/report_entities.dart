@@ -208,16 +208,22 @@ class TopCustomer extends Equatable {
     required this.phoneNumber,
     required this.bookings,
     required this.spend,
+    this.tours = 0,
   });
 
   final int customerId;
   final String fullName;
   final String phoneNumber;
   final int bookings;
+
+  /// Tour hoàn tất trong kỳ.
+  final int tours;
+
+  /// Tổng chi tiêu: đơn phòng hoàn tất + tour.
   final double spend;
 
   @override
-  List<Object?> get props => [customerId, fullName, phoneNumber, bookings, spend];
+  List<Object?> get props => [customerId, fullName, phoneNumber, bookings, tours, spend];
 }
 
 class StaffPerformance extends Equatable {
