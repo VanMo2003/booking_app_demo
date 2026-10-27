@@ -283,6 +283,9 @@ class RevenuePeriod extends Equatable {
     this.canceledRevenue = 0,
     this.averageStayNights = 0,
     this.averageLeadDays = 0,
+    this.payrollCost = 0,
+    this.grossProfit = 0,
+    this.profitMargin = 0,
   });
 
   final DateTime from;
@@ -317,6 +320,16 @@ class RevenuePeriod extends Equatable {
   /// Số ngày trung bình từ lúc đặt đến ngày nhận phòng.
   final double averageLeadDays;
 
+  /// Lương đã duyệt/đã trả của nhân viên, chia đều theo ngày trong tháng và
+  /// tính phần rơi vào kỳ.
+  final double payrollCost;
+
+  /// Tổng doanh thu trừ chi phí lương; có thể âm.
+  final double grossProfit;
+
+  /// Lợi nhuận trên doanh thu, phần trăm.
+  final double profitMargin;
+
   @override
   List<Object?> get props => [
         from,
@@ -340,6 +353,9 @@ class RevenuePeriod extends Equatable {
         canceledRevenue,
         averageStayNights,
         averageLeadDays,
+        payrollCost,
+        grossProfit,
+        profitMargin,
       ];
 }
 
@@ -497,6 +513,7 @@ class RevenueSummary extends Equatable {
     this.bookingGrowth,
     this.adrGrowth,
     this.revparGrowth,
+    this.profitGrowth,
     this.occupancyChange,
   });
 
@@ -506,6 +523,9 @@ class RevenueSummary extends Equatable {
   final double? bookingGrowth;
   final double? adrGrowth;
   final double? revparGrowth;
+
+  /// Chỉ có khi kỳ trước có lãi.
+  final double? profitGrowth;
 
   /// Chênh lệch lấp đầy, tính bằng điểm phần trăm.
   final double? occupancyChange;
@@ -520,6 +540,7 @@ class RevenueSummary extends Equatable {
         bookingGrowth,
         adrGrowth,
         revparGrowth,
+        profitGrowth,
         occupancyChange,
         byPaymentMethod,
         byChannel,

@@ -479,6 +479,27 @@ class _SummaryCard extends StatelessWidget {
           const Gap(AppSpacing.sm),
           for (final part in parts) _LegendRow(part: part, total: current.totalRevenue),
           const Gap(AppSpacing.sm),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _Kpi(
+                  label: ReportStrings.grossProfit,
+                  value: Fmt.money(current.grossProfit),
+                  delta: summary.profitGrowth,
+                ),
+              ),
+              const Gap(AppSpacing.sm),
+              Expanded(
+                child: _Kpi(
+                  label: ReportStrings.payrollCost,
+                  value: Fmt.money(current.payrollCost),
+                  note: ReportStrings.profitMargin(Fmt.percent(current.profitMargin)),
+                ),
+              ),
+            ],
+          ),
+          const Gap(AppSpacing.sm),
           const Divider(height: 1, color: AppColors.lineSoft),
           const Gap(AppSpacing.md),
           Row(
@@ -787,7 +808,7 @@ class _SharesCard extends StatelessWidget {
   }
 }
 
-enum _BranchMetric { revenue, growth, occupancy, revpar }
+enum _BranchMetric { revenue, profit, growth, occupancy, revpar }
 
 /// Bảng xếp hạng cơ sở của chuỗi, chọn chỉ số để xếp.
 class _BranchComparison extends StatefulWidget {
@@ -804,6 +825,7 @@ class _BranchComparisonState extends State<_BranchComparison> {
 
   static String _label(_BranchMetric metric) => switch (metric) {
         _BranchMetric.revenue => ReportStrings.sortRevenue,
+        _BranchMetric.profit => ReportStrings.sortProfit,
         _BranchMetric.growth => ReportStrings.sortGrowth,
         _BranchMetric.occupancy => ReportStrings.sortOccupancy,
         _BranchMetric.revpar => ReportStrings.sortRevpar,
@@ -812,6 +834,7 @@ class _BranchComparisonState extends State<_BranchComparison> {
   /// Cơ sở chưa có kỳ trước để so xếp cuối khi xem theo tăng trưởng.
   double _sortValue(BranchPerformance branch) => switch (_metric) {
         _BranchMetric.revenue => branch.current.totalRevenue,
+        _BranchMetric.profit => branch.current.grossProfit,
         _BranchMetric.growth => branch.revenueGrowth ?? double.negativeInfinity,
         _BranchMetric.occupancy => branch.current.occupancyRate,
         _BranchMetric.revpar => branch.current.revpar,
@@ -858,6 +881,7 @@ class _BranchRow extends StatelessWidget {
     final podium = rank <= 3;
     final headline = switch (metric) {
       _BranchMetric.revenue || _BranchMetric.growth => Fmt.money(current.totalRevenue),
+      _BranchMetric.profit => Fmt.money(current.grossProfit),
       _BranchMetric.occupancy => Fmt.percent(current.occupancyRate),
       _BranchMetric.revpar => Fmt.money(current.revpar),
     };

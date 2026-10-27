@@ -115,6 +115,9 @@ abstract final class ReportModel {
         canceledRevenue: json.decimal('canceledRevenue'),
         averageStayNights: json.decimal('averageStayNights'),
         averageLeadDays: json.decimal('averageLeadDays'),
+        payrollCost: json.decimal('payrollCost'),
+        grossProfit: json.decimal('grossProfit'),
+        profitMargin: json.decimal('profitMargin'),
       );
 
   static ExpectedRevenue expected(Json json) => ExpectedRevenue(
@@ -167,6 +170,7 @@ abstract final class ReportModel {
         bookingGrowth: json.decimalOrNull('bookingGrowth'),
         adrGrowth: json.decimalOrNull('adrGrowth'),
         revparGrowth: json.decimalOrNull('revparGrowth'),
+        profitGrowth: json.decimalOrNull('profitGrowth'),
         occupancyChange: json.decimalOrNull('occupancyChange'),
         byPaymentMethod: json.listOf('byPaymentMethod', share),
         byChannel: json.listOf('byChannel', share),

@@ -46,8 +46,13 @@ abstract final class ReportStrings {
   static const summaryNote =
       'Phòng và dịch vụ tính theo ngày trả phòng của đơn hoàn tất, tour theo ngày đi của đơn tour hoàn tất. '
       'ADR = tiền phòng / đêm đã bán; RevPAR = tiền phòng / đêm phòng khả dụng. '
+      'Chi phí lương: phiếu lương đã duyệt hoặc đã trả, chia đều theo ngày trong tháng. '
       'Kỳ trước: tháng (hoặc từ đầu tháng) so với cùng ngày tháng trước, từ đầu năm so với cùng kỳ năm trước, '
       'khoảng khác so với cùng số ngày ngay trước đó.';
+  static const grossProfit = 'Lợi nhuận sau lương';
+  static const payrollCost = 'Chi phí lương';
+  static String profitMargin(String margin) => 'Biên lợi nhuận $margin';
+  static const sortProfit = 'Lợi nhuận';
   static const averageStay = 'Lưu trú TB';
   static const averageLead = 'Đặt trước TB';
   static String nightsDecimal(String n) => '$n đêm';
