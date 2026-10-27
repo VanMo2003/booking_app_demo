@@ -1376,9 +1376,10 @@ class _PeopleTab extends StatelessWidget {
                               detail: [
                                 if ((staff.positionName ?? '').isNotEmpty) staff.positionName!,
                                 '@${staff.username}',
-                                AppStrings.bookingsCount(staff.bookings),
+                                ReportStrings.staffBookings(staff.bookings, staff.completedBookings),
+                                if (staff.toursHandled > 0) ReportStrings.staffTours(staff.toursHandled),
                               ].join(' · '),
-                              amount: staff.revenue,
+                              amount: staff.earned,
                             ),
                       ],
                     ),

@@ -171,7 +171,7 @@ class LoadPeopleReport {
     final cancellation = _repository.cancellation(scope, range);
     return PeopleReport(
       topCustomers: await customers,
-      staff: (await staff)..sort((a, b) => b.revenue.compareTo(a.revenue)),
+      staff: (await staff)..sort((a, b) => b.earned.compareTo(a.earned)),
       cancellation: await cancellation,
     );
   }

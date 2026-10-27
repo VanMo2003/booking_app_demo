@@ -228,17 +228,45 @@ class StaffPerformance extends Equatable {
     required this.revenue,
     this.fullName,
     this.positionName,
+    this.completedBookings = 0,
+    this.completedRevenue = 0,
+    this.toursHandled = 0,
+    this.tourRevenue = 0,
   });
 
   final String accountId;
   final String username;
   final String? fullName;
   final String? positionName;
+
+  /// Đơn nhận tại quầy, nhận phòng trong kỳ, chưa huỷ — và giá trị của chúng.
   final int bookings;
   final double revenue;
 
+  /// Đơn của nhân viên đã hoàn tất (trả phòng trong kỳ) và doanh thu thật.
+  final int completedBookings;
+  final double completedRevenue;
+
+  /// Tour hoàn tất trong kỳ do nhân viên xác nhận/hoàn tất.
+  final int toursHandled;
+  final double tourRevenue;
+
+  /// Doanh thu nhân viên mang về: đơn hoàn tất + tour.
+  double get earned => completedRevenue + tourRevenue;
+
   @override
-  List<Object?> get props => [accountId, username, fullName, positionName, bookings, revenue];
+  List<Object?> get props => [
+        accountId,
+        username,
+        fullName,
+        positionName,
+        bookings,
+        revenue,
+        completedBookings,
+        completedRevenue,
+        toursHandled,
+        tourRevenue,
+      ];
 }
 
 class CancellationStats extends Equatable {

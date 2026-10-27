@@ -84,6 +84,10 @@ abstract final class ReportModel {
         positionName: json.strOrNull('positionName'),
         bookings: json.integer('totalBooking'),
         revenue: json.decimal('totalRevenue'),
+        completedBookings: json.integer('completedBookings'),
+        completedRevenue: json.decimal('completedRevenue'),
+        toursHandled: json.integer('toursHandled'),
+        tourRevenue: json.decimal('tourRevenue'),
       );
 
   static CancellationStats cancellation(Json json) => CancellationStats(

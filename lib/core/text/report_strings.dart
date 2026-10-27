@@ -175,7 +175,11 @@ abstract final class ReportStrings {
   // Khách & nhân viên
   static const topCustomers = 'Khách chi tiêu nhiều nhất';
   static const staffPerformance = 'Hiệu suất nhân viên';
-  static const staffPerformanceNote = 'Chỉ tính đơn được tạo tại quầy.';
+  static const staffPerformanceNote =
+      'Đơn nhận tại quầy (nhận phòng trong kỳ). Số tiền = đơn của nhân viên đã hoàn tất (trả phòng trong kỳ) '
+      '+ tour nhân viên xác nhận/hoàn tất.';
+  static String staffBookings(int taken, int completed) => '$taken đơn nhận · $completed hoàn tất';
+  static String staffTours(int tours) => '$tours tour';
   static const cancellation = 'Tỷ lệ huỷ đơn';
   static const totalBookings = 'Tổng đơn';
   static const canceledBookings = 'Đã huỷ';
