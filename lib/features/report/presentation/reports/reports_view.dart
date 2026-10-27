@@ -525,6 +525,42 @@ class _SummaryCard extends StatelessWidget {
             ],
           ),
           const Gap(AppSpacing.md),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _Kpi(
+                  label: ReportStrings.averageStay,
+                  value: ReportStrings.nightsDecimal(Fmt.decimal(current.averageStayNights)),
+                  note: ReportStrings.previousValue(
+                    ReportStrings.nightsDecimal(Fmt.decimal(previous.averageStayNights)),
+                  ),
+                ),
+              ),
+              const Gap(AppSpacing.sm),
+              Expanded(
+                child: _Kpi(
+                  label: ReportStrings.averageLead,
+                  value: ReportStrings.daysDecimal(Fmt.decimal(current.averageLeadDays)),
+                  note: ReportStrings.previousValue(
+                    ReportStrings.daysDecimal(Fmt.decimal(previous.averageLeadDays)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (current.canceledBookings > 0) ...[
+            const Gap(AppSpacing.md),
+            IconText(
+              icon: Icons.event_busy_outlined,
+              text: ReportStrings.canceledLoss(
+                current.canceledBookings,
+                current.totalBookings,
+                Fmt.money(current.canceledRevenue),
+              ),
+            ),
+          ],
+          const Gap(AppSpacing.md),
           Text(ReportStrings.summaryNote, style: AppTextStyles.caption),
         ],
       ),
@@ -615,13 +651,17 @@ class _Kpi extends StatelessWidget {
   const _Kpi({
     required this.label,
     required this.value,
-    required this.delta,
+    this.delta,
     this.points = false,
+    this.note,
   });
 
   final String label;
   final String value;
   final double? delta;
+
+  /// Dòng phụ thay cho mức tăng giảm, ví dụ giá trị kỳ trước.
+  final String? note;
 
   /// Chênh lệch tính bằng điểm phần trăm (lấp đầy) thay vì phần trăm thay đổi.
   final bool points;
@@ -635,7 +675,10 @@ class _Kpi extends StatelessWidget {
         const Gap(2),
         Text(value, style: AppTextStyles.tabular.weight(FontWeight.w600)),
         const Gap(2),
-        _Delta(value: delta, points: points),
+        if (note != null)
+          Text(note!, style: AppTextStyles.caption)
+        else
+          _Delta(value: delta, points: points),
       ],
     );
   }

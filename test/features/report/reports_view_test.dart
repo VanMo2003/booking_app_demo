@@ -30,6 +30,9 @@ Map<String, dynamic> _period({required num total, num tours = 0}) => {
       'totalBookings': 3,
       'canceledBookings': 1,
       'cancellationRate': 33.33,
+      'canceledRevenue': 650000,
+      'averageStayNights': 2.5,
+      'averageLeadDays': 5,
     };
 
 /// Số liệu mẫu cho một chuỗi hai cơ sở; các báo cáo màn này không mở thì không cần.
@@ -141,6 +144,9 @@ void main() {
     // chi tiết cơ cấu hiện trọn vẹn trên dòng riêng
     expect(find.text(ReportStrings.soldNights(4)), findsOneWidget);
     expect(find.text(ReportStrings.tourOrders(1, 2)), findsOneWidget);
+    expect(find.text('2,5 đêm'), findsOneWidget);
+    expect(find.text('5 ngày'), findsOneWidget);
+    expect(find.text(ReportStrings.canceledLoss(1, 3, '650.000 ₫')), findsOneWidget);
     expect(find.text('+100%'), findsWidgets);
     expect(find.text('−20%'), findsOneWidget);
     expect(find.text('+2,5 điểm'), findsOneWidget);

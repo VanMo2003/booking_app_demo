@@ -280,6 +280,9 @@ class RevenuePeriod extends Equatable {
     required this.totalBookings,
     required this.canceledBookings,
     required this.cancellationRate,
+    this.canceledRevenue = 0,
+    this.averageStayNights = 0,
+    this.averageLeadDays = 0,
   });
 
   final DateTime from;
@@ -305,6 +308,15 @@ class RevenuePeriod extends Equatable {
   final int canceledBookings;
   final double cancellationRate;
 
+  /// Giá trị các đơn bị huỷ trong kỳ.
+  final double canceledRevenue;
+
+  /// Số đêm trung bình mỗi đơn hoàn tất.
+  final double averageStayNights;
+
+  /// Số ngày trung bình từ lúc đặt đến ngày nhận phòng.
+  final double averageLeadDays;
+
   @override
   List<Object?> get props => [
         from,
@@ -325,6 +337,9 @@ class RevenuePeriod extends Equatable {
         totalBookings,
         canceledBookings,
         cancellationRate,
+        canceledRevenue,
+        averageStayNights,
+        averageLeadDays,
       ];
 }
 

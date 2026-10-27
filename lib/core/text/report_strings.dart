@@ -48,6 +48,13 @@ abstract final class ReportStrings {
       'ADR = tiền phòng / đêm đã bán; RevPAR = tiền phòng / đêm phòng khả dụng. '
       'Kỳ trước: tháng (hoặc từ đầu tháng) so với cùng ngày tháng trước, từ đầu năm so với cùng kỳ năm trước, '
       'khoảng khác so với cùng số ngày ngay trước đó.';
+  static const averageStay = 'Lưu trú TB';
+  static const averageLead = 'Đặt trước TB';
+  static String nightsDecimal(String n) => '$n đêm';
+  static String daysDecimal(String n) => '$n ngày';
+  static String previousValue(String value) => 'Kỳ trước: $value';
+  static String canceledLoss(int canceled, int total, String amount) =>
+      'Huỷ $canceled/$total đơn nhận phòng trong kỳ · mất $amount';
   static const byPaymentMethod = 'Theo phương thức thanh toán';
   static const byPaymentMethodNote = 'Đơn phòng hoàn tất. Tour trả tại khách sạn nên không tính ở đây.';
   static const byChannel = 'Theo kênh bán';

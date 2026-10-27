@@ -112,6 +112,9 @@ abstract final class ReportModel {
         totalBookings: json.integer('totalBookings'),
         canceledBookings: json.integer('canceledBookings'),
         cancellationRate: json.decimal('cancellationRate'),
+        canceledRevenue: json.decimal('canceledRevenue'),
+        averageStayNights: json.decimal('averageStayNights'),
+        averageLeadDays: json.decimal('averageLeadDays'),
       );
 
   static ExpectedRevenue expected(Json json) => ExpectedRevenue(
