@@ -96,6 +96,14 @@ abstract final class ReportModel {
         canceled: json.integer('canceledBooking'),
         completed: json.integer('completedBooking'),
         rate: json.decimal('cancellationRate'),
+        canceledRevenue: json.decimal('canceledRevenue'),
+        canceledSelfService: json.integer('canceledSelfService'),
+        canceledFrontDesk: json.integer('canceledFrontDesk'),
+        tourOrders: json.integer('tourOrders'),
+        tourCanceled: json.integer('tourCanceled'),
+        tourCanceledByGuest: json.integer('tourCanceledByGuest'),
+        tourCanceledByHotel: json.integer('tourCanceledByHotel'),
+        tourRate: json.decimal('tourCancellationRate'),
       );
 
   static RevenuePeriod period(Json json) => RevenuePeriod(

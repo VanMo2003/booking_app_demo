@@ -184,6 +184,10 @@ abstract final class ReportStrings {
   static const totalBookings = 'Tổng đơn';
   static const canceledBookings = 'Đã huỷ';
   static const completedCount = 'Hoàn tất';
+  static String canceledSplit(int selfService, int frontDesk, String amount) =>
+      'Đơn huỷ: $selfService khách tự đặt trên app, $frontDesk đặt tại quầy · giá trị $amount';
+  static String tourCancellations(int orders, int canceled, String rate, int byGuest, int byHotel) =>
+      'Tour: $orders đơn, huỷ $canceled ($rate) — khách huỷ $byGuest, khách sạn huỷ $byHotel';
 
   // Xuất file
   static const exporting = 'Đang tạo file Excel…';

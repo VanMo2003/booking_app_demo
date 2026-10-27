@@ -281,6 +281,14 @@ class CancellationStats extends Equatable {
     required this.canceled,
     required this.completed,
     required this.rate,
+    this.canceledRevenue = 0,
+    this.canceledSelfService = 0,
+    this.canceledFrontDesk = 0,
+    this.tourOrders = 0,
+    this.tourCanceled = 0,
+    this.tourCanceledByGuest = 0,
+    this.tourCanceledByHotel = 0,
+    this.tourRate = 0,
   });
 
   final int total;
@@ -288,8 +296,35 @@ class CancellationStats extends Equatable {
   final int completed;
   final double rate;
 
+  /// Giá trị các đơn bị huỷ.
+  final double canceledRevenue;
+
+  /// Đơn huỷ do khách tự đặt trên app / đặt tại quầy.
+  final int canceledSelfService;
+  final int canceledFrontDesk;
+
+  /// Đơn tour có ngày đi trong kỳ, số bị huỷ và ai huỷ.
+  final int tourOrders;
+  final int tourCanceled;
+  final int tourCanceledByGuest;
+  final int tourCanceledByHotel;
+  final double tourRate;
+
   @override
-  List<Object?> get props => [total, canceled, completed, rate];
+  List<Object?> get props => [
+        total,
+        canceled,
+        completed,
+        rate,
+        canceledRevenue,
+        canceledSelfService,
+        canceledFrontDesk,
+        tourOrders,
+        tourCanceled,
+        tourCanceledByGuest,
+        tourCanceledByHotel,
+        tourRate,
+      ];
 }
 
 /// KPI doanh thu của một kỳ, tính cả hai đầu. Phòng và dịch vụ ghi nhận theo

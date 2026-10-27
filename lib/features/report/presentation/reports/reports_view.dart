@@ -1331,6 +1331,30 @@ class _PeopleTab extends StatelessWidget {
                             ),
                           ],
                         ),
+                        if (cancellation.canceled > 0) ...[
+                          const Gap(AppSpacing.md),
+                          Text(
+                            ReportStrings.canceledSplit(
+                              cancellation.canceledSelfService,
+                              cancellation.canceledFrontDesk,
+                              Fmt.money(cancellation.canceledRevenue),
+                            ),
+                            style: AppTextStyles.bodySmall,
+                          ),
+                        ],
+                        if (cancellation.tourOrders > 0) ...[
+                          const Gap(AppSpacing.xs),
+                          Text(
+                            ReportStrings.tourCancellations(
+                              cancellation.tourOrders,
+                              cancellation.tourCanceled,
+                              Fmt.percent(cancellation.tourRate),
+                              cancellation.tourCanceledByGuest,
+                              cancellation.tourCanceledByHotel,
+                            ),
+                            style: AppTextStyles.bodySmall,
+                          ),
+                        ],
                       ],
                     ),
                   ),
