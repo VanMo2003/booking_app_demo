@@ -104,6 +104,15 @@ abstract final class ReportStrings {
   static const occupancyNote =
       'Tính mọi đơn chưa huỷ, số đêm giao với khoảng đã chọn.';
   static const dailyOccupancy = 'Lấp đầy theo ngày';
+  static const byWeekday = 'Theo thứ trong tuần';
+  static const byWeekdayNote =
+      'Lấp đầy trung bình mỗi thứ trong kỳ; doanh thu gồm đơn phòng (ngày trả phòng) và tour (ngày đi).';
+  static String weekdayShort(int day) => day == 7 ? 'CN' : 'T${day + 1}';
+  static String weekdayName(int day) => day == 7 ? 'Chủ nhật' : 'Thứ ${const ['Hai', 'Ba', 'Tư', 'Năm', 'Sáu', 'Bảy'][day - 1]}';
+  static String weekdayTooltip(String day, String occupancy, String revenue) =>
+      '$day · lấp đầy $occupancy · $revenue/ngày';
+  static String weekdayHighlights(String busiest, String occupancy, String richest, String revenue) =>
+      'Đông khách nhất: $busiest ($occupancy) · doanh thu cao nhất: $richest ($revenue/ngày)';
   static const byRoom = 'Theo từng phòng';
   static const byRoomNote = 'Tỷ lệ đêm có khách; doanh thu = giá phòng × số đêm của lượt ở đã hoàn tất.';
   static String roomLabel(String number, String type) => type.isEmpty ? 'Phòng $number' : 'Phòng $number · $type';

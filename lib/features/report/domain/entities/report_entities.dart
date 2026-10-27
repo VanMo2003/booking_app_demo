@@ -359,6 +359,29 @@ class RevenuePeriod extends Equatable {
       ];
 }
 
+/// Một thứ trong tuần (1 = thứ Hai … 7 = Chủ nhật), trung bình trên các ngày
+/// của kỳ rơi vào thứ đó.
+class WeekdayStats extends Equatable {
+  const WeekdayStats({
+    required this.dayOfWeek,
+    required this.days,
+    required this.averageOccupancy,
+    required this.averageRevenue,
+    required this.totalRevenue,
+  });
+
+  final int dayOfWeek;
+  final int days;
+  final double averageOccupancy;
+
+  /// Doanh thu mỗi ngày (đơn phòng theo ngày trả phòng, tour theo ngày đi).
+  final double averageRevenue;
+  final double totalRevenue;
+
+  @override
+  List<Object?> get props => [dayOfWeek, days, averageOccupancy, averageRevenue, totalRevenue];
+}
+
 /// Một phòng của cơ sở trong khoảng đang xem.
 class RoomPerformance extends Equatable {
   const RoomPerformance({

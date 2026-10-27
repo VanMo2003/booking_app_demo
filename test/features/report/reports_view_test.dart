@@ -111,6 +111,18 @@ class _FakeReports implements ReportRepository {
       );
 
   @override
+  Future<List<WeekdayStats>> weekdays(ReportScope scope, ReportRange range) async => [
+        for (var day = 1; day <= 7; day++)
+          ReportModel.weekday({
+            'dayOfWeek': day,
+            'days': 3,
+            'averageOccupancy': day == 6 ? 80.0 : 20.0,
+            'averageRevenue': day == 7 ? 1500000 : 300000,
+            'totalRevenue': day == 7 ? 4500000 : 900000,
+          }),
+      ];
+
+  @override
   Future<List<DailyOccupancy>> occupancyDaily(BranchReportScope scope, ReportRange range) async => [];
 
   @override
@@ -176,6 +188,11 @@ void main() {
     expect(find.text(ReportStrings.roomLabel('101', 'Deluxe')), findsOneWidget);
     expect(find.text(ReportStrings.roomCaption(6, '3.600.000 ₫')), findsOneWidget);
     expect(find.text(ReportStrings.idleRooms('102')), findsOneWidget);
+    expect(find.text(ReportStrings.byWeekday), findsOneWidget);
+    expect(
+      find.text(ReportStrings.weekdayHighlights('Thứ Bảy', '80%', 'Chủ nhật', '1,5 tr')),
+      findsOneWidget,
+    );
   });
 
   Future<void> pumpChainReports(WidgetTester tester) async {

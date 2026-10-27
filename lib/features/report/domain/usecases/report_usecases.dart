@@ -114,6 +114,7 @@ class LoadOccupancyReport {
         range.days <= AppConstants.maxDailyReportDays;
     final roomsFuture =
         scope is BranchReportScope ? _repository.roomPerformance(scope, range) : null;
+    final weekdaysFuture = _repository.weekdays(scope, range);
     final daily = canLoadDaily
         ? await _repository.occupancyDaily(scope, range)
         : null;
@@ -121,6 +122,7 @@ class LoadOccupancyReport {
       summary: await summaryFuture,
       daily: daily,
       rooms: await roomsFuture,
+      weekdays: await weekdaysFuture,
     );
   }
 }

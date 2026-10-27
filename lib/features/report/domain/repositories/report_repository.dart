@@ -53,6 +53,9 @@ abstract interface class ReportRepository {
     ReportRange range,
   );
 
+  /// Thứ Hai → Chủ nhật: lấp đầy và doanh thu trung bình mỗi ngày.
+  Future<List<WeekdayStats>> weekdays(ReportScope scope, ReportRange range);
+
   /// Từng phòng của cơ sở trong khoảng đã chọn (chỉ cấp cơ sở).
   Future<List<RoomPerformance>> roomPerformance(BranchReportScope scope, ReportRange range);
 

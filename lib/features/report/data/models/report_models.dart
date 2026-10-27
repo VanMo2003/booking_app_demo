@@ -120,6 +120,14 @@ abstract final class ReportModel {
         profitMargin: json.decimal('profitMargin'),
       );
 
+  static WeekdayStats weekday(Json json) => WeekdayStats(
+        dayOfWeek: json.integer('dayOfWeek'),
+        days: json.integer('days'),
+        averageOccupancy: json.decimal('averageOccupancy'),
+        averageRevenue: json.decimal('averageRevenue'),
+        totalRevenue: json.decimal('totalRevenue'),
+      );
+
   static RoomPerformance room(Json json) => RoomPerformance(
         roomId: json.integer('roomId'),
         roomNumber: json.str('roomNumber'),

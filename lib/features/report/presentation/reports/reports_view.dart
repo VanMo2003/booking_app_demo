@@ -1046,6 +1046,10 @@ class _OccupancyTab extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (report.weekdays.any((day) => day.days > 0)) ...[
+                    const Gap(AppSpacing.md),
+                    _WeekdaysCard(weekdays: report.weekdays),
+                  ],
                   if (report.rooms != null) ...[
                     const Gap(AppSpacing.md),
                     _RoomsCard(rooms: report.rooms!),
@@ -1053,6 +1057,57 @@ class _OccupancyTab extends StatelessWidget {
                 ],
               );
             },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Thứ Hai → Chủ nhật: lấp đầy trung bình (biểu đồ) và ngày đông khách,
+/// ngày doanh thu cao nhất — để chỉnh giá theo ngày trong tuần.
+class _WeekdaysCard extends StatelessWidget {
+  const _WeekdaysCard({required this.weekdays});
+
+  final List<WeekdayStats> weekdays;
+
+  @override
+  Widget build(BuildContext context) {
+    final counted = weekdays.where((day) => day.days > 0).toList();
+    final busiest = counted.reduce((a, b) => b.averageOccupancy > a.averageOccupancy ? b : a);
+    final richest = counted.reduce((a, b) => b.averageRevenue > a.averageRevenue ? b : a);
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SectionHeader(title: ReportStrings.byWeekday, subtitle: ReportStrings.byWeekdayNote),
+          const Gap(AppSpacing.md),
+          AppBarChart(
+            height: 160,
+            axisFormatter: (value) => '${value.round()}%',
+            valueFormatter: Fmt.percent,
+            points: [
+              for (final day in weekdays)
+                ChartPoint(
+                  ReportStrings.weekdayShort(day.dayOfWeek),
+                  day.averageOccupancy,
+                  tooltip: ReportStrings.weekdayTooltip(
+                    ReportStrings.weekdayName(day.dayOfWeek),
+                    Fmt.percent(day.averageOccupancy),
+                    Fmt.moneyCompact(day.averageRevenue),
+                  ),
+                ),
+            ],
+          ),
+          const Gap(AppSpacing.sm),
+          IconText(
+            icon: Icons.insights_outlined,
+            text: ReportStrings.weekdayHighlights(
+              ReportStrings.weekdayName(busiest.dayOfWeek),
+              Fmt.percent(busiest.averageOccupancy),
+              ReportStrings.weekdayName(richest.dayOfWeek),
+              Fmt.moneyCompact(richest.averageRevenue),
+            ),
           ),
         ],
       ),

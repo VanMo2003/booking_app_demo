@@ -117,6 +117,10 @@ class ReportRepositoryImpl implements ReportRepository {
       (await _remote.get(scope, 'branches', _inclusive(range))).parseList(ReportModel.branch);
 
   @override
+  Future<List<WeekdayStats>> weekdays(ReportScope scope, ReportRange range) async =>
+      (await _remote.get(scope, 'weekdays', _inclusive(range))).parseList(ReportModel.weekday);
+
+  @override
   Future<List<RoomPerformance>> roomPerformance(BranchReportScope scope, ReportRange range) async =>
       (await _remote.get(scope, 'rooms', _inclusive(range))).parseList(ReportModel.room);
 
