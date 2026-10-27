@@ -223,7 +223,8 @@ Thẻ **Mục tiêu tháng** trên màn Tổng quan (`/reports/targets…`): tha
 tháng (doanh thu đã có + đơn/tour đã đặt sẽ hoàn tất), kèm phần còn thiếu. Quản lý bấm cờ để đặt/sửa/bỏ mục
 tiêu cơ sở mình; chủ chuỗi thấy tổng chuỗi và chạm từng cơ sở để đặt mục tiêu cho cơ sở đó. Mỗi sáng BE gửi
 thông báo (in-app + push) khi cơ sở vừa đạt mục tiêu (cúp, xanh) hoặc từ giữa tháng có nguy cơ hụt (mũi tên
-xuống, vàng).
+xuống, vàng). 8:00 thứ Hai còn có **Báo cáo tuần** (biểu đồ, xanh dương): tuần trước so với tuần trước nữa — chủ
+chuỗi nhận bản cả chuỗi, quản lý nhận bản cơ sở.
 
 Màn **Tổng quan** của quản lý cơ sở và của chủ chuỗi có thẻ **Doanh thu dự kiến 30 ngày tới**
 (`GET /reports/outlook`): tổng dự kiến, đơn phòng / tour / đã thu trước, phần còn chờ xác nhận, biểu đồ

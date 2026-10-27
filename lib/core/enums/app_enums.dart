@@ -202,6 +202,7 @@ enum NotificationType {
   tourBookingCanceled('TOUR_BOOKING_CANCELED'),
   revenueTargetReached('REVENUE_TARGET_REACHED'),
   revenueTargetAtRisk('REVENUE_TARGET_AT_RISK'),
+  weeklyReport('WEEKLY_REPORT'),
   other('');
 
   const NotificationType(this.value);
