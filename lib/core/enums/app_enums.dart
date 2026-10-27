@@ -200,6 +200,8 @@ enum NotificationType {
   tourBookingCreated('TOUR_BOOKING_CREATED'),
   tourBookingConfirmed('TOUR_BOOKING_CONFIRMED'),
   tourBookingCanceled('TOUR_BOOKING_CANCELED'),
+  revenueTargetReached('REVENUE_TARGET_REACHED'),
+  revenueTargetAtRisk('REVENUE_TARGET_AT_RISK'),
   other('');
 
   const NotificationType(this.value);
