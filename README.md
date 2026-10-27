@@ -219,6 +219,10 @@ nên đã gồm tour, kèm chú thích tăng giảm, ví dụ "+12,5% so với 0
 màn báo cáo tải file có thêm các sheet KPI so với kỳ trước, thanh toán & kênh bán, doanh thu theo tour
 (và so sánh cơ sở ở báo cáo chuỗi).
 
+Thẻ **Mục tiêu tháng** trên màn Tổng quan (`/reports/targets…`): thanh tiến độ đậm là đã đạt, nhạt là dự kiến cả
+tháng (doanh thu đã có + đơn/tour đã đặt sẽ hoàn tất), kèm phần còn thiếu. Quản lý bấm cờ để đặt/sửa/bỏ mục
+tiêu cơ sở mình; chủ chuỗi thấy tổng chuỗi và chạm từng cơ sở để đặt mục tiêu cho cơ sở đó.
+
 Màn **Tổng quan** của quản lý cơ sở và của chủ chuỗi có thẻ **Doanh thu dự kiến 30 ngày tới**
 (`GET /reports/outlook`): tổng dự kiến, đơn phòng / tour / đã thu trước, phần còn chờ xác nhận, biểu đồ
 từng ngày, và cảnh báo khi có đơn quá ngày trả phòng chưa hoàn tất hoặc đơn đã trả phòng chưa ghi nhận

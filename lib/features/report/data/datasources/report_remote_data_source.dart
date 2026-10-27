@@ -25,6 +25,12 @@ class ReportRemoteDataSource {
     return ApiResponse.fromJson(response.data ?? const {});
   }
 
+  /// Ghi dữ liệu báo cáo (mục tiêu doanh thu) — không theo [ReportScope].
+  Future<ApiResponse> put(String endpoint, Map<String, dynamic> body) async {
+    final response = await _dio.put<Map<String, dynamic>>('/reports/$endpoint', data: body);
+    return ApiResponse.fromJson(response.data ?? const {});
+  }
+
   /// File `.xlsx` dạng bytes.
   Future<List<int>> export(ReportScope scope, Map<String, dynamic> query) async {
     final response = await _dio.get<List<int>>(

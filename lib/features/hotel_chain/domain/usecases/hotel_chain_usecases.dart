@@ -10,6 +10,7 @@ import '../../../hotel/domain/entities/hotel.dart';
 import '../../../report/domain/entities/report_entities.dart';
 import '../../../report/domain/entities/report_range.dart';
 import '../../../report/domain/repositories/report_repository.dart';
+import '../../../report/domain/usecases/report_usecases.dart' show monthKey;
 import '../../data/manager_registry.dart';
 import '../../data/models/hotel_chain_models.dart';
 import '../entities/hotel_chain.dart';
@@ -83,6 +84,7 @@ class ChainOverview extends Equatable {
     this.occupancy,
     this.outlook,
     this.monthSummary,
+    this.targets,
   });
 
   final HotelChainDetail detail;
@@ -95,8 +97,11 @@ class ChainOverview extends Equatable {
   /// Tổng quan từ đầu tháng đến hôm nay (gồm tour) cạnh cùng các ngày của tháng trước.
   final RevenueSummary? monthSummary;
 
+  /// Tháng này của cả chuỗi và từng cơ sở so với mục tiêu.
+  final ChainTargetProgress? targets;
+
   @override
-  List<Object?> get props => [detail, last5Months, occupancy, outlook, monthSummary];
+  List<Object?> get props => [detail, last5Months, occupancy, outlook, monthSummary, targets];
 }
 
 @injectable
@@ -114,12 +119,14 @@ class LoadChainOverview {
     final occupancy = _optional(_reports.occupancy(scope, month));
     final outlook = _optional(_reports.outlook(scope));
     final monthSummary = _optional(_reports.summary(scope, month));
+    final targets = _optional(_reports.chainTargetProgress(chainId, monthKey(DateTime.now())));
     return ChainOverview(
       detail: await detail,
       last5Months: [...await last5]..sort((a, b) => a.monthIndex.compareTo(b.monthIndex)),
       occupancy: await occupancy,
       outlook: await outlook,
       monthSummary: await monthSummary,
+      targets: await targets,
     );
   }
 

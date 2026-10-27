@@ -53,6 +53,14 @@ abstract interface class ReportRepository {
     ReportRange range,
   );
 
+  /// Tháng [month] ("2026-10") của một cơ sở so với mục tiêu.
+  Future<TargetProgress> targetProgress(int hotelId, String month);
+
+  Future<ChainTargetProgress> chainTargetProgress(int hotelChainId, String month);
+
+  /// Đặt mục tiêu; [amount] = 0 là bỏ mục tiêu.
+  Future<TargetProgress> setTarget({required int hotelId, required String month, required double amount});
+
   /// Thứ Hai → Chủ nhật: lấp đầy và doanh thu trung bình mỗi ngày.
   Future<List<WeekdayStats>> weekdays(ReportScope scope, ReportRange range);
 

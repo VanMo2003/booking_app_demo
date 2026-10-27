@@ -19,8 +19,11 @@ import '../../../core/text/workspace_strings.dart';
 import '../../../core/utils/formatters.dart';
 import '../../auth/presentation/session/session_cubit.dart';
 import '../../hotel/domain/entities/hotel.dart';
+import '../../report/domain/entities/report_entities.dart';
+import '../../report/domain/usecases/report_usecases.dart';
 import '../../report/presentation/widgets/growth_text.dart';
 import '../../report/presentation/widgets/revenue_outlook_card.dart';
+import '../../report/presentation/widgets/target_progress_card.dart';
 import '../domain/usecases/hotel_chain_usecases.dart';
 import 'chain_cubits.dart';
 
@@ -89,6 +92,24 @@ class _OverviewBody extends StatelessWidget {
   Future<void> _openBranchForm(BuildContext context, int chainId) async {
     final saved = await context.rootRouter.push<bool>(BranchFormRoute(chainId: chainId));
     if (saved == true) await onChanged();
+  }
+
+  Future<void> _editTarget(BuildContext context, TargetProgress branch) async {
+    final hotelId = branch.hotelId;
+    if (hotelId == null) return;
+    final amount = await showTargetDialog(
+      context,
+      branchName: branch.hotelName ?? '',
+      month: branch.month,
+      current: branch.target,
+    );
+    if (amount == null || !context.mounted) return;
+    final result = await AppAction.run(
+      context,
+      () => runAction(() => getIt<SetRevenueTarget>()(hotelId: hotelId, month: branch.month, amount: amount)),
+      successMessage: ReportStrings.targetSaved,
+    );
+    if (result.isSuccess) await onChanged();
   }
 
   @override
@@ -211,6 +232,14 @@ class _OverviewBody extends StatelessWidget {
                   ],
                 ),
               ),
+              if (overview.targets != null) ...[
+                const Gap(AppSpacing.md),
+                TargetProgressCard(
+                  progress: overview.targets!.chain,
+                  branches: overview.targets!.branches,
+                  onEditBranch: (branch) => _editTarget(context, branch),
+                ),
+              ],
               if (overview.outlook != null) ...[
                 const Gap(AppSpacing.md),
                 RevenueOutlookCard(outlook: overview.outlook!),

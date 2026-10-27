@@ -102,6 +102,20 @@ class LoadRevenueSummary {
       _repository.summary(scope, range);
 }
 
+/// Đặt (hoặc bỏ, khi [amount] = 0) mục tiêu doanh thu tháng của một cơ sở.
+@injectable
+class SetRevenueTarget {
+  const SetRevenueTarget(this._repository);
+
+  final ReportRepository _repository;
+
+  Future<TargetProgress> call({required int hotelId, required String month, required double amount}) =>
+      _repository.setTarget(hotelId: hotelId, month: month, amount: amount);
+}
+
+/// "2026-10" cho tháng chứa [date] — khoá tháng của mục tiêu doanh thu.
+String monthKey(DateTime date) => '${date.year}-${date.month.toString().padLeft(2, '0')}';
+
 @injectable
 class LoadOccupancyReport {
   const LoadOccupancyReport(this._repository);
@@ -206,6 +220,7 @@ class LoadBranchDashboard {
     final cancellation = _optional(_reports.cancellation(scope, month));
     final outlook = _optional(_reports.outlook(scope));
     final monthSummary = _optional(_reports.summary(scope, month));
+    final target = _optional(_reports.targetProgress(hotelId, monthKey(DateTime.now())));
     return BranchDashboard(
       last5Months: [...await last5]..sort((a, b) => a.monthIndex.compareTo(b.monthIndex)),
       bookings: await bookings,
@@ -213,6 +228,7 @@ class LoadBranchDashboard {
       cancellation: await cancellation,
       outlook: await outlook,
       monthSummary: await monthSummary,
+      target: await target,
     );
   }
 

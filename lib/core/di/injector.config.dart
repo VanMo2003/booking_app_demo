@@ -591,6 +591,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i109.LoadRevenueReport(gh<_i12.ReportRepository>()));
     gh.factory<_i109.LoadRevenueSummary>(
         () => _i109.LoadRevenueSummary(gh<_i12.ReportRepository>()));
+    gh.factory<_i109.SetRevenueTarget>(
+        () => _i109.SetRevenueTarget(gh<_i12.ReportRepository>()));
     gh.factory<_i109.LoadOccupancyReport>(
         () => _i109.LoadOccupancyReport(gh<_i12.ReportRepository>()));
     gh.factory<_i109.LoadBreakdownReport>(

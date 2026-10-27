@@ -110,6 +110,7 @@ class BranchDashboard extends Equatable {
     this.cancellation,
     this.outlook,
     this.monthSummary,
+    this.target,
   });
 
   final List<RevenueByMonth> last5Months;
@@ -123,6 +124,9 @@ class BranchDashboard extends Equatable {
   /// Tổng quan từ đầu tháng đến hôm nay (gồm tour) cạnh cùng các ngày của tháng trước.
   final RevenueSummary? monthSummary;
 
+  /// Tháng này so với mục tiêu; `null` khi không tải được.
+  final TargetProgress? target;
+
   RevenueByMonth? get currentMonth =>
       last5Months.isEmpty ? null : last5Months.last;
 
@@ -131,5 +135,5 @@ class BranchDashboard extends Equatable {
 
   @override
   List<Object?> get props =>
-      [last5Months, bookings, occupancy, cancellation, outlook, monthSummary];
+      [last5Months, bookings, occupancy, cancellation, outlook, monthSummary, target];
 }

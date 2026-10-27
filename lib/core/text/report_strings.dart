@@ -86,6 +86,22 @@ abstract final class ReportStrings {
   static String versusPreviousRange(String delta, String from, String to) => '$delta so với $from–$to';
   static String previousRangeValue(String from, String to, String value) => '$from–$to: $value';
 
+  // Mục tiêu doanh thu tháng
+  static String targetTitle(String month) => 'Mục tiêu tháng $month';
+  static String targetDay(int day, int days) => 'Ngày $day/$days của tháng';
+  static String targetAchieved(String revenue, String target) => '$revenue / $target';
+  static String targetProjected(String amount, String rate) => 'Dự kiến cả tháng $amount ($rate)';
+  static String targetShortfall(String amount) => 'còn thiếu $amount';
+  static const noTarget = 'Chưa đặt mục tiêu doanh thu cho tháng này.';
+  static const noChainTarget = 'Chưa cơ sở nào có mục tiêu tháng này — chạm từng cơ sở bên dưới để đặt.';
+  static const noTargetShort = 'Chưa đặt';
+  static const chainTargetNote = 'Tỷ lệ chỉ tính các cơ sở đã đặt mục tiêu.';
+  static const setTarget = 'Đặt mục tiêu';
+  static const editTarget = 'Sửa mục tiêu';
+  static const removeTarget = 'Bỏ mục tiêu';
+  static const targetAmount = 'Doanh thu mục tiêu';
+  static const targetSaved = 'Đã lưu mục tiêu';
+
   // Doanh thu dự kiến
   static String outlookTitle(int days) => 'Doanh thu dự kiến $days ngày tới';
   static String outlookNote(String from, String to) =>

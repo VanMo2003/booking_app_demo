@@ -12,6 +12,7 @@ import '../../../../core/navigation/router_extensions.dart';
 import '../../../../core/style/style.dart';
 import '../../../../core/text/app_strings.dart';
 import '../../../../core/text/booking_strings.dart';
+import '../../../../core/text/report_strings.dart';
 import '../../../../core/text/workspace_strings.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../../core/utils/formatters.dart';
@@ -19,10 +20,12 @@ import '../../../booking/domain/entities/booking.dart';
 import '../../../booking/presentation/desk/desk_cubit.dart';
 import '../../../booking/presentation/widgets/booking_card.dart';
 import '../../../shell/presentation/workspace_scope.dart';
+import '../../domain/entities/report_entities.dart';
 import '../../domain/entities/report_views.dart';
 import '../../domain/usecases/report_usecases.dart';
 import '../widgets/growth_text.dart';
 import '../widgets/revenue_outlook_card.dart';
+import '../widgets/target_progress_card.dart';
 
 @injectable
 class DashboardCubit extends LoadCubit<BranchDashboard> {
@@ -103,6 +106,22 @@ class _DashboardBody extends StatelessWidget {
   Future<void> _openBooking(BuildContext context, Booking booking) async {
     await context.rootRouter.push(BookingDetailRoute(bookingId: booking.id));
     if (context.mounted) await context.read<DashboardCubit>().load();
+  }
+
+  Future<void> _editTarget(BuildContext context, TargetProgress progress) async {
+    final amount = await showTargetDialog(
+      context,
+      branchName: context.branchName ?? progress.hotelName ?? '',
+      month: progress.month,
+      current: progress.target,
+    );
+    if (amount == null || !context.mounted) return;
+    final result = await AppAction.run(
+      context,
+      () => runAction(() => getIt<SetRevenueTarget>()(hotelId: hotelId, month: progress.month, amount: amount)),
+      successMessage: ReportStrings.targetSaved,
+    );
+    if (result.isSuccess && context.mounted) await context.read<DashboardCubit>().load();
   }
 
   @override
@@ -254,6 +273,13 @@ class _DashboardBody extends StatelessWidget {
             ],
           ),
         ),
+        if (data.target != null) ...[
+          const Gap(AppSpacing.lg),
+          TargetProgressCard(
+            progress: data.target!,
+            onEdit: () => _editTarget(context, data.target!),
+          ),
+        ],
         if (data.outlook != null) ...[
           const Gap(AppSpacing.lg),
           RevenueOutlookCard(outlook: data.outlook!, onOpenDesk: () => _openDesk(context)),

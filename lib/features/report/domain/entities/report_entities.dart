@@ -359,6 +359,65 @@ class RevenuePeriod extends Equatable {
       ];
 }
 
+/// Doanh thu một tháng so với mục tiêu, của một cơ sở ([hotelId] có giá trị)
+/// hoặc cả chuỗi. Dự kiến = doanh thu đã có + đơn và tour đã đặt sẽ hoàn tất
+/// trong phần còn lại của tháng.
+class TargetProgress extends Equatable {
+  const TargetProgress({
+    required this.month,
+    required this.revenue,
+    required this.projectedRevenue,
+    required this.daysElapsed,
+    required this.daysInMonth,
+    this.hotelId,
+    this.hotelName,
+    this.target,
+    this.achievedRate,
+    this.projectedRate,
+  });
+
+  final int? hotelId;
+  final String? hotelName;
+
+  /// "2026-10".
+  final String month;
+
+  /// `null` khi chưa đặt mục tiêu.
+  final double? target;
+  final double revenue;
+  final double projectedRevenue;
+  final double? achievedRate;
+  final double? projectedRate;
+  final int daysElapsed;
+  final int daysInMonth;
+
+  bool get hasTarget => target != null;
+
+  @override
+  List<Object?> get props => [
+        hotelId,
+        hotelName,
+        month,
+        target,
+        revenue,
+        projectedRevenue,
+        achievedRate,
+        projectedRate,
+        daysElapsed,
+        daysInMonth,
+      ];
+}
+
+class ChainTargetProgress extends Equatable {
+  const ChainTargetProgress({required this.chain, required this.branches});
+
+  final TargetProgress chain;
+  final List<TargetProgress> branches;
+
+  @override
+  List<Object?> get props => [chain, branches];
+}
+
 /// Một thứ trong tuần (1 = thứ Hai … 7 = Chủ nhật), trung bình trên các ngày
 /// của kỳ rơi vào thứ đó.
 class WeekdayStats extends Equatable {

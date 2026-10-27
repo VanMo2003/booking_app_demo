@@ -120,6 +120,24 @@ abstract final class ReportModel {
         profitMargin: json.decimal('profitMargin'),
       );
 
+  static TargetProgress target(Json json) => TargetProgress(
+        hotelId: json.intOrNull('hotelId'),
+        hotelName: json.strOrNull('hotelName'),
+        month: json.str('month'),
+        target: json.decimalOrNull('target'),
+        revenue: json.decimal('revenue'),
+        projectedRevenue: json.decimal('projectedRevenue'),
+        achievedRate: json.decimalOrNull('achievedRate'),
+        projectedRate: json.decimalOrNull('projectedRate'),
+        daysElapsed: json.integer('daysElapsed'),
+        daysInMonth: json.integer('daysInMonth'),
+      );
+
+  static ChainTargetProgress chainTarget(Json json) => ChainTargetProgress(
+        chain: target(json.obj('chain') ?? const {}),
+        branches: json.listOf('branches', target),
+      );
+
   static WeekdayStats weekday(Json json) => WeekdayStats(
         dayOfWeek: json.integer('dayOfWeek'),
         days: json.integer('days'),
