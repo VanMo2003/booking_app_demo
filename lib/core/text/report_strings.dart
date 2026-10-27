@@ -67,6 +67,10 @@ abstract final class ReportStrings {
   static const channelFrontDesk = 'Đặt tại quầy';
   static const channelTour = 'Tour';
   static String shareCaption(int count, String share) => '$count đơn · $share';
+  static const byCustomerType = 'Khách mới và khách quay lại';
+  static const byCustomerTypeNote = 'Khách quay lại: đã có đơn hoàn tất, trả phòng trước kỳ này.';
+  static const newGuests = 'Khách mới';
+  static const returningGuests = 'Khách quay lại';
   static String weekLabel(int week) => 'Tuần $week';
   static const branchComparison = 'So sánh cơ sở';
   static const branchComparisonNote =

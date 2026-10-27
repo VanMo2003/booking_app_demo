@@ -567,6 +567,7 @@ class RevenueSummary extends Equatable {
     required this.previous,
     required this.byPaymentMethod,
     required this.byChannel,
+    this.byCustomerType = const [],
     this.revenueGrowth,
     this.bookingGrowth,
     this.adrGrowth,
@@ -590,6 +591,9 @@ class RevenueSummary extends Equatable {
   final List<RevenueShare> byPaymentMethod;
   final List<RevenueShare> byChannel;
 
+  /// `NEW` / `RETURNING`: khách quay lại là khách đã có đơn hoàn tất trả phòng trước kỳ.
+  final List<RevenueShare> byCustomerType;
+
   @override
   List<Object?> get props => [
         current,
@@ -602,5 +606,6 @@ class RevenueSummary extends Equatable {
         occupancyChange,
         byPaymentMethod,
         byChannel,
+        byCustomerType,
       ];
 }

@@ -206,7 +206,8 @@ chọn khoảng 7 ngày / tháng này / tháng trước / năm nay / tuỳ chọ
   bằng điểm), đơn hoàn tất; **lợi nhuận sau lương** (doanh thu − lương đã duyệt/đã trả phân bổ theo
   ngày) và biên lợi nhuận; lưu trú TB, đặt trước TB, số đơn huỷ và doanh thu mất do huỷ. Kỳ trước bằng 0
   thì hiện "Kỳ trước chưa có số liệu" thay vì %.
-- **Theo phương thức thanh toán** và **theo kênh bán** (khách tự đặt trên app / tại quầy / tour).
+- **Theo phương thức thanh toán**, **theo kênh bán** (khách tự đặt trên app / tại quầy / tour) và **khách mới /
+  khách quay lại** (đã có đơn hoàn tất trả phòng trước kỳ).
 - Chỉ ở báo cáo chuỗi: **So sánh cơ sở** (`GET /reports/chain/branches`) theo đúng khoảng ngày đang chọn —
   mỗi cơ sở có thứ hạng, doanh thu, thanh tỷ trọng, lấp đầy, ADR, tỷ lệ huỷ và % tăng giảm so với kỳ trước;
   chọn xếp theo doanh thu / lợi nhuận / tăng trưởng / lấp đầy / RevPAR. Chạm một cơ sở để mở báo cáo riêng của cơ sở đó

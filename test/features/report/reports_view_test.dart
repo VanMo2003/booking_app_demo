@@ -58,6 +58,10 @@ class _FakeReports implements ReportRepository {
           {'key': 'FRONT_DESK', 'count': 1, 'revenue': 1100000, 'share': 27.5},
           {'key': 'TOUR', 'count': 1, 'revenue': 900000, 'share': 22.5},
         ],
+        'byCustomerType': [
+          {'key': 'NEW', 'count': 1, 'revenue': 1100000, 'share': 35.48},
+          {'key': 'RETURNING', 'count': 1, 'revenue': 2000000, 'share': 64.52},
+        ],
       });
 
   @override
@@ -227,6 +231,7 @@ void main() {
     expect(find.text('+2,5 điểm'), findsOneWidget);
     expect(find.text(ReportStrings.byPaymentMethod), findsOneWidget);
     expect(find.text(ReportStrings.channelFrontDesk), findsOneWidget);
+    expect(find.text(ReportStrings.returningGuests), findsOneWidget);
     expect(find.text(ReportStrings.branchComparison), findsOneWidget);
 
     // xếp theo doanh thu: Hoàn Kiếm trước; theo lấp đầy: Đà Nẵng (60%) trước

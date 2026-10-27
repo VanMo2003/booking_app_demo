@@ -193,5 +193,6 @@ abstract final class ReportModel {
         occupancyChange: json.decimalOrNull('occupancyChange'),
         byPaymentMethod: json.listOf('byPaymentMethod', share),
         byChannel: json.listOf('byChannel', share),
+        byCustomerType: json.listOf('byCustomerType', share),
       );
 }

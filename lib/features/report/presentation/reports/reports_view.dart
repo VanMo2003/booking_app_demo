@@ -802,6 +802,24 @@ class _SharesCard extends StatelessWidget {
               for (final share in summary.byChannel) _bar(share, _channelLabel(share.key)),
             ],
           ),
+          if (summary.byCustomerType.isNotEmpty) ...[
+            const Gap(AppSpacing.md),
+            const SectionHeader(
+              title: ReportStrings.byCustomerType,
+              subtitle: ReportStrings.byCustomerTypeNote,
+            ),
+            const Gap(AppSpacing.xs),
+            RankedBarList(
+              color: AppColors.info,
+              items: [
+                for (final share in summary.byCustomerType)
+                  _bar(
+                    share,
+                    share.key == 'RETURNING' ? ReportStrings.returningGuests : ReportStrings.newGuests,
+                  ),
+              ],
+            ),
+          ],
         ],
       ),
     );
