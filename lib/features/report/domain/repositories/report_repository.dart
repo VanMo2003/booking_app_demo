@@ -53,6 +53,9 @@ abstract interface class ReportRepository {
     ReportRange range,
   );
 
+  /// Đơn đã hoàn tất chưa ghi nhận thanh toán, trả phòng lâu nhất trước.
+  Future<List<Receivable>> receivables(ReportScope scope);
+
   /// Tháng [month] ("2026-10") của một cơ sở so với mục tiêu.
   Future<TargetProgress> targetProgress(int hotelId, String month);
 

@@ -117,6 +117,10 @@ class ReportRepositoryImpl implements ReportRepository {
       (await _remote.get(scope, 'branches', _inclusive(range))).parseList(ReportModel.branch);
 
   @override
+  Future<List<Receivable>> receivables(ReportScope scope) async =>
+      (await _remote.get(scope, 'receivables')).parseList(ReportModel.receivable);
+
+  @override
   Future<TargetProgress> targetProgress(int hotelId, String month) async =>
       (await _remote.get(BranchReportScope(hotelId), 'targets/progress', {'month': month}))
           .parse(ReportModel.target);

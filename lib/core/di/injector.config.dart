@@ -247,6 +247,8 @@ import 'package:booking_app_mobile/features/report/domain/usecases/report_usecas
     as _i109;
 import 'package:booking_app_mobile/features/report/presentation/dashboard/dashboard_screen.dart'
     as _i79;
+import 'package:booking_app_mobile/features/report/presentation/receivables/receivables_screen.dart'
+    as _i223;
 import 'package:booking_app_mobile/features/report/presentation/reports/reports_cubit.dart'
     as _i978;
 import 'package:booking_app_mobile/features/room/data/datasources/room_api.dart'
@@ -753,6 +755,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i1003.DishesCubit(gh<_i643.GetBranchDishes>()));
     gh.factory<_i508.RoomsManageCubit>(
         () => _i508.RoomsManageCubit(gh<_i643.GetBranchRooms>()));
+    gh.factory<_i223.ReceivablesCubit>(() => _i223.ReceivablesCubit(
+          gh<_i12.ReportRepository>(),
+          gh<_i750.ChangeBookingStatus>(),
+        ));
     gh.factory<_i836.RegisterCubit>(() => _i836.RegisterCubit(
           gh<_i856.RegisterCustomer>(),
           gh<_i642.SessionCubit>(),

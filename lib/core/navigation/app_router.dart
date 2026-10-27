@@ -102,6 +102,7 @@ class AppRouter extends RootStackRouter {
         ),
         AutoRoute(page: BranchFormRoute.page),
         AutoRoute(page: BranchReportDetailRoute.page),
+        AutoRoute(page: ReceivablesRoute.page),
         AutoRoute(page: ManagersRoute.page),
         AutoRoute(page: ChainInfoRoute.page),
 

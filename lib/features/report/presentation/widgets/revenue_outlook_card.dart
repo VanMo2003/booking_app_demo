@@ -12,12 +12,20 @@ import '../../domain/entities/report_entities.dart';
 /// Doanh thu sắp tới và những khoản cần xử lý, cho màn Tổng quan của quản lý
 /// cơ sở và của chủ chuỗi.
 class RevenueOutlookCard extends StatelessWidget {
-  const RevenueOutlookCard({super.key, required this.outlook, this.onOpenDesk});
+  const RevenueOutlookCard({
+    super.key,
+    required this.outlook,
+    this.onOpenOverdue,
+    this.onOpenOutstanding,
+  });
 
   final RevenueOutlook outlook;
 
-  /// Mở màn xử lý đơn (tab Quầy của quản lý) khi chạm vào cảnh báo; `null` thì cảnh báo chỉ để đọc.
-  final VoidCallback? onOpenDesk;
+  /// Chạm cảnh báo "quá ngày trả phòng" (ví dụ mở tab Quầy); `null` thì chỉ để đọc.
+  final VoidCallback? onOpenOverdue;
+
+  /// Chạm cảnh báo "chưa ghi nhận thanh toán" (mở danh sách tiền chưa thu); `null` thì chỉ để đọc.
+  final VoidCallback? onOpenOutstanding;
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +98,7 @@ class RevenueOutlookCard extends StatelessWidget {
               tone: StatusTone.warning,
               icon: Icons.schedule_rounded,
               text: ReportStrings.overdueStays(outlook.overdueBookings, Fmt.money(outlook.overdueRevenue)),
-              onTap: onOpenDesk,
+              onTap: onOpenOverdue,
             ),
           ],
           if (outlook.outstandingBookings > 0) ...[
@@ -102,7 +110,7 @@ class RevenueOutlookCard extends StatelessWidget {
                 outlook.outstandingBookings,
                 Fmt.money(outlook.outstandingAmount),
               ),
-              onTap: onOpenDesk,
+              onTap: onOpenOutstanding,
             ),
           ],
         ],

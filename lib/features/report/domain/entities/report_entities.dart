@@ -359,6 +359,39 @@ class RevenuePeriod extends Equatable {
       ];
 }
 
+/// Đơn đã hoàn tất nhưng chưa ghi nhận thanh toán — tiền quầy còn phải thu
+/// hoặc xác nhận.
+class Receivable extends Equatable {
+  const Receivable({
+    required this.bookingId,
+    required this.hotelId,
+    required this.hotelName,
+    required this.customerName,
+    required this.phoneNumber,
+    required this.checkoutDate,
+    required this.totalAmount,
+    required this.paymentMethod,
+    required this.daysOverdue,
+  });
+
+  final int bookingId;
+  final int hotelId;
+  final String hotelName;
+  final String customerName;
+  final String phoneNumber;
+  final DateTime checkoutDate;
+  final double totalAmount;
+
+  /// Giá trị gốc từ BE (`CASH`, `BANK_TRANSFER`, `VN_PAY`).
+  final String paymentMethod;
+
+  /// Số ngày kể từ ngày trả phòng.
+  final int daysOverdue;
+
+  @override
+  List<Object?> get props => [bookingId, hotelId, customerName, checkoutDate, totalAmount, daysOverdue];
+}
+
 /// Doanh thu một tháng so với mục tiêu, của một cơ sở ([hotelId] có giá trị)
 /// hoặc cả chuỗi. Dự kiến = doanh thu đã có + đơn và tour đã đặt sẽ hoàn tất
 /// trong phần còn lại của tháng.

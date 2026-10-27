@@ -242,7 +242,13 @@ class _OverviewBody extends StatelessWidget {
               ],
               if (overview.outlook != null) ...[
                 const Gap(AppSpacing.md),
-                RevenueOutlookCard(outlook: overview.outlook!),
+                RevenueOutlookCard(
+                  outlook: overview.outlook!,
+                  onOpenOutstanding: () async {
+                    await context.rootRouter.push(ReceivablesRoute(hotelChainId: chain.id));
+                    await onChanged();
+                  },
+                ),
               ],
               const Gap(AppSpacing.md),
               AppCard(

@@ -86,6 +86,20 @@ abstract final class ReportStrings {
   static String versusPreviousRange(String delta, String from, String to) => '$delta so với $from–$to';
   static String previousRangeValue(String from, String to, String value) => '$from–$to: $value';
 
+  // Tiền chưa thu
+  static const receivablesTitle = 'Tiền chưa thu';
+  static String receivablesTotal(int bookings) => '$bookings đơn đã trả phòng chưa ghi nhận thanh toán';
+  static const receivablesNote =
+      'Thu tiền hoặc xác nhận khách đã chuyển khoản, rồi bấm "Đã thu tiền" để ghi nhận.';
+  static const receivablesEmpty = 'Không còn khoản nào chưa thu';
+  static const receivablesEmptyNote = 'Mọi đơn đã trả phòng đều đã được ghi nhận thanh toán.';
+  static String receivableDue(String checkout, int days) =>
+      days == 0 ? 'Trả phòng hôm nay ($checkout)' : 'Trả phòng $checkout · quá $days ngày';
+  static String receivableConfirm(String guest, String amount) =>
+      'Ghi nhận ${guest.isEmpty ? 'khách' : guest} đã thanh toán $amount?';
+  static String bookingNumber(int id) => 'Đơn #$id';
+  static const openBooking = 'Xem đơn';
+
   // Mục tiêu doanh thu tháng
   static String targetTitle(String month) => 'Mục tiêu tháng $month';
   static String targetDay(int day, int days) => 'Ngày $day/$days của tháng';

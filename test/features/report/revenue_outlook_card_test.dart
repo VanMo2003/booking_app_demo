@@ -36,7 +36,12 @@ Map<String, dynamic> _outlook({int overdue = 0, int outstanding = 0}) => {
 void main() {
   setUpAll(() => GoogleFonts.config.allowRuntimeFetching = false);
 
-  Future<void> pump(WidgetTester tester, Map<String, dynamic> json, {VoidCallback? onOpenDesk}) async {
+  Future<void> pump(
+    WidgetTester tester,
+    Map<String, dynamic> json, {
+    VoidCallback? onOpenOverdue,
+    VoidCallback? onOpenOutstanding,
+  }) async {
     tester.view.physicalSize = const Size(390 * 3, 1200 * 3);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
@@ -45,7 +50,11 @@ void main() {
         home: Scaffold(
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(16),
-            child: RevenueOutlookCard(outlook: ReportModel.outlook(json), onOpenDesk: onOpenDesk),
+            child: RevenueOutlookCard(
+              outlook: ReportModel.outlook(json),
+              onOpenOverdue: onOpenOverdue,
+              onOpenOutstanding: onOpenOutstanding,
+            ),
           ),
         ),
       ),
@@ -72,12 +81,17 @@ void main() {
     expect(find.text(ReportStrings.outstandingPayments(1, '300.000 ₫')), findsOneWidget);
   });
 
-  testWidgets('chạm cảnh báo mở màn xử lý đơn', (tester) async {
-    var opened = 0;
-    await pump(tester, _outlook(overdue: 1, outstanding: 1), onOpenDesk: () => opened++);
+  testWidgets('mỗi cảnh báo mở đúng nơi xử lý: quá hạn → quầy, chưa thu → danh sách tiền chưa thu', (tester) async {
+    final opened = <String>[];
+    await pump(
+      tester,
+      _outlook(overdue: 1, outstanding: 1),
+      onOpenOverdue: () => opened.add('desk'),
+      onOpenOutstanding: () => opened.add('receivables'),
+    );
 
     await tester.tap(find.text(ReportStrings.outstandingPayments(1, '300.000 ₫')));
     await tester.tap(find.text(ReportStrings.overdueStays(1, '500.000 ₫')));
-    expect(opened, 2);
+    expect(opened, ['receivables', 'desk']);
   });
 }

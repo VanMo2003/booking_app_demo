@@ -108,6 +108,11 @@ class _DashboardBody extends StatelessWidget {
     if (context.mounted) await context.read<DashboardCubit>().load();
   }
 
+  Future<void> _openReceivables(BuildContext context) async {
+    await context.rootRouter.push(ReceivablesRoute(hotelId: hotelId));
+    if (context.mounted) await context.read<DashboardCubit>().load();
+  }
+
   Future<void> _editTarget(BuildContext context, TargetProgress progress) async {
     final amount = await showTargetDialog(
       context,
@@ -282,7 +287,11 @@ class _DashboardBody extends StatelessWidget {
         ],
         if (data.outlook != null) ...[
           const Gap(AppSpacing.lg),
-          RevenueOutlookCard(outlook: data.outlook!, onOpenDesk: () => _openDesk(context)),
+          RevenueOutlookCard(
+            outlook: data.outlook!,
+            onOpenOverdue: () => _openDesk(context),
+            onOpenOutstanding: () => _openReceivables(context),
+          ),
         ],
         const Gap(AppSpacing.lg),
         AppCard(

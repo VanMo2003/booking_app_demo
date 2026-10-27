@@ -120,6 +120,18 @@ abstract final class ReportModel {
         profitMargin: json.decimal('profitMargin'),
       );
 
+  static Receivable receivable(Json json) => Receivable(
+        bookingId: json.integer('bookingId'),
+        hotelId: json.integer('hotelId'),
+        hotelName: json.str('hotelName'),
+        customerName: json.str('customerName'),
+        phoneNumber: json.str('phoneNumber'),
+        checkoutDate: json.date('checkoutDate') ?? DateOnly.today(),
+        totalAmount: json.decimal('totalAmount'),
+        paymentMethod: json.str('paymentMethod'),
+        daysOverdue: json.integer('daysOverdue'),
+      );
+
   static TargetProgress target(Json json) => TargetProgress(
         hotelId: json.intOrNull('hotelId'),
         hotelName: json.strOrNull('hotelName'),

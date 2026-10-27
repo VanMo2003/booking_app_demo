@@ -228,7 +228,9 @@ xuống, vàng).
 Màn **Tổng quan** của quản lý cơ sở và của chủ chuỗi có thẻ **Doanh thu dự kiến 30 ngày tới**
 (`GET /reports/outlook`): tổng dự kiến, đơn phòng / tour / đã thu trước, phần còn chờ xác nhận, biểu đồ
 từng ngày, và cảnh báo khi có đơn quá ngày trả phòng chưa hoàn tất hoặc đơn đã trả phòng chưa ghi nhận
-thanh toán (`RevenueOutlookCard`, dùng chung hai màn).
+thanh toán (`RevenueOutlookCard`, dùng chung hai màn). Chạm cảnh báo "quá ngày trả phòng" mở tab Quầy; chạm
+"chưa ghi nhận thanh toán" mở màn **Tiền chưa thu** (`ReceivablesScreen`, `GET /reports/receivables` hoặc bản
+chuỗi): tổng tiền, từng đơn với khách, SĐT, ngày trả phòng, số ngày quá hạn, nút **Xem đơn** và **Đã thu tiền**.
 
 Tab **Lấp đầy** (cơ sở và chuỗi) có thẻ **Theo thứ trong tuần** (`GET /reports/weekdays`): biểu đồ lấp đầy
 trung bình T2 → CN, chạm cột để xem doanh thu TB mỗi ngày, và dòng tóm tắt ngày đông khách nhất / doanh thu
