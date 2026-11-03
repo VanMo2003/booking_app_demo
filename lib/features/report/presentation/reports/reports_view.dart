@@ -21,6 +21,7 @@ import '../../../../core/utils/formatters.dart';
 import '../../domain/entities/report_entities.dart';
 import '../../domain/entities/report_range.dart';
 import '../../domain/entities/report_views.dart';
+import '../widgets/booking_hours_card.dart';
 import '../widgets/growth_text.dart';
 import 'reports_cubit.dart';
 
@@ -1559,6 +1560,10 @@ class _PeopleTab extends StatelessWidget {
                   ],
                   const Gap(AppSpacing.md),
                   _OriginsCard(origins: report.origins),
+                  if (report.hours != null) ...[
+                    const Gap(AppSpacing.md),
+                    BookingHoursCard(hours: report.hours!),
+                  ],
                   if (report.assistant != null) ...[
                     const Gap(AppSpacing.md),
                     _AssistantCard(report: report.assistant!),

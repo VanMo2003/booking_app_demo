@@ -236,6 +236,13 @@ abstract final class ReportStrings {
       '${medianDays == null ? '' : ' · thường huỷ trước $medianDays ngày'}';
   static String canceledBySide(int guest, int hotel) => 'Khách huỷ $guest đơn · khách sạn huỷ $hotel đơn';
 
+  // Giờ khách đặt
+  static const hoursTitle = 'Khách đặt vào lúc nào';
+  static String hoursNote(int orders) => '$orders đơn phòng và tour tạo trong kỳ, theo thứ và giờ đặt';
+  static String busiestSlot(String weekday, int hour, String night) =>
+      'Đông nhất $weekday ${hour}h–${hour + 1}h · $night đơn đặt từ 22h đến 6h';
+  static const noOrders = 'Chưa có đơn nào trong kỳ';
+
   // Sổ thu tiền
   static const todayCollected = 'Hôm nay đã thu';
   static const nothingCollectedToday = 'Chưa ghi nhận khoản thu nào hôm nay';

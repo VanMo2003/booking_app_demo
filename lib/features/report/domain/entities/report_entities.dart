@@ -1096,3 +1096,31 @@ class Collections extends Equatable {
   @override
   List<Object?> get props => [total, payments, byMethod, byDate];
 }
+
+/// Đơn phòng và đơn tour theo thứ (0 = thứ Hai) và giờ tạo đơn.
+class BookingHours extends Equatable {
+  const BookingHours({
+    required this.orders,
+    required this.cells,
+    this.busiestWeekday,
+    this.busiestHour,
+    required this.nightShare,
+  });
+
+  final int orders;
+
+  /// 7 hàng (thứ Hai … Chủ nhật) × 24 giờ.
+  final List<List<int>> cells;
+
+  /// 1 = thứ Hai; null khi không có đơn.
+  final int? busiestWeekday;
+  final int? busiestHour;
+
+  /// Phần trăm đơn đặt từ 22h đến 6h.
+  final double nightShare;
+
+  int get peak => cells.expand((row) => row).fold(0, (most, n) => n > most ? n : most);
+
+  @override
+  List<Object?> get props => [orders, cells, busiestWeekday, busiestHour, nightShare];
+}

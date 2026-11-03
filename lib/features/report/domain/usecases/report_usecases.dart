@@ -145,6 +145,7 @@ class LoadPeopleReport {
     final assistant = _repository.aiAssistant(scope, range);
     final origins = _repository.guestOrigins(scope, range);
     final ratings = _repository.ratings(scope, range);
+    final hours = _repository.bookingHours(scope, range);
     return PeopleReport(
       topCustomers: await customers,
       staff: (await staff)..sort((a, b) => b.earned.compareTo(a.earned)),
@@ -152,6 +153,7 @@ class LoadPeopleReport {
       assistant: await assistant,
       origins: await origins,
       ratings: await ratings,
+      hours: await hours,
     );
   }
 }

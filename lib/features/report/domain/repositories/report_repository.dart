@@ -48,6 +48,9 @@ abstract interface class ReportRepository {
 
   Future<CancellationStats> cancellation(ReportScope scope, ReportRange range);
 
+  /// Đơn theo thứ và giờ khách đặt.
+  Future<BookingHours> bookingHours(ReportScope scope, ReportRange range);
+
   /// Sổ thu tiền theo ngày ghi nhận thanh toán; khoảng tối đa 92 ngày.
   Future<Collections> collections(ReportScope scope, ReportRange range);
 

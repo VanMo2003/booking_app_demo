@@ -128,6 +128,10 @@ class ReportRepositoryImpl implements ReportRepository {
           .parse(ReportModel.cancellation);
 
   @override
+  Future<BookingHours> bookingHours(ReportScope scope, ReportRange range) async =>
+      (await _remote.get(scope, 'booking-hours', _inclusive(range))).parse(ReportModel.bookingHours);
+
+  @override
   Future<Collections> collections(ReportScope scope, ReportRange range) async =>
       (await _remote.get(scope, 'collections', _inclusive(range))).parse(ReportModel.collections);
 

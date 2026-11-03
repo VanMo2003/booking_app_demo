@@ -130,6 +130,7 @@ class PeopleReport extends Equatable {
     this.assistant,
     this.origins = const [],
     this.ratings,
+    this.hours,
   });
 
   final List<TopCustomer> topCustomers;
@@ -138,9 +139,10 @@ class PeopleReport extends Equatable {
   final AiAssistantReport? assistant;
   final List<GuestOrigin> origins;
   final RatingReport? ratings;
+  final BookingHours? hours;
 
   @override
-  List<Object?> get props => [topCustomers, staff, cancellation, assistant, origins, ratings];
+  List<Object?> get props => [topCustomers, staff, cancellation, assistant, origins, ratings, hours];
 }
 
 class ReportFile {

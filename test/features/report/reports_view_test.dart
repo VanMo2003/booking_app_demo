@@ -229,6 +229,17 @@ class _FakeReports implements ReportRepository {
       });
 
   @override
+  Future<BookingHours> bookingHours(ReportScope scope, ReportRange range) async => ReportModel.bookingHours({
+        'orders': 1,
+        'cells': [
+          for (var day = 0; day < 7; day++) [for (var h = 0; h < 24; h++) day == 0 && h == 9 ? 1 : 0],
+        ],
+        'busiestWeekday': 1,
+        'busiestHour': 9,
+        'nightShare': 0,
+      });
+
+  @override
   Future<Collections> collections(ReportScope scope, ReportRange range) async => ReportModel.collections({
         'total': 3000000,
         'payments': 2,

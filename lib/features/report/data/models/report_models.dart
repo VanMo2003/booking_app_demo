@@ -286,6 +286,17 @@ abstract final class ReportModel {
         averageRating: json.decimalOrNull('averageRating'),
       );
 
+  static BookingHours bookingHours(Json json) => BookingHours(
+        orders: json.integer('orders'),
+        cells: [
+          for (final row in (json['cells'] as List?) ?? const [])
+            [for (final count in row as List) (count as num).toInt()],
+        ],
+        busiestWeekday: json.intOrNull('busiestWeekday'),
+        busiestHour: json.intOrNull('busiestHour'),
+        nightShare: json.decimal('nightShare'),
+      );
+
   static CollectionDay collectionDay(Json json) => CollectionDay(
         date: json.date('date') ?? DateOnly.today(),
         cash: json.decimal('cash'),
