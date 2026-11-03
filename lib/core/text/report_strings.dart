@@ -193,6 +193,8 @@ abstract final class ReportStrings {
       'Tiền tour của đơn hoàn tất, theo ngày đi. Phòng trong gói tính vào doanh thu phòng khi khách trả phòng.';
   static String tourCaption(int orders, int guests) => '$orders đơn · $guests khách';
   static String aiOrders(int n) => '$n đơn do AI lên';
+  static String tourFill(int departures, String fill) => '$departures chuyến · lấp $fill chỗ';
+  static String payrollShare(String share) => 'Lương $share doanh thu';
   static String packageRooms(String amount) => 'phòng gói $amount';
   static const roomTypeNote =
       'Tiền phòng thực thu của đơn hoàn tất (tổng đơn trừ dịch vụ), chia cho các phòng trong đơn theo giá × số đêm. '

@@ -201,6 +201,9 @@ class TourRevenue extends Equatable {
     required this.packageRoomAmount,
     required this.aiOrders,
     this.tourId,
+    this.departures = 0,
+    this.seatsOffered = 0,
+    this.fillRate = 0,
   });
 
   /// `null` khi tour đã bị xoá — đơn vẫn giữ tên tour.
@@ -214,8 +217,14 @@ class TourRevenue extends Equatable {
   /// Số đơn do trợ lý AI lên sau khi khách đồng ý trong tin nhắn.
   final int aiOrders;
 
+  /// Số ngày khởi hành có đơn hoàn tất, tổng số chỗ của các chuyến đó (0 khi không rõ) và phần trăm đã bán.
+  final int departures;
+  final int seatsOffered;
+  final double fillRate;
+
   @override
-  List<Object?> get props => [tourId, name, orders, guests, revenue, packageRoomAmount, aiOrders];
+  List<Object?> get props =>
+      [tourId, name, orders, guests, revenue, packageRoomAmount, aiOrders, departures, seatsOffered, fillRate];
 }
 
 class TopCustomer extends Equatable {

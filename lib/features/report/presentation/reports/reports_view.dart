@@ -1032,6 +1032,15 @@ class _BranchRow extends StatelessWidget {
                   ),
                   style: AppTextStyles.caption,
                 ),
+                if (current.payrollCost > 0 && current.totalRevenue > 0) ...[
+                  const Gap(2),
+                  Text(
+                    ReportStrings.payrollShare(Fmt.percent(current.payrollCost * 100 / current.totalRevenue)),
+                    style: AppTextStyles.caption.colored(
+                      current.payrollCost > current.totalRevenue ? AppColors.danger : AppColors.inkSecondary,
+                    ),
+                  ),
+                ],
                 if (branch.averageRating != null) ...[
                   const Gap(2),
                   Text(
@@ -1341,6 +1350,7 @@ class _BreakdownTab extends StatelessWidget {
                               value: row.revenue,
                               caption: [
                                 ReportStrings.tourCaption(row.orders, row.guests),
+                                if (row.seatsOffered > 0) ReportStrings.tourFill(row.departures, Fmt.percent(row.fillRate)),
                                 if (row.aiOrders > 0) ReportStrings.aiOrders(row.aiOrders),
                                 if (row.packageRoomAmount > 0)
                                   ReportStrings.packageRooms(Fmt.moneyCompact(row.packageRoomAmount)),

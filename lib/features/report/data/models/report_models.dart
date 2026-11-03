@@ -73,6 +73,9 @@ abstract final class ReportModel {
         revenue: json.decimal('tourRevenue'),
         packageRoomAmount: json.decimal('packageRoomAmount'),
         aiOrders: json.integer('aiOrders'),
+        departures: json.integer('departures'),
+        seatsOffered: json.integer('seatsOffered'),
+        fillRate: json.decimal('fillRate'),
       );
 
   static TopCustomer topCustomer(Json json) => TopCustomer(

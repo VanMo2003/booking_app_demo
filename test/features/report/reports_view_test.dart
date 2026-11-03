@@ -152,6 +152,9 @@ class _FakeReports implements ReportRepository {
           revenue: 900000,
           packageRoomAmount: 550000,
           aiOrders: 1,
+          departures: 1,
+          seatsOffered: 10,
+          fillRate: 20,
         ),
       ];
 
@@ -372,6 +375,8 @@ void main() {
     expect(find.text(ReportStrings.branchComparison), findsOneWidget);
     // cơ sở có đánh giá hiện điểm; cơ sở chưa có thì không
     expect(find.text(ReportStrings.branchRating('4,5', 12)), findsOneWidget);
+    // lương 1.000.000 trên doanh thu 3.000.000 của Hoàn Kiếm
+    expect(find.text(ReportStrings.payrollShare('33,3%')), findsOneWidget);
     expect(find.textContaining('đánh giá)'), findsOneWidget);
 
     // xếp theo doanh thu: Hoàn Kiếm trước; theo lấp đầy: Đà Nẵng (60%) trước
@@ -445,5 +450,6 @@ void main() {
     expect(find.text('Suite'), findsOneWidget);
     expect(find.text('Vịnh Hạ Long 1 ngày'), findsOneWidget);
     expect(find.textContaining('1 đơn do AI lên'), findsOneWidget);
+    expect(find.textContaining(ReportStrings.tourFill(1, '20%')), findsOneWidget);
   });
 }
