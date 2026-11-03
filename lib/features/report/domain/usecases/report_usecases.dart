@@ -38,7 +38,26 @@ class LoadRevenueReport {
       RevenueGranularity.year => ReportRange(DateTime(now.year - years + 1), now),
     };
     final buckets = await _repository.trend(scope, window, granularity);
-    return RevenueReport(granularity: granularity, buckets: buckets);
+    if (granularity != RevenueGranularity.month) {
+      return RevenueReport(granularity: granularity, buckets: buckets);
+    }
+    // cùng kỳ năm trước: đúng chừng ấy ngày, nên tháng đang chạy dở so với đúng phần đó của năm trước
+    final lastYear = await _repository.trend(scope, _yearBefore(window), granularity);
+    final byMonth = {for (final bucket in lastYear) bucket.start.month: bucket.revenue};
+    return RevenueReport(
+      granularity: granularity,
+      buckets: [for (final bucket in buckets) bucket.withPrevious(byMonth[bucket.start.month])],
+    );
+  }
+
+  /// [range] lùi một năm; 29/02 thành 28/02.
+  static ReportRange _yearBefore(ReportRange range) {
+    DateTime back(DateTime day) {
+      final lastDay = DateOnly.endOfMonth(DateTime(day.year - 1, day.month)).day;
+      return DateTime(day.year - 1, day.month, day.day > lastDay ? lastDay : day.day);
+    }
+
+    return ReportRange(back(range.from), back(range.to));
   }
 }
 

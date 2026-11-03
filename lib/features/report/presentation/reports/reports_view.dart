@@ -21,6 +21,7 @@ import '../../../../core/utils/formatters.dart';
 import '../../domain/entities/report_entities.dart';
 import '../../domain/entities/report_range.dart';
 import '../../domain/entities/report_views.dart';
+import '../widgets/growth_text.dart';
 import 'reports_cubit.dart';
 
 /// Màn báo cáo dùng chung: cơ sở (quản lý) và cả chuỗi (chủ khách sạn).
@@ -307,7 +308,11 @@ class _RevenueTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<ReportsCubit>();
     final report = state.revenue.data;
-    final nonEmpty = report?.buckets.where((bucket) => bucket.revenue > 0).toList() ?? const [];
+    // một tháng trống năm nay nhưng có doanh thu năm trước vẫn đáng xem
+    final nonEmpty = report?.buckets
+            .where((bucket) => bucket.revenue > 0 || (bucket.previousRevenue ?? 0) > 0)
+            .toList() ??
+        const [];
     return RefreshIndicator(
       onRefresh: cubit.refresh,
       child: ListView(
@@ -399,6 +404,16 @@ class _RevenueTab extends StatelessWidget {
                             ReportStrings.bucketCounts(AppStrings.bookingsCount(bucket.bookings), bucket.tours),
                             style: AppTextStyles.caption,
                           ),
+                          if (bucket.previousRevenue != null)
+                            Text(
+                              ReportStrings.yearOverYear(
+                                Fmt.moneyCompact(bucket.previousRevenue),
+                                bucket.yearOverYear == null ? null : signedPercent(bucket.yearOverYear!),
+                              ),
+                              style: AppTextStyles.caption.colored(
+                                (bucket.yearOverYear ?? 0) < 0 ? AppColors.danger : AppColors.inkSecondary,
+                              ),
+                            ),
                         ],
                       ),
                     ),

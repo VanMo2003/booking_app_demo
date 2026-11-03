@@ -213,7 +213,8 @@ chọn khoảng 7 ngày / tháng này / tháng trước / năm nay / tuỳ chọ
   chọn xếp theo doanh thu / lợi nhuận / tăng trưởng / lấp đầy / RevPAR. Chạm một cơ sở để mở báo cáo riêng của cơ sở đó
   (`BranchReportDetailRoute`, đủ 4 tab và xuất Excel cấp cơ sở).
 - **Diễn biến doanh thu** (`GET /reports/trend`, đơn phòng + tour) theo ngày / tuần / tháng (các tháng của năm
-  đang xem) / năm (5 năm gần nhất) và bảng chi tiết từng mốc kèm số đơn, số tour.
+  đang xem) / năm (5 năm gần nhất) và bảng chi tiết từng mốc kèm số đơn, số tour. Xem theo tháng thì mỗi tháng
+  có thêm **cùng kỳ năm trước** và % thay đổi (tháng đang chạy so với đúng chừng ấy ngày của năm trước).
 
 Trên màn **Tổng quan**, thẻ **Doanh thu tháng này** (và **Đơn hoàn tất** của quản lý) lấy từ tổng quan kỳ
 nên đã gồm tour, kèm chú thích tăng giảm, ví dụ "+12,5% so với 01/09–20/09". Nút **Xuất Excel** ở

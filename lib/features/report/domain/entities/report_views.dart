@@ -14,6 +14,7 @@ class RevenueBucket extends Equatable {
     this.week,
     this.tourRevenue = 0,
     this.tours = 0,
+    this.previousRevenue,
   });
 
   final DateTime start;
@@ -30,8 +31,29 @@ class RevenueBucket extends Equatable {
   final double tourRevenue;
   final int tours;
 
+  /// Cùng kỳ năm trước (chỉ khi xem theo tháng); `null` khi không so.
+  final double? previousRevenue;
+
+  /// % thay đổi so với cùng kỳ năm trước; `null` khi năm trước bằng 0 hoặc không so.
+  double? get yearOverYear {
+    final before = previousRevenue;
+    if (before == null || before <= 0) return null;
+    return (revenue - before) / before * 100;
+  }
+
+  RevenueBucket withPrevious(double? previous) => RevenueBucket(
+        start: start,
+        end: end,
+        revenue: revenue,
+        bookings: bookings,
+        week: week,
+        tourRevenue: tourRevenue,
+        tours: tours,
+        previousRevenue: previous,
+      );
+
   @override
-  List<Object?> get props => [start, end, revenue, bookings, week, tourRevenue, tours];
+  List<Object?> get props => [start, end, revenue, bookings, week, tourRevenue, tours, previousRevenue];
 }
 
 class RevenueReport extends Equatable {

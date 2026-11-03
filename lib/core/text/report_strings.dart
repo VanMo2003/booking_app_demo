@@ -31,6 +31,8 @@ abstract final class ReportStrings {
   static const trendNote =
       'Đơn đã hoàn tất: phòng (gồm dịch vụ) theo ngày trả phòng, tour theo ngày đi.';
   static String bucketCounts(String bookings, int tours) => tours == 0 ? bookings : '$bookings · $tours tour';
+  static String yearOverYear(String lastYear, String? change) =>
+      change == null ? 'Cùng kỳ năm trước: $lastYear' : 'Cùng kỳ năm trước: $lastYear ($change)';
 
   // Tổng quan kỳ
   static String previousPeriod(String from, String to, String amount) =>
