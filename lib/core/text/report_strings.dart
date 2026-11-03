@@ -96,6 +96,7 @@ abstract final class ReportStrings {
   static const sortGrowth = 'Tăng trưởng';
   static const sortOccupancy = 'Lấp đầy';
   static const sortRevpar = 'RevPAR';
+  static const sortRating = 'Đánh giá';
   static String branchCaption(String share, String occupancy, String adr, String cancellation) =>
       'Tỷ trọng $share · Lấp đầy $occupancy · ADR $adr · Huỷ $cancellation';
 

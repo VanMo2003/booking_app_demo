@@ -895,7 +895,7 @@ class _SharesCard extends StatelessWidget {
   }
 }
 
-enum _BranchMetric { revenue, profit, growth, occupancy, revpar }
+enum _BranchMetric { revenue, profit, growth, occupancy, revpar, rating }
 
 /// Bảng xếp hạng cơ sở của chuỗi, chọn chỉ số để xếp.
 class _BranchComparison extends StatefulWidget {
@@ -916,6 +916,7 @@ class _BranchComparisonState extends State<_BranchComparison> {
         _BranchMetric.growth => ReportStrings.sortGrowth,
         _BranchMetric.occupancy => ReportStrings.sortOccupancy,
         _BranchMetric.revpar => ReportStrings.sortRevpar,
+        _BranchMetric.rating => ReportStrings.sortRating,
       };
 
   /// Cơ sở chưa có kỳ trước để so xếp cuối khi xem theo tăng trưởng.
@@ -925,6 +926,8 @@ class _BranchComparisonState extends State<_BranchComparison> {
         _BranchMetric.growth => branch.revenueGrowth ?? double.negativeInfinity,
         _BranchMetric.occupancy => branch.current.occupancyRate,
         _BranchMetric.revpar => branch.current.revpar,
+        // chưa có đánh giá thì xếp cuối
+        _BranchMetric.rating => branch.averageRating ?? double.negativeInfinity,
       };
 
   @override
@@ -971,6 +974,8 @@ class _BranchRow extends StatelessWidget {
       _BranchMetric.profit => Fmt.money(current.grossProfit),
       _BranchMetric.occupancy => Fmt.percent(current.occupancyRate),
       _BranchMetric.revpar => Fmt.money(current.revpar),
+      _BranchMetric.rating =>
+        branch.averageRating == null ? '—' : '${Fmt.decimal(branch.averageRating)} ★',
     };
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),

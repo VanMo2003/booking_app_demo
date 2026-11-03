@@ -405,6 +405,14 @@ void main() {
     await tester.tap(occupancyChip);
     await tester.pumpAndSettle();
     expect(top('Đà Nẵng Riverside'), lessThan(top('Khách Sạn Hoàn Kiếm Palace')));
+    // theo đánh giá: Hoàn Kiếm (4,5 ★) trước cơ sở chưa có đánh giá
+    final ratingChip = find.widgetWithText(ChoiceChip, ReportStrings.sortRating);
+    await tester.ensureVisible(ratingChip);
+    await tester.pumpAndSettle();
+    await tester.tap(ratingChip);
+    await tester.pumpAndSettle();
+    expect(top('Khách Sạn Hoàn Kiếm Palace'), lessThan(top('Đà Nẵng Riverside')));
+    expect(find.text('4,5 ★'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
