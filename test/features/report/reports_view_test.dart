@@ -65,6 +65,14 @@ class _FakeReports implements ReportRepository {
           {'key': 'NEW', 'count': 1, 'revenue': 1100000, 'share': 35.48},
           {'key': 'RETURNING', 'count': 1, 'revenue': 2000000, 'share': 64.52},
         ],
+        'byPaymentTiming': [
+          {'key': 'PREPAID', 'count': 1, 'revenue': 2000000, 'share': 64.52},
+          {'key': 'AT_STAY', 'count': 0, 'revenue': 0, 'share': 0},
+          {'key': 'AFTER_CHECKOUT', 'count': 1, 'revenue': 1100000, 'share': 35.48},
+          {'key': 'UNPAID', 'count': 0, 'revenue': 0, 'share': 0},
+          {'key': 'UNKNOWN', 'count': 0, 'revenue': 0, 'share': 0},
+        ],
+        'averageDaysToCollect': 3.0,
       });
 
   @override
@@ -97,6 +105,8 @@ class _FakeReports implements ReportRepository {
           bookings: 2,
           tourRevenue: 900000,
           tours: 1,
+          payrollCost: 3600000,
+          grossProfit: -500000,
         ),
       ];
 
@@ -351,6 +361,12 @@ void main() {
     expect(find.text(ReportStrings.byPaymentMethod), findsOneWidget);
     expect(find.text(ReportStrings.channelFrontDesk), findsOneWidget);
     expect(find.text(ReportStrings.returningGuests), findsOneWidget);
+    // thời điểm thu tiền: chỉ các nhóm có đơn, kèm số ngày thu muộn
+    expect(find.text(ReportStrings.paymentTimingLabel('PREPAID')), findsOneWidget);
+    expect(find.text(ReportStrings.paymentTimingLabel('UNPAID')), findsNothing);
+    expect(find.text(ReportStrings.daysToCollect('3')), findsOneWidget);
+    // diễn biến: lãi sau lương của mốc, âm thì báo đỏ
+    expect(find.text(ReportStrings.bucketProfit('-500 N')), findsOneWidget);
     // diễn biến: dòng chi tiết có cả số tour
     expect(find.text(ReportStrings.bucketCounts('2 đơn', 1)), findsOneWidget);
     expect(find.text(ReportStrings.branchComparison), findsOneWidget);

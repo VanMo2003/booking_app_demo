@@ -811,6 +811,8 @@ class RevenueSummary extends Equatable {
     required this.byPaymentMethod,
     required this.byChannel,
     this.byCustomerType = const [],
+    this.byPaymentTiming = const [],
+    this.averageDaysToCollect,
     this.revenueGrowth,
     this.bookingGrowth,
     this.adrGrowth,
@@ -837,6 +839,12 @@ class RevenueSummary extends Equatable {
   /// `NEW` / `RETURNING`: khách quay lại là khách đã có đơn hoàn tất trả phòng trước kỳ.
   final List<RevenueShare> byCustomerType;
 
+  /// Đơn hoàn tất theo lúc thu tiền: `PREPAID`, `AT_STAY`, `AFTER_CHECKOUT`, `UNPAID`, `UNKNOWN`.
+  final List<RevenueShare> byPaymentTiming;
+
+  /// Số ngày trung bình sau trả phòng mới thu được tiền (chỉ các đơn thu muộn); null khi không có.
+  final double? averageDaysToCollect;
+
   @override
   List<Object?> get props => [
         current,
@@ -850,6 +858,8 @@ class RevenueSummary extends Equatable {
         byPaymentMethod,
         byChannel,
         byCustomerType,
+        byPaymentTiming,
+        averageDaysToCollect,
       ];
 }
 

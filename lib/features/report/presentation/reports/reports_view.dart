@@ -404,6 +404,13 @@ class _RevenueTab extends StatelessWidget {
                             ReportStrings.bucketCounts(AppStrings.bookingsCount(bucket.bookings), bucket.tours),
                             style: AppTextStyles.caption,
                           ),
+                          if (bucket.payrollCost > 0 && bucket.grossProfit != null)
+                            Text(
+                              ReportStrings.bucketProfit(Fmt.moneyCompact(bucket.grossProfit)),
+                              style: AppTextStyles.caption.colored(
+                                bucket.grossProfit! < 0 ? AppColors.danger : AppColors.inkSecondary,
+                              ),
+                            ),
                           if (bucket.previousRevenue != null)
                             Text(
                               ReportStrings.yearOverYear(
@@ -861,6 +868,26 @@ class _SharesCard extends StatelessWidget {
                   ),
               ],
             ),
+          ],
+          if (summary.byPaymentTiming.any((share) => share.count > 0)) ...[
+            const Gap(AppSpacing.md),
+            const SectionHeader(
+              title: ReportStrings.byPaymentTiming,
+              subtitle: ReportStrings.byPaymentTimingNote,
+            ),
+            const Gap(AppSpacing.xs),
+            RankedBarList(
+              color: AppColors.success,
+              items: [
+                for (final share in summary.byPaymentTiming)
+                  if (share.count > 0) _bar(share, ReportStrings.paymentTimingLabel(share.key)),
+              ],
+            ),
+            if (summary.averageDaysToCollect != null)
+              Text(
+                ReportStrings.daysToCollect(Fmt.decimal(summary.averageDaysToCollect)),
+                style: AppTextStyles.caption,
+              ),
           ],
         ],
       ),

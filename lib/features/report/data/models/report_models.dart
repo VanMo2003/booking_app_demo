@@ -174,6 +174,8 @@ abstract final class ReportModel {
         week: json.intOrNull('week'),
         tourRevenue: json.decimal('tourRevenue'),
         tours: json.integer('tours'),
+        payrollCost: json.decimal('payrollCost'),
+        grossProfit: json.decimalOrNull('grossProfit'),
       );
 
   static Receivable receivable(Json json) => Receivable(
@@ -330,5 +332,7 @@ abstract final class ReportModel {
         byPaymentMethod: json.listOf('byPaymentMethod', share),
         byChannel: json.listOf('byChannel', share),
         byCustomerType: json.listOf('byCustomerType', share),
+        byPaymentTiming: json.listOf('byPaymentTiming', share),
+        averageDaysToCollect: json.decimalOrNull('averageDaysToCollect'),
       );
 }

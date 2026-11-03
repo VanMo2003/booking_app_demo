@@ -74,6 +74,18 @@ abstract final class ReportStrings {
   static String shareCaption(int count, String share) => '$count đơn · $share';
   static const byCustomerType = 'Khách mới và khách quay lại';
   static const byCustomerTypeNote = 'Khách quay lại: đã có đơn hoàn tất, trả phòng trước kỳ này.';
+  static const byPaymentTiming = 'Thời điểm thu tiền';
+  static const byPaymentTimingNote = 'Đơn hoàn tất trong kỳ, theo lúc thanh toán được ghi nhận.';
+  static String paymentTimingLabel(String key) => switch (key) {
+        'PREPAID' => 'Trả trước khi đến',
+        'AT_STAY' => 'Trả trong thời gian ở',
+        'AFTER_CHECKOUT' => 'Trả sau khi trả phòng',
+        'UNPAID' => 'Chưa thu',
+        'UNKNOWN' => 'Đã thu, không rõ lúc nào',
+        _ => key,
+      };
+  static String daysToCollect(String days) => 'Đơn thu muộn trung bình $days ngày sau trả phòng mới thu được tiền';
+  static String bucketProfit(String profit) => 'Sau lương $profit';
   static const newGuests = 'Khách mới';
   static const returningGuests = 'Khách quay lại';
   static String weekLabel(int week) => 'Tuần $week';
