@@ -258,6 +258,9 @@ abstract final class ReportStrings {
 
   // Đánh giá, quê quán
   static const ratingsTitle = 'Đánh giá của khách';
+  static const monthRatingsTitle = 'Đánh giá tháng này';
+  static String monthRatings(String average, int reviews) => '$average ★ · $reviews đánh giá';
+  static String lowReviewsAlert(int count) => '$count đánh giá từ 3 sao trở xuống — xem ở Báo cáo › Khách & NV';
   static String ratingsNote(int reviews, String rate) =>
       '$reviews đánh giá viết trong kỳ · $rate đơn hoàn tất có đánh giá';
   static String previousRating(String rating) => 'Kỳ trước $rating ★';

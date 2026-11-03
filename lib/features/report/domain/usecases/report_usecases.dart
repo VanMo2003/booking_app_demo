@@ -204,6 +204,7 @@ class LoadBranchDashboard {
     final target = _optional(_reports.targetProgress(hotelId, monthKey(DateTime.now())));
     final today = DateOnly.today();
     final collections = _optional(_reports.collections(scope, ReportRange(today, today)));
+    final ratings = _optional(_reports.ratings(scope, month));
     return BranchDashboard(
       last5Months: [...await last5]..sort((a, b) => a.monthIndex.compareTo(b.monthIndex)),
       bookings: await bookings,
@@ -213,6 +214,7 @@ class LoadBranchDashboard {
       monthSummary: await monthSummary,
       target: await target,
       todayCollections: await collections,
+      monthRatings: await ratings,
     );
   }
 

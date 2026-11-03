@@ -26,6 +26,7 @@ import '../../domain/usecases/report_usecases.dart';
 import '../widgets/growth_text.dart';
 import '../widgets/revenue_outlook_card.dart';
 import '../widgets/target_progress_card.dart';
+import '../widgets/month_ratings_card.dart';
 import '../widgets/today_collections_card.dart';
 
 @injectable
@@ -282,6 +283,10 @@ class _DashboardBody extends StatelessWidget {
         if (data.todayCollections != null) ...[
           const Gap(AppSpacing.lg),
           TodayCollectionsCard(collections: data.todayCollections!),
+        ],
+        if (data.monthRatings != null && data.monthRatings!.reviews > 0) ...[
+          const Gap(AppSpacing.lg),
+          MonthRatingsCard(ratings: data.monthRatings!),
         ],
         if (data.target != null) ...[
           const Gap(AppSpacing.lg),
