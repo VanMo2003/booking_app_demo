@@ -4,6 +4,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../domain/entities/report_entities.dart';
 import '../../domain/entities/report_range.dart';
+import '../../domain/entities/report_views.dart';
 import '../../domain/repositories/report_repository.dart';
 import '../datasources/report_remote_data_source.dart';
 import '../models/report_models.dart';
@@ -138,6 +139,15 @@ class ReportRepositoryImpl implements ReportRepository {
   }) async =>
       (await _remote.put('targets', {'hotelId': hotelId, 'month': month, 'amount': amount}))
           .parse(ReportModel.target);
+
+  @override
+  Future<List<RevenueBucket>> trend(
+    ReportScope scope,
+    ReportRange range,
+    RevenueGranularity granularity,
+  ) async =>
+      (await _remote.get(scope, 'trend', {..._inclusive(range), 'granularity': granularity.name}))
+          .parseList(ReportModel.trendBucket);
 
   @override
   Future<List<WeekdayStats>> weekdays(ReportScope scope, ReportRange range) async =>

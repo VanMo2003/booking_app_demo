@@ -12,18 +12,26 @@ class RevenueBucket extends Equatable {
     required this.revenue,
     required this.bookings,
     this.week,
+    this.tourRevenue = 0,
+    this.tours = 0,
   });
 
   final DateTime start;
   final DateTime end;
+
+  /// Tổng: đơn phòng (gồm dịch vụ) + tour.
   final double revenue;
   final int bookings;
 
   /// Số tuần ISO khi xem theo tuần.
   final int? week;
 
+  /// Phần tour trong [revenue] và số đơn tour hoàn tất.
+  final double tourRevenue;
+  final int tours;
+
   @override
-  List<Object?> get props => [start, end, revenue, bookings, week];
+  List<Object?> get props => [start, end, revenue, bookings, week, tourRevenue, tours];
 }
 
 class RevenueReport extends Equatable {

@@ -27,7 +27,10 @@ abstract final class ReportStrings {
   static const averagePerBooking = 'Trung bình mỗi đơn';
   static const revenueNote =
       'Đơn phòng đã hoàn tất (gồm dịch vụ), theo ngày trả phòng.';
-  static const trendTitle = 'Diễn biến doanh thu phòng';
+  static const trendTitle = 'Diễn biến doanh thu';
+  static const trendNote =
+      'Đơn đã hoàn tất: phòng (gồm dịch vụ) theo ngày trả phòng, tour theo ngày đi.';
+  static String bucketCounts(String bookings, int tours) => tours == 0 ? bookings : '$bookings · $tours tour';
 
   // Tổng quan kỳ
   static String previousPeriod(String from, String to, String amount) =>

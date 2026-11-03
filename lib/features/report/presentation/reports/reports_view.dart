@@ -352,7 +352,7 @@ class _RevenueTab extends StatelessWidget {
               children: [
                 const SectionHeader(
                   title: ReportStrings.trendTitle,
-                  subtitle: ReportStrings.revenueNote,
+                  subtitle: ReportStrings.trendNote,
                 ),
                 const Gap(AppSpacing.sm),
                 ChoiceChipBar<RevenueGranularity>(
@@ -396,7 +396,7 @@ class _RevenueTab extends StatelessWidget {
                             style: AppTextStyles.tabular.weight(FontWeight.w600),
                           ),
                           Text(
-                            AppStrings.bookingsCount(bucket.bookings),
+                            ReportStrings.bucketCounts(AppStrings.bookingsCount(bucket.bookings), bucket.tours),
                             style: AppTextStyles.caption,
                           ),
                         ],

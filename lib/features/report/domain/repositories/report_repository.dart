@@ -1,5 +1,6 @@
 import '../entities/report_entities.dart';
 import '../entities/report_range.dart';
+import '../entities/report_views.dart';
 
 abstract interface class ReportRepository {
   Future<List<RevenueByDate>> revenueByDay(ReportScope scope, ReportRange range);
@@ -63,6 +64,10 @@ abstract interface class ReportRepository {
 
   /// Đặt mục tiêu; [amount] = 0 là bỏ mục tiêu.
   Future<TargetProgress> setTarget({required int hotelId, required String month, required double amount});
+
+  /// Diễn biến doanh thu (đơn phòng + tour) trong [range], mỗi mốc một ngày /
+  /// tuần ISO / tháng / năm, đủ cả mốc trống.
+  Future<List<RevenueBucket>> trend(ReportScope scope, ReportRange range, RevenueGranularity granularity);
 
   /// Thứ Hai → Chủ nhật: lấp đầy và doanh thu trung bình mỗi ngày.
   Future<List<WeekdayStats>> weekdays(ReportScope scope, ReportRange range);

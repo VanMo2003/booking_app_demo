@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -10,84 +9,36 @@ import '../entities/report_range.dart';
 import '../entities/report_views.dart';
 import '../repositories/report_repository.dart';
 
-/// Doanh thu theo độ chi tiết; điền 0 cho các mốc không có đơn để biểu đồ liền mạch.
+/// Diễn biến doanh thu (đơn phòng + tour) theo độ chi tiết; BE trả đủ các mốc,
+/// mốc trống có giá trị 0. Theo ngày/tuần là đúng khoảng đang xem; theo tháng
+/// là các tháng của năm chứa ngày cuối khoảng (đến hôm nay); theo năm là 5 năm
+/// gần nhất.
 @injectable
 class LoadRevenueReport {
   const LoadRevenueReport(this._repository);
 
   final ReportRepository _repository;
 
+  /// Số năm của chế độ xem theo năm.
+  static const years = 5;
+
   Future<RevenueReport> call(
     ReportScope scope,
     ReportRange range,
-    RevenueGranularity granularity,
-  ) async {
-    final buckets = switch (granularity) {
-      RevenueGranularity.day => await _daily(scope, range),
-      RevenueGranularity.week => await _weekly(scope, range),
-      RevenueGranularity.month => await _monthly(scope, range),
-      RevenueGranularity.year => await _yearly(scope),
+    RevenueGranularity granularity, {
+    DateTime? today,
+  }) async {
+    final now = DateOnly.of(today ?? DateTime.now());
+    final window = switch (granularity) {
+      RevenueGranularity.day || RevenueGranularity.week => range,
+      RevenueGranularity.month => ReportRange(
+          DateTime(range.to.year),
+          range.to.year == now.year ? now : DateTime(range.to.year, 12, 31),
+        ),
+      RevenueGranularity.year => ReportRange(DateTime(now.year - years + 1), now),
     };
+    final buckets = await _repository.trend(scope, window, granularity);
     return RevenueReport(granularity: granularity, buckets: buckets);
-  }
-
-  Future<List<RevenueBucket>> _daily(ReportScope scope, ReportRange range) async {
-    final rows = await _repository.revenueByDay(scope, range);
-    final byDate = {for (final row in rows) Fmt.apiDate(row.date): row};
-    return DateOnly.daysInRange(range.from, range.to).map((day) {
-      final row = byDate[Fmt.apiDate(day)];
-      return RevenueBucket(
-        start: day,
-        end: day,
-        revenue: row?.revenue ?? 0,
-        bookings: row?.bookings ?? 0,
-      );
-    }).toList();
-  }
-
-  Future<List<RevenueBucket>> _weekly(ReportScope scope, ReportRange range) async {
-    final rows = await _repository.revenueByWeek(scope, range);
-    return rows
-        .map(
-          (row) => RevenueBucket(
-            start: row.startDate ?? range.from,
-            end: row.endDate ?? range.to,
-            revenue: row.revenue,
-            bookings: row.bookings,
-            week: row.week,
-          ),
-        )
-        .toList();
-  }
-
-  Future<List<RevenueBucket>> _monthly(ReportScope scope, ReportRange range) async {
-    final year = range.to.year;
-    final rows = await _repository.revenueByMonth(scope, year);
-    final lastMonth = year == DateTime.now().year ? DateTime.now().month : 12;
-    return List.generate(lastMonth, (index) {
-      final month = index + 1;
-      final row = rows.firstWhereOrNull((r) => r.month == month);
-      return RevenueBucket(
-        start: DateTime(year, month),
-        end: DateOnly.endOfMonth(DateTime(year, month)),
-        revenue: row?.revenue ?? 0,
-        bookings: row?.bookings ?? 0,
-      );
-    });
-  }
-
-  Future<List<RevenueBucket>> _yearly(ReportScope scope) async {
-    final rows = await _repository.revenueByYear(scope);
-    return (rows..sort((a, b) => a.year.compareTo(b.year)))
-        .map(
-          (row) => RevenueBucket(
-            start: DateTime(row.year),
-            end: DateTime(row.year, 12, 31),
-            revenue: row.revenue,
-            bookings: row.bookings,
-          ),
-        )
-        .toList();
   }
 }
 

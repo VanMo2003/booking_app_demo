@@ -3,6 +3,7 @@ import 'package:booking_app_mobile/core/text/report_strings.dart';
 import 'package:booking_app_mobile/features/report/data/models/report_models.dart';
 import 'package:booking_app_mobile/features/report/domain/entities/report_entities.dart';
 import 'package:booking_app_mobile/features/report/domain/entities/report_range.dart';
+import 'package:booking_app_mobile/features/report/domain/entities/report_views.dart';
 import 'package:booking_app_mobile/features/report/domain/repositories/report_repository.dart';
 import 'package:booking_app_mobile/features/report/domain/usecases/report_usecases.dart';
 import 'package:booking_app_mobile/features/report/presentation/reports/reports_cubit.dart';
@@ -84,8 +85,16 @@ class _FakeReports implements ReportRepository {
       ];
 
   @override
-  Future<List<RevenueByDate>> revenueByDay(ReportScope scope, ReportRange range) async =>
-      [RevenueByDate(date: range.from, revenue: 3100000, bookings: 2)];
+  Future<List<RevenueBucket>> trend(ReportScope scope, ReportRange range, RevenueGranularity granularity) async => [
+        RevenueBucket(
+          start: range.from,
+          end: range.from,
+          revenue: 3100000,
+          bookings: 2,
+          tourRevenue: 900000,
+          tours: 1,
+        ),
+      ];
 
   // danh sách sửa được, như danh sách đọc từ JSON: use case sắp xếp tại chỗ
   @override
@@ -232,6 +241,8 @@ void main() {
     expect(find.text(ReportStrings.byPaymentMethod), findsOneWidget);
     expect(find.text(ReportStrings.channelFrontDesk), findsOneWidget);
     expect(find.text(ReportStrings.returningGuests), findsOneWidget);
+    // diễn biến: dòng chi tiết có cả số tour
+    expect(find.text(ReportStrings.bucketCounts('2 đơn', 1)), findsOneWidget);
     expect(find.text(ReportStrings.branchComparison), findsOneWidget);
 
     // xếp theo doanh thu: Hoàn Kiếm trước; theo lấp đầy: Đà Nẵng (60%) trước

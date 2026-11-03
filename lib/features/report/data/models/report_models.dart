@@ -1,6 +1,7 @@
 import '../../../../core/network/json_reader.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../domain/entities/report_entities.dart';
+import '../../domain/entities/report_views.dart';
 
 /// Chuyển JSON các DTO báo cáo phía BE sang entity.
 abstract final class ReportModel {
@@ -131,6 +132,16 @@ abstract final class ReportModel {
         payrollCost: json.decimal('payrollCost'),
         grossProfit: json.decimal('grossProfit'),
         profitMargin: json.decimal('profitMargin'),
+      );
+
+  static RevenueBucket trendBucket(Json json) => RevenueBucket(
+        start: json.date('start') ?? DateOnly.today(),
+        end: json.date('end') ?? DateOnly.today(),
+        revenue: json.decimal('totalRevenue'),
+        bookings: json.integer('bookings'),
+        week: json.intOrNull('week'),
+        tourRevenue: json.decimal('tourRevenue'),
+        tours: json.integer('tours'),
       );
 
   static Receivable receivable(Json json) => Receivable(
