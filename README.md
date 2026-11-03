@@ -243,6 +243,21 @@ tỷ lệ lấp đầy kèm số đêm có khách và doanh thu, và dòng liệ
 Tab **Cơ cấu** có thêm **Doanh thu theo tour** (`GET /reports/revenue-by-tour`): mỗi tour một thanh, kèm số
 đơn, số khách, số đơn do AI lên và tiền phòng gói (phòng gói tính vào doanh thu phòng khi khách trả phòng).
 
+Các báo cáo thêm sau (endpoint chi tiết ở README của BE):
+
+- Tab **Doanh thu**: tổng quan có thêm tỷ lệ đơn mua dịch vụ, dịch vụ TB mỗi đơn, số khách và chi tiêu TB mỗi
+  khách; thẻ thanh toán có **Thời điểm thu tiền** (trả trước / trong thời gian ở / sau trả phòng / chưa thu) kèm
+  số ngày thu muộn TB; mỗi mốc diễn biến ghi **lãi sau lương**. So sánh cơ sở có thêm điểm đánh giá, lương trên
+  doanh thu và cách xếp theo đánh giá.
+- Tab **Cơ cấu**: theo loại phòng có lấp đầy, ADR, RevPAR, giá niêm yết (kèm loại chưa bán được); theo tour có số
+  chuyến và tỷ lệ lấp chỗ; **Sổ thu tiền** (`/reports/collections`, khoảng ≤ 92 ngày) theo ngày thu và phương thức.
+- Tab **Khách & NV**: tỷ lệ huỷ chia theo số ngày huỷ trước nhận phòng (và ai huỷ); **Đánh giá của khách**
+  (`/reports/ratings`); **Khách đến từ đâu** (`/reports/guest-origins`); **Khách đặt vào lúc nào**
+  (`/reports/booking-hours`, bảng nhiệt thứ × giờ); **Trợ lý AI** (`/reports/ai-assistant`).
+- Màn **Tổng quan**: thẻ dự kiến có **Phòng đã được đặt** 30 ngày tới (cạnh cùng kỳ năm trước); quản lý có thẻ
+  **Hôm nay đã thu**; chủ chuỗi thấy mức đã đặt của từng cơ sở trong danh sách cơ sở
+  (`/reports/chain/outlook/branches`).
+
 ## Thông báo, push và deep link
 
 - **Trong app:** chuông ở đầu các màn quản trị/chờ duyệt (`NotificationBell`), hộp
