@@ -586,6 +586,8 @@ class ExpectedRevenue extends Equatable {
     required this.tourRevenue,
     required this.bookings,
     required this.tours,
+    this.bookedRooms = 0,
+    this.occupancyRate = 0,
   });
 
   final DateTime date;
@@ -594,10 +596,14 @@ class ExpectedRevenue extends Equatable {
   final int bookings;
   final int tours;
 
+  /// Phòng đã có người đặt cho đêm bắt đầu từ ngày này, và tỷ lệ trên tổng số phòng.
+  final int bookedRooms;
+  final double occupancyRate;
+
   double get total => bookingRevenue + tourRevenue;
 
   @override
-  List<Object?> get props => [date, bookingRevenue, tourRevenue, bookings, tours];
+  List<Object?> get props => [date, bookingRevenue, tourRevenue, bookings, tours, bookedRooms, occupancyRate];
 }
 
 /// Doanh thu sắp tới (từ hôm nay) và tiền còn phải thu. "Mở" là chờ xác nhận
@@ -620,6 +626,10 @@ class RevenueOutlook extends Equatable {
     required this.overdueBookings,
     required this.outstandingAmount,
     required this.outstandingBookings,
+    this.totalRooms = 0,
+    this.bookedRoomNights = 0,
+    this.availableRoomNights = 0,
+    this.occupancyOnTheBooks = 0,
   });
 
   final DateTime from;
@@ -647,6 +657,12 @@ class RevenueOutlook extends Equatable {
   final double outstandingAmount;
   final int outstandingBookings;
 
+  /// Lấp đầy đã đặt trước: đêm phòng đã có người đặt trên tổng đêm phòng của khoảng.
+  final int totalRooms;
+  final int bookedRoomNights;
+  final int availableRoomNights;
+  final double occupancyOnTheBooks;
+
   int get days => byDate.length;
 
   @override
@@ -667,6 +683,10 @@ class RevenueOutlook extends Equatable {
         overdueBookings,
         outstandingAmount,
         outstandingBookings,
+        totalRooms,
+        bookedRoomNights,
+        availableRoomNights,
+        occupancyOnTheBooks,
       ];
 }
 

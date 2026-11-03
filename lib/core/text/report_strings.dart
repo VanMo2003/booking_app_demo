@@ -132,6 +132,11 @@ abstract final class ReportStrings {
       '$bookings đơn quá ngày trả phòng chưa hoàn tất · $amount';
   static String outstandingPayments(int bookings, String amount) =>
       '$bookings đơn đã trả phòng chưa ghi nhận thanh toán · $amount';
+  static const onTheBooks = 'Phòng đã được đặt';
+  static String onTheBooksNote(int booked, int available) => '$booked/$available đêm phòng đã có khách đặt';
+  static String noBookedRooms(int days) => 'Chưa có phòng nào được đặt cho $days ngày tới';
+  static String busiestNight(String day, int booked, int total) => 'Đông nhất $day: $booked/$total phòng';
+  static String fullNights(int nights) => '$nights đêm đã kín phòng';
 
   // Lấp đầy
   static const occupancyRate = 'Tỷ lệ lấp đầy';

@@ -92,6 +92,10 @@ class RevenueOutlookCard extends StatelessWidget {
                 ),
             ],
           ),
+          if (outlook.totalRooms > 0) ...[
+            const Gap(AppSpacing.md),
+            _OnTheBooks(outlook: outlook),
+          ],
           if (outlook.overdueBookings > 0) ...[
             const Gap(AppSpacing.sm),
             _Alert(
@@ -115,6 +119,63 @@ class RevenueOutlookCard extends StatelessWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+/// Lấp đầy đã đặt trước cho từng đêm của khoảng dự kiến.
+class _OnTheBooks extends StatelessWidget {
+  const _OnTheBooks({required this.outlook});
+
+  final RevenueOutlook outlook;
+
+  @override
+  Widget build(BuildContext context) {
+    if (outlook.bookedRoomNights == 0) {
+      return Text(ReportStrings.noBookedRooms(outlook.days), style: AppTextStyles.caption);
+    }
+    final full = outlook.byDate.where((day) => day.bookedRooms >= outlook.totalRooms).length;
+    final busiest = outlook.byDate.reduce((a, b) => b.bookedRooms > a.bookedRooms ? b : a);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Expanded(child: Text(ReportStrings.onTheBooks, style: AppTextStyles.caption)),
+            Text(
+              Fmt.percent(outlook.occupancyOnTheBooks),
+              style: AppTextStyles.tabular.weight(FontWeight.w600),
+            ),
+          ],
+        ),
+        Text(
+          [
+            ReportStrings.onTheBooksNote(outlook.bookedRoomNights, outlook.availableRoomNights),
+            if (full > 0)
+              ReportStrings.fullNights(full)
+            else
+              ReportStrings.busiestNight(Fmt.weekdayDate(busiest.date), busiest.bookedRooms, outlook.totalRooms),
+          ].join(' · '),
+          style: AppTextStyles.caption,
+        ),
+        const Gap(AppSpacing.sm),
+        AppLineChart(
+          height: 110,
+          maxY: 100,
+          maxLabels: 6,
+          axisFormatter: (value) => '${value.round()}%',
+          valueFormatter: Fmt.percent,
+          points: [
+            for (final day in outlook.byDate)
+              ChartPoint(
+                Fmt.dayMonth(day.date),
+                day.occupancyRate,
+                tooltip:
+                    '${Fmt.weekdayDate(day.date)} · ${ReportStrings.roomsOccupied(day.bookedRooms, outlook.totalRooms)}',
+              ),
+          ],
+        ),
+      ],
     );
   }
 }

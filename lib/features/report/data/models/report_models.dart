@@ -218,6 +218,8 @@ abstract final class ReportModel {
         tourRevenue: json.decimal('tourRevenue'),
         bookings: json.integer('bookings'),
         tours: json.integer('tours'),
+        bookedRooms: json.integer('bookedRooms'),
+        occupancyRate: json.decimal('occupancyRate'),
       );
 
   static RevenueOutlook outlook(Json json) => RevenueOutlook(
@@ -237,6 +239,10 @@ abstract final class ReportModel {
         overdueBookings: json.integer('overdueBookings'),
         outstandingAmount: json.decimal('outstandingAmount'),
         outstandingBookings: json.integer('outstandingBookings'),
+        totalRooms: json.integer('totalRooms'),
+        bookedRoomNights: json.integer('bookedRoomNights'),
+        availableRoomNights: json.integer('availableRoomNights'),
+        occupancyOnTheBooks: json.decimal('occupancyOnTheBooks'),
       );
 
   static BranchPerformance branch(Json json) => BranchPerformance(

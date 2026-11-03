@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Map<String, dynamic> _outlook({int overdue = 0, int outstanding = 0}) => {
+/// [booked]: số phòng đã đặt của từng đêm đầu khoảng (các đêm sau trống).
+Map<String, dynamic> _outlook({int overdue = 0, int outstanding = 0, int rooms = 0, List<int> booked = const []}) => {
       'from': '2026-10-20',
       'to': '2026-11-18',
       'totalExpected': 2900000,
@@ -25,8 +26,14 @@ Map<String, dynamic> _outlook({int overdue = 0, int outstanding = 0}) => {
             'tourRevenue': day == 2 ? 900000 : 0,
             'bookings': day == 0 || day == 2 ? 1 : 0,
             'tours': day == 2 ? 1 : 0,
+            'bookedRooms': day < booked.length ? booked[day] : 0,
+            'occupancyRate': day < booked.length && rooms > 0 ? booked[day] * 100 / rooms : 0,
           },
       ],
+      'totalRooms': rooms,
+      'bookedRoomNights': booked.fold<int>(0, (sum, n) => sum + n),
+      'availableRoomNights': rooms * 30,
+      'occupancyOnTheBooks': rooms == 0 ? 0 : booked.fold<int>(0, (sum, n) => sum + n) * 100 / (rooms * 30),
       'overdueRevenue': overdue * 500000,
       'overdueBookings': overdue,
       'outstandingAmount': outstanding * 300000,
@@ -71,6 +78,30 @@ void main() {
     expect(find.text(ReportStrings.awaitingConfirmation('800.000 ₫', 1)), findsOneWidget);
     expect(find.textContaining('quá ngày trả phòng'), findsNothing);
     expect(find.textContaining('chưa ghi nhận thanh toán'), findsNothing);
+  });
+
+  testWidgets('phòng đã được đặt: lấp đầy cả khoảng, đêm kín phòng', (tester) async {
+    await pump(tester, _outlook(rooms: 4, booked: [4, 2]));
+
+    expect(tester.takeException(), isNull);
+    expect(find.text(ReportStrings.onTheBooks), findsOneWidget);
+    expect(find.text('5%'), findsOneWidget);
+    expect(
+      find.text('${ReportStrings.onTheBooksNote(6, 120)} · ${ReportStrings.fullNights(1)}'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('chưa kín đêm nào thì nêu đêm đông nhất; chưa ai đặt thì nói rõ', (tester) async {
+    await pump(tester, _outlook(rooms: 4, booked: [1, 3]));
+    expect(
+      find.text('${ReportStrings.onTheBooksNote(4, 120)} · ${ReportStrings.busiestNight('T4, 21/10', 3, 4)}'),
+      findsOneWidget,
+    );
+
+    await pump(tester, _outlook(rooms: 4));
+    expect(find.text(ReportStrings.noBookedRooms(30)), findsOneWidget);
+    expect(find.text(ReportStrings.onTheBooks), findsNothing);
   });
 
   testWidgets('có đơn quá hạn trả phòng và tiền chưa thu thì hiện cảnh báo', (tester) async {
