@@ -23,6 +23,7 @@ import '../../report/domain/entities/report_entities.dart';
 import '../../report/domain/usecases/report_usecases.dart';
 import '../../report/presentation/widgets/branch_outlook_line.dart';
 import '../../report/presentation/widgets/growth_text.dart';
+import '../../report/presentation/widgets/month_ratings_card.dart';
 import '../../report/presentation/widgets/revenue_outlook_card.dart';
 import '../../report/presentation/widgets/target_progress_card.dart';
 import '../domain/usecases/hotel_chain_usecases.dart';
@@ -242,6 +243,10 @@ class _OverviewBody extends StatelessWidget {
                   branches: overview.targets!.branches,
                   onEditBranch: (branch) => _editTarget(context, branch),
                 ),
+              ],
+              if (overview.monthRatings != null && overview.monthRatings!.reviews > 0) ...[
+                const Gap(AppSpacing.md),
+                MonthRatingsCard(ratings: overview.monthRatings!),
               ],
               if (overview.outlook != null) ...[
                 const Gap(AppSpacing.md),
