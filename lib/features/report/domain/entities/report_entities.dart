@@ -544,6 +544,8 @@ class TargetProgress extends Equatable {
     this.target,
     this.achievedRate,
     this.projectedRate,
+    this.lastYearRevenue,
+    this.recentMonthlyAverage,
   });
 
   final int? hotelId;
@@ -561,6 +563,10 @@ class TargetProgress extends Equatable {
   final int daysElapsed;
   final int daysInMonth;
 
+  /// Gợi ý khi đặt mục tiêu (chỉ cơ sở): cùng tháng năm trước và trung bình 3 tháng liền trước.
+  final double? lastYearRevenue;
+  final double? recentMonthlyAverage;
+
   bool get hasTarget => target != null;
 
   @override
@@ -575,6 +581,8 @@ class TargetProgress extends Equatable {
         projectedRate,
         daysElapsed,
         daysInMonth,
+        lastYearRevenue,
+        recentMonthlyAverage,
       ];
 }
 

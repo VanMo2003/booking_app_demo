@@ -103,6 +103,8 @@ class _OverviewBody extends StatelessWidget {
       branchName: branch.hotelName ?? '',
       month: branch.month,
       current: branch.target,
+      lastYearRevenue: branch.lastYearRevenue,
+      recentMonthlyAverage: branch.recentMonthlyAverage,
     );
     if (amount == null || !context.mounted) return;
     final result = await AppAction.run(

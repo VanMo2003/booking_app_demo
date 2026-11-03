@@ -251,6 +251,8 @@ Future<double?> showTargetDialog(
   required String branchName,
   required String month,
   double? current,
+  double? lastYearRevenue,
+  double? recentMonthlyAverage,
 }) {
   final controller = TextEditingController(text: ThousandsInputFormatter.format(current));
   final formKey = GlobalKey<FormState>();
@@ -271,6 +273,13 @@ Future<double?> showTargetDialog(
               label: ReportStrings.targetAmount,
               validator: Validators.money,
             ),
+            if (lastYearRevenue != null || recentMonthlyAverage != null) ...[
+              const Gap(AppSpacing.xs),
+              Text(
+                ReportStrings.targetHint(Fmt.money(lastYearRevenue), Fmt.money(recentMonthlyAverage)),
+                style: AppTextStyles.caption,
+              ),
+            ],
           ],
         ),
       ),

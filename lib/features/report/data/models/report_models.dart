@@ -206,6 +206,8 @@ abstract final class ReportModel {
         projectedRate: json.decimalOrNull('projectedRate'),
         daysElapsed: json.integer('daysElapsed'),
         daysInMonth: json.integer('daysInMonth'),
+        lastYearRevenue: json.decimalOrNull('lastYearRevenue'),
+        recentMonthlyAverage: json.decimalOrNull('recentMonthlyAverage'),
       );
 
   static ChainTargetProgress chainTarget(Json json) => ChainTargetProgress(

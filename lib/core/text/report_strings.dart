@@ -135,6 +135,8 @@ abstract final class ReportStrings {
   static const removeTarget = 'Bỏ mục tiêu';
   static const targetAmount = 'Doanh thu mục tiêu';
   static const targetSaved = 'Đã lưu mục tiêu';
+  static String targetHint(String lastYear, String recent) =>
+      'Cùng tháng năm trước: $lastYear · TB 3 tháng gần nhất: $recent';
 
   // Doanh thu dự kiến
   static String outlookTitle(int days) => 'Doanh thu dự kiến $days ngày tới';

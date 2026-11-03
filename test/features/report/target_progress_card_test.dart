@@ -87,4 +87,33 @@ void main() {
     await tester.tap(find.text(ReportStrings.setTarget));
     expect(edits, 1);
   });
+
+  testWidgets('hộp đặt mục tiêu gợi ý cùng tháng năm trước và trung bình 3 tháng', (tester) async {
+    tester.view.physicalSize = const Size(390 * 3, 800 * 3);
+    tester.view.devicePixelRatio = 3;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: TextButton(
+              onPressed: () => showTargetDialog(
+                context,
+                branchName: 'Hoàn Kiếm',
+                month: '2026-11',
+                lastYearRevenue: 30000000,
+                recentMonthlyAverage: 24500000,
+              ),
+              child: const Text('mở'),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('mở'));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text(ReportStrings.targetHint('30.000.000 ₫', '24.500.000 ₫')), findsOneWidget);
+  });
 }

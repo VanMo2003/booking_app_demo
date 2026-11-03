@@ -121,6 +121,8 @@ class _DashboardBody extends StatelessWidget {
       branchName: context.branchName ?? progress.hotelName ?? '',
       month: progress.month,
       current: progress.target,
+      lastYearRevenue: progress.lastYearRevenue,
+      recentMonthlyAverage: progress.recentMonthlyAverage,
     );
     if (amount == null || !context.mounted) return;
     final result = await AppAction.run(
