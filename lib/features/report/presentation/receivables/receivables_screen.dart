@@ -111,6 +111,8 @@ class _ReceivablesView extends StatelessWidget {
                           Fmt.money(rows.fold<double>(0, (sum, row) => sum + row.totalAmount)),
                           style: AppTextStyles.moneyLarge.colored(AppColors.danger),
                         ),
+                        const Gap(AppSpacing.sm),
+                        _Aging(rows: rows),
                         const Gap(AppSpacing.xs),
                         Text(ReportStrings.receivablesNote, style: AppTextStyles.caption),
                       ],
@@ -131,6 +133,40 @@ class _ReceivablesView extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// Tuổi nợ: số tiền chưa thu theo số ngày đã qua kể từ khi trả phòng.
+class _Aging extends StatelessWidget {
+  const _Aging({required this.rows});
+
+  final List<Receivable> rows;
+
+  @override
+  Widget build(BuildContext context) {
+    double sum(bool Function(int days) test) =>
+        rows.where((row) => test(row.daysOverdue)).fold(0, (total, row) => total + row.totalAmount);
+    final buckets = [
+      (ReportStrings.agingRecent, sum((d) => d <= 7), AppColors.inkSecondary),
+      (ReportStrings.agingMonth, sum((d) => d > 7 && d <= 30), AppColors.warning),
+      (ReportStrings.agingOld, sum((d) => d > 30), AppColors.danger),
+    ];
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (final (label, amount, color) in buckets)
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: AppTextStyles.caption),
+                const Gap(2),
+                Text(Fmt.moneyCompact(amount), style: AppTextStyles.tabular.weight(FontWeight.w600).colored(color)),
+              ],
+            ),
+          ),
+      ],
     );
   }
 }

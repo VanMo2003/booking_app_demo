@@ -63,6 +63,10 @@ void main() {
     expect(find.text('Nguyễn An'), findsOneWidget);
     expect(find.text(ReportStrings.receivableDue('12/10/2026', 16)), findsOneWidget);
     expect(find.text(ReportStrings.receivableDue('12/10/2026', 0)), findsOneWidget);
+    // tuổi nợ: 800.000 trong 7 ngày, 1.200.000 ở 8–30 ngày, chưa có khoản quá 30 ngày
+    expect(find.text(ReportStrings.agingMonth), findsOneWidget);
+    expect(find.text('800 N'), findsOneWidget);
+    expect(find.text('1,2 tr'), findsOneWidget);
   });
 
   testWidgets('không còn khoản nào: màn trống', (tester) async {

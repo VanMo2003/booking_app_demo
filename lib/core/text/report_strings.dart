@@ -247,6 +247,11 @@ abstract final class ReportStrings {
       'Đông nhất $weekday ${hour}h–${hour + 1}h · $night đơn đặt từ 22h đến 6h';
   static const noOrders = 'Chưa có đơn nào trong kỳ';
 
+  // Tuổi nợ (màn Tiền chưa thu)
+  static const agingRecent = 'Trong 7 ngày';
+  static const agingMonth = '8–30 ngày';
+  static const agingOld = 'Trên 30 ngày';
+
   // Sổ thu tiền
   static const todayCollected = 'Hôm nay đã thu';
   static const nothingCollectedToday = 'Chưa ghi nhận khoản thu nào hôm nay';
