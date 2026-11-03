@@ -200,6 +200,8 @@ class LoadBranchDashboard {
     final outlook = _optional(_reports.outlook(scope));
     final monthSummary = _optional(_reports.summary(scope, month));
     final target = _optional(_reports.targetProgress(hotelId, monthKey(DateTime.now())));
+    final today = DateOnly.today();
+    final collections = _optional(_reports.collections(scope, ReportRange(today, today)));
     return BranchDashboard(
       last5Months: [...await last5]..sort((a, b) => a.monthIndex.compareTo(b.monthIndex)),
       bookings: await bookings,
@@ -208,6 +210,7 @@ class LoadBranchDashboard {
       outlook: await outlook,
       monthSummary: await monthSummary,
       target: await target,
+      todayCollections: await collections,
     );
   }
 

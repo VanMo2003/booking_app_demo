@@ -237,6 +237,8 @@ abstract final class ReportStrings {
   static String canceledBySide(int guest, int hotel) => 'Khách huỷ $guest đơn · khách sạn huỷ $hotel đơn';
 
   // Sổ thu tiền
+  static const todayCollected = 'Hôm nay đã thu';
+  static const nothingCollectedToday = 'Chưa ghi nhận khoản thu nào hôm nay';
   static const collectionsTitle = 'Sổ thu tiền';
   static const collectionsNote =
       'Tiền đơn phòng được ghi nhận đã thu trong khoảng, theo ngày thu (doanh thu thì tính theo ngày trả phòng).';
