@@ -60,6 +60,8 @@ abstract final class ReportStrings {
   static const averageLead = 'Đặt trước TB';
   static const serviceAttach = 'Đơn mua dịch vụ';
   static const servicePerBooking = 'Dịch vụ TB mỗi đơn';
+  static const uniqueGuests = 'Số khách';
+  static const revenuePerGuest = 'Chi tiêu TB mỗi khách';
   static String nightsDecimal(String n) => '$n đêm';
   static String daysDecimal(String n) => '$n ngày';
   static String previousValue(String value) => 'Kỳ trước: $value';

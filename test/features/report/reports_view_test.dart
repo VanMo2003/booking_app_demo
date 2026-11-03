@@ -36,6 +36,8 @@ Map<String, dynamic> _period({required num total, num tours = 0}) => {
       'averageLeadDays': 5,
       'serviceAttachRate': total == 4000000 ? 50.0 : 40.0,
       'servicePerBooking': total == 4000000 ? 150000 : 100000,
+      'uniqueGuests': total == 4000000 ? 3 : 2,
+      'revenuePerGuest': total == 4000000 ? 1033333 : 1000000,
       'payrollCost': 1000000,
       'grossProfit': total - 1000000,
       'profitMargin': total == 0 ? 0 : (total - 1000000) * 100 / total,
@@ -383,6 +385,8 @@ void main() {
     expect(find.text(ReportStrings.serviceAttach), findsOneWidget);
     expect(find.text('+10 điểm'), findsOneWidget);
     expect(find.text(ReportStrings.previousValue('100.000 ₫')), findsOneWidget);
+    expect(find.text(ReportStrings.revenuePerGuest), findsOneWidget);
+    expect(find.text('1.033.333 ₫'), findsOneWidget);
     expect(find.text(ReportStrings.canceledLoss(1, 3, '650.000 ₫')), findsOneWidget);
     expect(find.text('+100%'), findsWidgets);
     expect(find.text('−20%'), findsOneWidget);

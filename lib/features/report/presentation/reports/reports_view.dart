@@ -619,6 +619,27 @@ class _SummaryCard extends StatelessWidget {
                 ),
               ],
             ),
+            const Gap(AppSpacing.md),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: _Kpi(
+                    label: ReportStrings.uniqueGuests,
+                    value: Fmt.number(current.uniqueGuests),
+                    note: ReportStrings.previousValue(Fmt.number(previous.uniqueGuests)),
+                  ),
+                ),
+                const Gap(AppSpacing.sm),
+                Expanded(
+                  child: _Kpi(
+                    label: ReportStrings.revenuePerGuest,
+                    value: Fmt.money(current.revenuePerGuest),
+                    note: ReportStrings.previousValue(Fmt.money(previous.revenuePerGuest)),
+                  ),
+                ),
+              ],
+            ),
           ],
           if (current.canceledBookings > 0) ...[
             const Gap(AppSpacing.md),

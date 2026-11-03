@@ -164,6 +164,8 @@ abstract final class ReportModel {
         averageLeadDays: json.decimal('averageLeadDays'),
         serviceAttachRate: json.decimal('serviceAttachRate'),
         servicePerBooking: json.decimal('servicePerBooking'),
+        uniqueGuests: json.integer('uniqueGuests'),
+        revenuePerGuest: json.decimal('revenuePerGuest'),
         payrollCost: json.decimal('payrollCost'),
         grossProfit: json.decimal('grossProfit'),
         profitMargin: json.decimal('profitMargin'),

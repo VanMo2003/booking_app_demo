@@ -409,6 +409,8 @@ class RevenuePeriod extends Equatable {
     this.profitMargin = 0,
     this.serviceAttachRate = 0,
     this.servicePerBooking = 0,
+    this.uniqueGuests = 0,
+    this.revenuePerGuest = 0,
   });
 
   final DateTime from;
@@ -457,6 +459,10 @@ class RevenuePeriod extends Equatable {
   final double serviceAttachRate;
   final double servicePerBooking;
 
+  /// Số khách khác nhau của các đơn hoàn tất và chi tiêu trung bình mỗi khách (phòng + dịch vụ).
+  final int uniqueGuests;
+  final double revenuePerGuest;
+
   @override
   List<Object?> get props => [
         from,
@@ -485,6 +491,8 @@ class RevenuePeriod extends Equatable {
         profitMargin,
         serviceAttachRate,
         servicePerBooking,
+        uniqueGuests,
+        revenuePerGuest,
       ];
 }
 
