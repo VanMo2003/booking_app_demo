@@ -221,6 +221,23 @@ abstract final class ReportStrings {
       '${medianDays == null ? '' : ' · thường huỷ trước $medianDays ngày'}';
   static String canceledBySide(int guest, int hotel) => 'Khách huỷ $guest đơn · khách sạn huỷ $hotel đơn';
 
+  // Đánh giá, quê quán
+  static const ratingsTitle = 'Đánh giá của khách';
+  static String ratingsNote(int reviews, String rate) =>
+      '$reviews đánh giá viết trong kỳ · $rate đơn hoàn tất có đánh giá';
+  static String previousRating(String rating) => 'Kỳ trước $rating ★';
+  static String stars(int n) => '$n sao';
+  static const lowReviews = 'Đánh giá thấp gần đây';
+  static String reviewLine(String customer, String date, String branch) =>
+      [customer, date, if (branch.isNotEmpty) branch].join(' · ');
+  static const noReviews = 'Chưa có đánh giá nào trong kỳ';
+  static String branchRating(String rating, int reviews) => '★ $rating ($reviews đánh giá)';
+  static const originsTitle = 'Khách đến từ đâu';
+  static const unknownHometown = 'Chưa khai quê quán';
+  static String originCaption(int guests, int bookings, int tours, String share) =>
+      '$guests khách · $bookings đơn${tours > 0 ? ' · $tours tour' : ''} · $share doanh thu';
+  static String otherOrigins(int places, String amount) => 'Còn $places nơi khác · $amount';
+
   // Trợ lý AI
   static const aiAssistant = 'Trợ lý AI';
   static const aiAssistantNote = 'Tin nhắn với khách trong kỳ và đơn tour trợ lý lên';

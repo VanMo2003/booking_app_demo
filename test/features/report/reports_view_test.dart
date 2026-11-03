@@ -76,6 +76,8 @@ class _FakeReports implements ReportRepository {
           'previousRevenue': 1500000,
           'revenueGrowth': 100.0,
           'revenueShare': 75.0,
+          'reviews': 12,
+          'averageRating': 4.5,
         }),
         ReportModel.branch({
           'hotelId': 7,
@@ -214,6 +216,39 @@ class _FakeReports implements ReportRepository {
       });
 
   @override
+  Future<List<GuestOrigin>> guestOrigins(ReportScope scope, ReportRange range) async => [
+        for (var i = 0; i < 10; i++)
+          ReportModel.guestOrigin({
+            'hometown': i == 9 ? null : 'Tỉnh $i',
+            'guests': 10 - i,
+            'bookings': 10 - i,
+            'tours': i == 0 ? 2 : 0,
+            'revenue': (10 - i) * 1000000,
+            'share': 10 - i,
+          }),
+      ];
+
+  @override
+  Future<RatingReport> ratings(ReportScope scope, ReportRange range) async => ReportModel.ratings({
+        'reviews': 6,
+        'averageRating': 3.8,
+        'previousAverageRating': 4.2,
+        'distribution': [0, 1, 1, 2, 2],
+        'reviewRate': 30.0,
+        'lowReviews': [
+          {
+            'feedbackId': 3,
+            'bookingId': 21,
+            'hotelName': 'Đà Nẵng Riverside',
+            'customerName': 'Nguyễn An',
+            'rating': 2,
+            'comments': 'Phòng ồn, điều hoà kém',
+            'reviewDate': '2026-10-15',
+          },
+        ],
+      });
+
+  @override
   Future<AiAssistantReport> aiAssistant(ReportScope scope, ReportRange range) async => ReportModel.aiAssistant({
         'conversations': 12,
         'aiOnlyConversations': 8,
@@ -319,6 +354,9 @@ void main() {
     // diễn biến: dòng chi tiết có cả số tour
     expect(find.text(ReportStrings.bucketCounts('2 đơn', 1)), findsOneWidget);
     expect(find.text(ReportStrings.branchComparison), findsOneWidget);
+    // cơ sở có đánh giá hiện điểm; cơ sở chưa có thì không
+    expect(find.text(ReportStrings.branchRating('4,5', 12)), findsOneWidget);
+    expect(find.textContaining('đánh giá)'), findsOneWidget);
 
     // xếp theo doanh thu: Hoàn Kiếm trước; theo lấp đầy: Đà Nẵng (60%) trước
     double top(String name) => tester.getTopLeft(find.text(name)).dy;
@@ -351,6 +389,18 @@ void main() {
     expect(find.text(ReportStrings.aiTours(5, 2, 2, 1)), findsOneWidget);
     expect(find.text(ReportStrings.aiTourRevenue('1.800.000 ₫', '40%')), findsOneWidget);
     expect(find.text(ReportStrings.waitingForStaff(2)), findsOneWidget);
+
+    // đánh giá: điểm, kỳ trước, đánh giá thấp kèm cơ sở (báo cáo chuỗi)
+    expect(find.text(ReportStrings.ratingsTitle), findsOneWidget);
+    expect(find.text('3,8 ★'), findsOneWidget);
+    expect(find.text(ReportStrings.previousRating('4,2')), findsOneWidget);
+    expect(find.text('★★☆☆☆  Phòng ồn, điều hoà kém'), findsOneWidget);
+    expect(find.text(ReportStrings.reviewLine('Nguyễn An', '15/10/2026', 'Đà Nẵng Riverside')), findsOneWidget);
+    // quê quán: 8 nơi đầu, còn lại gộp
+    expect(find.text('Tỉnh 0'), findsOneWidget);
+    expect(find.text(ReportStrings.originCaption(10, 10, 2, '10%')), findsOneWidget);
+    expect(find.text('Tỉnh 8'), findsNothing);
+    expect(find.text(ReportStrings.otherOrigins(2, '3.000.000 ₫')), findsOneWidget);
 
     // huỷ trước ngày nhận phòng bao lâu
     expect(find.text(ReportStrings.cancelLeadTime), findsOneWidget);

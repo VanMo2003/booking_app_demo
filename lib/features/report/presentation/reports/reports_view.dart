@@ -1005,6 +1005,13 @@ class _BranchRow extends StatelessWidget {
                   ),
                   style: AppTextStyles.caption,
                 ),
+                if (branch.averageRating != null) ...[
+                  const Gap(2),
+                  Text(
+                    ReportStrings.branchRating(Fmt.decimal(branch.averageRating), branch.reviews),
+                    style: AppTextStyles.caption,
+                  ),
+                ],
                 const Gap(2),
                 _Delta(value: branch.revenueGrowth),
               ],
@@ -1502,6 +1509,12 @@ class _PeopleTab extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (report.ratings != null) ...[
+                    const Gap(AppSpacing.md),
+                    _RatingsCard(ratings: report.ratings!, showBranch: cubit.scope is ChainReportScope),
+                  ],
+                  const Gap(AppSpacing.md),
+                  _OriginsCard(origins: report.origins),
                   if (report.assistant != null) ...[
                     const Gap(AppSpacing.md),
                     _AssistantCard(report: report.assistant!),
@@ -1510,6 +1523,135 @@ class _PeopleTab extends StatelessWidget {
               );
             },
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RatingsCard extends StatelessWidget {
+  const _RatingsCard({required this.ratings, required this.showBranch});
+
+  final RatingReport ratings;
+
+  /// Báo cáo chuỗi: ghi cơ sở cạnh từng đánh giá.
+  final bool showBranch;
+
+  @override
+  Widget build(BuildContext context) {
+    final average = ratings.averageRating;
+    final previous = ratings.previousAverageRating;
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SectionHeader(
+            title: ReportStrings.ratingsTitle,
+            subtitle: ReportStrings.ratingsNote(ratings.reviews, Fmt.percent(ratings.reviewRate)),
+          ),
+          const Gap(AppSpacing.md),
+          if (average == null)
+            Text(ReportStrings.noReviews, style: AppTextStyles.bodySmall)
+          else ...[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text('${Fmt.decimal(average)} ★', style: AppTextStyles.moneyLarge.colored(AppColors.warning)),
+                const Gap(AppSpacing.sm),
+                if (previous != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Text(
+                      ReportStrings.previousRating(Fmt.decimal(previous)),
+                      style: AppTextStyles.caption,
+                    ),
+                  ),
+              ],
+            ),
+            const Gap(AppSpacing.xs),
+            RankedBarList(
+              color: AppColors.warning,
+              valueFormatter: (value) => Fmt.number(value),
+              items: [
+                for (var star = 5; star >= 1; star--)
+                  if (ratings.distribution.length >= star)
+                    RankedBar(label: ReportStrings.stars(star), value: ratings.distribution[star - 1].toDouble()),
+              ],
+            ),
+            if (ratings.lowReviews.isNotEmpty) ...[
+              const Gap(AppSpacing.sm),
+              Text(ReportStrings.lowReviews, style: AppTextStyles.caption),
+              for (final review in ratings.lowReviews)
+                Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.sm),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${'★' * review.rating}${'☆' * (5 - review.rating)}  ${review.comments}',
+                        style: AppTextStyles.bodySmall,
+                      ),
+                      Text(
+                        ReportStrings.reviewLine(
+                          review.customerName,
+                          Fmt.date(review.reviewDate),
+                          showBranch ? review.hotelName : '',
+                        ),
+                        style: AppTextStyles.caption,
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _OriginsCard extends StatelessWidget {
+  const _OriginsCard({required this.origins});
+
+  static const _shown = 8;
+
+  final List<GuestOrigin> origins;
+
+  @override
+  Widget build(BuildContext context) {
+    final shown = origins.take(_shown).toList();
+    final rest = origins.skip(_shown).toList();
+    return AppCard(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SectionHeader(title: ReportStrings.originsTitle),
+          const Gap(AppSpacing.xs),
+          RankedBarList(
+            color: AppColors.accent,
+            items: [
+              for (final origin in shown)
+                RankedBar(
+                  label: origin.hometown ?? ReportStrings.unknownHometown,
+                  value: origin.revenue,
+                  caption: ReportStrings.originCaption(
+                    origin.guests,
+                    origin.bookings,
+                    origin.tours,
+                    Fmt.percent(origin.share),
+                  ),
+                ),
+            ],
+          ),
+          if (rest.isNotEmpty)
+            Text(
+              ReportStrings.otherOrigins(
+                rest.length,
+                Fmt.money(rest.fold<double>(0, (sum, origin) => sum + origin.revenue)),
+              ),
+              style: AppTextStyles.caption,
+            ),
         ],
       ),
     );

@@ -48,6 +48,12 @@ abstract interface class ReportRepository {
 
   Future<CancellationStats> cancellation(ReportScope scope, ReportRange range);
 
+  /// Khách theo quê quán: số khách, đơn, tour, doanh thu; nhiều doanh thu nhất trước.
+  Future<List<GuestOrigin>> guestOrigins(ReportScope scope, ReportRange range);
+
+  /// Đánh giá của khách viết trong kỳ.
+  Future<RatingReport> ratings(ReportScope scope, ReportRange range);
+
   /// Trợ lý AI trong kỳ: hội thoại, tin trả lời, tốc độ trả lời, đơn tour AI lên.
   Future<AiAssistantReport> aiAssistant(ReportScope scope, ReportRange range);
 

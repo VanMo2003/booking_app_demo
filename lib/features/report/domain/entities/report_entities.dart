@@ -755,12 +755,18 @@ class BranchPerformance extends Equatable {
     required this.previousRevenue,
     required this.revenueShare,
     this.revenueGrowth,
+    this.reviews = 0,
+    this.averageRating,
   });
 
   final int hotelId;
   final String hotelName;
   final RevenuePeriod current;
   final double previousRevenue;
+
+  /// Đánh giá viết trong kỳ và điểm trung bình (null khi chưa có).
+  final int reviews;
+  final double? averageRating;
 
   /// `null` khi kỳ trước cơ sở chưa có doanh thu.
   final double? revenueGrowth;
@@ -770,7 +776,7 @@ class BranchPerformance extends Equatable {
 
   @override
   List<Object?> get props =>
-      [hotelId, hotelName, current, previousRevenue, revenueGrowth, revenueShare];
+      [hotelId, hotelName, current, previousRevenue, revenueGrowth, revenueShare, reviews, averageRating];
 }
 
 /// Một phần doanh thu: theo phương thức thanh toán hoặc theo kênh bán.
@@ -956,4 +962,78 @@ class BranchOutlook extends Equatable {
         lastYearOccupancy,
         totalExpected,
       ];
+}
+
+/// Khách từ một quê quán trong kỳ; [hometown] null là khách chưa khai.
+class GuestOrigin extends Equatable {
+  const GuestOrigin({
+    this.hometown,
+    required this.guests,
+    required this.bookings,
+    required this.tours,
+    required this.revenue,
+    required this.share,
+  });
+
+  final String? hometown;
+  final int guests;
+  final int bookings;
+  final int tours;
+  final double revenue;
+  final double share;
+
+  @override
+  List<Object?> get props => [hometown, guests, bookings, tours, revenue, share];
+}
+
+/// Một đánh giá của khách.
+class GuestReview extends Equatable {
+  const GuestReview({
+    required this.feedbackId,
+    required this.bookingId,
+    required this.hotelName,
+    required this.customerName,
+    required this.rating,
+    required this.comments,
+    this.reviewDate,
+  });
+
+  final int feedbackId;
+  final int bookingId;
+  final String hotelName;
+  final String customerName;
+  final int rating;
+  final String comments;
+  final DateTime? reviewDate;
+
+  @override
+  List<Object?> get props => [feedbackId, bookingId, hotelName, customerName, rating, comments, reviewDate];
+}
+
+/// Đánh giá viết trong kỳ (theo ngày đánh giá) so với kỳ trước.
+class RatingReport extends Equatable {
+  const RatingReport({
+    required this.reviews,
+    this.averageRating,
+    this.previousAverageRating,
+    required this.distribution,
+    required this.reviewRate,
+    required this.lowReviews,
+  });
+
+  final int reviews;
+  final double? averageRating;
+  final double? previousAverageRating;
+
+  /// Số đánh giá 1, 2, 3, 4, 5 sao theo thứ tự.
+  final List<int> distribution;
+
+  /// Phần trăm đơn hoàn tất trong kỳ có đánh giá.
+  final double reviewRate;
+
+  /// Tối đa 5 đánh giá từ 3 sao trở xuống, mới nhất trước.
+  final List<GuestReview> lowReviews;
+
+  @override
+  List<Object?> get props => [reviews, averageRating, previousAverageRating, distribution, reviewRate, lowReviews];
 }

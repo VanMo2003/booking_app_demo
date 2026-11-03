@@ -277,6 +277,38 @@ abstract final class ReportModel {
         previousRevenue: json.decimal('previousRevenue'),
         revenueGrowth: json.decimalOrNull('revenueGrowth'),
         revenueShare: json.decimal('revenueShare'),
+        reviews: json.integer('reviews'),
+        averageRating: json.decimalOrNull('averageRating'),
+      );
+
+  static GuestOrigin guestOrigin(Json json) => GuestOrigin(
+        hometown: json.strOrNull('hometown'),
+        guests: json.integer('guests'),
+        bookings: json.integer('bookings'),
+        tours: json.integer('tours'),
+        revenue: json.decimal('revenue'),
+        share: json.decimal('share'),
+      );
+
+  static GuestReview review(Json json) => GuestReview(
+        feedbackId: json.integer('feedbackId'),
+        bookingId: json.integer('bookingId'),
+        hotelName: json.str('hotelName'),
+        customerName: json.str('customerName'),
+        rating: json.integer('rating'),
+        comments: json.str('comments'),
+        reviewDate: json.date('reviewDate'),
+      );
+
+  static RatingReport ratings(Json json) => RatingReport(
+        reviews: json.integer('reviews'),
+        averageRating: json.decimalOrNull('averageRating'),
+        previousAverageRating: json.decimalOrNull('previousAverageRating'),
+        distribution: [
+          for (final count in (json['distribution'] as List?) ?? const []) (count as num).toInt(),
+        ],
+        reviewRate: json.decimal('reviewRate'),
+        lowReviews: json.listOf('lowReviews', review),
       );
 
   static RevenueShare share(Json json) => RevenueShare(
