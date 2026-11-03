@@ -21,6 +21,7 @@ import '../../auth/presentation/session/session_cubit.dart';
 import '../../hotel/domain/entities/hotel.dart';
 import '../../report/domain/entities/report_entities.dart';
 import '../../report/domain/usecases/report_usecases.dart';
+import '../../report/presentation/widgets/branch_outlook_line.dart';
 import '../../report/presentation/widgets/growth_text.dart';
 import '../../report/presentation/widgets/revenue_outlook_card.dart';
 import '../../report/presentation/widgets/target_progress_card.dart';
@@ -302,6 +303,7 @@ class _OverviewBody extends StatelessWidget {
                 for (final hotel in detail.hotels) ...[
                   _BranchRow(
                     hotel: hotel,
+                    outlook: overview.branchOutlook.where((b) => b.hotelId == hotel.id).firstOrNull,
                     onOpen: () => context.rootRouter.push(WorkspaceShellRoute(hotelId: hotel.id)),
                   ),
                   const Gap(AppSpacing.xs),
@@ -341,10 +343,13 @@ class _HeaderPill extends StatelessWidget {
 }
 
 class _BranchRow extends StatelessWidget {
-  const _BranchRow({required this.hotel, required this.onOpen});
+  const _BranchRow({required this.hotel, required this.onOpen, this.outlook});
 
   final Hotel hotel;
   final VoidCallback onOpen;
+
+  /// Phòng đã đặt những ngày tới; không có (cơ sở chưa có phòng, hoặc không tải được) thì không hiện.
+  final BranchOutlook? outlook;
 
   @override
   Widget build(BuildContext context) {
@@ -372,6 +377,10 @@ class _BranchRow extends StatelessWidget {
                 ),
                 const Gap(2),
                 IconText(icon: Icons.location_on_outlined, text: hotel.address),
+                if (outlook != null && outlook!.totalRooms > 0) ...[
+                  const Gap(6),
+                  BranchOutlookLine(outlook: outlook!),
+                ],
               ],
             ),
           ),

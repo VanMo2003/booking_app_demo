@@ -895,3 +895,40 @@ class AiAssistantReport extends Equatable {
         tourRevenueShare,
       ];
 }
+
+/// Một cơ sở của chuỗi trong những ngày tới: đã kín bao nhiêu và dự kiến thu bao nhiêu.
+class BranchOutlook extends Equatable {
+  const BranchOutlook({
+    required this.hotelId,
+    required this.hotelName,
+    required this.totalRooms,
+    required this.bookedRoomNights,
+    required this.availableRoomNights,
+    required this.occupancyOnTheBooks,
+    this.lastYearOccupancy,
+    required this.totalExpected,
+  });
+
+  final int hotelId;
+  final String hotelName;
+  final int totalRooms;
+  final int bookedRoomNights;
+  final int availableRoomNights;
+  final double occupancyOnTheBooks;
+
+  /// Những đêm này năm trước; null khi năm trước chưa có đơn.
+  final double? lastYearOccupancy;
+  final double totalExpected;
+
+  @override
+  List<Object?> get props => [
+        hotelId,
+        hotelName,
+        totalRooms,
+        bookedRoomNights,
+        availableRoomNights,
+        occupancyOnTheBooks,
+        lastYearOccupancy,
+        totalExpected,
+      ];
+}

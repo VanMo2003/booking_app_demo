@@ -252,6 +252,17 @@ abstract final class ReportModel {
         lastYearOccupancy: json.decimalOrNull('lastYearOccupancy'),
       );
 
+  static BranchOutlook branchOutlook(Json json) => BranchOutlook(
+        hotelId: json.integer('hotelId'),
+        hotelName: json.str('hotelName'),
+        totalRooms: json.integer('totalRooms'),
+        bookedRoomNights: json.integer('bookedRoomNights'),
+        availableRoomNights: json.integer('availableRoomNights'),
+        occupancyOnTheBooks: json.decimal('occupancyOnTheBooks'),
+        lastYearOccupancy: json.decimalOrNull('lastYearOccupancy'),
+        totalExpected: json.decimal('totalExpected'),
+      );
+
   static BranchPerformance branch(Json json) => BranchPerformance(
         hotelId: json.integer('hotelId'),
         hotelName: json.str('hotelName'),

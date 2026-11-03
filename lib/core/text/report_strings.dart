@@ -138,6 +138,8 @@ abstract final class ReportStrings {
   static String busiestNight(String day, int booked, int total) => 'Đông nhất $day: $booked/$total phòng';
   static String fullNights(int nights) => '$nights đêm đã kín phòng';
   static String lastYearOccupancy(String rate) => 'Cùng kỳ năm trước những đêm này lấp đầy $rate';
+  static String branchOnTheBooks(int days, String rate, String? lastYear) =>
+      'Đã đặt $days ngày tới: $rate${lastYear == null ? '' : ' · năm trước $lastYear'}';
 
   // Lấp đầy
   static const occupancyRate = 'Tỷ lệ lấp đầy';

@@ -85,6 +85,7 @@ class ChainOverview extends Equatable {
     this.outlook,
     this.monthSummary,
     this.targets,
+    this.branchOutlook = const [],
   });
 
   final HotelChainDetail detail;
@@ -100,8 +101,11 @@ class ChainOverview extends Equatable {
   /// Tháng này của cả chuỗi và từng cơ sở so với mục tiêu.
   final ChainTargetProgress? targets;
 
+  /// Phòng đã đặt những ngày tới của từng cơ sở; rỗng khi không tải được.
+  final List<BranchOutlook> branchOutlook;
+
   @override
-  List<Object?> get props => [detail, last5Months, occupancy, outlook, monthSummary, targets];
+  List<Object?> get props => [detail, last5Months, occupancy, outlook, monthSummary, targets, branchOutlook];
 }
 
 @injectable
@@ -120,6 +124,7 @@ class LoadChainOverview {
     final outlook = _optional(_reports.outlook(scope));
     final monthSummary = _optional(_reports.summary(scope, month));
     final targets = _optional(_reports.chainTargetProgress(chainId, monthKey(DateTime.now())));
+    final branchOutlook = _optional(_reports.branchOutlook(scope));
     return ChainOverview(
       detail: await detail,
       last5Months: [...await last5]..sort((a, b) => a.monthIndex.compareTo(b.monthIndex)),
@@ -127,6 +132,7 @@ class LoadChainOverview {
       outlook: await outlook,
       monthSummary: await monthSummary,
       targets: await targets,
+      branchOutlook: await branchOutlook ?? const [],
     );
   }
 
