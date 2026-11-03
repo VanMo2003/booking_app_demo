@@ -1370,6 +1370,42 @@ class _PeopleTab extends StatelessWidget {
                             style: AppTextStyles.bodySmall,
                           ),
                         ],
+                        if (cancellation.canceled > 0 && cancellation.byLeadTime.isNotEmpty) ...[
+                          const Gap(AppSpacing.md),
+                          Text(ReportStrings.cancelLeadTime, style: AppTextStyles.caption),
+                          RankedBarList(
+                            color: AppColors.danger,
+                            valueFormatter: (value) => AppStrings.bookingsCount(value.round()),
+                            items: [
+                              for (final bucket in cancellation.byLeadTime)
+                                RankedBar(
+                                  label: ReportStrings.cancelLeadLabel(bucket.key),
+                                  value: bucket.count.toDouble(),
+                                  caption: ReportStrings.cancelLeadCaption(
+                                    Fmt.percent(bucket.share),
+                                    Fmt.money(bucket.revenue),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          Text(
+                            ReportStrings.lateCancellations(
+                              Fmt.percent(cancellation.lateShare),
+                              cancellation.medianLeadDays,
+                            ),
+                            style: AppTextStyles.bodySmall,
+                          ),
+                          if (cancellation.canceledByGuest + cancellation.canceledByHotel > 0) ...[
+                            const Gap(AppSpacing.xs),
+                            Text(
+                              ReportStrings.canceledBySide(
+                                cancellation.canceledByGuest,
+                                cancellation.canceledByHotel,
+                              ),
+                              style: AppTextStyles.bodySmall,
+                            ),
+                          ],
+                        ],
                       ],
                     ),
                   ),

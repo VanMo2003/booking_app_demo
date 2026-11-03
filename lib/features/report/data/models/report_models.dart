@@ -105,6 +105,12 @@ abstract final class ReportModel {
         tourCanceledByGuest: json.integer('tourCanceledByGuest'),
         tourCanceledByHotel: json.integer('tourCanceledByHotel'),
         tourRate: json.decimal('tourCancellationRate'),
+        byLeadTime: json.listOf('byLeadTime', share),
+        medianLeadDays: json.intOrNull('medianCancelLeadDays'),
+        lateCancellations: json.integer('lateCancellations'),
+        lateShare: json.decimal('lateCancellationShare'),
+        canceledByGuest: json.integer('canceledByGuest'),
+        canceledByHotel: json.integer('canceledByHotel'),
       );
 
   static AiAssistantReport aiAssistant(Json json) => AiAssistantReport(

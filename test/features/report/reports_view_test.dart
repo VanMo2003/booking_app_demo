@@ -169,8 +169,24 @@ class _FakeReports implements ReportRepository {
   Future<List<StaffPerformance>> staffPerformance(ReportScope scope, ReportRange range) async => [];
 
   @override
-  Future<CancellationStats> cancellation(ReportScope scope, ReportRange range) async =>
-      const CancellationStats(total: 0, canceled: 0, completed: 0, rate: 0);
+  Future<CancellationStats> cancellation(ReportScope scope, ReportRange range) async => ReportModel.cancellation({
+        'totalBooking': 10,
+        'canceledBooking': 4,
+        'completedBooking': 5,
+        'cancellationRate': 40.0,
+        'byLeadTime': [
+          {'key': 'SAME_DAY', 'count': 1, 'revenue': 700000, 'share': 25.0},
+          {'key': 'D1_2', 'count': 2, 'revenue': 1300000, 'share': 50.0},
+          {'key': 'D3_7', 'count': 0, 'revenue': 0, 'share': 0},
+          {'key': 'D8_30', 'count': 1, 'revenue': 450000, 'share': 25.0},
+          {'key': 'OVER_30', 'count': 0, 'revenue': 0, 'share': 0},
+        ],
+        'medianCancelLeadDays': 2,
+        'lateCancellations': 3,
+        'lateCancellationShare': 75.0,
+        'canceledByGuest': 3,
+        'canceledByHotel': 1,
+      });
 
   @override
   Future<AiAssistantReport> aiAssistant(ReportScope scope, ReportRange range) async => ReportModel.aiAssistant({
@@ -306,6 +322,13 @@ void main() {
     expect(find.text(ReportStrings.aiTours(5, 2, 2, 1)), findsOneWidget);
     expect(find.text(ReportStrings.aiTourRevenue('1.800.000 ₫', '40%')), findsOneWidget);
     expect(find.text(ReportStrings.waitingForStaff(2)), findsOneWidget);
+
+    // huỷ trước ngày nhận phòng bao lâu
+    expect(find.text(ReportStrings.cancelLeadTime), findsOneWidget);
+    expect(find.text(ReportStrings.cancelLeadLabel('D1_2')), findsOneWidget);
+    expect(find.text(ReportStrings.cancelLeadCaption('50%', '1.300.000 ₫')), findsOneWidget);
+    expect(find.text(ReportStrings.lateCancellations('75%', 2)), findsOneWidget);
+    expect(find.text(ReportStrings.canceledBySide(3, 1)), findsOneWidget);
   });
 
   testWidgets('tab Cơ cấu: thêm doanh thu theo tour', (tester) async {

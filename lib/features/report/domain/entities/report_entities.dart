@@ -289,6 +289,12 @@ class CancellationStats extends Equatable {
     this.tourCanceledByGuest = 0,
     this.tourCanceledByHotel = 0,
     this.tourRate = 0,
+    this.byLeadTime = const [],
+    this.medianLeadDays,
+    this.lateCancellations = 0,
+    this.lateShare = 0,
+    this.canceledByGuest = 0,
+    this.canceledByHotel = 0,
   });
 
   final int total;
@@ -310,6 +316,20 @@ class CancellationStats extends Equatable {
   final int tourCanceledByHotel;
   final double tourRate;
 
+  /// Đơn huỷ theo số ngày huỷ trước ngày nhận phòng: `SAME_DAY`, `D1_2`, `D3_7`, `D8_30`, `OVER_30`.
+  final List<RevenueShare> byLeadTime;
+
+  /// Trung vị số ngày huỷ trước ngày nhận phòng; null khi không có đơn huỷ.
+  final int? medianLeadDays;
+
+  /// Huỷ từ 2 ngày trước trở xuống — phần mà phí huỷ sát ngày sẽ áp vào.
+  final int lateCancellations;
+  final double lateShare;
+
+  /// Ai huỷ; đơn huỷ trước khi hệ thống ghi nhận điều này không thuộc bên nào.
+  final int canceledByGuest;
+  final int canceledByHotel;
+
   @override
   List<Object?> get props => [
         total,
@@ -324,6 +344,12 @@ class CancellationStats extends Equatable {
         tourCanceledByGuest,
         tourCanceledByHotel,
         tourRate,
+        byLeadTime,
+        medianLeadDays,
+        lateCancellations,
+        lateShare,
+        canceledByGuest,
+        canceledByHotel,
       ];
 }
 

@@ -198,6 +198,20 @@ abstract final class ReportStrings {
       'Đơn huỷ: $selfService khách tự đặt trên app, $frontDesk đặt tại quầy · giá trị $amount';
   static String tourCancellations(int orders, int canceled, String rate, int byGuest, int byHotel) =>
       'Tour: $orders đơn, huỷ $canceled ($rate) — khách huỷ $byGuest, khách sạn huỷ $byHotel';
+  static const cancelLeadTime = 'Huỷ trước ngày nhận phòng bao lâu';
+  static String cancelLeadLabel(String key) => switch (key) {
+        'SAME_DAY' => 'Trong ngày nhận phòng',
+        'D1_2' => '1–2 ngày trước',
+        'D3_7' => '3–7 ngày trước',
+        'D8_30' => '8–30 ngày trước',
+        'OVER_30' => 'Hơn 30 ngày trước',
+        _ => key,
+      };
+  static String cancelLeadCaption(String share, String amount) => '$share số đơn huỷ · $amount';
+  static String lateCancellations(String share, int? medianDays) =>
+      '$share đơn huỷ sát ngày (từ 2 ngày trước trở xuống)'
+      '${medianDays == null ? '' : ' · thường huỷ trước $medianDays ngày'}';
+  static String canceledBySide(int guest, int hotel) => 'Khách huỷ $guest đơn · khách sạn huỷ $hotel đơn';
 
   // Trợ lý AI
   static const aiAssistant = 'Trợ lý AI';
