@@ -34,6 +34,8 @@ Map<String, dynamic> _period({required num total, num tours = 0}) => {
       'canceledRevenue': 650000,
       'averageStayNights': 2.5,
       'averageLeadDays': 5,
+      'serviceAttachRate': total == 4000000 ? 50.0 : 40.0,
+      'servicePerBooking': total == 4000000 ? 150000 : 100000,
       'payrollCost': 1000000,
       'grossProfit': total - 1000000,
       'profitMargin': total == 0 ? 0 : (total - 1000000) * 100 / total,
@@ -99,7 +101,30 @@ class _FakeReports implements ReportRepository {
   // danh sách sửa được, như danh sách đọc từ JSON: use case sắp xếp tại chỗ
   @override
   Future<List<RoomTypeRevenue>> revenueByRoomType(ReportScope scope, ReportRange range) async =>
-      [const RoomTypeRevenue(name: 'Deluxe', bookedRooms: 2, roomNights: 4, revenue: 2400000)];
+      [
+        ReportModel.roomType({
+          'roomTypeName': 'Deluxe',
+          'bookedRooms': 2,
+          'roomNights': 4,
+          'totalRevenue': 2400000,
+          'rooms': 3,
+          'occupancyRate': 35.0,
+          'adr': 600000,
+          'revpar': 210000,
+          'listPrice': 750000,
+        }),
+        ReportModel.roomType({
+          'roomTypeName': 'Suite',
+          'bookedRooms': 0,
+          'roomNights': 0,
+          'totalRevenue': 0,
+          'rooms': 1,
+          'occupancyRate': 0,
+          'adr': 0,
+          'revpar': 0,
+          'listPrice': 1500000,
+        }),
+      ];
 
   @override
   Future<List<ServiceRevenue>> revenueByService(ReportScope scope, ReportRange range) async =>
@@ -280,6 +305,10 @@ void main() {
     expect(find.text('3.000.000 ₫'), findsWidgets);
     expect(find.text(ReportStrings.profitMargin('75%')), findsOneWidget);
     expect(find.text('5 ngày'), findsOneWidget);
+    // đơn mua dịch vụ: 50% so với 40% kỳ trước = +10 điểm
+    expect(find.text(ReportStrings.serviceAttach), findsOneWidget);
+    expect(find.text('+10 điểm'), findsOneWidget);
+    expect(find.text(ReportStrings.previousValue('100.000 ₫')), findsOneWidget);
     expect(find.text(ReportStrings.canceledLoss(1, 3, '650.000 ₫')), findsOneWidget);
     expect(find.text('+100%'), findsWidgets);
     expect(find.text('−20%'), findsOneWidget);
@@ -338,6 +367,16 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text(ReportStrings.byTour), findsOneWidget);
+    // loại phòng: lấp đầy, ADR, RevPAR; bán thấp hơn giá niêm yết 20%; loại chưa bán vẫn có mặt
+    expect(
+      find.text([
+        ReportStrings.roomTypeCounts(3, 2, 4),
+        ReportStrings.roomTypeKpis('35%', '600 N', '210 N'),
+        ReportStrings.belowListPrice('750 N', '20%'),
+      ].join('\n')),
+      findsOneWidget,
+    );
+    expect(find.text('Suite'), findsOneWidget);
     expect(find.text('Vịnh Hạ Long 1 ngày'), findsOneWidget);
     expect(find.textContaining('1 đơn do AI lên'), findsOneWidget);
   });

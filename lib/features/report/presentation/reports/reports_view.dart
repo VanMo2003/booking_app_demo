@@ -585,6 +585,33 @@ class _SummaryCard extends StatelessWidget {
               ),
             ],
           ),
+          if (current.completedBookings > 0) ...[
+            const Gap(AppSpacing.md),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: _Kpi(
+                    label: ReportStrings.serviceAttach,
+                    value: Fmt.percent(current.serviceAttachRate),
+                    // so theo điểm phần trăm như lấp đầy
+                    delta: previous.completedBookings == 0
+                        ? null
+                        : current.serviceAttachRate - previous.serviceAttachRate,
+                    points: true,
+                  ),
+                ),
+                const Gap(AppSpacing.sm),
+                Expanded(
+                  child: _Kpi(
+                    label: ReportStrings.servicePerBooking,
+                    value: Fmt.money(current.servicePerBooking),
+                    note: ReportStrings.previousValue(Fmt.money(previous.servicePerBooking)),
+                  ),
+                ),
+              ],
+            ),
+          ],
           if (current.canceledBookings > 0) ...[
             const Gap(AppSpacing.md),
             IconText(
@@ -1219,8 +1246,19 @@ class _BreakdownTab extends StatelessWidget {
                             RankedBar(
                               label: row.name,
                               value: row.revenue,
-                              caption:
-                                  '${ReportStrings.bookedRooms(row.bookedRooms)} · ${ReportStrings.nights(row.roomNights)}',
+                              caption: [
+                                ReportStrings.roomTypeCounts(row.rooms, row.bookedRooms, row.roomNights),
+                                ReportStrings.roomTypeKpis(
+                                  Fmt.percent(row.occupancyRate),
+                                  Fmt.moneyCompact(row.adr),
+                                  Fmt.moneyCompact(row.revpar),
+                                ),
+                                if (row.discountRate >= 5)
+                                  ReportStrings.belowListPrice(
+                                    Fmt.moneyCompact(row.listPrice),
+                                    Fmt.percent(row.discountRate),
+                                  ),
+                              ].join('\n'),
                             ),
                         ],
                       ),

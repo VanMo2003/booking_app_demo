@@ -52,6 +52,11 @@ abstract final class ReportModel {
         bookedRooms: json.integer('bookedRooms'),
         roomNights: json.integer('roomNights'),
         revenue: json.decimal('totalRevenue'),
+        rooms: json.integer('rooms'),
+        occupancyRate: json.decimal('occupancyRate'),
+        adr: json.decimal('adr'),
+        revpar: json.decimal('revpar'),
+        listPrice: json.decimal('listPrice'),
       );
 
   static ServiceRevenue service(Json json) => ServiceRevenue(
@@ -154,6 +159,8 @@ abstract final class ReportModel {
         canceledRevenue: json.decimal('canceledRevenue'),
         averageStayNights: json.decimal('averageStayNights'),
         averageLeadDays: json.decimal('averageLeadDays'),
+        serviceAttachRate: json.decimal('serviceAttachRate'),
+        servicePerBooking: json.decimal('servicePerBooking'),
         payrollCost: json.decimal('payrollCost'),
         grossProfit: json.decimal('grossProfit'),
         profitMargin: json.decimal('profitMargin'),

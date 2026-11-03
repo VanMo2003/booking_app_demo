@@ -151,6 +151,11 @@ class RoomTypeRevenue extends Equatable {
     required this.bookedRooms,
     required this.roomNights,
     required this.revenue,
+    this.rooms = 0,
+    this.occupancyRate = 0,
+    this.adr = 0,
+    this.revpar = 0,
+    this.listPrice = 0,
   });
 
   final String name;
@@ -158,8 +163,20 @@ class RoomTypeRevenue extends Equatable {
   final int roomNights;
   final double revenue;
 
+  /// Số phòng của loại này; lấp đầy theo đêm có khách đặt; ADR = thực thu mỗi đêm đã bán; RevPAR = thực thu trên
+  /// mỗi đêm phòng có thể bán; giá niêm yết trung bình của các phòng loại này.
+  final int rooms;
+  final double occupancyRate;
+  final double adr;
+  final double revpar;
+  final double listPrice;
+
+  /// Phần trăm ADR thấp hơn giá niêm yết; 0 khi chưa bán hoặc không thấp hơn.
+  double get discountRate =>
+      adr <= 0 || listPrice <= 0 || adr >= listPrice ? 0 : (listPrice - adr) * 100 / listPrice;
+
   @override
-  List<Object?> get props => [name, bookedRooms, roomNights, revenue];
+  List<Object?> get props => [name, bookedRooms, roomNights, revenue, rooms, occupancyRate, adr, revpar, listPrice];
 }
 
 class ServiceRevenue extends Equatable {
@@ -381,6 +398,8 @@ class RevenuePeriod extends Equatable {
     this.payrollCost = 0,
     this.grossProfit = 0,
     this.profitMargin = 0,
+    this.serviceAttachRate = 0,
+    this.servicePerBooking = 0,
   });
 
   final DateTime from;
@@ -425,6 +444,10 @@ class RevenuePeriod extends Equatable {
   /// Lợi nhuận trên doanh thu, phần trăm.
   final double profitMargin;
 
+  /// Phần trăm đơn hoàn tất có mua thêm dịch vụ, và tiền dịch vụ trung bình mỗi đơn hoàn tất.
+  final double serviceAttachRate;
+  final double servicePerBooking;
+
   @override
   List<Object?> get props => [
         from,
@@ -451,6 +474,8 @@ class RevenuePeriod extends Equatable {
         payrollCost,
         grossProfit,
         profitMargin,
+        serviceAttachRate,
+        servicePerBooking,
       ];
 }
 

@@ -58,6 +58,8 @@ abstract final class ReportStrings {
   static const sortProfit = 'Lợi nhuận';
   static const averageStay = 'Lưu trú TB';
   static const averageLead = 'Đặt trước TB';
+  static const serviceAttach = 'Đơn mua dịch vụ';
+  static const servicePerBooking = 'Dịch vụ TB mỗi đơn';
   static String nightsDecimal(String n) => '$n đêm';
   static String daysDecimal(String n) => '$n ngày';
   static String previousValue(String value) => 'Kỳ trước: $value';
@@ -172,7 +174,6 @@ abstract final class ReportStrings {
   // Cơ cấu
   static const byRoomType = 'Doanh thu theo loại phòng';
   static const byService = 'Doanh thu theo dịch vụ';
-  static String bookedRooms(int n) => '$n lượt phòng';
   static String nights(int n) => '$n đêm';
   static String quantity(int n) => '$n lượt';
   static const byTour = 'Doanh thu theo tour';
@@ -182,7 +183,12 @@ abstract final class ReportStrings {
   static String aiOrders(int n) => '$n đơn do AI lên';
   static String packageRooms(String amount) => 'phòng gói $amount';
   static const roomTypeNote =
-      'Tiền phòng thực thu của đơn hoàn tất (tổng đơn trừ dịch vụ), chia cho các phòng trong đơn theo giá × số đêm.';
+      'Tiền phòng thực thu của đơn hoàn tất (tổng đơn trừ dịch vụ), chia cho các phòng trong đơn theo giá × số đêm. '
+      'Lấp đầy tính mọi đơn chưa huỷ; ADR = thực thu mỗi đêm đã bán; RevPAR = thực thu trên mỗi đêm phòng có thể bán.';
+  static String roomTypeCounts(int rooms, int stays, int nights) => '$rooms phòng · $stays lượt ở · $nights đêm';
+  static String roomTypeKpis(String occupancy, String adr, String revpar) =>
+      'Lấp đầy $occupancy · ADR $adr · RevPAR $revpar';
+  static String belowListPrice(String listPrice, String discount) => 'thấp hơn giá niêm yết $listPrice $discount';
 
   // Khách & nhân viên
   static const topCustomers = 'Khách chi tiêu nhiều nhất';
