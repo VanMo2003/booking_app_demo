@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/utils/date_utils.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../domain/entities/report_entities.dart';
 import '../../domain/entities/report_range.dart';
@@ -42,10 +43,26 @@ class ReportRepositoryImpl implements ReportRepository {
       (await _remote.get(scope, 'monthly', {'year': year}))
           .parseList(ReportModel.byMonth);
 
+  /// Lấy từ `trend` (đơn phòng + tour) thay vì `monthly/last-5-months` (chỉ đơn phòng), để cột tháng này
+  /// khớp thẻ "Doanh thu tháng này" vốn đã tính tour.
   @override
-  Future<List<RevenueByMonth>> revenueLast5Months(ReportScope scope) async =>
-      (await _remote.get(scope, 'monthly/last-5-months'))
-          .parseList(ReportModel.byMonth);
+  Future<List<RevenueByMonth>> revenueLast5Months(ReportScope scope) async {
+    final today = DateOnly.today();
+    final months = await trend(
+      scope,
+      ReportRange(DateTime(today.year, today.month - 4), today),
+      RevenueGranularity.month,
+    );
+    return [
+      for (final month in months)
+        RevenueByMonth(
+          year: month.start.year,
+          month: month.start.month,
+          revenue: month.revenue,
+          bookings: month.bookings,
+        ),
+    ];
+  }
 
   @override
   Future<List<RevenueByYear>> revenueByYear(ReportScope scope) async =>

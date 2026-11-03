@@ -270,7 +270,7 @@ class _OverviewBody extends StatelessWidget {
                       ],
                     ),
                     const Gap(AppSpacing.xs),
-                    Text(ReportStrings.revenueNote, style: AppTextStyles.caption),
+                    Text(ReportStrings.trendNote, style: AppTextStyles.caption),
                   ],
                 ),
               ),

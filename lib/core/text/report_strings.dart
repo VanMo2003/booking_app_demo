@@ -25,8 +25,6 @@ abstract final class ReportStrings {
   static const totalRevenue = 'Tổng doanh thu';
   static const completedBookings = 'Đơn hoàn tất';
   static const averagePerBooking = 'Trung bình mỗi đơn';
-  static const revenueNote =
-      'Đơn phòng đã hoàn tất (gồm dịch vụ), theo ngày trả phòng.';
   static const trendTitle = 'Diễn biến doanh thu';
   static const trendNote =
       'Đơn đã hoàn tất: phòng (gồm dịch vụ) theo ngày trả phòng, tour theo ngày đi.';
