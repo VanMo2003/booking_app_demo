@@ -203,6 +203,7 @@ enum NotificationType {
   revenueTargetReached('REVENUE_TARGET_REACHED'),
   revenueTargetAtRisk('REVENUE_TARGET_AT_RISK'),
   weeklyReport('WEEKLY_REPORT'),
+  lowRatingReview('LOW_RATING_REVIEW'),
   other('');
 
   const NotificationType(this.value);
