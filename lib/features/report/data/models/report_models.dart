@@ -243,6 +243,7 @@ abstract final class ReportModel {
         bookedRoomNights: json.integer('bookedRoomNights'),
         availableRoomNights: json.integer('availableRoomNights'),
         occupancyOnTheBooks: json.decimal('occupancyOnTheBooks'),
+        lastYearOccupancy: json.decimalOrNull('lastYearOccupancy'),
       );
 
   static BranchPerformance branch(Json json) => BranchPerformance(

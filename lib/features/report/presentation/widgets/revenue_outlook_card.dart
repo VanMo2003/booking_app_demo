@@ -131,8 +131,18 @@ class _OnTheBooks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final lastYear = outlook.lastYearOccupancy;
+    final lastYearLine = lastYear == null
+        ? null
+        : Text(ReportStrings.lastYearOccupancy(Fmt.percent(lastYear)), style: AppTextStyles.caption);
     if (outlook.bookedRoomNights == 0) {
-      return Text(ReportStrings.noBookedRooms(outlook.days), style: AppTextStyles.caption);
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(ReportStrings.noBookedRooms(outlook.days), style: AppTextStyles.caption),
+          if (lastYearLine != null) lastYearLine,
+        ],
+      );
     }
     final full = outlook.byDate.where((day) => day.bookedRooms >= outlook.totalRooms).length;
     final busiest = outlook.byDate.reduce((a, b) => b.bookedRooms > a.bookedRooms ? b : a);
@@ -158,6 +168,7 @@ class _OnTheBooks extends StatelessWidget {
           ].join(' · '),
           style: AppTextStyles.caption,
         ),
+        if (lastYearLine != null) lastYearLine,
         const Gap(AppSpacing.sm),
         AppLineChart(
           height: 110,

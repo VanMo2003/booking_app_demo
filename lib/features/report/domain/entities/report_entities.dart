@@ -630,6 +630,7 @@ class RevenueOutlook extends Equatable {
     this.bookedRoomNights = 0,
     this.availableRoomNights = 0,
     this.occupancyOnTheBooks = 0,
+    this.lastYearOccupancy,
   });
 
   final DateTime from;
@@ -663,6 +664,9 @@ class RevenueOutlook extends Equatable {
   final int availableRoomNights;
   final double occupancyOnTheBooks;
 
+  /// Những đêm này năm trước rốt cuộc lấp đầy bao nhiêu; null khi năm trước chưa có đơn nào.
+  final double? lastYearOccupancy;
+
   int get days => byDate.length;
 
   @override
@@ -687,6 +691,7 @@ class RevenueOutlook extends Equatable {
         bookedRoomNights,
         availableRoomNights,
         occupancyOnTheBooks,
+        lastYearOccupancy,
       ];
 }
 
