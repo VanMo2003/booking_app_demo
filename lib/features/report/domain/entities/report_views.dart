@@ -114,14 +114,16 @@ class PeopleReport extends Equatable {
     required this.topCustomers,
     required this.staff,
     required this.cancellation,
+    this.assistant,
   });
 
   final List<TopCustomer> topCustomers;
   final List<StaffPerformance> staff;
   final CancellationStats cancellation;
+  final AiAssistantReport? assistant;
 
   @override
-  List<Object?> get props => [topCustomers, staff, cancellation];
+  List<Object?> get props => [topCustomers, staff, cancellation, assistant];
 }
 
 class ReportFile {

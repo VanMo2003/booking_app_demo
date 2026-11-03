@@ -770,3 +770,77 @@ class RevenueSummary extends Equatable {
         byCustomerType,
       ];
 }
+
+/// Trợ lý AI trong kỳ: hội thoại nó tự trả lời so với hội thoại nhân viên vào cuộc, tốc độ trả lời của mỗi bên
+/// và các đơn tour nó lên.
+class AiAssistantReport extends Equatable {
+  const AiAssistantReport({
+    required this.conversations,
+    required this.aiOnlyConversations,
+    required this.staffConversations,
+    required this.guestMessages,
+    required this.aiReplies,
+    required this.staffReplies,
+    required this.aiReplyShare,
+    this.aiMedianReplySeconds,
+    this.staffMedianReplySeconds,
+    required this.waitingForStaff,
+    required this.tourOrders,
+    required this.tourOrdersOpen,
+    required this.tourOrdersCompleted,
+    required this.tourOrdersCanceled,
+    required this.tourRevenue,
+    required this.tourRevenueShare,
+  });
+
+  /// Hội thoại có tin nhắn trong kỳ; trong đó số AI tự trả lời trọn và số có nhân viên viết.
+  final int conversations;
+  final int aiOnlyConversations;
+  final int staffConversations;
+
+  final int guestMessages;
+  final int aiReplies;
+  final int staffReplies;
+
+  /// Phần trăm tin trả lời phía khách sạn do AI viết.
+  final double aiReplyShare;
+
+  /// Trung vị thời gian từ tin khách đầu tiên chưa được trả lời tới tin trả lời; null khi bên đó chưa trả lời.
+  final int? aiMedianReplySeconds;
+  final int? staffMedianReplySeconds;
+
+  /// Hội thoại AI đã chuyển cho nhân viên mà chưa ai trả lời (tính tới lúc này, không theo kỳ).
+  final int waitingForStaff;
+
+  /// Đơn tour AI lên trong kỳ, theo trạng thái hiện tại.
+  final int tourOrders;
+  final int tourOrdersOpen;
+  final int tourOrdersCompleted;
+  final int tourOrdersCanceled;
+
+  /// Doanh thu tour hoàn tất do AI bán (theo ngày đi) và tỷ trọng trong doanh thu tour của kỳ.
+  final double tourRevenue;
+  final double tourRevenueShare;
+
+  bool get isEmpty => conversations == 0 && tourOrders == 0 && waitingForStaff == 0;
+
+  @override
+  List<Object?> get props => [
+        conversations,
+        aiOnlyConversations,
+        staffConversations,
+        guestMessages,
+        aiReplies,
+        staffReplies,
+        aiReplyShare,
+        aiMedianReplySeconds,
+        staffMedianReplySeconds,
+        waitingForStaff,
+        tourOrders,
+        tourOrdersOpen,
+        tourOrdersCompleted,
+        tourOrdersCanceled,
+        tourRevenue,
+        tourRevenueShare,
+      ];
+}

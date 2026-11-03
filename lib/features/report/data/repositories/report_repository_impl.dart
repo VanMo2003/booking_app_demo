@@ -128,6 +128,10 @@ class ReportRepositoryImpl implements ReportRepository {
           .parse(ReportModel.cancellation);
 
   @override
+  Future<AiAssistantReport> aiAssistant(ReportScope scope, ReportRange range) async =>
+      (await _remote.get(scope, 'ai-assistant', _inclusive(range))).parse(ReportModel.aiAssistant);
+
+  @override
   Future<List<BranchPerformance>> branchPerformance(
     ChainReportScope scope,
     ReportRange range,

@@ -139,10 +139,12 @@ class LoadPeopleReport {
     final customers = _repository.topCustomers(scope, range);
     final staff = _repository.staffPerformance(scope, range);
     final cancellation = _repository.cancellation(scope, range);
+    final assistant = _repository.aiAssistant(scope, range);
     return PeopleReport(
       topCustomers: await customers,
       staff: (await staff)..sort((a, b) => b.earned.compareTo(a.earned)),
       cancellation: await cancellation,
+      assistant: await assistant,
     );
   }
 }

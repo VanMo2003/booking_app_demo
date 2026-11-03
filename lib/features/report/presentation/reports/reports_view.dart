@@ -1428,10 +1428,95 @@ class _PeopleTab extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (report.assistant != null) ...[
+                    const Gap(AppSpacing.md),
+                    _AssistantCard(report: report.assistant!),
+                  ],
                 ],
               );
             },
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AssistantCard extends StatelessWidget {
+  const _AssistantCard({required this.report});
+
+  final AiAssistantReport report;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SectionHeader(title: ReportStrings.aiAssistant, subtitle: ReportStrings.aiAssistantNote),
+          const Gap(AppSpacing.md),
+          if (report.isEmpty)
+            Text(ReportStrings.aiEmpty, style: AppTextStyles.bodySmall)
+          else ...[
+            Row(
+              children: [
+                PercentRing(percent: report.aiReplyShare, size: 104, caption: ReportStrings.aiReplyRing),
+                const Gap(AppSpacing.lg),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _MiniStat(label: ReportStrings.aiConversations, value: Fmt.number(report.conversations)),
+                      const Gap(AppSpacing.sm),
+                      _MiniStat(
+                        label: ReportStrings.aiOnlyConversations,
+                        value: Fmt.number(report.aiOnlyConversations),
+                      ),
+                      const Gap(AppSpacing.sm),
+                      _MiniStat(
+                        label: ReportStrings.staffConversations,
+                        value: Fmt.number(report.staffConversations),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const Gap(AppSpacing.md),
+            Text(
+              ReportStrings.aiReplies(report.guestMessages, report.aiReplies, report.staffReplies),
+              style: AppTextStyles.bodySmall,
+            ),
+            const Gap(AppSpacing.xs),
+            Text(
+              ReportStrings.replyTimes(report.aiMedianReplySeconds, report.staffMedianReplySeconds),
+              style: AppTextStyles.bodySmall,
+            ),
+            if (report.tourOrders > 0 || report.tourRevenue > 0) ...[
+              const Gap(AppSpacing.xs),
+              Text(
+                ReportStrings.aiTours(
+                  report.tourOrders,
+                  report.tourOrdersCompleted,
+                  report.tourOrdersOpen,
+                  report.tourOrdersCanceled,
+                ),
+                style: AppTextStyles.bodySmall,
+              ),
+              const Gap(AppSpacing.xs),
+              Text(
+                ReportStrings.aiTourRevenue(Fmt.money(report.tourRevenue), Fmt.percent(report.tourRevenueShare)),
+                style: AppTextStyles.bodySmall,
+              ),
+            ],
+            if (report.waitingForStaff > 0) ...[
+              const Gap(AppSpacing.sm),
+              Text(
+                ReportStrings.waitingForStaff(report.waitingForStaff),
+                style: AppTextStyles.bodySmall.copyWith(color: AppColors.warning, fontWeight: FontWeight.w600),
+              ),
+            ],
+          ],
         ],
       ),
     );

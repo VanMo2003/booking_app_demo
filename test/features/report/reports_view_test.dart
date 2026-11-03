@@ -163,6 +163,36 @@ class _FakeReports implements ReportRepository {
       ];
 
   @override
+  Future<List<TopCustomer>> topCustomers(ReportScope scope, ReportRange range, {int limit = 10}) async => [];
+
+  @override
+  Future<List<StaffPerformance>> staffPerformance(ReportScope scope, ReportRange range) async => [];
+
+  @override
+  Future<CancellationStats> cancellation(ReportScope scope, ReportRange range) async =>
+      const CancellationStats(total: 0, canceled: 0, completed: 0, rate: 0);
+
+  @override
+  Future<AiAssistantReport> aiAssistant(ReportScope scope, ReportRange range) async => ReportModel.aiAssistant({
+        'conversations': 12,
+        'aiOnlyConversations': 8,
+        'staffConversations': 4,
+        'guestMessages': 40,
+        'aiReplies': 30,
+        'staffReplies': 10,
+        'aiReplyShare': 75.0,
+        'aiMedianReplySeconds': 6,
+        'staffMedianReplySeconds': 750,
+        'waitingForStaff': 2,
+        'aiTourOrders': 5,
+        'aiTourOrdersOpen': 2,
+        'aiTourOrdersCompleted': 2,
+        'aiTourOrdersCanceled': 1,
+        'aiTourRevenue': 1800000,
+        'aiTourRevenueShare': 40.0,
+      });
+
+  @override
   dynamic noSuchMethod(Invocation invocation) => throw UnimplementedError('${invocation.memberName}');
 }
 
@@ -257,6 +287,25 @@ void main() {
     await tester.pumpAndSettle();
     expect(top('Đà Nẵng Riverside'), lessThan(top('Khách Sạn Hoàn Kiếm Palace')));
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('tab Khách & NV: thẻ trợ lý AI', (tester) async {
+    await pumpChainReports(tester);
+    // thanh tab cuộn ngang trên điện thoại
+    await tester.ensureVisible(find.text(ReportStrings.tabPeople));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(ReportStrings.tabPeople));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text(ReportStrings.aiAssistant), findsOneWidget);
+    expect(find.text('75%'), findsOneWidget);
+    expect(find.text(ReportStrings.aiReplies(40, 30, 10)), findsOneWidget);
+    expect(find.text(ReportStrings.replyTimes(6, 750)), findsOneWidget);
+    expect(find.textContaining('AI 6 giây · nhân viên 13 phút'), findsOneWidget);
+    expect(find.text(ReportStrings.aiTours(5, 2, 2, 1)), findsOneWidget);
+    expect(find.text(ReportStrings.aiTourRevenue('1.800.000 ₫', '40%')), findsOneWidget);
+    expect(find.text(ReportStrings.waitingForStaff(2)), findsOneWidget);
   });
 
   testWidgets('tab Cơ cấu: thêm doanh thu theo tour', (tester) async {

@@ -107,6 +107,25 @@ abstract final class ReportModel {
         tourRate: json.decimal('tourCancellationRate'),
       );
 
+  static AiAssistantReport aiAssistant(Json json) => AiAssistantReport(
+        conversations: json.integer('conversations'),
+        aiOnlyConversations: json.integer('aiOnlyConversations'),
+        staffConversations: json.integer('staffConversations'),
+        guestMessages: json.integer('guestMessages'),
+        aiReplies: json.integer('aiReplies'),
+        staffReplies: json.integer('staffReplies'),
+        aiReplyShare: json.decimal('aiReplyShare'),
+        aiMedianReplySeconds: json.intOrNull('aiMedianReplySeconds'),
+        staffMedianReplySeconds: json.intOrNull('staffMedianReplySeconds'),
+        waitingForStaff: json.integer('waitingForStaff'),
+        tourOrders: json.integer('aiTourOrders'),
+        tourOrdersOpen: json.integer('aiTourOrdersOpen'),
+        tourOrdersCompleted: json.integer('aiTourOrdersCompleted'),
+        tourOrdersCanceled: json.integer('aiTourOrdersCanceled'),
+        tourRevenue: json.decimal('aiTourRevenue'),
+        tourRevenueShare: json.decimal('aiTourRevenueShare'),
+      );
+
   static RevenuePeriod period(Json json) => RevenuePeriod(
         from: json.date('from') ?? DateOnly.today(),
         to: json.date('to') ?? DateOnly.today(),

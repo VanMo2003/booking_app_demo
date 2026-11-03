@@ -1,3 +1,4 @@
+import 'package:booking_app_mobile/core/text/report_strings.dart';
 import 'package:booking_app_mobile/features/report/data/models/report_models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -142,5 +143,40 @@ void main() {
     expect(outlook.awaitingConfirmationBookings, 1);
     expect(outlook.overdueBookings, 1);
     expect(outlook.outstandingAmount, 300000);
+  });
+
+  test('đọc báo cáo trợ lý AI: bên chưa trả lời thì không có thời gian', () {
+    final report = ReportModel.aiAssistant({
+      'conversations': 3,
+      'aiOnlyConversations': 3,
+      'staffConversations': 0,
+      'guestMessages': 5,
+      'aiReplies': 4,
+      'staffReplies': 0,
+      'aiReplyShare': 100.0,
+      'aiMedianReplySeconds': 7,
+      'staffMedianReplySeconds': null,
+      'waitingForStaff': 0,
+      'aiTourOrders': 1,
+      'aiTourOrdersOpen': 1,
+      'aiTourOrdersCompleted': 0,
+      'aiTourOrdersCanceled': 0,
+      'aiTourRevenue': 0,
+      'aiTourRevenueShare': 0,
+    });
+
+    expect(report.aiMedianReplySeconds, 7);
+    expect(report.staffMedianReplySeconds, isNull);
+    expect(report.tourOrders, 1);
+    expect(report.isEmpty, isFalse);
+    expect(ReportStrings.replyTimes(7, null), endsWith('AI 7 giây · nhân viên —'));
+  });
+
+  test('thời gian trả lời: giây, phút, giờ, ngày', () {
+    expect(ReportStrings.replyDuration(45), '45 giây');
+    expect(ReportStrings.replyDuration(750), '13 phút');
+    expect(ReportStrings.replyDuration(3600), '1 giờ');
+    expect(ReportStrings.replyDuration(7500), '2 giờ 5 phút');
+    expect(ReportStrings.replyDuration(3 * 86400 + 100), '3 ngày');
   });
 }

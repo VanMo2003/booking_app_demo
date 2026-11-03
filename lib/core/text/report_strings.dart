@@ -193,6 +193,36 @@ abstract final class ReportStrings {
   static String tourCancellations(int orders, int canceled, String rate, int byGuest, int byHotel) =>
       'Tour: $orders đơn, huỷ $canceled ($rate) — khách huỷ $byGuest, khách sạn huỷ $byHotel';
 
+  // Trợ lý AI
+  static const aiAssistant = 'Trợ lý AI';
+  static const aiAssistantNote = 'Tin nhắn với khách trong kỳ và đơn tour trợ lý lên';
+  static const aiReplyRing = 'tin do AI trả lời';
+  static const aiConversations = 'Hội thoại';
+  static const aiOnlyConversations = 'AI tự xử lý trọn';
+  static const staffConversations = 'Có nhân viên vào cuộc';
+  static const aiEmpty = 'Chưa có hội thoại hay đơn tour nào qua trợ lý trong kỳ';
+  static String aiReplies(int guest, int ai, int staff) =>
+      '$guest tin của khách · AI trả lời $ai tin, nhân viên $staff tin';
+  static String replyTimes(int? ai, int? staff) =>
+      'Thường trả lời sau (trung vị): AI ${replyDuration(ai)} · nhân viên ${replyDuration(staff)}';
+  static String waitingForStaff(int count) => '$count hội thoại AI đã chuyển đang chờ nhân viên trả lời';
+  static String aiTours(int orders, int completed, int open, int canceled) =>
+      'Đơn tour AI lên: $orders — $completed hoàn tất, $open đang mở, $canceled huỷ';
+  static String aiTourRevenue(String amount, String share) => 'Doanh thu tour AI bán: $amount ($share doanh thu tour)';
+
+  /// 40 giây · 12 phút · 2 giờ 5 phút · 3 ngày; "—" khi chưa có.
+  static String replyDuration(int? seconds) {
+    if (seconds == null) return '—';
+    if (seconds < 60) return '$seconds giây';
+    if (seconds < 3600) return '${(seconds / 60).round()} phút';
+    if (seconds < 86400) {
+      final hours = seconds ~/ 3600;
+      final minutes = (seconds % 3600) ~/ 60;
+      return minutes == 0 ? '$hours giờ' : '$hours giờ $minutes phút';
+    }
+    return '${(seconds / 86400).round()} ngày';
+  }
+
   // Xuất file
   static const exporting = 'Đang tạo file Excel…';
   static String exported(String fileName) => 'Đã lưu $fileName';

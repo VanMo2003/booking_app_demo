@@ -48,6 +48,9 @@ abstract interface class ReportRepository {
 
   Future<CancellationStats> cancellation(ReportScope scope, ReportRange range);
 
+  /// Trợ lý AI trong kỳ: hội thoại, tin trả lời, tốc độ trả lời, đơn tour AI lên.
+  Future<AiAssistantReport> aiAssistant(ReportScope scope, ReportRange range);
+
   /// Từng cơ sở của chuỗi trong khoảng đã chọn, nhiều doanh thu nhất trước.
   Future<List<BranchPerformance>> branchPerformance(
     ChainReportScope scope,
