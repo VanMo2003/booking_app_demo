@@ -151,7 +151,8 @@ abstract final class ReportStrings {
   static String weekdayHighlights(String busiest, String occupancy, String richest, String revenue) =>
       'Đông khách nhất: $busiest ($occupancy) · doanh thu cao nhất: $richest ($revenue/ngày)';
   static const byRoom = 'Theo từng phòng';
-  static const byRoomNote = 'Tỷ lệ đêm có khách; doanh thu = giá phòng × số đêm của lượt ở đã hoàn tất.';
+  static const byRoomNote =
+      'Tỷ lệ đêm có khách; doanh thu = tiền phòng thực thu của lượt ở đã hoàn tất.';
   static String roomLabel(String number, String type) => type.isEmpty ? 'Phòng $number' : 'Phòng $number · $type';
   static String roomCaption(int nights, String revenue) => '$nights đêm có khách · $revenue';
   static String idleRooms(String numbers) => 'Chưa có khách trong kỳ: $numbers';
@@ -173,7 +174,7 @@ abstract final class ReportStrings {
   static String aiOrders(int n) => '$n đơn do AI lên';
   static String packageRooms(String amount) => 'phòng gói $amount';
   static const roomTypeNote =
-      'Doanh thu phòng tính bằng giá phòng hiện tại × số đêm.';
+      'Tiền phòng thực thu của đơn hoàn tất (tổng đơn trừ dịch vụ), chia cho các phòng trong đơn theo giá × số đêm.';
 
   // Khách & nhân viên
   static const topCustomers = 'Khách chi tiêu nhiều nhất';
