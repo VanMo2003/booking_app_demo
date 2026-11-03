@@ -1332,6 +1332,8 @@ class _BreakdownTab extends StatelessWidget {
                   ),
                 ),
                 const Gap(AppSpacing.md),
+                _CollectionsCard(collections: report.collections),
+                const Gap(AppSpacing.md),
                 AppCard(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1560,6 +1562,80 @@ class _PeopleTab extends StatelessWidget {
               );
             },
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CollectionsCard extends StatelessWidget {
+  const _CollectionsCard({required this.collections});
+
+  final Collections? collections;
+
+  @override
+  Widget build(BuildContext context) {
+    final ledger = collections;
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const SectionHeader(title: ReportStrings.collectionsTitle, subtitle: ReportStrings.collectionsNote),
+          const Gap(AppSpacing.sm),
+          if (ledger == null)
+            Text(ReportStrings.collectionsTooLong, style: AppTextStyles.bodySmall)
+          else ...[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerLeft,
+                    child: Text(Fmt.money(ledger.total), style: AppTextStyles.moneyLarge.colored(AppColors.success)),
+                  ),
+                ),
+                const Gap(AppSpacing.sm),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Text(ReportStrings.collectionsTotal(ledger.payments), style: AppTextStyles.caption),
+                ),
+              ],
+            ),
+            const Gap(AppSpacing.xs),
+            RankedBarList(
+              color: AppColors.success,
+              items: [
+                for (final share in ledger.byMethod)
+                  if (share.count > 0)
+                    RankedBar(
+                      label: PaymentMethod.parse(share.key).label,
+                      value: share.revenue,
+                      caption: ReportStrings.shareCaption(share.count, Fmt.percent(share.share)),
+                    ),
+              ],
+            ),
+            if (ledger.total > 0) ...[
+              const Gap(AppSpacing.sm),
+              AppBarChart(
+                height: 140,
+                maxLabels: 6,
+                color: AppColors.success,
+                points: [
+                  for (final day in ledger.byDate)
+                    ChartPoint(
+                      Fmt.dayMonth(day.date),
+                      day.total,
+                      tooltip: '${Fmt.weekdayDate(day.date)} · ${ReportStrings.collectionDay(
+                        Fmt.moneyCompact(day.cash),
+                        Fmt.moneyCompact(day.bankTransfer),
+                        Fmt.moneyCompact(day.vnPay),
+                      )}',
+                    ),
+                ],
+              ),
+            ],
+          ],
         ],
       ),
     );

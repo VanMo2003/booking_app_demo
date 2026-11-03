@@ -108,14 +108,18 @@ class BreakdownReport extends Equatable {
     required this.roomTypes,
     required this.services,
     required this.tours,
+    this.collections,
   });
 
   final List<RoomTypeRevenue> roomTypes;
   final List<ServiceRevenue> services;
   final List<TourRevenue> tours;
 
+  /// Sổ thu tiền; `null` khi khoảng dài hơn 92 ngày.
+  final Collections? collections;
+
   @override
-  List<Object?> get props => [roomTypes, services, tours];
+  List<Object?> get props => [roomTypes, services, tours, collections];
 }
 
 class PeopleReport extends Equatable {

@@ -235,6 +235,15 @@ abstract final class ReportStrings {
       '${medianDays == null ? '' : ' · thường huỷ trước $medianDays ngày'}';
   static String canceledBySide(int guest, int hotel) => 'Khách huỷ $guest đơn · khách sạn huỷ $hotel đơn';
 
+  // Sổ thu tiền
+  static const collectionsTitle = 'Sổ thu tiền';
+  static const collectionsNote =
+      'Tiền đơn phòng được ghi nhận đã thu trong khoảng, theo ngày thu (doanh thu thì tính theo ngày trả phòng).';
+  static String collectionsTotal(int payments) => '$payments khoản thu';
+  static const collectionsTooLong = 'Chọn khoảng tối đa 92 ngày để xem sổ thu tiền theo ngày.';
+  static String collectionDay(String cash, String transfer, String vnPay) =>
+      'Tiền mặt $cash · Chuyển khoản $transfer · VNPay $vnPay';
+
   // Đánh giá, quê quán
   static const ratingsTitle = 'Đánh giá của khách';
   static String ratingsNote(int reviews, String rate) =>

@@ -286,6 +286,22 @@ abstract final class ReportModel {
         averageRating: json.decimalOrNull('averageRating'),
       );
 
+  static CollectionDay collectionDay(Json json) => CollectionDay(
+        date: json.date('date') ?? DateOnly.today(),
+        cash: json.decimal('cash'),
+        bankTransfer: json.decimal('bankTransfer'),
+        vnPay: json.decimal('vnPay'),
+        total: json.decimal('total'),
+        payments: json.integer('payments'),
+      );
+
+  static Collections collections(Json json) => Collections(
+        total: json.decimal('total'),
+        payments: json.integer('payments'),
+        byMethod: json.listOf('byMethod', share),
+        byDate: json.listOf('byDate', collectionDay),
+      );
+
   static GuestOrigin guestOrigin(Json json) => GuestOrigin(
         hometown: json.strOrNull('hometown'),
         guests: json.integer('guests'),

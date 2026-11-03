@@ -1056,3 +1056,43 @@ class RatingReport extends Equatable {
   @override
   List<Object?> get props => [reviews, averageRating, previousAverageRating, distribution, reviewRate, lowReviews];
 }
+
+/// Tiền ghi nhận đã thu trong một ngày, theo phương thức.
+class CollectionDay extends Equatable {
+  const CollectionDay({
+    required this.date,
+    required this.cash,
+    required this.bankTransfer,
+    required this.vnPay,
+    required this.total,
+    required this.payments,
+  });
+
+  final DateTime date;
+  final double cash;
+  final double bankTransfer;
+  final double vnPay;
+  final double total;
+  final int payments;
+
+  @override
+  List<Object?> get props => [date, cash, bankTransfer, vnPay, total, payments];
+}
+
+/// Sổ thu tiền: đơn được ghi nhận thanh toán trong khoảng, theo ngày ghi nhận (không theo ngày trả phòng).
+class Collections extends Equatable {
+  const Collections({
+    required this.total,
+    required this.payments,
+    required this.byMethod,
+    required this.byDate,
+  });
+
+  final double total;
+  final int payments;
+  final List<RevenueShare> byMethod;
+  final List<CollectionDay> byDate;
+
+  @override
+  List<Object?> get props => [total, payments, byMethod, byDate];
+}

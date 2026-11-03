@@ -229,6 +229,21 @@ class _FakeReports implements ReportRepository {
       });
 
   @override
+  Future<Collections> collections(ReportScope scope, ReportRange range) async => ReportModel.collections({
+        'total': 3000000,
+        'payments': 2,
+        'byMethod': [
+          {'key': 'CASH', 'count': 1, 'revenue': 1000000, 'share': 33.33},
+          {'key': 'BANK_TRANSFER', 'count': 0, 'revenue': 0, 'share': 0},
+          {'key': 'VN_PAY', 'count': 1, 'revenue': 2000000, 'share': 66.67},
+        ],
+        'byDate': [
+          {'date': '2026-10-01', 'cash': 1000000, 'bankTransfer': 0, 'vnPay': 2000000, 'total': 3000000, 'payments': 2},
+          {'date': '2026-10-02', 'cash': 0, 'bankTransfer': 0, 'vnPay': 0, 'total': 0, 'payments': 0},
+        ],
+      });
+
+  @override
   Future<List<GuestOrigin>> guestOrigins(ReportScope scope, ReportRange range) async => [
         for (var i = 0; i < 10; i++)
           ReportModel.guestOrigin({
@@ -438,6 +453,10 @@ void main() {
 
     expect(tester.takeException(), isNull);
     expect(find.text(ReportStrings.byTour), findsOneWidget);
+    // sổ thu tiền: tổng, chỉ phương thức có thu
+    expect(find.text(ReportStrings.collectionsTitle), findsOneWidget);
+    expect(find.text(ReportStrings.collectionsTotal(2)), findsOneWidget);
+    expect(find.text(ReportStrings.shareCaption(1, '66,7%')), findsOneWidget);
     // loại phòng: lấp đầy, ADR, RevPAR; bán thấp hơn giá niêm yết 20%; loại chưa bán vẫn có mặt
     expect(
       find.text([
