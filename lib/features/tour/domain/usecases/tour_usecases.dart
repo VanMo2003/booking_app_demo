@@ -1,3 +1,5 @@
+import '../../../../core/network/paged.dart';
+import '../entities/travel_theme.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/network/upload_file.dart';
@@ -54,4 +56,32 @@ class DeleteTour {
   final TourRepository _repository;
 
   Future<void> call(int id) => _repository.delete(id);
+}
+
+@injectable
+class GetTour {
+  const GetTour(this._repository);
+
+  final TourRepository _repository;
+
+  Future<Tour> call(int id) => _repository.byId(id);
+}
+
+@injectable
+class SearchTours {
+  const SearchTours(this._repository);
+
+  final TourRepository _repository;
+
+  Future<Paged<Tour>> call({String? query, TravelTheme? theme, double? maxPrice, int page = 0}) =>
+      _repository.search(query: query, theme: theme, maxPrice: maxPrice, page: page);
+}
+
+@injectable
+class GetTourHome {
+  const GetTourHome(this._repository);
+
+  final TourRepository _repository;
+
+  Future<TourHome> call(List<TravelTheme> interests) => _repository.home(interests);
 }

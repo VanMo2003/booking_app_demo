@@ -14,6 +14,10 @@ import '../../room/domain/usecases/room_usecases.dart';
 import '../data/models/tour_models.dart';
 import '../domain/entities/tour.dart';
 import '../domain/usecases/tour_usecases.dart';
+import 'widgets/tour_discover_widgets.dart';
+import '../domain/entities/travel_theme.dart';
+import '../../../core/utils/date_utils.dart';
+import '../../../core/text/discover_strings.dart';
 
 /// Thêm hoặc sửa tour. Ảnh chọn từ máy hoặc dán link. Trả `true` khi đã lưu.
 @RoutePage()
@@ -42,14 +46,40 @@ class _TourFormScreenState extends State<TourFormScreen> {
   late final Future<List<Room>> _branchRooms = getIt<GetBranchRooms>()(widget.hotelId)
       .then((rooms) => [...rooms]..sort((a, b) => a.price.compareTo(b.price)));
   late bool _available = widget.tour?.available ?? true;
+  late final _destination = TextEditingController(text: widget.tour?.destination);
+  late final _childPrice = TextEditingController(text: ThousandsInputFormatter.format(widget.tour?.childPrice));
+  late final _policy = TextEditingController(text: widget.tour?.cancellationPolicy);
+  late final _discount = TextEditingController(text: widget.tour?.discountPercent?.toString());
+  late Set<TravelTheme> _themes = {...?widget.tour?.themes};
+  late final List<_StepFields> _steps = [
+    for (final step in widget.tour?.itinerary ?? const <ItineraryStep>[]) _StepFields(step),
+  ];
+  late bool _featured = widget.tour?.featured ?? false;
+  late DateTime? _promotionEndsAt = widget.tour?.promotionEndsAt;
   bool _saving = false;
 
   bool get _isEdit => widget.tour != null;
 
   @override
   void dispose() {
-    for (final controller in [_name, _price, _duration, _departure, _includes, _maxGuests, _description, _stayNights]) {
+    for (final controller in [
+      _name,
+      _price,
+      _duration,
+      _departure,
+      _includes,
+      _maxGuests,
+      _description,
+      _stayNights,
+      _destination,
+      _childPrice,
+      _policy,
+      _discount,
+    ]) {
       controller.dispose();
+    }
+    for (final step in _steps) {
+      step.dispose();
     }
     _photo.dispose();
     super.dispose();
@@ -83,6 +113,22 @@ class _TourFormScreenState extends State<TourFormScreen> {
       hotelId: _isEdit ? null : widget.hotelId,
       stayNights: int.parse(_stayNights.text.trim()),
       roomIds: _roomIds.toList(),
+      destination: _destination.text.trim(),
+      themes: _themes.toList(),
+      itinerary: [
+        for (final step in _steps)
+          if (step.title.text.trim().isNotEmpty)
+            ItineraryStep(
+              time: step.time.text.trim().isEmpty ? null : step.time.text.trim(),
+              title: step.title.text.trim(),
+              description: step.description.text.trim().isEmpty ? null : step.description.text.trim(),
+            ),
+      ],
+      childPrice: Validators.parseMoney(_childPrice.text) ?? 0,
+      cancellationPolicy: _policy.text.trim(),
+      featured: _featured,
+      discountPercent: int.tryParse(_discount.text.trim()) ?? 0,
+      promotionEndsAt: _promotionEndsAt,
     );
     final result = await runAction(
       () => getIt<SaveTour>()(request, id: widget.tour?.id, image: _photo.picked),
@@ -125,7 +171,31 @@ class _TourFormScreenState extends State<TourFormScreen> {
               validator: Validators.required(),
             ),
             const Gap(AppSpacing.sm),
-            AppMoneyField(controller: _price, label: TourStrings.price, validator: Validators.money),
+            AppTextField(
+              controller: _destination,
+              label: TourFormStrings.destination,
+              hint: TourFormStrings.destinationHint,
+              prefixIcon: Icons.place_outlined,
+              textCapitalization: TextCapitalization.words,
+              textInputAction: TextInputAction.next,
+            ),
+            const Gap(AppSpacing.sm),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: AppMoneyField(controller: _price, label: TourFormStrings.adultPrice, validator: Validators.money),
+                ),
+                const Gap(AppSpacing.sm),
+                Expanded(
+                  child: AppMoneyField(
+                    controller: _childPrice,
+                    label: TourFormStrings.childPrice,
+                    helper: TourFormStrings.childPriceHint,
+                  ),
+                ),
+              ],
+            ),
             const Gap(AppSpacing.sm),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,6 +249,127 @@ class _TourFormScreenState extends State<TourFormScreen> {
               minLines: 3,
               maxLines: 8,
               textCapitalization: TextCapitalization.sentences,
+            ),
+            const Gap(AppSpacing.xl),
+            const GroupLabel(TourFormStrings.themes),
+            Text(TourFormStrings.themesHint, style: AppTextStyles.caption),
+            const Gap(AppSpacing.xs),
+            ThemePicker(selected: _themes, onChanged: (next) => setState(() => _themes = next)),
+            const Gap(AppSpacing.xl),
+            const GroupLabel(TourFormStrings.itinerary),
+            Text(TourFormStrings.itineraryHint, style: AppTextStyles.caption),
+            for (var i = 0; i < _steps.length; i++) ...[
+              const Gap(AppSpacing.sm),
+              AppCard(
+                padding: const EdgeInsets.fromLTRB(12, 8, 4, 12),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(TourFormStrings.step(i + 1), style: AppTextStyles.captionStrong),
+                        const Spacer(),
+                        IconButton(
+                          tooltip: TourFormStrings.removeStep,
+                          icon: const Icon(Icons.close_rounded, size: 20),
+                          onPressed: _saving
+                              ? null
+                              : () => setState(() {
+                                    _steps.removeAt(i).dispose();
+                                  }),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Column(
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: 110,
+                                child: AppTextField(controller: _steps[i].time, label: TourFormStrings.stepTime),
+                              ),
+                              const Gap(AppSpacing.sm),
+                              Expanded(
+                                child: AppTextField(
+                                  controller: _steps[i].title,
+                                  label: TourFormStrings.stepTitle,
+                                  textCapitalization: TextCapitalization.sentences,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Gap(AppSpacing.xs),
+                          AppTextField(
+                            controller: _steps[i].description,
+                            label: TourFormStrings.stepDescription,
+                            minLines: 1,
+                            maxLines: 3,
+                            textCapitalization: TextCapitalization.sentences,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                onPressed: _saving || _steps.length >= 30 ? null : () => setState(() => _steps.add(_StepFields())),
+                icon: const Icon(Icons.add_rounded),
+                label: const Text(TourFormStrings.addStep),
+              ),
+            ),
+            const Gap(AppSpacing.md),
+            AppTextField(
+              controller: _policy,
+              label: TourFormStrings.cancellation,
+              hint: TourFormStrings.cancellationHint,
+              prefixIcon: Icons.event_busy_outlined,
+              minLines: 2,
+              maxLines: 5,
+              maxLength: 2000,
+              textCapitalization: TextCapitalization.sentences,
+            ),
+            const Gap(AppSpacing.xl),
+            const GroupLabel(TourFormStrings.promotion),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: AppTextField(
+                    controller: _discount,
+                    label: TourFormStrings.discount,
+                    hint: TourFormStrings.discountHint,
+                    prefixIcon: Icons.local_offer_outlined,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    validator: (value) {
+                      final n = int.tryParse(value?.trim() ?? '');
+                      return n != null && n > 90 ? TourFormStrings.discountMax : null;
+                    },
+                  ),
+                ),
+                const Gap(AppSpacing.sm),
+                Expanded(
+                  child: AppDateField(
+                    label: TourFormStrings.promotionEnds,
+                    value: _promotionEndsAt ?? DateOnly.today().add(const Duration(days: 30)),
+                    firstDate: DateOnly.today(),
+                    onChanged: (day) => setState(() => _promotionEndsAt = day),
+                  ),
+                ),
+              ],
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              value: _featured,
+              onChanged: (value) => setState(() => _featured = value),
+              title: Text(TourFormStrings.featured, style: AppTextStyles.bodyMedium),
+              subtitle: Text(TourFormStrings.featuredHint, style: AppTextStyles.caption),
             ),
             const Gap(AppSpacing.xl),
             const GroupLabel(TourStrings.roomsSection),
@@ -252,5 +443,23 @@ class _TourFormScreenState extends State<TourFormScreen> {
         child: AppButton(label: AppStrings.save, expand: true, loading: _saving, onPressed: _submit),
       ),
     );
+  }
+}
+
+/// Ô nhập của một chặng lịch trình.
+class _StepFields {
+  _StepFields([ItineraryStep? step])
+      : time = TextEditingController(text: step?.time),
+        title = TextEditingController(text: step?.title),
+        description = TextEditingController(text: step?.description);
+
+  final TextEditingController time;
+  final TextEditingController title;
+  final TextEditingController description;
+
+  void dispose() {
+    time.dispose();
+    title.dispose();
+    description.dispose();
   }
 }

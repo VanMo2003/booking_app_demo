@@ -204,6 +204,9 @@ enum NotificationType {
   revenueTargetAtRisk('REVENUE_TARGET_AT_RISK'),
   weeklyReport('WEEKLY_REPORT'),
   lowRatingReview('LOW_RATING_REVIEW'),
+  promotion('PROMOTION'),
+  tripReminder('TRIP_REMINDER'),
+  bookingUpdated('BOOKING_UPDATED'),
   other('');
 
   const NotificationType(this.value);

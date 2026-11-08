@@ -13,6 +13,7 @@ import '../../auth/presentation/session/session_cubit.dart';
 import '../domain/entities/favorite_hotel.dart';
 import 'favorite_button.dart';
 import 'favorites_cubit.dart';
+import '../../shell/presentation/customer_shell_screen.dart';
 
 @RoutePage()
 class FavoritesScreen extends StatelessWidget {
@@ -49,7 +50,7 @@ class FavoritesScreen extends StatelessWidget {
                       label: BookingStrings.exploreNow,
                       size: AppButtonSize.medium,
                       icon: Icons.travel_explore_rounded,
-                      onPressed: () => AutoTabsRouter.of(context).setActiveIndex(0),
+                      onPressed: () => AutoTabsRouter.of(context).setActiveIndex(CustomerTabs.hotels),
                     ),
                   )
                 : ListView.separated(

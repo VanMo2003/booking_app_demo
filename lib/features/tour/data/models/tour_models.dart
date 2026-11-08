@@ -2,6 +2,7 @@ import '../../../../core/network/json_reader.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../domain/entities/tour.dart';
+import '../../domain/entities/travel_theme.dart';
 
 /// JSON `TourResponse` ↔ [Tour].
 abstract final class TourModel {
@@ -19,6 +20,39 @@ abstract final class TourModel {
         available: json.flag('available', true),
         stayNights: json.integer('stayNights', 1),
         rooms: TourRoomModel.listFrom(json, 'rooms'),
+        hotelName: json.strOrNull('hotelName'),
+        hotelAddress: json.strOrNull('hotelAddress'),
+        destination: json.strOrNull('destination'),
+        themes: json.strings('themes').map(TravelTheme.tryParse).whereType<TravelTheme>().toList(),
+        itinerary: json.listOf('itinerary', step),
+        childPrice: json.decimalOrNull('childPrice'),
+        cancellationPolicy: json.strOrNull('cancellationPolicy'),
+        featured: json.flag('featured'),
+        discountPercent: json.intOrNull('discountPercent'),
+        promotionEndsAt: json.date('promotionEndsAt'),
+        onSale: json.flag('onSale'),
+        salePrice: json.decimalOrNull('salePrice'),
+        saleChildPrice: json.decimalOrNull('saleChildPrice'),
+      );
+
+  static ItineraryStep step(Json json) => ItineraryStep(
+        time: json.strOrNull('time'),
+        title: json.str('title'),
+        description: json.strOrNull('description'),
+      );
+
+  static TourDestination destination(Json json) => TourDestination(
+        name: json.str('destination'),
+        tours: json.integer('tours'),
+        fromPrice: json.decimal('fromPrice'),
+        pathImage: json.strOrNull('pathImage'),
+      );
+
+  static TourHome home(Json json) => TourHome(
+        featured: json.listOf('featured', fromJson),
+        deals: json.listOf('deals', fromJson),
+        forYou: json.listOf('forYou', fromJson),
+        destinations: json.listOf('destinations', destination),
       );
 }
 
@@ -65,7 +99,29 @@ class TourRequest {
     this.hotelId,
     this.stayNights = 1,
     this.roomIds,
+    this.destination,
+    this.themes,
+    this.itinerary,
+    this.childPrice,
+    this.cancellationPolicy,
+    this.featured,
+    this.discountPercent,
+    this.promotionEndsAt,
   });
+
+  /// Các trường của khách xem tour; `null` = giữ nguyên khi sửa.
+  final String? destination;
+  final List<TravelTheme>? themes;
+  final List<ItineraryStep>? itinerary;
+
+  /// 0 = trẻ em trả như người lớn (khi sửa).
+  final double? childPrice;
+  final String? cancellationPolicy;
+  final bool? featured;
+
+  /// 0 = tắt khuyến mãi.
+  final int? discountPercent;
+  final DateTime? promotionEndsAt;
 
   final String name;
   final double price;
@@ -107,5 +163,17 @@ class TourRequest {
         'stayNights': stayNights,
         if (roomIds != null) 'roomIds': roomIds,
         if (hotelId != null) 'hotelId': hotelId,
+        if (destination != null) 'destination': destination,
+        if (themes != null) 'themes': [for (final theme in themes!) theme.value],
+        if (itinerary != null)
+          'itinerary': [
+            for (final step in itinerary!)
+              {'time': step.time, 'title': step.title, 'description': step.description},
+          ],
+        if (childPrice != null && childPrice! > 0) 'childPrice': childPrice!.round(),
+        if (cancellationPolicy != null) 'cancellationPolicy': cancellationPolicy,
+        if (featured != null) 'featured': featured,
+        if (discountPercent != null) 'discountPercent': discountPercent,
+        if (promotionEndsAt != null) 'promotionEndsAt': Fmt.apiDate(promotionEndsAt!),
       };
 }

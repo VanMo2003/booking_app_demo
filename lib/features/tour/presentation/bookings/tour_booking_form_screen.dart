@@ -9,6 +9,7 @@ import '../../../../core/component/component.dart';
 import '../../../../core/di/injector.dart';
 import '../../../../core/navigation/app_router.dart';
 import '../../../../core/style/style.dart';
+import '../../../../core/text/discover_strings.dart';
 import '../../../../core/text/tour_strings.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../../core/utils/formatters.dart';
@@ -16,6 +17,9 @@ import '../../data/models/tour_booking_models.dart';
 import '../../domain/entities/tour.dart';
 import '../../domain/usecases/tour_booking_usecases.dart';
 import '../../domain/usecases/tour_usecases.dart';
+import '../../../voucher/data/voucher_repository.dart';
+import '../../../voucher/domain/entities/voucher.dart';
+import '../../../voucher/presentation/voucher_widgets.dart';
 
 /// Khách đặt tour trong ứng dụng: chọn ngày đi, số khách và — với tour kèm phòng — các phòng
 /// của gói còn trống đêm đó (nhận phòng đúng ngày đi tour). Đặt xong mở chi tiết đơn tour.
@@ -34,9 +38,15 @@ class _TourBookingFormScreenState extends State<TourBookingFormScreen> {
   static const _maxPerOrder = 50;
 
   late DateTime _date = DateOnly.today().add(const Duration(days: 1));
-  late int _guests = math.min(2, _limit);
+  late int _adults = math.min(2, _limit);
+  int _children = 0;
   final _selected = <int>{};
   final _note = TextEditingController();
+  final _voucherCode = TextEditingController();
+
+  /// Mã đã áp dụng (đã kiểm tra với BE cho đúng số khách hiện tại).
+  VoucherCheck? _voucher;
+  bool _checkingVoucher = false;
   LoadState<TourStay> _stay = const LoadState();
   bool _saving = false;
 
@@ -52,7 +62,15 @@ class _TourBookingFormScreenState extends State<TourBookingFormScreen> {
 
   int get _beds => _chosen.fold(0, (sum, room) => sum + room.capacity);
 
-  double get _tourAmount => _tour.price * _guests;
+  int get _guests => _adults + _children;
+
+  double get _adultAmount => _tour.salePrice * _adults;
+
+  double get _childAmount => _tour.childPayPrice * _children;
+
+  double get _discount => _voucher?.valid == true ? _voucher!.discount : 0;
+
+  double get _tourAmount => _adultAmount + _childAmount - _discount;
 
   double get _roomAmount => _chosen.fold(0.0, (sum, room) => sum + room.price) * _nights;
 
@@ -65,7 +83,78 @@ class _TourBookingFormScreenState extends State<TourBookingFormScreen> {
   @override
   void dispose() {
     _note.dispose();
+    _voucherCode.dispose();
     super.dispose();
+  }
+
+  void _setGuests({int? adults, int? children}) {
+    setState(() {
+      _adults = adults ?? _adults;
+      _children = children ?? _children;
+    });
+    // Giảm theo % đổi theo số khách: kiểm tra lại mã đang dùng.
+    if (_voucher?.valid == true) _applyVoucher(_voucher!.code);
+  }
+
+  Future<void> _applyVoucher([String? code]) async {
+    final text = (code ?? _voucherCode.text).trim();
+    if (text.isEmpty) return;
+    _voucherCode.text = text.toUpperCase();
+    setState(() => _checkingVoucher = true);
+    try {
+      final check = await getIt<VoucherRepository>()
+          .check(code: text, tourId: _tour.id, guests: _guests, children: _children);
+      if (!mounted) return;
+      setState(() => _voucher = check);
+      if (!check.valid) AppToast.error(context, check.message);
+    } catch (error) {
+      if (mounted) AppToast.error(context, error.toString());
+    } finally {
+      if (mounted) setState(() => _checkingVoucher = false);
+    }
+  }
+
+  void _removeVoucher() => setState(() {
+        _voucher = null;
+        _voucherCode.clear();
+      });
+
+  Future<void> _pickVoucher() async {
+    final List<Voucher> vouchers;
+    try {
+      vouchers = await getIt<VoucherRepository>().available(hotelId: _tour.hotelId);
+    } catch (error) {
+      if (mounted) AppToast.error(context, error.toString());
+      return;
+    }
+    if (!mounted) return;
+    final picked = await showModalBottomSheet<Voucher>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (sheetContext) => SafeArea(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(sheetContext).height * 0.7),
+          child: vouchers.isEmpty
+              ? const Padding(
+                  padding: EdgeInsets.all(24),
+                  child: Text(DiscoverStrings.voucherNoneHere, textAlign: TextAlign.center),
+                )
+              : ListView.separated(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                  itemCount: vouchers.length,
+                  separatorBuilder: (_, __) => const Gap(AppSpacing.sm),
+                  itemBuilder: (_, i) => VoucherTicket(
+                    voucher: vouchers[i],
+                    selected: _voucher?.code == vouchers[i].code,
+                    onTap: () => Navigator.of(sheetContext).pop(vouchers[i]),
+                  ),
+                ),
+        ),
+      ),
+    );
+    if (picked != null) await _applyVoucher(picked.code);
   }
 
   Future<void> _loadStay() async {
@@ -109,6 +198,8 @@ class _TourBookingFormScreenState extends State<TourBookingFormScreen> {
             tourId: _tour.id,
             tourDate: _date,
             guests: _guests,
+            children: _children,
+            voucherCode: _voucher?.valid == true ? _voucher!.code : null,
             roomIds: _chosen.map((room) => room.roomId).toList(),
             note: _note.text,
           ),
@@ -159,7 +250,7 @@ class _TourBookingFormScreenState extends State<TourBookingFormScreen> {
                     ],
                   ),
                 ),
-                PriceText(_tour.price, unit: TourStrings.perGuest),
+                PriceText(_tour.salePrice, unit: TourStrings.perGuest),
               ],
             ),
           ),
@@ -175,9 +266,22 @@ class _TourBookingFormScreenState extends State<TourBookingFormScreen> {
           ),
           const Gap(AppSpacing.sm),
           _GuestCounter(
-            value: _guests,
-            max: _limit,
-            onChanged: _saving ? null : (value) => setState(() => _guests = value),
+            label: DiscoverStrings.adults,
+            icon: Icons.person_rounded,
+            value: _adults,
+            min: 1,
+            max: _limit - _children,
+            onChanged: _saving ? null : (value) => _setGuests(adults: value),
+          ),
+          const Gap(AppSpacing.xs),
+          _GuestCounter(
+            label: DiscoverStrings.children,
+            hint: DiscoverStrings.childrenHint,
+            icon: Icons.child_care_rounded,
+            value: _children,
+            min: 0,
+            max: _limit - _adults,
+            onChanged: _saving ? null : (value) => _setGuests(children: value),
           ),
           if (_tour.withRooms) ...[
             const Gap(AppSpacing.lg),
@@ -194,15 +298,29 @@ class _TourBookingFormScreenState extends State<TourBookingFormScreen> {
             maxLength: 500,
             textCapitalization: TextCapitalization.sentences,
           ),
+          const Gap(AppSpacing.lg),
+          const GroupLabel(DiscoverStrings.voucher),
+          _voucherField(),
           const Gap(AppSpacing.sm),
           AppCard(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             child: Column(
               children: [
                 InfoRow(
-                  label: TourBookingStrings.tourPart(Fmt.money(_tour.price), _guests),
-                  value: Fmt.money(_tourAmount),
+                  label: DiscoverStrings.adultPart(_adults),
+                  value: Fmt.money(_adultAmount),
                 ),
+                if (_children > 0)
+                  InfoRow(
+                    label: DiscoverStrings.childPart(_children),
+                    value: Fmt.money(_childAmount),
+                  ),
+                if (_discount > 0)
+                  InfoRow(
+                    label: DiscoverStrings.voucherLine(_voucher!.code),
+                    value: '-${Fmt.money(_discount)}',
+                    valueStyle: AppTextStyles.bodyStrong.colored(AppColors.success),
+                  ),
                 if (_tour.withRooms)
                   InfoRow(label: TourBookingStrings.roomPart(_nights), value: Fmt.money(_roomAmount)),
                 const Divider(),
@@ -227,6 +345,58 @@ class _TourBookingFormScreenState extends State<TourBookingFormScreen> {
           onPressed: _stay.isLoading ? null : _submit,
         ),
       ),
+    );
+  }
+
+  Widget _voucherField() {
+    final applied = _voucher?.valid == true;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: AppTextField(
+                controller: _voucherCode,
+                hint: DiscoverStrings.voucherHint,
+                enabled: !_saving && !applied,
+                textCapitalization: TextCapitalization.characters,
+                prefixIcon: Icons.local_offer_outlined,
+                onSubmitted: (_) => _applyVoucher(),
+              ),
+            ),
+            const Gap(AppSpacing.xs),
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: applied
+                  ? TextButton(onPressed: _saving ? null : _removeVoucher, child: const Text(DiscoverStrings.voucherRemove))
+                  : FilledButton.tonal(
+                      onPressed: _saving || _checkingVoucher ? null : _applyVoucher,
+                      child: _checkingVoucher
+                          ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                          : const Text(DiscoverStrings.voucherApply),
+                    ),
+            ),
+          ],
+        ),
+        if (applied)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              DiscoverStrings.voucherApplied(_voucher!.code, Fmt.money(_voucher!.discount)),
+              style: AppTextStyles.caption.colored(AppColors.success),
+            ),
+          ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            onPressed: _saving ? null : _pickVoucher,
+            icon: const Icon(Icons.confirmation_number_outlined, size: 18),
+            label: const Text(DiscoverStrings.voucherPick),
+          ),
+        ),
+      ],
     );
   }
 
@@ -296,11 +466,23 @@ class _TourBookingFormScreenState extends State<TourBookingFormScreen> {
   }
 }
 
-/// Số khách: nút trừ / cộng trong giới hạn của tour.
+/// Một loại khách (người lớn / trẻ em): nút trừ / cộng trong giới hạn của tour.
 class _GuestCounter extends StatelessWidget {
-  const _GuestCounter({required this.value, required this.max, required this.onChanged});
+  const _GuestCounter({
+    required this.label,
+    required this.icon,
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.onChanged,
+    this.hint,
+  });
 
+  final String label;
+  final String? hint;
+  final IconData icon;
   final int value;
+  final int min;
   final int max;
   final ValueChanged<int>? onChanged;
 
@@ -310,11 +492,19 @@ class _GuestCounter extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       child: Row(
         children: [
-          const Icon(Icons.groups_outlined, size: 20, color: AppColors.inkSecondary),
+          Icon(icon, size: 20, color: AppColors.inkSecondary),
           const Gap(AppSpacing.sm),
-          Expanded(child: Text(TourBookingStrings.guestCount, style: AppTextStyles.body)),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(label, style: AppTextStyles.body),
+                if (hint != null) Text(hint!, style: AppTextStyles.caption),
+              ],
+            ),
+          ),
           IconButton(
-            onPressed: onChanged == null || value <= 1 ? null : () => onChanged!(value - 1),
+            onPressed: onChanged == null || value <= min ? null : () => onChanged!(value - 1),
             icon: const Icon(Icons.remove_circle_outline_rounded),
           ),
           SizedBox(

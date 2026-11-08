@@ -13,6 +13,19 @@ abstract class TourApi {
   @GET('/tours')
   Future<ApiResponse> byHotel(@Query('hotelId') int hotelId);
 
+  @GET('/tours/{id}')
+  Future<ApiResponse> byId(@Path('id') int id);
+
+  /// Tour của mọi cơ sở đang mở: theo chữ (tên, địa điểm, địa chỉ), chủ đề, giá tối đa.
+  @GET('/tours/search')
+  Future<ApiResponse> search(@Queries() Map<String, dynamic> query);
+
+  @GET('/tours/destinations')
+  Future<ApiResponse> destinations();
+
+  @GET('/tours/home')
+  Future<ApiResponse> home(@Query('interests') String? interests);
+
   @POST('/tours')
   Future<ApiResponse> create(@Body() Map<String, dynamic> body);
 

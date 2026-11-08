@@ -6,6 +6,7 @@ import '../../../../core/component/component.dart';
 import '../../../../core/style/style.dart';
 import '../../../../core/text/tour_strings.dart';
 import '../../domain/entities/tour.dart';
+import 'tour_discover_widgets.dart';
 
 /// "4 giờ · 8:00 hằng ngày" — những gì có thì ghép lại.
 String tourMeta(Tour tour) =>
@@ -50,6 +51,15 @@ class TourCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
+                if (tour.destination != null) ...[
+                  const Gap(2),
+                  IconText(
+                    icon: Icons.place_outlined,
+                    iconSize: 14,
+                    text: tour.destination!,
+                    style: AppTextStyles.caption,
+                  ),
+                ],
                 if (meta.isNotEmpty) ...[
                   const Gap(2),
                   IconText(icon: Icons.schedule_rounded, iconSize: 14, text: meta, style: AppTextStyles.caption),
@@ -60,11 +70,12 @@ class TourCard extends StatelessWidget {
                   runSpacing: 4,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    PriceText(
-                      tour.price,
-                      unit: TourStrings.perGuest,
-                      color: paused ? AppColors.inkTertiary : AppColors.primaryDark,
-                    ),
+                    if (paused)
+                      PriceText(tour.price, unit: TourStrings.perGuest, color: AppColors.inkTertiary)
+                    else
+                      TourPriceTag(tour: tour),
+                    if (!paused && tour.onSale && tour.discountPercent != null)
+                      SaleBadge(percent: tour.discountPercent!),
                     if (paused)
                       const StatusBadge(label: TourStrings.paused, tone: StatusTone.neutral, dense: true),
                   ],

@@ -35,6 +35,10 @@ class TourBooking extends Equatable {
     this.bookingId,
     this.stayCheckout,
     this.rooms = const [],
+    this.children = 0,
+    this.childUnitPrice,
+    this.voucherCode,
+    this.voucherDiscount,
   });
 
   final int id;
@@ -53,6 +57,14 @@ class TourBooking extends Equatable {
   final int? conversationId;
   final DateTime tourDate;
   final int guests;
+
+  /// Trong [guests], số trẻ em (giá [childUnitPrice]).
+  final int children;
+  final double? childUnitPrice;
+
+  /// Mã giảm giá đã dùng và số tiền được giảm (đã trừ vào tiền tour).
+  final String? voucherCode;
+  final double? voucherDiscount;
   final double unitPrice;
   final double totalAmount;
   final TourBookingStatus status;

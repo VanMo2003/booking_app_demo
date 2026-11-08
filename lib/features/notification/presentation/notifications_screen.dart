@@ -185,6 +185,9 @@ class _NotificationTile extends StatelessWidget {
       NotificationType.revenueTargetAtRisk => (Icons.trending_down_rounded, StatusTone.warning),
       NotificationType.weeklyReport => (Icons.insights_rounded, StatusTone.info),
       NotificationType.lowRatingReview => (Icons.star_half_rounded, StatusTone.danger),
+      NotificationType.promotion => (Icons.local_offer_rounded, StatusTone.danger),
+      NotificationType.tripReminder => (Icons.alarm_rounded, StatusTone.info),
+      NotificationType.bookingUpdated => (Icons.receipt_long_rounded, StatusTone.success),
       NotificationType.other => (Icons.notifications_none_rounded, StatusTone.brand),
     };
     final colors = tone.colors;

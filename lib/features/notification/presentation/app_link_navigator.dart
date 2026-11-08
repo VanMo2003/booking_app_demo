@@ -39,6 +39,14 @@ class AppLinkNavigator {
         } else {
           await _router.push(TourBookingDetailRoute(bookingId: bookingId));
         }
+      case TourLink(:final tourId):
+        await _router.push(TourDetailRoute(tourId: tourId));
+      case BookingLink(:final bookingId):
+        if (session == null) {
+          await _router.push(LoginRoute());
+        } else {
+          await _router.push(BookingDetailRoute(bookingId: bookingId));
+        }
       case ChatLink(:final conversationId):
         if (session == null) {
           await _router.push(LoginRoute());

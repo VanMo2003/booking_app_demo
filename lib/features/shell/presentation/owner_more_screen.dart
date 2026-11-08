@@ -13,6 +13,7 @@ import '../../../core/text/management_strings.dart';
 import '../../auth/presentation/session/session_cubit.dart';
 import '../../auth/presentation/session/session_navigator.dart';
 import '../../notification/presentation/notification_setup_screen.dart';
+import '../../../core/text/discover_strings.dart';
 
 /// Tab Thêm của chủ khách sạn.
 @RoutePage()
@@ -78,6 +79,11 @@ class OwnerMoreScreen extends StatelessWidget {
                 icon: Icons.manage_accounts_outlined,
                 title: ManagementStrings.managersTitle,
                 onTap: () => router.push(ManagersRoute(chainId: chain.id)),
+              ),
+              MenuTile(
+                icon: Icons.local_offer_outlined,
+                title: VoucherStrings.title,
+                onTap: () => router.push(VouchersRoute(hotelChainId: chain.id, subtitle: chain.name)),
               ),
               MenuTile(
                 icon: Icons.apartment_rounded,

@@ -20,6 +20,7 @@ import '../../../notification/presentation/notification_bell.dart';
 import '../../domain/entities/booking.dart';
 import '../../domain/usecases/booking_usecases.dart';
 import '../widgets/booking_card.dart';
+import '../../../shell/presentation/customer_shell_screen.dart';
 
 @injectable
 class MyBookingsCubit extends LoadCubit<List<Booking>> {
@@ -195,7 +196,7 @@ class _BookingList extends StatelessWidget {
                           label: BookingStrings.exploreNow,
                           icon: Icons.travel_explore_rounded,
                           size: AppButtonSize.medium,
-                          onPressed: () => AutoTabsRouter.of(context).setActiveIndex(0),
+                          onPressed: () => AutoTabsRouter.of(context).setActiveIndex(CustomerTabs.home),
                         )
                       : null,
                 ),

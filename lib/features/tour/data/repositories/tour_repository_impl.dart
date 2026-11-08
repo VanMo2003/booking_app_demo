@@ -1,3 +1,5 @@
+import '../../../../core/network/paged.dart';
+import '../../domain/entities/travel_theme.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/network/upload_file.dart';
@@ -15,6 +17,30 @@ class TourRepositoryImpl implements TourRepository {
   @override
   Future<List<Tour>> byHotel(int hotelId) async =>
       (await _api.byHotel(hotelId)).parseList(TourModel.fromJson);
+
+  @override
+  Future<Tour> byId(int id) async => (await _api.byId(id)).parse(TourModel.fromJson);
+
+  @override
+  Future<Paged<Tour>> search({String? query, TravelTheme? theme, double? maxPrice, int page = 0}) async =>
+      (await _api.search({
+        if (query != null && query.trim().isNotEmpty) 'q': query.trim(),
+        if (theme != null) 'theme': theme.value,
+        if (maxPrice != null) 'maxPrice': maxPrice.round(),
+        'page': page,
+        'size': 20,
+      }))
+          .parse((json) => Paged.fromJson(json, TourModel.fromJson));
+
+  @override
+  Future<List<TourDestination>> destinations() async =>
+      (await _api.destinations()).parseList(TourModel.destination);
+
+  @override
+  Future<TourHome> home(List<TravelTheme> interests) async => (await _api.home(
+        interests.isEmpty ? null : interests.map((theme) => theme.value).join(','),
+      ))
+          .parse(TourModel.home);
 
   @override
   Future<Tour> create(TourRequest request) async =>

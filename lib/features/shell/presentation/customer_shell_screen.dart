@@ -6,8 +6,19 @@ import '../../../core/navigation/app_router.dart';
 import '../../../core/text/chat_strings.dart';
 import '../../../core/text/explore_strings.dart';
 import '../../chat/presentation/chat_entry.dart';
+import '../../../core/text/discover_strings.dart';
 
-/// Khung cho khách vãng lai và khách hàng: 5 tab dưới đáy.
+/// Vị trí các tab của khách, dùng thay cho số khi chuyển tab.
+abstract final class CustomerTabs {
+  static const home = 0;
+  static const hotels = 1;
+  static const bookings = 2;
+  static const favorites = 3;
+  static const chats = 4;
+  static const account = 5;
+}
+
+/// Khung cho khách vãng lai và khách hàng: 6 tab dưới đáy, tour (Trang chủ) trước, khách sạn sau.
 @RoutePage()
 class CustomerShellScreen extends StatelessWidget {
   const CustomerShellScreen({super.key});
@@ -16,6 +27,7 @@ class CustomerShellScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AutoTabsRouter(
       routes: const [
+        TourHomeRoute(),
         ExploreRoute(),
         MyBookingsRoute(),
         FavoritesRoute(),
@@ -35,11 +47,17 @@ class CustomerShellScreen extends StatelessWidget {
             child: NavigationBar(
               selectedIndex: tabs.activeIndex,
               onDestinationSelected: tabs.setActiveIndex,
+              labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
               destinations: const [
                 NavigationDestination(
-                  icon: Icon(Icons.travel_explore_outlined),
-                  selectedIcon: Icon(Icons.travel_explore_rounded),
-                  label: ExploreStrings.tabExplore,
+                  icon: Icon(Icons.explore_outlined),
+                  selectedIcon: Icon(Icons.explore_rounded),
+                  label: DiscoverStrings.tabHome,
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.apartment_outlined),
+                  selectedIcon: Icon(Icons.apartment_rounded),
+                  label: DiscoverStrings.tabHotels,
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.receipt_long_outlined),

@@ -22,6 +22,10 @@ abstract final class TourBookingModel {
         conversationId: json.intOrNull('conversationId'),
         tourDate: json.date('tourDate') ?? DateOnly.today(),
         guests: json.integer('guests', 1),
+        children: json.integer('children'),
+        childUnitPrice: json.decimalOrNull('childUnitPrice'),
+        voucherCode: json.strOrNull('voucherCode'),
+        voucherDiscount: json.decimalOrNull('voucherDiscount'),
         unitPrice: json.decimal('unitPrice'),
         totalAmount: json.decimal('totalAmount'),
         status: TourBookingStatus.parse(json.strOrNull('status')),
@@ -46,11 +50,17 @@ class TourBookingRequest {
     required this.guests,
     this.roomIds = const [],
     this.note = '',
+    this.children = 0,
+    this.voucherCode,
   });
 
   final int tourId;
   final DateTime tourDate;
+
+  /// Tổng số khách; [children] trong đó là trẻ em.
   final int guests;
+  final int children;
+  final String? voucherCode;
   final List<int> roomIds;
   final String note;
 
@@ -58,6 +68,8 @@ class TourBookingRequest {
         'tourId': tourId,
         'tourDate': Fmt.apiDate(tourDate),
         'guests': guests,
+        if (children > 0) 'children': children,
+        if (voucherCode != null && voucherCode!.trim().isNotEmpty) 'voucherCode': voucherCode!.trim(),
         if (roomIds.isNotEmpty) 'roomIds': roomIds,
         if (note.trim().isNotEmpty) 'note': note.trim(),
       };

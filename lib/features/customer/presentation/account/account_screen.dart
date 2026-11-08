@@ -18,6 +18,8 @@ import '../../../auth/domain/entities/session.dart';
 import '../../../auth/presentation/session/session_cubit.dart';
 import '../../../auth/presentation/session/session_navigator.dart';
 import '../../../notification/presentation/notification_setup_screen.dart';
+import '../../../shell/presentation/customer_shell_screen.dart';
+import '../../../../core/text/discover_strings.dart';
 
 /// Tab Tài khoản của khách.
 @RoutePage()
@@ -85,19 +87,24 @@ class AccountScreen extends StatelessWidget {
                         title: ExploreStrings.groupBooking,
                         children: [
                           MenuTile(
+                            icon: Icons.interests_outlined,
+                            title: DiscoverStrings.interestsEdit,
+                            onTap: () => context.rootRouter.push(InterestsRoute()),
+                          ),
+                          MenuTile(
                             icon: Icons.receipt_long_outlined,
                             title: ExploreStrings.tabBookings,
-                            onTap: () => tabs.setActiveIndex(1),
+                            onTap: () => tabs.setActiveIndex(CustomerTabs.bookings),
                           ),
                           MenuTile(
                             icon: Icons.favorite_border_rounded,
                             title: ExploreStrings.tabFavorites,
-                            onTap: () => tabs.setActiveIndex(2),
+                            onTap: () => tabs.setActiveIndex(CustomerTabs.favorites),
                           ),
                           MenuTile(
                             icon: Icons.chat_bubble_outline_rounded,
                             title: ChatStrings.title,
-                            onTap: () => tabs.setActiveIndex(3),
+                            onTap: () => tabs.setActiveIndex(CustomerTabs.chats),
                           ),
                         ],
                       ),

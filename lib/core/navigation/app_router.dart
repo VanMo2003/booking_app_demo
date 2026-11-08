@@ -31,6 +31,7 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           page: CustomerShellRoute.page,
           children: [
+            AutoRoute(page: TourHomeRoute.page),
             AutoRoute(page: ExploreRoute.page),
             AutoRoute(page: MyBookingsRoute.page),
             AutoRoute(page: FavoritesRoute.page),
@@ -38,6 +39,10 @@ class AppRouter extends RootStackRouter {
             AutoRoute(page: AccountRoute.page),
           ],
         ),
+        AutoRoute(page: InterestsRoute.page),
+        AutoRoute(page: TourSearchRoute.page),
+        AutoRoute(page: VouchersRoute.page),
+        AutoRoute(page: VoucherFormRoute.page),
         AutoRoute(page: SearchResultsRoute.page),
         AutoRoute(page: AiSearchRoute.page),
         AutoRoute(page: HotelDetailRoute.page),

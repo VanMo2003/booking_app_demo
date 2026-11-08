@@ -15,6 +15,7 @@ import '../../../ai/presentation/ai_widgets.dart';
 import '../../../auth/presentation/session/session_cubit.dart';
 import '../widgets/hotel_card.dart';
 import 'explore_cubit.dart';
+import '../../../shell/presentation/customer_shell_screen.dart';
 
 /// Trang chủ: ai cũng xem được, không cần đăng nhập.
 @RoutePage()
@@ -249,7 +250,7 @@ class _GreetingRow extends StatelessWidget {
               )
             else
               GestureDetector(
-                onTap: () => AutoTabsRouter.of(context).setActiveIndex(4),
+                onTap: () => AutoTabsRouter.of(context).setActiveIndex(CustomerTabs.account),
                 child: Container(
                   padding: const EdgeInsets.all(2),
                   decoration: BoxDecoration(

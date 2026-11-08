@@ -21,6 +21,7 @@ import '../../chat/presentation/chat_hub.dart';
 import '../../notification/presentation/notification_badge_cubit.dart';
 import '../../notification/presentation/notification_setup_screen.dart';
 import 'workspace_scope.dart';
+import '../../../core/text/discover_strings.dart';
 
 @RoutePage()
 class WorkspaceMoreScreen extends StatelessWidget {
@@ -103,6 +104,12 @@ class WorkspaceMoreScreen extends StatelessWidget {
                 title: TourBookingStrings.branchTitle,
                 onTap: () => router.push(TourBookingsRoute(hotelId: hotelId)),
               ),
+              if (session.role == Role.hotelManager || session.role == Role.hotelOwner)
+                MenuTile(
+                  icon: Icons.local_offer_outlined,
+                  title: VoucherStrings.title,
+                  onTap: () => router.push(VouchersRoute(hotelId: hotelId, subtitle: branchName)),
+                ),
               MenuTile(
                 icon: Icons.notifications_none_rounded,
                 title: NotificationStrings.title,
