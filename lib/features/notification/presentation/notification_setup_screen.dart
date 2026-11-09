@@ -223,6 +223,14 @@ class _NotificationSetupTileState extends State<NotificationSetupTile> {
   final _delivery = getIt<BackgroundDelivery>();
   late Future<BackgroundDeliveryStatus?> _status = _delivery.status();
 
+  /// Hỏi lại trạng thái khi quay về từ trang cài đặt. Phép gán phải nằm trong thân hàm, không viết
+  /// `setState(() => _status = ...)`: dấu `=>` trả về chính Future đó nên Flutter báo lỗi.
+  void _refresh() {
+    setState(() {
+      _status = _delivery.status();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!_delivery.supported) return const SizedBox.shrink();
@@ -240,7 +248,7 @@ class _NotificationSetupTileState extends State<NotificationSetupTile> {
                   : NotificationStrings.setupNeeded,
           onTap: () async {
             await context.rootRouter.push(const NotificationSetupRoute());
-            if (mounted) setState(() => _status = _delivery.status());
+            if (mounted) _refresh();
           },
         );
       },

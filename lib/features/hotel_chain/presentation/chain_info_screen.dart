@@ -112,7 +112,11 @@ class _ChainInfoScreenState extends State<ChainInfoScreen> {
           if (snapshot.hasError) {
             return AppFailureView.fromError(
               snapshot.error!,
-              onRetry: () => setState(() => _detail = _load()),
+              // Phép gán vào Future phải nằm trong thân hàm: `setState(() => ...)` trả về chính
+              // Future đó nên Flutter báo lỗi "setState() callback argument returned a Future".
+              onRetry: () => setState(() {
+                _detail = _load();
+              }),
             );
           }
           if (!snapshot.hasData) return const AppLoadingView();
