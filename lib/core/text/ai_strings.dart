@@ -188,6 +188,18 @@ abstract final class AiStrings {
   static String themesFrom(String from, String to, int reviews) => '$from – $to · $reviews đánh giá có nội dung';
   static String themesBranchValue(int reviews, String average) => '$reviews đánh giá · $average sao';
 
+  // AI kiểm tra mức hoàn thiện trang
+  static const auditTitle = 'Hoàn thiện trang cơ sở';
+  static const auditMenu = 'Kiểm tra trang cơ sở';
+  static const auditTodo = 'Nên làm trước';
+  static const auditChecks = 'Tiêu chí';
+  static const auditHigh = 'Ưu tiên cao';
+  static const auditMedium = 'Vừa';
+  static const auditLow = 'Thấp';
+  static const auditNote =
+      'Tiêu chí và điểm do hệ thống đếm trên dữ liệu thật của cơ sở; phần "nên làm trước" do AI diễn đạt.';
+  static String auditPassed(int done, int total) => 'Đạt $done trong $total tiêu chí';
+
   // Trợ lý lễ tân trong chat
   static const suggest = 'Gợi ý trả lời bằng AI';
   static const suggestionNote = 'Bản nháp AI soạn từ dữ liệu của cơ sở — kiểm tra trước khi gửi.';

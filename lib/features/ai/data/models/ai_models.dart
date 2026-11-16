@@ -226,6 +226,32 @@ abstract final class AiModels {
         averageRating: json['averageRating'] == null ? null : json.decimal('averageRating'),
       );
 
+  static ContentAudit contentAudit(Json json) => ContentAudit(
+        hotelId: json.integer('hotelId'),
+        score: json.integer('score'),
+        summary: json.strOrNull('summary'),
+        checks: json.listOf('checks', _auditCheck),
+        items: json.listOf('items', _auditItem),
+        notes: json.strings('notes'),
+      );
+
+  static AuditCheck _auditCheck(Json json) => AuditCheck(
+        key: json.str('key'),
+        label: json.str('label'),
+        passed: json.flag('passed'),
+        done: json.intOrNull('done'),
+        total: json.intOrNull('total'),
+        hint: json.strOrNull('hint'),
+      );
+
+  static AuditItem _auditItem(Json json) => AuditItem(
+        title: json.str('title'),
+        priority: AuditPriority.parse(json.strOrNull('priority')),
+        how: json.str('how'),
+        why: json.strOrNull('why'),
+        checkKey: json.strOrNull('checkKey'),
+      );
+
   static AiSuggestion suggestion(Json json) => AiSuggestion(
         content: json.str('content'),
         needsStaff: json.flag('needsStaff'),

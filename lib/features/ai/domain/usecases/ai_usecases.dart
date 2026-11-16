@@ -140,6 +140,15 @@ class GetReviewThemes {
 }
 
 @injectable
+class GetContentAudit {
+  const GetContentAudit(this._repository);
+
+  final AiRepository _repository;
+
+  Future<ContentAudit> call(int hotelId) => _repository.contentAudit(hotelId);
+}
+
+@injectable
 class SuggestChatReply {
   const SuggestChatReply(this._repository);
 

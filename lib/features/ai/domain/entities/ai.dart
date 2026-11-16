@@ -625,6 +625,99 @@ class ReviewThemes extends Equatable {
   List<Object?> get props => [hotelChainId, from, to, reviewCount, summary, themes, actions, byBranch, notes];
 }
 
+/// Mức ưu tiên của một việc cần làm để hoàn thiện trang.
+enum AuditPriority {
+  high('HIGH'),
+  medium('MEDIUM'),
+  low('LOW');
+
+  const AuditPriority(this.value);
+
+  final String value;
+
+  static AuditPriority parse(String? raw) {
+    for (final priority in values) {
+      if (priority.value == raw) return priority;
+    }
+    return AuditPriority.medium;
+  }
+}
+
+/// Một tiêu chí hoàn thiện trang, do máy chủ đếm trên dữ liệu thật.
+class AuditCheck extends Equatable {
+  const AuditCheck({
+    required this.key,
+    required this.label,
+    required this.passed,
+    this.done,
+    this.total,
+    this.hint,
+  });
+
+  final String key;
+  final String label;
+  final bool passed;
+  final int? done;
+  final int? total;
+  final String? hint;
+
+  /// "3/5" khi tiêu chí đếm theo dòng, "đang có 2" khi chỉ đếm số lượng.
+  String? get progress {
+    if (total != null && total! > 0) return '$done/$total';
+    if (done != null) return '$done';
+    return null;
+  }
+
+  @override
+  List<Object?> get props => [key, label, passed, done, total, hint];
+}
+
+/// Một việc nên làm, do AI diễn đạt từ tiêu chí chưa đạt.
+class AuditItem extends Equatable {
+  const AuditItem({
+    required this.title,
+    required this.priority,
+    required this.how,
+    this.why,
+    this.checkKey,
+  });
+
+  final String title;
+  final AuditPriority priority;
+  final String how;
+  final String? why;
+  final String? checkKey;
+
+  @override
+  List<Object?> get props => [title, priority, how, why, checkKey];
+}
+
+/// Trang bán phòng của cơ sở hoàn thiện tới đâu.
+class ContentAudit extends Equatable {
+  const ContentAudit({
+    required this.hotelId,
+    required this.score,
+    this.summary,
+    this.checks = const [],
+    this.items = const [],
+    this.notes = const [],
+  });
+
+  final int hotelId;
+
+  /// 0-100, tỉ lệ tiêu chí đạt — máy chủ tính, không phải AI nói.
+  final int score;
+  final String? summary;
+  final List<AuditCheck> checks;
+  final List<AuditItem> items;
+  final List<String> notes;
+
+  int get passedCount => checks.where((check) => check.passed).length;
+
+  @override
+  List<Object?> get props => [hotelId, score, summary, checks, items, notes];
+}
+
 /// Bản nháp trả lời khách do AI soạn — chưa gửi gì cho khách.
 class AiSuggestion extends Equatable {
   const AiSuggestion({

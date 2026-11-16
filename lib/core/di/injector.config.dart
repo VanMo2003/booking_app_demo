@@ -45,6 +45,8 @@ import 'package:booking_app_mobile/features/ai/domain/repositories/ai_repository
     as _i444;
 import 'package:booking_app_mobile/features/ai/domain/usecases/ai_usecases.dart'
     as _i769;
+import 'package:booking_app_mobile/features/ai/presentation/ai_content_audit_screen.dart'
+    as _i852;
 import 'package:booking_app_mobile/features/ai/presentation/ai_guest_assistant_screen.dart'
     as _i933;
 import 'package:booking_app_mobile/features/ai/presentation/ai_pricing_screen.dart'
@@ -626,6 +628,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i769.GetChatSummary(gh<_i444.AiRepository>()));
     gh.factory<_i769.GetReviewThemes>(
         () => _i769.GetReviewThemes(gh<_i444.AiRepository>()));
+    gh.factory<_i769.GetContentAudit>(
+        () => _i769.GetContentAudit(gh<_i444.AiRepository>()));
     gh.factory<_i769.SuggestChatReply>(
         () => _i769.SuggestChatReply(gh<_i444.AiRepository>()));
     gh.factory<_i769.GetAiBranchSettings>(
@@ -797,6 +801,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i1048.SystemOverviewCubit(gh<_i962.LoadSystemOverview>()));
     gh.factory<_i785.RoomAdminCubit>(
         () => _i785.RoomAdminCubit(gh<_i644.GetRoomDetail>()));
+    gh.factory<_i852.AiContentAuditCubit>(
+        () => _i852.AiContentAuditCubit(gh<_i769.GetContentAudit>()));
     gh.factory<_i508.RoomsManageCubit>(
         () => _i508.RoomsManageCubit(gh<_i644.GetBranchRooms>()));
     gh.factory<_i489.ChainsPageCubit>(

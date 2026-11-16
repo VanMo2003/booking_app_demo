@@ -48,6 +48,9 @@ abstract class AiApi {
     @Query('to') String to,
   );
 
+  @GET('/ai/branches/{hotelId}/content-audit')
+  Future<ApiResponse> contentAudit(@Path('hotelId') int hotelId);
+
   @POST('/ai/conversations/{id}/suggest-reply')
   Future<ApiResponse> suggestReply(@Path('id') int conversationId);
 

@@ -119,6 +119,11 @@ class WorkspaceMoreScreen extends StatelessWidget {
                     onTap: () => router.push(AiPricingRoute(hotelId: hotelId, subtitle: branchName)),
                   ),
                 ),
+                MenuTile(
+                  icon: Icons.fact_check_outlined,
+                  title: AiStrings.auditMenu,
+                  onTap: () => router.push(AiContentAuditRoute(hotelId: hotelId, subtitle: branchName)),
+                ),
               ],
               MenuTile(
                 icon: Icons.notifications_none_rounded,
