@@ -11,6 +11,7 @@ import '../../../../core/navigation/router_extensions.dart';
 import '../../../../core/style/style.dart';
 import '../../../../core/text/discover_strings.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../ai/presentation/ai_widgets.dart';
 import '../../../voucher/presentation/voucher_widgets.dart';
 import '../../domain/entities/tour.dart';
 import '../widgets/tour_card.dart';
@@ -86,6 +87,9 @@ class _TourHomeView extends StatelessWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
                 SliverToBoxAdapter(child: _Header(onSearch: () => context.rootRouter.push(TourSearchRoute()))),
+                const SliverToBoxAdapter(
+                  child: AiTourSearchEntry(padding: EdgeInsets.fromLTRB(16, 12, 16, 0)),
+                ),
                 if (view == null)
                   SliverToBoxAdapter(
                     child: Padding(

@@ -2,6 +2,8 @@ import 'package:booking_app_mobile/core/di/injector.dart';
 import 'package:booking_app_mobile/core/network/paged.dart';
 import 'package:booking_app_mobile/core/storage/app_preferences.dart';
 import 'package:booking_app_mobile/core/text/discover_strings.dart';
+import 'package:booking_app_mobile/features/ai/domain/repositories/ai_repository.dart';
+import 'package:booking_app_mobile/features/ai/domain/usecases/ai_usecases.dart';
 import 'package:booking_app_mobile/features/notification/services/app_link.dart';
 import 'package:booking_app_mobile/features/tour/data/interest_store.dart';
 import 'package:booking_app_mobile/features/tour/data/models/tour_booking_models.dart';
@@ -62,6 +64,15 @@ class _FakeTours implements TourRepository {
   @override
   Future<Paged<Tour>> search({String? query, TravelTheme? theme, double? maxPrice, int page = 0}) async =>
       const Paged.empty();
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => throw UnimplementedError('${invocation.memberName}');
+}
+
+/// Máy chủ chưa bật AI: lối vào "Hỏi AI tìm tour" tự ẩn.
+class _FakeAi implements AiRepository {
+  @override
+  Future<bool> enabled() async => false;
 
   @override
   dynamic noSuchMethod(Invocation invocation) => throw UnimplementedError('${invocation.memberName}');
@@ -161,6 +172,7 @@ void main() {
       });
       store = InterestStore(AppPreferences(await SharedPreferences.getInstance()), Dio());
       getIt
+        ..registerSingleton<AiAvailability>(AiAvailability(_FakeAi()))
         ..registerSingleton<InterestStore>(store)
         ..registerFactory<TourHomeCubit>(() => TourHomeCubit(GetTourHome(_FakeTours()), store, _FakeVouchers()));
     });

@@ -1,4 +1,6 @@
 import '../../../../core/network/json_reader.dart';
+import '../../../tour/data/models/tour_models.dart';
+import '../../../tour/domain/entities/travel_theme.dart';
 import '../../domain/entities/ai.dart';
 
 abstract final class AiModels {
@@ -33,6 +35,28 @@ abstract final class AiModels {
         fromPrice: json.decimal('fromPrice'),
         matchedAmenities: json.strings('matchedAmenities'),
       );
+
+  static AiTourSearchResult tourSearchResult(Json json) {
+    final filters = json.obj('filters') ?? const <String, dynamic>{};
+    return AiTourSearchResult(
+      query: json.str('query'),
+      summary: json.strOrNull('summary'),
+      filters: AiTourFilters(
+        destinations: filters.strings('destinations'),
+        themes: filters.strings('themes').map(TravelTheme.tryParse).nonNulls.toList(),
+        minPrice: filters['minPrice'] == null ? null : filters.decimal('minPrice'),
+        maxPrice: filters['maxPrice'] == null ? null : filters.decimal('maxPrice'),
+        adults: filters.intOrNull('adults'),
+        children: filters.intOrNull('children'),
+        tourDate: filters.date('tourDate'),
+        nights: filters.intOrNull('nights'),
+        withRooms: filters['withRooms'] as bool?,
+        keywords: filters.strings('keywords'),
+      ),
+      results: json.listOf('results', TourModel.fromJson),
+      notes: json.strings('notes'),
+    );
+  }
 
   static AiSuggestion suggestion(Json json) => AiSuggestion(
         content: json.str('content'),

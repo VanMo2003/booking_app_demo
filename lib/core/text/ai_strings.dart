@@ -27,6 +27,27 @@ abstract final class AiStrings {
   static String priceOver(String price) => 'Trên $price';
   static String priceBetween(String min, String max) => '$min – $max';
 
+  // Tìm tour bằng AI
+  static const tourEntry = 'Hỏi AI tìm tour';
+  static const tourEntryHint = '"Tour biển Hạ Long 2 ngày cho gia đình, dưới 2 triệu"';
+  static const tourTitle = 'Tìm tour bằng AI';
+  static const tourIntro =
+      'Kể về chuyến đi bạn muốn. AI hiểu điểm đến, chủ đề, ngày đi, số người và mức giá; tour, giá và chỗ còn lại lấy trực tiếp từ hệ thống.';
+  static const tourHint = 'Ví dụ: tour biển Hạ Long 2 ngày 1 đêm cho 2 người lớn 1 trẻ em, dưới 3 triệu';
+  static const tourExamples = [
+    'Tour biển Hạ Long 2 ngày 1 đêm cho 2 người lớn 1 trẻ em',
+    'Tour ẩm thực phố cổ Hà Nội đi về trong ngày dưới 500k',
+    'Tour núi Sa Pa kèm khách sạn, thích thiên nhiên',
+  ];
+  static String tourResultsCount(int n) => '$n tour phù hợp';
+  static const tourNoResults = 'Chưa có tour nào khớp';
+  static const tourNoResultsHint = 'Thử bớt điều kiện: mức giá, ngày đi hoặc chủ đề.';
+  static String tourGuests(int adults, int children) =>
+      children == 0 ? '$adults người lớn' : '$adults người lớn · $children trẻ em';
+  static String tourNights(int n) => n == 0 ? 'Đi về trong ngày' : '$n đêm';
+  static const tourWithRooms = 'Có kèm khách sạn';
+  static const tourWithoutRooms = 'Không kèm khách sạn';
+
   // Trợ lý lễ tân trong chat
   static const suggest = 'Gợi ý trả lời bằng AI';
   static const suggestionNote = 'Bản nháp AI soạn từ dữ liệu của cơ sở — kiểm tra trước khi gửi.';

@@ -17,6 +17,9 @@ abstract class AiApi {
   @POST('/ai/search')
   Future<ApiResponse> search(@Body() Map<String, dynamic> body);
 
+  @POST('/ai/tours/search')
+  Future<ApiResponse> searchTours(@Body() Map<String, dynamic> body);
+
   @POST('/ai/conversations/{id}/suggest-reply')
   Future<ApiResponse> suggestReply(@Path('id') int conversationId);
 

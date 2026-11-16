@@ -20,6 +20,10 @@ class AiRepositoryImpl implements AiRepository {
       (await _api.search({'query': query})).parse(AiModels.searchResult);
 
   @override
+  Future<AiTourSearchResult> searchTours(String query) async =>
+      (await _api.searchTours({'query': query})).parse(AiModels.tourSearchResult);
+
+  @override
   Future<AiSuggestion> suggestReply(int conversationId) async =>
       (await _api.suggestReply(conversationId)).parse(AiModels.suggestion);
 

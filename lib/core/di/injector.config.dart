@@ -47,6 +47,8 @@ import 'package:booking_app_mobile/features/ai/domain/usecases/ai_usecases.dart'
     as _i769;
 import 'package:booking_app_mobile/features/ai/presentation/ai_search_screen.dart'
     as _i1050;
+import 'package:booking_app_mobile/features/ai/presentation/ai_tour_search_screen.dart'
+    as _i151;
 import 'package:booking_app_mobile/features/amenity/data/datasources/amenity_api.dart'
     as _i619;
 import 'package:booking_app_mobile/features/amenity/data/repositories/amenity_repository_impl.dart'
@@ -596,6 +598,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i769.AiAvailability(gh<_i444.AiRepository>()));
     gh.factory<_i769.SearchWithAi>(
         () => _i769.SearchWithAi(gh<_i444.AiRepository>()));
+    gh.factory<_i769.SearchToursWithAi>(
+        () => _i769.SearchToursWithAi(gh<_i444.AiRepository>()));
     gh.factory<_i769.SuggestChatReply>(
         () => _i769.SuggestChatReply(gh<_i444.AiRepository>()));
     gh.factory<_i769.GetAiBranchSettings>(
@@ -634,6 +638,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i1001.SearchTours(gh<_i954.TourRepository>()));
     gh.factory<_i1001.GetTourHome>(
         () => _i1001.GetTourHome(gh<_i954.TourRepository>()));
+    gh.factory<_i151.AiTourSearchCubit>(
+        () => _i151.AiTourSearchCubit(gh<_i769.SearchToursWithAi>()));
     gh.factory<_i750.CreateBooking>(
         () => _i750.CreateBooking(gh<_i299.BookingRepository>()));
     gh.factory<_i750.UpdateBooking>(

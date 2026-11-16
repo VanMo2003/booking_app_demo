@@ -5,6 +5,8 @@ abstract interface class AiRepository {
 
   Future<AiSearchResult> search(String query);
 
+  Future<AiTourSearchResult> searchTours(String query);
+
   Future<AiSuggestion> suggestReply(int conversationId);
 
   Future<AiBranchSettings> settings(int hotelId);
