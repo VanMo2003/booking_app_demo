@@ -13,6 +13,8 @@ import '../../../../core/text/ai_strings.dart';
 import '../../../../core/text/app_strings.dart';
 import '../../../../core/text/chat_strings.dart';
 import '../../../../core/utils/external_actions.dart';
+import '../../../ai/presentation/ai_widgets.dart';
+import '../../../ai/presentation/chat_summary_sheet.dart';
 import '../../../ai/domain/usecases/ai_usecases.dart';
 import '../../../auth/presentation/session/session_cubit.dart';
 import '../../domain/entities/chat.dart';
@@ -58,6 +60,14 @@ class _ChatView extends StatelessWidget {
             titleSpacing: 0,
             title: conversation == null ? null : _ChatTitle(conversation: conversation),
             actions: [
+              if (conversation != null && !conversation.isCustomerView)
+                AiEnabled(
+                  child: IconButton(
+                    tooltip: AiStrings.summaryTooltip,
+                    onPressed: () => showChatSummary(context, conversation.id),
+                    icon: const Icon(Icons.summarize_outlined),
+                  ),
+                ),
               if (conversation != null && conversation.counterpartPhone.isNotEmpty)
                 IconButton(
                   tooltip: AppStrings.call,

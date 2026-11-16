@@ -188,6 +188,18 @@ abstract final class AiModels {
         target: json.str('target'),
       );
 
+  static ChatSummary chatSummary(Json json) => ChatSummary(
+        conversationId: json.integer('conversationId'),
+        urgency: ChatUrgency.parse(json.strOrNull('urgency')),
+        summary: json.strOrNull('summary'),
+        openItems: json.strings('openItems'),
+        nextSteps: json.strings('nextSteps'),
+        waitingOnHotel: json.flag('waitingOnHotel'),
+        needsStaff: json.flag('needsStaff'),
+        handoffReason: json.strOrNull('handoffReason'),
+        messageCount: json.integer('messageCount'),
+      );
+
   static AiSuggestion suggestion(Json json) => AiSuggestion(
         content: json.str('content'),
         needsStaff: json.flag('needsStaff'),

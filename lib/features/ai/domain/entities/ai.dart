@@ -488,6 +488,66 @@ class GuestAnswer extends Equatable {
   List<Object?> get props => [question, answer, suggestions, links, notes];
 }
 
+/// Mức gấp của một cuộc trò chuyện, do AI đọc ra từ nội dung.
+enum ChatUrgency {
+  low('LOW'),
+  normal('NORMAL'),
+  high('HIGH');
+
+  const ChatUrgency(this.value);
+
+  final String value;
+
+  static ChatUrgency parse(String? raw) {
+    for (final urgency in values) {
+      if (urgency.value == raw) return urgency;
+    }
+    return ChatUrgency.normal;
+  }
+}
+
+/// Ghi chú ngắn về một cuộc trò chuyện dài, cho nhân viên của cơ sở.
+class ChatSummary extends Equatable {
+  const ChatSummary({
+    required this.conversationId,
+    required this.urgency,
+    this.summary,
+    this.openItems = const [],
+    this.nextSteps = const [],
+    this.waitingOnHotel = false,
+    this.needsStaff = false,
+    this.handoffReason,
+    this.messageCount = 0,
+  });
+
+  final int conversationId;
+  final ChatUrgency urgency;
+  final String? summary;
+  final List<String> openItems;
+  final List<String> nextSteps;
+
+  /// Khách nhắn cuối: cơ sở đang nợ một câu trả lời.
+  final bool waitingOnHotel;
+  final bool needsStaff;
+  final String? handoffReason;
+  final int messageCount;
+
+  bool get isEmpty => messageCount == 0;
+
+  @override
+  List<Object?> get props => [
+        conversationId,
+        urgency,
+        summary,
+        openItems,
+        nextSteps,
+        waitingOnHotel,
+        needsStaff,
+        handoffReason,
+        messageCount,
+      ];
+}
+
 /// Bản nháp trả lời khách do AI soạn — chưa gửi gì cho khách.
 class AiSuggestion extends Equatable {
   const AiSuggestion({

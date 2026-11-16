@@ -121,6 +121,15 @@ class AskGuestAssistant {
 }
 
 @injectable
+class GetChatSummary {
+  const GetChatSummary(this._repository);
+
+  final AiRepository _repository;
+
+  Future<ChatSummary> call(int conversationId) => _repository.chatSummary(conversationId);
+}
+
+@injectable
 class SuggestChatReply {
   const SuggestChatReply(this._repository);
 

@@ -620,6 +620,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i769.GetPricingAdvice(gh<_i444.AiRepository>()));
     gh.factory<_i769.AskGuestAssistant>(
         () => _i769.AskGuestAssistant(gh<_i444.AiRepository>()));
+    gh.factory<_i769.GetChatSummary>(
+        () => _i769.GetChatSummary(gh<_i444.AiRepository>()));
     gh.factory<_i769.SuggestChatReply>(
         () => _i769.SuggestChatReply(gh<_i444.AiRepository>()));
     gh.factory<_i769.GetAiBranchSettings>(

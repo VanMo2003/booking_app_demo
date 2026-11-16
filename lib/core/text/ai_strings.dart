@@ -1,3 +1,5 @@
+import '../../features/ai/domain/entities/ai.dart';
+
 /// Chuỗi cho các tính năng AI: tìm phòng bằng câu nói và trợ lý lễ tân trong chat.
 abstract final class AiStrings {
   static const assistantName = 'Trợ lý AI';
@@ -154,6 +156,21 @@ abstract final class AiStrings {
   static const guestFrom = 'Trả lời từ các đơn của chính bạn';
   static const guestNote =
       'Muốn đặt, huỷ hay thanh toán thì làm trong ứng dụng; cần khách sạn hỗ trợ thì nhắn trong mục Tin nhắn.';
+
+  // Tóm tắt hội thoại cho nhân viên
+  static const summaryTooltip = 'AI tóm tắt hội thoại';
+  static const summaryTitle = 'Tóm tắt hội thoại';
+  static const summaryOpen = 'Còn treo';
+  static const summaryNext = 'Nên làm tiếp';
+  static const summaryWaiting = 'Khách đang chờ trả lời';
+  static const summaryEmpty = 'Hội thoại chưa có tin nhắn nào';
+  static const summaryNote = 'AI tóm tắt từ nội dung hội thoại, không gửi gì cho khách.';
+  static String summaryFrom(int n) => 'Đọc từ $n tin nhắn gần nhất';
+  static String summaryUrgency(ChatUrgency urgency) => switch (urgency) {
+        ChatUrgency.high => 'Gấp',
+        ChatUrgency.normal => 'Bình thường',
+        ChatUrgency.low => 'Không gấp',
+      };
 
   // Trợ lý lễ tân trong chat
   static const suggest = 'Gợi ý trả lời bằng AI';

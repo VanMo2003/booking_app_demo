@@ -19,6 +19,8 @@ abstract interface class AiRepository {
 
   Future<GuestAnswer> askAssistant(String query);
 
+  Future<ChatSummary> chatSummary(int conversationId);
+
   Future<AiSuggestion> suggestReply(int conversationId);
 
   Future<AiBranchSettings> settings(int hotelId);
