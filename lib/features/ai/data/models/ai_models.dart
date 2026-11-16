@@ -252,6 +252,31 @@ abstract final class AiModels {
         checkKey: json.strOrNull('checkKey'),
       );
 
+  static DailyBrief dailyBrief(Json json) => DailyBrief(
+        hotelId: json.integer('hotelId'),
+        date: json.date('date') ?? DateTime.now(),
+        headline: json.strOrNull('headline'),
+        signals: json.listOf('signals', _briefSignal),
+        tasks: json.listOf('tasks', _briefTask),
+        notes: json.strings('notes'),
+      );
+
+  static BriefSignal _briefSignal(Json json) => BriefSignal(
+        key: json.str('key'),
+        label: json.str('label'),
+        value: json.str('value'),
+        level: BriefLevel.parse(json.strOrNull('level')),
+        detail: json.strOrNull('detail'),
+      );
+
+  static BriefTask _briefTask(Json json) => BriefTask(
+        title: json.str('title'),
+        priority: AuditPriority.parse(json.strOrNull('priority')),
+        how: json.str('how'),
+        why: json.strOrNull('why'),
+        signalKey: json.strOrNull('signalKey'),
+      );
+
   static AiSuggestion suggestion(Json json) => AiSuggestion(
         content: json.str('content'),
         needsStaff: json.flag('needsStaff'),

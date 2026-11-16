@@ -79,9 +79,9 @@ lib/
 
 Tính năng: `auth`, `splash`, `shell` (khung tab từng vai trò), `hotel`, `room`,
 `booking`, `payment`, `feedback`, `favorite`, `customer`, `amenity`, `service`,
-`dish` (thực đơn món ăn), `tour` (tour tham quan), `chat` (nhắn tin khách ↔ cơ sở), `ai` (12 tính năng AI: tìm phòng/tìm tour bằng câu nói, kế hoạch chuyến đi, trợ lý lễ tân, trợ lý của
+`dish` (thực đơn món ăn), `tour` (tour tham quan), `chat` (nhắn tin khách ↔ cơ sở), `ai` (13 tính năng AI: tìm phòng/tìm tour bằng câu nói, kế hoạch chuyến đi, trợ lý lễ tân, trợ lý của
 khách, tóm tắt hội thoại, tóm tắt & phân tích đánh giá, soạn nội dung tour, hỏi đáp số liệu, tư vấn giá
-phòng, kiểm tra trang cơ sở),
+phòng, kiểm tra trang cơ sở, bản tin việc hôm nay),
 `employee`, `payroll`, `report`, `hotel_chain`, `partner` (đăng ký và xét duyệt chủ
 khách sạn), `notification` (hộp thông báo, push, deep link), `account`, `catalog`, `admin`.
 
@@ -165,6 +165,10 @@ của BE). Lúc mở app, `AiAvailability` hỏi `GET /ai/status`; máy chủ ch
   câu bình thường, nhận câu trả lời kèm kỳ số liệu, số đáng chú ý và gợi ý.
 - **AI tư vấn giá phòng** (`AiPricingScreen`, menu Thêm của quản lý): mỗi loại phòng nên tăng/giữ/giảm
   bao nhiêu phần trăm, giá cũ → giá đề xuất, lý do, kèm lấp phòng và ADR thực.
+- **Việc hôm nay** (`AiDailyBriefScreen`, menu Thêm của quản lý): bản tin đầu ngày — khách nhận/trả phòng
+  hôm nay, đơn còn chờ xác nhận, tour khởi hành hôm nay và ngày mai, tin nhắn khách chưa trả lời, đánh giá
+  thấp mới, tiền chưa thu, phòng bảo trì và chỉ tiêu tháng. Việc nên làm trước nằm trên cùng, dòng không có
+  gì phải làm gom xuống mục "Đã kiểm tra".
 - **Kiểm tra trang cơ sở** (`AiContentAuditScreen`, menu Thêm của quản lý): điểm 0–100, danh sách tiêu
   chí đạt/chưa đạt và việc nên làm trước. Hiện cả khi chưa bật AI vì tiêu chí do máy chủ đếm.
 - **Khách nói gì về chuỗi** (`AiReviewThemesScreen`, menu Thêm của chủ chuỗi): chọn kỳ 30/90/180 ngày,

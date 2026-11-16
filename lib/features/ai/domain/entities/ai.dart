@@ -718,6 +718,105 @@ class ContentAudit extends Equatable {
   List<Object?> get props => [hotelId, score, summary, checks, items, notes];
 }
 
+/// Một dòng số liệu trong bản tin đầu ngày cần xử lý tới đâu.
+enum BriefLevel {
+  /// Cần người xử lý ngay hôm nay.
+  urgent('URGENT'),
+
+  /// Đáng để mắt, chưa gấp.
+  watch('WATCH'),
+
+  /// Không có gì phải làm.
+  quiet('QUIET');
+
+  const BriefLevel(this.value);
+
+  final String value;
+
+  bool get needsWork => this != BriefLevel.quiet;
+
+  static BriefLevel parse(String? raw) {
+    for (final level in values) {
+      if (level.value == raw) return level;
+    }
+    return BriefLevel.quiet;
+  }
+}
+
+/// Một dòng số liệu của hôm nay, do máy chủ đếm trên dữ liệu thật.
+class BriefSignal extends Equatable {
+  const BriefSignal({
+    required this.key,
+    required this.label,
+    required this.value,
+    required this.level,
+    this.detail,
+  });
+
+  final String key;
+  final String label;
+
+  /// Con số đã viết sẵn thành chữ: "3 đơn", "1,2 tr đ".
+  final String value;
+  final BriefLevel level;
+  final String? detail;
+
+  @override
+  List<Object?> get props => [key, label, value, level, detail];
+}
+
+/// Một việc nên làm, do AI xếp thứ tự và diễn đạt từ các dòng đang cần xử lý.
+class BriefTask extends Equatable {
+  const BriefTask({
+    required this.title,
+    required this.priority,
+    required this.how,
+    this.why,
+    this.signalKey,
+  });
+
+  final String title;
+  final AuditPriority priority;
+  final String how;
+  final String? why;
+  final String? signalKey;
+
+  @override
+  List<Object?> get props => [title, priority, how, why, signalKey];
+}
+
+/// Bản tin đầu ngày của một cơ sở.
+class DailyBrief extends Equatable {
+  const DailyBrief({
+    required this.hotelId,
+    required this.date,
+    this.headline,
+    this.signals = const [],
+    this.tasks = const [],
+    this.notes = const [],
+  });
+
+  final int hotelId;
+  final DateTime date;
+
+  /// Một hai câu về hôm nay; rỗng khi máy chủ chưa bật AI.
+  final String? headline;
+  final List<BriefSignal> signals;
+  final List<BriefTask> tasks;
+  final List<String> notes;
+
+  /// Các dòng đang cần xử lý, gấp trước — phần quản lý phải đọc.
+  List<BriefSignal> get live => signals.where((signal) => signal.level.needsWork).toList()
+    ..sort((a, b) => a.level.index.compareTo(b.level.index));
+
+  List<BriefSignal> get calm => signals.where((signal) => !signal.level.needsWork).toList();
+
+  int get urgentCount => signals.where((signal) => signal.level == BriefLevel.urgent).length;
+
+  @override
+  List<Object?> get props => [hotelId, date, headline, signals, tasks, notes];
+}
+
 /// Bản nháp trả lời khách do AI soạn — chưa gửi gì cho khách.
 class AiSuggestion extends Equatable {
   const AiSuggestion({

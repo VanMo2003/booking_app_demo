@@ -188,6 +188,19 @@ abstract final class AiStrings {
   static String themesFrom(String from, String to, int reviews) => '$from – $to · $reviews đánh giá có nội dung';
   static String themesBranchValue(int reviews, String average) => '$reviews đánh giá · $average sao';
 
+  // AI bản tin đầu ngày
+  static const briefTitle = 'Việc hôm nay';
+  static const briefMenu = 'Việc hôm nay';
+  static const briefTodo = 'Nên làm trước';
+  static const briefLive = 'Đang cần xử lý';
+  static const briefCalm = 'Đã kiểm tra, không có gì';
+  static const briefUrgent = 'Gấp';
+  static const briefWatch = 'Để mắt';
+  static const briefAllQuiet = 'Hôm nay không có việc nào đang chờ xử lý.';
+  static const briefNote =
+      'Mọi con số ở đây do hệ thống đếm trên dữ liệu thật của cơ sở; phần "nên làm trước" do AI sắp xếp.';
+  static String briefUrgentCount(int count) => '$count việc gấp';
+
   // AI kiểm tra mức hoàn thiện trang
   static const auditTitle = 'Hoàn thiện trang cơ sở';
   static const auditMenu = 'Kiểm tra trang cơ sở';
