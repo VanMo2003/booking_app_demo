@@ -133,6 +133,13 @@ abstract final class AiModels {
         generatedAt: json.date('generatedAt'),
       );
 
+  static TourDraft tourDraft(Json json) => TourDraft(
+        description: json.strOrNull('description'),
+        includes: json.strOrNull('includes'),
+        cancellationPolicy: json.strOrNull('cancellationPolicy'),
+        itinerary: json.listOf('itinerary', TourModel.step),
+      );
+
   static AiSuggestion suggestion(Json json) => AiSuggestion(
         content: json.str('content'),
         needsStaff: json.flag('needsStaff'),

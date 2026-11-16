@@ -32,6 +32,10 @@ class AiRepositoryImpl implements AiRepository {
       (await _api.reviewDigest(hotelId)).parse(AiModels.reviewDigest);
 
   @override
+  Future<TourDraft> draftTour(Map<String, dynamic> body) async =>
+      (await _api.draftTour(body)).parse(AiModels.tourDraft);
+
+  @override
   Future<AiSuggestion> suggestReply(int conversationId) async =>
       (await _api.suggestReply(conversationId)).parse(AiModels.suggestion);
 

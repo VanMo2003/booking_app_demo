@@ -90,6 +90,17 @@ abstract final class AiStrings {
   static const digestNote = 'AI tóm tắt từ đánh giá thật của khách, không phải lời của khách sạn.';
   static String digestStars(int stars) => '$stars★';
 
+  // AI soạn nội dung tour
+  static const draftTour = 'AI soạn nội dung';
+  static const draftTourHint = 'Nhập tên tour và điểm đến, AI viết mô tả, lịch trình và điều khoản huỷ để bạn sửa lại.';
+  static const draftTourNeedsName = 'Nhập tên tour trước đã';
+  static const draftTourDone = 'Đã điền nội dung nháp — đọc lại và sửa trước khi lưu';
+  static const draftTourEmpty = 'AI chưa soạn được nội dung, thử lại sau';
+  static const draftOverwriteTitle = 'Thay nội dung đang có?';
+  static const draftOverwriteMessage =
+      'Mô tả, phần bao gồm, lịch trình và điều khoản huỷ sẽ bị thay bằng bản AI soạn. Giá và ảnh giữ nguyên.';
+  static const draftOverwriteConfirm = 'Thay';
+
   // Trợ lý lễ tân trong chat
   static const suggest = 'Gợi ý trả lời bằng AI';
   static const suggestionNote = 'Bản nháp AI soạn từ dữ liệu của cơ sở — kiểm tra trước khi gửi.';

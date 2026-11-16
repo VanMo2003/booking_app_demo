@@ -11,6 +11,8 @@ abstract interface class AiRepository {
 
   Future<ReviewDigest> reviewDigest(int hotelId);
 
+  Future<TourDraft> draftTour(Map<String, dynamic> body);
+
   Future<AiSuggestion> suggestReply(int conversationId);
 
   Future<AiBranchSettings> settings(int hotelId);

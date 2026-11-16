@@ -6,9 +6,11 @@ import '../../../core/bloc/load_state.dart';
 import '../../../core/component/component.dart';
 import '../../../core/di/injector.dart';
 import '../../../core/style/style.dart';
+import '../../../core/text/ai_strings.dart';
 import '../../../core/text/app_strings.dart';
 import '../../../core/text/tour_strings.dart';
 import '../../../core/utils/validators.dart';
+import '../../ai/domain/usecases/ai_usecases.dart';
 import '../../room/domain/entities/room.dart';
 import '../../room/domain/usecases/room_usecases.dart';
 import '../data/models/tour_models.dart';
@@ -57,6 +59,7 @@ class _TourFormScreenState extends State<TourFormScreen> {
   late bool _featured = widget.tour?.featured ?? false;
   late DateTime? _promotionEndsAt = widget.tour?.promotionEndsAt;
   bool _saving = false;
+  bool _drafting = false;
 
   bool get _isEdit => widget.tour != null;
 
@@ -95,6 +98,65 @@ class _TourFormScreenState extends State<TourFormScreen> {
     final nights = int.tryParse(value?.trim() ?? '');
     if (nights == null || nights < 1 || nights > 30) return 'Từ 1 đến 30 đêm';
     return null;
+  }
+
+  /// AI soạn mô tả, phần bao gồm, lịch trình và điều khoản huỷ từ những gì đã nhập. Chỉ điền vào biểu
+  /// mẫu — quản lý đọc lại rồi tự lưu. Có nội dung cũ thì hỏi trước khi thay.
+  Future<void> _draft() async {
+    final name = _name.text.trim();
+    if (name.isEmpty) {
+      AppToast.error(context, AiStrings.draftTourNeedsName);
+      return;
+    }
+    final hasContent = _description.text.trim().isNotEmpty ||
+        _includes.text.trim().isNotEmpty ||
+        _policy.text.trim().isNotEmpty ||
+        _steps.any((step) => step.title.text.trim().isNotEmpty);
+    if (hasContent) {
+      final replace = await AppDialogs.confirm(
+        context,
+        title: AiStrings.draftOverwriteTitle,
+        message: AiStrings.draftOverwriteMessage,
+        confirmLabel: AiStrings.draftOverwriteConfirm,
+      );
+      if (replace != true || !mounted) return;
+    }
+    setState(() => _drafting = true);
+    final result = await runAction(
+      () => getIt<DraftTourWithAi>()(
+        hotelId: widget.hotelId,
+        name: name,
+        destination: _destination.text,
+        duration: _duration.text,
+        departure: _departure.text,
+        themes: _themes.toList(),
+      ),
+    );
+    if (!mounted) return;
+    setState(() => _drafting = false);
+    final draft = result.value;
+    if (draft == null) {
+      AppToast.error(context, result.error!);
+      return;
+    }
+    if (draft.isEmpty) {
+      AppToast.error(context, AiStrings.draftTourEmpty);
+      return;
+    }
+    setState(() {
+      if ((draft.description ?? '').isNotEmpty) _description.text = draft.description!;
+      if ((draft.includes ?? '').isNotEmpty) _includes.text = draft.includes!;
+      if ((draft.cancellationPolicy ?? '').isNotEmpty) _policy.text = draft.cancellationPolicy!;
+      if (draft.itinerary.isNotEmpty) {
+        for (final step in _steps) {
+          step.dispose();
+        }
+        _steps
+          ..clear()
+          ..addAll(draft.itinerary.map(_StepFields.new));
+      }
+    });
+    AppToast.success(context, AiStrings.draftTourDone);
   }
 
   Future<void> _submit() async {
@@ -230,6 +292,26 @@ class _TourFormScreenState extends State<TourFormScreen> {
               hint: TourStrings.departureHint,
               prefixIcon: Icons.schedule_rounded,
               textInputAction: TextInputAction.next,
+            ),
+            const Gap(AppSpacing.sm),
+            ValueListenableBuilder<bool>(
+              valueListenable: getIt<AiAvailability>().enabled,
+              builder: (context, aiEnabled, _) {
+                if (!aiEnabled) return const SizedBox.shrink();
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AppButton.tonal(
+                      label: AiStrings.draftTour,
+                      icon: Icons.auto_awesome_rounded,
+                      loading: _drafting,
+                      onPressed: _saving || _drafting ? null : _draft,
+                    ),
+                    const Gap(4),
+                    Text(AiStrings.draftTourHint, style: AppTextStyles.caption),
+                  ],
+                );
+              },
             ),
             const Gap(AppSpacing.sm),
             AppTextField(

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 
+import '../../../tour/domain/entities/travel_theme.dart';
 import '../entities/ai.dart';
 import '../repositories/ai_repository.dart';
 
@@ -56,6 +57,35 @@ class GetReviewDigest {
   final AiRepository _repository;
 
   Future<ReviewDigest> call(int hotelId) => _repository.reviewDigest(hotelId);
+}
+
+@injectable
+class DraftTourWithAi {
+  const DraftTourWithAi(this._repository);
+
+  final AiRepository _repository;
+
+  /// Gửi những gì quản lý đã nhập; ô nào để trống thì không gửi.
+  Future<TourDraft> call({
+    required int hotelId,
+    required String name,
+    String? destination,
+    String? duration,
+    String? departure,
+    List<TravelTheme> themes = const [],
+    String? notes,
+  }) {
+    String? some(String? value) => value == null || value.trim().isEmpty ? null : value.trim();
+    return _repository.draftTour({
+      'hotelId': hotelId,
+      'name': name.trim(),
+      if (some(destination) != null) 'destination': some(destination),
+      if (some(duration) != null) 'duration': some(duration),
+      if (some(departure) != null) 'departure': some(departure),
+      if (themes.isNotEmpty) 'themes': themes.map((theme) => theme.value).toList(),
+      if (some(notes) != null) 'notes': some(notes),
+    });
+  }
 }
 
 @injectable

@@ -331,6 +331,25 @@ class ReviewDigest extends Equatable {
       [hotelId, available, summary, pros, cons, reviewCount, averageRating, ratingCounts, generatedAt];
 }
 
+/// Nội dung nháp cho một tour do AI soạn; khách sạn sửa lại rồi tự lưu.
+class TourDraft extends Equatable {
+  const TourDraft({this.description, this.includes, this.cancellationPolicy, this.itinerary = const []});
+
+  final String? description;
+  final String? includes;
+  final String? cancellationPolicy;
+  final List<ItineraryStep> itinerary;
+
+  bool get isEmpty =>
+      (description ?? '').isEmpty &&
+      (includes ?? '').isEmpty &&
+      (cancellationPolicy ?? '').isEmpty &&
+      itinerary.isEmpty;
+
+  @override
+  List<Object?> get props => [description, includes, cancellationPolicy, itinerary];
+}
+
 /// Bản nháp trả lời khách do AI soạn — chưa gửi gì cho khách.
 class AiSuggestion extends Equatable {
   const AiSuggestion({
