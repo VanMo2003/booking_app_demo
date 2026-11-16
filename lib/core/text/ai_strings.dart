@@ -48,6 +48,40 @@ abstract final class AiStrings {
   static const tourWithRooms = 'Có kèm khách sạn';
   static const tourWithoutRooms = 'Không kèm khách sạn';
 
+  // Lên kế hoạch chuyến đi bằng AI
+  static const tripEntry = 'Lên kế hoạch chuyến đi';
+  static const tripEntryHint = '"Hạ Long 3 ngày 2 đêm, 2 người lớn 1 trẻ, 6 triệu"';
+  static const tripTitle = 'Kế hoạch chuyến đi';
+  static const tripIntro =
+      'Kể về chuyến đi: điểm đến, mấy ngày, mấy người và khoảng tiền. AI xếp lịch trình từng ngày từ khách sạn còn phòng và tour đang chạy; mọi khoản tiền do hệ thống tính.';
+  static const tripHint = 'Ví dụ: Hạ Long 3 ngày 2 đêm cho 2 người lớn 1 trẻ em, khoảng 6 triệu, thích biển';
+  static const tripAction = 'Lên kế hoạch';
+  static const tripExamples = [
+    'Hạ Long 3 ngày 2 đêm cho 2 người lớn 1 trẻ em, khoảng 6 triệu, thích biển',
+    'Cuối tuần này ở Ninh Bình cho 2 người, thích thiên nhiên và văn hoá',
+    'Sa Pa 2 ngày 1 đêm cho 4 người, dưới 8 triệu',
+  ];
+  static const tripNothing = 'Chưa lên được kế hoạch';
+  static const tripNothingHint = 'Thử nói rõ điểm đến và số ngày, hoặc chọn ngày khác.';
+  static const tripStay = 'Nơi ở';
+  static const tripSchedule = 'Lịch trình';
+  static const tripToursTitle = 'Tour trong kế hoạch';
+  static const tripCostTitle = 'Chi phí dự kiến';
+  static const tripCostRooms = 'Tiền phòng';
+  static const tripCostTours = 'Tiền tour';
+  static const tripCostVoucher = 'Mã giảm giá';
+  static const tripCostTotal = 'Tổng cộng';
+  static const tripCostPerPerson = 'Mỗi người';
+  static const tripCostLeft = 'Còn lại so với ngân sách';
+  static const tripCostOver = 'Vượt ngân sách';
+  static const tripCostNote = 'Tiền phòng và tiền tour theo giá hiện tại, chưa gồm ăn uống ngoài tour.';
+  static const tripBookStay = 'Đặt phòng';
+  static const tripDay = 'Ngày';
+  static String tripNights(int nights) => '${nights + 1} ngày $nights đêm';
+  static String tripRoom(String number, String type) => 'Phòng $number · $type';
+  static String tripPerNight(String price) => '$price/đêm';
+  static String tripBudget(String price) => 'Ngân sách $price';
+
   // Trợ lý lễ tân trong chat
   static const suggest = 'Gợi ý trả lời bằng AI';
   static const suggestionNote = 'Bản nháp AI soạn từ dữ liệu của cơ sở — kiểm tra trước khi gửi.';

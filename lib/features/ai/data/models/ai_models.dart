@@ -1,6 +1,7 @@
 import '../../../../core/network/json_reader.dart';
 import '../../../tour/data/models/tour_models.dart';
 import '../../../tour/domain/entities/travel_theme.dart';
+import '../../../voucher/data/voucher_repository.dart';
 import '../../domain/entities/ai.dart';
 
 abstract final class AiModels {
@@ -57,6 +58,66 @@ abstract final class AiModels {
       notes: json.strings('notes'),
     );
   }
+
+  static AiTripPlan tripPlan(Json json) {
+    final stay = json.obj('stay');
+    final cost = json.obj('cost') ?? const <String, dynamic>{};
+    final voucher = json.obj('voucher');
+    return AiTripPlan(
+      query: json.str('query'),
+      summary: json.strOrNull('summary'),
+      destination: json.strOrNull('destination'),
+      startDate: json.date('startDate'),
+      nights: json.integer('nights'),
+      adults: json.integer('adults'),
+      children: json.integer('children'),
+      themes: json.strings('themes').map(TravelTheme.tryParse).nonNulls.toList(),
+      budget: json['budget'] == null ? null : json.decimal('budget'),
+      stay: stay == null ? null : _stay(stay),
+      days: json.listOf('days', _day),
+      tours: json.listOf('tours', TourModel.fromJson),
+      voucher: voucher == null ? null : VoucherModel.fromJson(voucher),
+      cost: TripCost(
+        rooms: cost.decimal('rooms'),
+        tours: cost.decimal('tours'),
+        voucherDiscount: cost['voucherDiscount'] == null ? null : cost.decimal('voucherDiscount'),
+        total: cost.decimal('total'),
+        perPerson: cost.decimal('perPerson'),
+        leftOver: cost['leftOver'] == null ? null : cost.decimal('leftOver'),
+      ),
+      notes: json.strings('notes'),
+    );
+  }
+
+  static TripStay _stay(Json json) => TripStay(
+        hotelId: json.integer('hotelId'),
+        hotelName: json.str('hotelName'),
+        address: json.str('address'),
+        category: json.str('category'),
+        rating: json.decimal('rating'),
+        image: json.strOrNull('pathImage'),
+        roomId: json.integer('roomId'),
+        roomNumber: json.str('roomNumber'),
+        roomType: json.str('roomType'),
+        capacity: json.integer('capacity'),
+        pricePerNight: json.decimal('pricePerNight'),
+        checkin: json.date('checkin') ?? DateTime.now(),
+        checkout: json.date('checkout') ?? DateTime.now(),
+      );
+
+  static TripDay _day(Json json) => TripDay(
+        index: json.integer('index'),
+        date: json.date('date') ?? DateTime.now(),
+        title: json.strOrNull('title'),
+        steps: json.listOf('steps', _step),
+      );
+
+  static TripStep _step(Json json) => TripStep(
+        title: json.str('title'),
+        time: json.strOrNull('time'),
+        detail: json.strOrNull('detail'),
+        tourId: json.intOrNull('tourId'),
+      );
 
   static AiSuggestion suggestion(Json json) => AiSuggestion(
         content: json.str('content'),

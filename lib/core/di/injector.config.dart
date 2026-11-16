@@ -49,6 +49,8 @@ import 'package:booking_app_mobile/features/ai/presentation/ai_search_screen.dar
     as _i1050;
 import 'package:booking_app_mobile/features/ai/presentation/ai_tour_search_screen.dart'
     as _i151;
+import 'package:booking_app_mobile/features/ai/presentation/ai_trip_plan_screen.dart'
+    as _i238;
 import 'package:booking_app_mobile/features/amenity/data/datasources/amenity_api.dart'
     as _i619;
 import 'package:booking_app_mobile/features/amenity/data/repositories/amenity_repository_impl.dart'
@@ -600,6 +602,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i769.SearchWithAi(gh<_i444.AiRepository>()));
     gh.factory<_i769.SearchToursWithAi>(
         () => _i769.SearchToursWithAi(gh<_i444.AiRepository>()));
+    gh.factory<_i769.PlanTripWithAi>(
+        () => _i769.PlanTripWithAi(gh<_i444.AiRepository>()));
     gh.factory<_i769.SuggestChatReply>(
         () => _i769.SuggestChatReply(gh<_i444.AiRepository>()));
     gh.factory<_i769.GetAiBranchSettings>(
@@ -855,6 +859,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i398.UnregisterPushDevice(gh<_i129.NotificationRepository>()));
     gh.lazySingleton<_i922.PendingOwnersCubit>(
         () => _i922.PendingOwnersCubit(gh<_i387.CountPendingOwners>()));
+    gh.factory<_i238.AiTripPlanCubit>(
+        () => _i238.AiTripPlanCubit(gh<_i769.PlanTripWithAi>()));
     gh.factory<_i836.RegisterCubit>(() => _i836.RegisterCubit(
           gh<_i857.RegisterCustomer>(),
           gh<_i642.SessionCubit>(),

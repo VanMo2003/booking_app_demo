@@ -41,6 +41,15 @@ class SearchToursWithAi {
 }
 
 @injectable
+class PlanTripWithAi {
+  const PlanTripWithAi(this._repository);
+
+  final AiRepository _repository;
+
+  Future<AiTripPlan> call(String query) => _repository.planTrip(query.trim());
+}
+
+@injectable
 class SuggestChatReply {
   const SuggestChatReply(this._repository);
 

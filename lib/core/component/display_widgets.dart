@@ -213,12 +213,15 @@ class InfoRow extends StatelessWidget {
       padding: padding,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
+        // Nhãn dài thì xuống dòng thay vì tràn ra ngoài; khoảng trống dồn vào giữa nên giá trị
+        // vẫn sát lề phải như cũ.
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           if (icon != null) ...[
             Icon(icon, size: 18, color: AppColors.inkTertiary),
             const SizedBox(width: 10),
           ],
-          Text(label, style: AppTextStyles.bodySmall),
+          Flexible(child: Text(label, style: AppTextStyles.bodySmall, maxLines: 2)),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Align(

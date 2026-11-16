@@ -117,6 +117,58 @@ class AiTourSearchEntry extends StatelessWidget {
   }
 }
 
+/// Lối vào "Lên kế hoạch chuyến đi" ở trang chủ tour; ẩn khi máy chủ chưa bật AI.
+class AiTripPlanEntry extends StatelessWidget {
+  const AiTripPlanEntry({super.key, this.padding = EdgeInsets.zero});
+
+  final EdgeInsetsGeometry padding;
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: getIt<AiAvailability>().enabled,
+      builder: (context, enabled, _) {
+        if (!enabled) return const SizedBox.shrink();
+        return Padding(
+          padding: padding,
+          child: Material(
+            color: AppColors.primarySoft,
+            borderRadius: AppRadius.mdAll,
+            child: InkWell(
+              borderRadius: AppRadius.mdAll,
+              onTap: () => context.rootRouter.push(AiTripPlanRoute()),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: Row(
+                  children: [
+                    const Icon(Icons.map_rounded, color: AppColors.primary, size: 20),
+                    const Gap(AppSpacing.sm),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(AiStrings.tripEntry, style: AppTextStyles.bodyStrong),
+                          Text(
+                            AiStrings.tripEntryHint,
+                            style: AppTextStyles.caption,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.chevron_right_rounded, color: AppColors.inkTertiary),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
 /// Đầu hộp thư của một cơ sở: chủ khách sạn / quản lý bật-tắt trợ lý AI tự trả lời;
 /// nhân viên chỉ thấy dải báo khi đang bật. Ẩn hẳn khi máy chủ chưa bật AI.
 class AiAutoReplyBar extends StatefulWidget {

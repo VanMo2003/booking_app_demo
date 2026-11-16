@@ -90,6 +90,9 @@ class _TourHomeView extends StatelessWidget {
                 const SliverToBoxAdapter(
                   child: AiTourSearchEntry(padding: EdgeInsets.fromLTRB(16, 12, 16, 0)),
                 ),
+                const SliverToBoxAdapter(
+                  child: AiTripPlanEntry(padding: EdgeInsets.fromLTRB(16, 8, 16, 0)),
+                ),
                 if (view == null)
                   SliverToBoxAdapter(
                     child: Padding(
