@@ -207,6 +207,7 @@ enum NotificationType {
   promotion('PROMOTION'),
   tripReminder('TRIP_REMINDER'),
   bookingUpdated('BOOKING_UPDATED'),
+  bookingCreated('BOOKING_CREATED'),
   other('');
 
   const NotificationType(this.value);
