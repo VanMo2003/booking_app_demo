@@ -151,6 +151,30 @@ abstract final class AiModels {
         notes: json.strings('notes'),
       );
 
+  static PricingAdvice pricingAdvice(Json json) => PricingAdvice(
+        hotelId: json.integer('hotelId'),
+        from: json.date('from') ?? DateTime.now(),
+        to: json.date('to') ?? DateTime.now(),
+        outlookDays: json.integer('outlookDays', 30),
+        summary: json.strOrNull('summary'),
+        items: json.listOf('items', _pricingItem),
+        risks: json.strings('risks'),
+        notes: json.strings('notes'),
+      );
+
+  static PricingItem _pricingItem(Json json) => PricingItem(
+        roomTypeId: json.intOrNull('roomTypeId'),
+        roomTypeName: json.str('roomTypeName'),
+        action: PricingAction.parse(json.strOrNull('action')),
+        percent: json.intOrNull('percent'),
+        reason: json.strOrNull('reason'),
+        listPrice: json.decimal('listPrice'),
+        adr: json.decimal('adr'),
+        occupancyRate: json.decimal('occupancyRate'),
+        rooms: json.integer('rooms'),
+        suggestedPrice: json['suggestedPrice'] == null ? null : json.decimal('suggestedPrice'),
+      );
+
   static AiSuggestion suggestion(Json json) => AiSuggestion(
         content: json.str('content'),
         needsStaff: json.flag('needsStaff'),

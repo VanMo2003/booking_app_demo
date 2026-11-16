@@ -8,6 +8,7 @@ import '../../../core/enums/app_enums.dart';
 import '../../../core/navigation/app_router.dart';
 import '../../../core/navigation/router_extensions.dart';
 import '../../../core/style/style.dart';
+import '../../../core/text/ai_strings.dart';
 import '../../../core/text/app_strings.dart';
 import '../../../core/text/chat_strings.dart';
 import '../../../core/text/enum_labels.dart';
@@ -15,6 +16,7 @@ import '../../../core/text/menu_strings.dart';
 import '../../../core/text/notification_strings.dart';
 import '../../../core/text/tour_strings.dart';
 import '../../../core/text/workspace_strings.dart';
+import '../../ai/presentation/ai_widgets.dart';
 import '../../auth/presentation/session/session_cubit.dart';
 import '../../auth/presentation/session/session_navigator.dart';
 import '../../chat/presentation/chat_hub.dart';
@@ -104,12 +106,20 @@ class WorkspaceMoreScreen extends StatelessWidget {
                 title: TourBookingStrings.branchTitle,
                 onTap: () => router.push(TourBookingsRoute(hotelId: hotelId)),
               ),
-              if (session.role == Role.hotelManager || session.role == Role.hotelOwner)
+              if (session.role == Role.hotelManager || session.role == Role.hotelOwner) ...[
                 MenuTile(
                   icon: Icons.local_offer_outlined,
                   title: VoucherStrings.title,
                   onTap: () => router.push(VouchersRoute(hotelId: hotelId, subtitle: branchName)),
                 ),
+                AiEnabled(
+                  child: MenuTile(
+                    icon: Icons.price_change_outlined,
+                    title: AiStrings.pricingMenu,
+                    onTap: () => router.push(AiPricingRoute(hotelId: hotelId, subtitle: branchName)),
+                  ),
+                ),
+              ],
               MenuTile(
                 icon: Icons.notifications_none_rounded,
                 title: NotificationStrings.title,

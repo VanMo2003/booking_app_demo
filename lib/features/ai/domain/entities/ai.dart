@@ -378,6 +378,85 @@ class AiReportAnswer extends Equatable {
   List<Object?> get props => [question, scope, from, to, answer, highlights, suggestions, notes];
 }
 
+/// Nên làm gì với giá một loại phòng.
+enum PricingAction {
+  raise('RAISE'),
+  hold('HOLD'),
+  lower('LOWER');
+
+  const PricingAction(this.value);
+
+  final String value;
+
+  static PricingAction parse(String? raw) {
+    for (final action in values) {
+      if (action.value == raw) return action;
+    }
+    return PricingAction.hold;
+  }
+}
+
+/// Gợi ý giá cho một loại phòng, kèm đúng những con số mà kết luận dựa vào.
+class PricingItem extends Equatable {
+  const PricingItem({
+    required this.roomTypeName,
+    required this.action,
+    this.roomTypeId,
+    this.percent,
+    this.reason,
+    this.listPrice = 0,
+    this.adr = 0,
+    this.occupancyRate = 0,
+    this.rooms = 0,
+    this.suggestedPrice,
+  });
+
+  final int? roomTypeId;
+  final String roomTypeName;
+  final PricingAction action;
+
+  /// Phần trăm tăng hoặc giảm; null khi giữ nguyên.
+  final int? percent;
+  final String? reason;
+  final double listPrice;
+  final double adr;
+  final double occupancyRate;
+  final int rooms;
+
+  /// Giá niêm yết sau khi áp phần trăm, máy chủ tự tính; null khi giữ nguyên.
+  final double? suggestedPrice;
+
+  @override
+  List<Object?> get props =>
+      [roomTypeId, roomTypeName, action, percent, reason, listPrice, adr, occupancyRate, rooms, suggestedPrice];
+}
+
+/// AI tư vấn giá phòng cho một cơ sở. Chỉ là gợi ý — không đổi giá phòng nào.
+class PricingAdvice extends Equatable {
+  const PricingAdvice({
+    required this.hotelId,
+    required this.from,
+    required this.to,
+    this.outlookDays = 30,
+    this.summary,
+    this.items = const [],
+    this.risks = const [],
+    this.notes = const [],
+  });
+
+  final int hotelId;
+  final DateTime from;
+  final DateTime to;
+  final int outlookDays;
+  final String? summary;
+  final List<PricingItem> items;
+  final List<String> risks;
+  final List<String> notes;
+
+  @override
+  List<Object?> get props => [hotelId, from, to, outlookDays, summary, items, risks, notes];
+}
+
 /// Bản nháp trả lời khách do AI soạn — chưa gửi gì cho khách.
 class AiSuggestion extends Equatable {
   const AiSuggestion({

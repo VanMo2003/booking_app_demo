@@ -120,6 +120,25 @@ abstract final class AiStrings {
   static const answerCopied = 'Đã sao chép';
   static const askNote = 'Câu trả lời dựa trên số liệu báo cáo của chính bạn — mở tab báo cáo để xem chi tiết.';
 
+  // AI tư vấn giá phòng
+  static const pricingTitle = 'AI tư vấn giá phòng';
+  static const pricingMenu = 'AI tư vấn giá phòng';
+  static const pricingRefresh = 'Xem lại';
+  static const pricingByType = 'Theo loại phòng';
+  static const pricingRisks = 'Cần cân nhắc';
+  static const pricingEmpty = 'Chưa có loại phòng nào để tư vấn';
+  static const pricingRaise = 'Tăng';
+  static const pricingHold = 'Giữ nguyên';
+  static const pricingLower = 'Giảm';
+  static const pricingNote =
+      'Gợi ý dựa trên số liệu của chính cơ sở bạn. AI không đổi giá phòng — bạn tự sửa trong mục Phòng nếu thấy hợp lý.';
+  static String pricingPeriod(String from, String to, int days) =>
+      'Số liệu $from – $to, kèm lượng đã đặt trước cho $days ngày tới';
+  static String pricingRooms(int n) => '$n phòng';
+  static String pricingOccupancy(String percent) => 'Lấp phòng $percent%';
+  static String pricingList(String price) => 'Niêm yết $price';
+  static String pricingAdr(String price) => 'ADR thực $price';
+
   // Trợ lý lễ tân trong chat
   static const suggest = 'Gợi ý trả lời bằng AI';
   static const suggestionNote = 'Bản nháp AI soạn từ dữ liệu của cơ sở — kiểm tra trước khi gửi.';

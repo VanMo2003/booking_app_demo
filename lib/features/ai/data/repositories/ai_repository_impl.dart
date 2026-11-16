@@ -40,6 +40,10 @@ class AiRepositoryImpl implements AiRepository {
       (await _api.askReports(body)).parse(AiModels.reportAnswer);
 
   @override
+  Future<PricingAdvice> pricingAdvice(int hotelId) async =>
+      (await _api.pricingAdvice(hotelId)).parse(AiModels.pricingAdvice);
+
+  @override
   Future<AiSuggestion> suggestReply(int conversationId) async =>
       (await _api.suggestReply(conversationId)).parse(AiModels.suggestion);
 

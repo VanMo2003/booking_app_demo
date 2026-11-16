@@ -45,6 +45,8 @@ import 'package:booking_app_mobile/features/ai/domain/repositories/ai_repository
     as _i444;
 import 'package:booking_app_mobile/features/ai/domain/usecases/ai_usecases.dart'
     as _i769;
+import 'package:booking_app_mobile/features/ai/presentation/ai_pricing_screen.dart'
+    as _i715;
 import 'package:booking_app_mobile/features/ai/presentation/ai_report_ask_screen.dart'
     as _i201;
 import 'package:booking_app_mobile/features/ai/presentation/ai_search_screen.dart'
@@ -612,6 +614,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i769.DraftTourWithAi(gh<_i444.AiRepository>()));
     gh.factory<_i769.AskReportsWithAi>(
         () => _i769.AskReportsWithAi(gh<_i444.AiRepository>()));
+    gh.factory<_i769.GetPricingAdvice>(
+        () => _i769.GetPricingAdvice(gh<_i444.AiRepository>()));
     gh.factory<_i769.SuggestChatReply>(
         () => _i769.SuggestChatReply(gh<_i444.AiRepository>()));
     gh.factory<_i769.GetAiBranchSettings>(
@@ -912,6 +916,8 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i672.GetHotelDetail>(),
           gh<_i750.UpdateBooking>(),
         ));
+    gh.factory<_i715.AiPricingCubit>(
+        () => _i715.AiPricingCubit(gh<_i769.GetPricingAdvice>()));
     gh.factory<_i102.PayrollCubit>(() => _i102.PayrollCubit(
           gh<_i320.GetBranchEmployees>(),
           gh<_i134.SavePayroll>(),

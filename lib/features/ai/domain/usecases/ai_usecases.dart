@@ -103,6 +103,15 @@ class AskReportsWithAi {
 }
 
 @injectable
+class GetPricingAdvice {
+  const GetPricingAdvice(this._repository);
+
+  final AiRepository _repository;
+
+  Future<PricingAdvice> call(int hotelId) => _repository.pricingAdvice(hotelId);
+}
+
+@injectable
 class SuggestChatReply {
   const SuggestChatReply(this._repository);
 
