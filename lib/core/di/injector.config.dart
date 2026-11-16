@@ -45,6 +45,8 @@ import 'package:booking_app_mobile/features/ai/domain/repositories/ai_repository
     as _i444;
 import 'package:booking_app_mobile/features/ai/domain/usecases/ai_usecases.dart'
     as _i769;
+import 'package:booking_app_mobile/features/ai/presentation/ai_guest_assistant_screen.dart'
+    as _i933;
 import 'package:booking_app_mobile/features/ai/presentation/ai_pricing_screen.dart'
     as _i715;
 import 'package:booking_app_mobile/features/ai/presentation/ai_report_ask_screen.dart'
@@ -616,6 +618,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i769.AskReportsWithAi(gh<_i444.AiRepository>()));
     gh.factory<_i769.GetPricingAdvice>(
         () => _i769.GetPricingAdvice(gh<_i444.AiRepository>()));
+    gh.factory<_i769.AskGuestAssistant>(
+        () => _i769.AskGuestAssistant(gh<_i444.AiRepository>()));
     gh.factory<_i769.SuggestChatReply>(
         () => _i769.SuggestChatReply(gh<_i444.AiRepository>()));
     gh.factory<_i769.GetAiBranchSettings>(
@@ -909,6 +913,8 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i644.GetRoomDetail>(),
           gh<_i644.GetRoomsForDates>(),
         ));
+    gh.factory<_i933.AiGuestAssistantCubit>(
+        () => _i933.AiGuestAssistantCubit(gh<_i769.AskGuestAssistant>()));
     gh.factory<_i79.DashboardCubit>(
         () => _i79.DashboardCubit(gh<_i109.LoadBranchDashboard>()));
     gh.factory<_i1027.BookingEditCubit>(() => _i1027.BookingEditCubit(

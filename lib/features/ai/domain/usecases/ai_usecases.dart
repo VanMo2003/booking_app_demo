@@ -112,6 +112,15 @@ class GetPricingAdvice {
 }
 
 @injectable
+class AskGuestAssistant {
+  const AskGuestAssistant(this._repository);
+
+  final AiRepository _repository;
+
+  Future<GuestAnswer> call(String query) => _repository.askAssistant(query.trim());
+}
+
+@injectable
 class SuggestChatReply {
   const SuggestChatReply(this._repository);
 

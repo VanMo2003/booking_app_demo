@@ -35,6 +35,9 @@ abstract class AiApi {
   @GET('/ai/branches/{hotelId}/pricing-advice')
   Future<ApiResponse> pricingAdvice(@Path('hotelId') int hotelId);
 
+  @POST('/ai/assistant/ask')
+  Future<ApiResponse> askAssistant(@Body() Map<String, dynamic> body);
+
   @POST('/ai/conversations/{id}/suggest-reply')
   Future<ApiResponse> suggestReply(@Path('id') int conversationId);
 

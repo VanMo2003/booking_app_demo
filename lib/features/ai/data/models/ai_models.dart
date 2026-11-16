@@ -175,6 +175,19 @@ abstract final class AiModels {
         suggestedPrice: json['suggestedPrice'] == null ? null : json.decimal('suggestedPrice'),
       );
 
+  static GuestAnswer guestAnswer(Json json) => GuestAnswer(
+        question: json.str('question'),
+        answer: json.strOrNull('answer'),
+        suggestions: json.strings('suggestions'),
+        links: json.listOf('links', _guestLink),
+        notes: json.strings('notes'),
+      );
+
+  static GuestLink _guestLink(Json json) => GuestLink(
+        label: json.str('label'),
+        target: json.str('target'),
+      );
+
   static AiSuggestion suggestion(Json json) => AiSuggestion(
         content: json.str('content'),
         needsStaff: json.flag('needsStaff'),

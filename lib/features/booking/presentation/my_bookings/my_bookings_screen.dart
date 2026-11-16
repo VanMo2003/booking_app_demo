@@ -12,9 +12,11 @@ import '../../../../core/navigation/router_extensions.dart';
 import '../../../../core/style/style.dart';
 import '../../../../core/text/app_strings.dart';
 import '../../../../core/text/auth_strings.dart';
+import '../../../../core/text/ai_strings.dart';
 import '../../../../core/text/booking_strings.dart';
 import '../../../../core/text/enum_labels.dart';
 import '../../../../core/text/tour_strings.dart';
+import '../../../ai/presentation/ai_widgets.dart';
 import '../../../auth/presentation/session/session_cubit.dart';
 import '../../../notification/presentation/notification_bell.dart';
 import '../../domain/entities/booking.dart';
@@ -131,6 +133,13 @@ class _MyBookingsView extends StatelessWidget {
                   onPressed: () => context.rootRouter.push(TourBookingsRoute()),
                   icon: const Icon(Icons.tour_outlined, size: 20),
                   label: const Text(TourBookingStrings.entry),
+                ),
+                AiEnabled(
+                  child: IconButton(
+                    tooltip: AiStrings.guestTitle,
+                    onPressed: () => context.rootRouter.push(const AiGuestAssistantRoute()),
+                    icon: const Icon(Icons.support_agent_rounded),
+                  ),
                 ),
                 const NotificationBell(),
               ],

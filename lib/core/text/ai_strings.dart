@@ -139,6 +139,22 @@ abstract final class AiStrings {
   static String pricingList(String price) => 'Niêm yết $price';
   static String pricingAdr(String price) => 'ADR thực $price';
 
+  // Trợ lý riêng của khách
+  static const guestTitle = 'Trợ lý của bạn';
+  static const guestEntry = 'Trợ lý';
+  static const guestIntro =
+      'Hỏi về chính các đơn của bạn. Trợ lý chỉ đọc đơn phòng, đơn tour, mã giảm giá và sở thích của bạn; không đặt, không huỷ và không thanh toán hộ.';
+  static const guestHint = 'Ví dụ: đơn sắp tới của tôi thế nào?';
+  static const guestExamples = [
+    'Đơn sắp tới của tôi thế nào?',
+    'Tôi còn mã giảm giá nào dùng được không?',
+    'Tôi đã đặt tour nào, ngày mấy?',
+  ];
+  static const guestNext = 'Nên làm gì tiếp';
+  static const guestFrom = 'Trả lời từ các đơn của chính bạn';
+  static const guestNote =
+      'Muốn đặt, huỷ hay thanh toán thì làm trong ứng dụng; cần khách sạn hỗ trợ thì nhắn trong mục Tin nhắn.';
+
   // Trợ lý lễ tân trong chat
   static const suggest = 'Gợi ý trả lời bằng AI';
   static const suggestionNote = 'Bản nháp AI soạn từ dữ liệu của cơ sở — kiểm tra trước khi gửi.';

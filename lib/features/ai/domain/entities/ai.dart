@@ -457,6 +457,37 @@ class PricingAdvice extends Equatable {
   List<Object?> get props => [hotelId, from, to, outlookDays, summary, items, risks, notes];
 }
 
+/// Một chỗ trong ứng dụng mà trợ lý gợi ý mở; target đã được máy chủ kiểm là đơn của chính khách.
+class GuestLink extends Equatable {
+  const GuestLink({required this.label, required this.target});
+
+  final String label;
+  final String target;
+
+  @override
+  List<Object?> get props => [label, target];
+}
+
+/// Trả lời của trợ lý riêng cho khách, viết từ chính các đơn của khách.
+class GuestAnswer extends Equatable {
+  const GuestAnswer({
+    required this.question,
+    this.answer,
+    this.suggestions = const [],
+    this.links = const [],
+    this.notes = const [],
+  });
+
+  final String question;
+  final String? answer;
+  final List<String> suggestions;
+  final List<GuestLink> links;
+  final List<String> notes;
+
+  @override
+  List<Object?> get props => [question, answer, suggestions, links, notes];
+}
+
 /// Bản nháp trả lời khách do AI soạn — chưa gửi gì cho khách.
 class AiSuggestion extends Equatable {
   const AiSuggestion({

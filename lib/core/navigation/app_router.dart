@@ -49,6 +49,7 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: AiTripPlanRoute.page),
         AutoRoute(page: AiReportAskRoute.page),
         AutoRoute(page: AiPricingRoute.page),
+        AutoRoute(page: AiGuestAssistantRoute.page),
         AutoRoute(page: HotelDetailRoute.page),
         AutoRoute(page: RoomDetailRoute.page),
         AutoRoute(page: HotelMenuRoute.page),
