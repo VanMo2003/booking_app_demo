@@ -79,7 +79,9 @@ lib/
 
 Tính năng: `auth`, `splash`, `shell` (khung tab từng vai trò), `hotel`, `room`,
 `booking`, `payment`, `feedback`, `favorite`, `customer`, `amenity`, `service`,
-`dish` (thực đơn món ăn), `tour` (tour tham quan), `chat` (nhắn tin khách ↔ cơ sở), `ai` (tìm phòng bằng AI, trợ lý lễ tân),
+`dish` (thực đơn món ăn), `tour` (tour tham quan), `chat` (nhắn tin khách ↔ cơ sở), `ai` (12 tính năng AI: tìm phòng/tìm tour bằng câu nói, kế hoạch chuyến đi, trợ lý lễ tân, trợ lý của
+khách, tóm tắt hội thoại, tóm tắt & phân tích đánh giá, soạn nội dung tour, hỏi đáp số liệu, tư vấn giá
+phòng, kiểm tra trang cơ sở),
 `employee`, `payroll`, `report`, `hotel_chain`, `partner` (đăng ký và xét duyệt chủ
 khách sạn), `notification` (hộp thông báo, push, deep link), `account`, `catalog`, `admin`.
 
@@ -141,6 +143,35 @@ của BE). Lúc mở app, `AiAvailability` hỏi `GET /ai/status`; máy chủ ch
     hộp thư và dải lý do trong màn chat (khách không thấy).
   - Trợ lý biết các tour của cơ sở: khách hỏi đi chơi, ăn uống quanh khu vực thì AI gợi ý tour; muốn
     đặt tour thì AI gửi tóm tắt, khách nhắn "Đồng ý" là AI lên đơn tour (xem *Tour tham quan*).
+  - **Đặt phòng trong chat:** cùng cách hai bước — AI tra phòng trống, gửi tóm tắt (phòng, ngày, số
+    đêm, tổng tiền), khách nhắn "Đồng ý" thì AI lên đơn phòng chờ cơ sở xác nhận; đội ngũ cơ sở nhận
+    thông báo.
+  - **AI tóm tắt hội thoại** (`showChatSummary`): nút 📝 trên màn chat phía cơ sở mở bảng ghi chú —
+    mức gấp, khách cần gì, việc còn treo, nên làm gì tiếp; không gửi gì cho khách.
+- **Tìm tour bằng AI** (`AiTourSearchScreen`): lối vào ở trang chủ tour. Gõ một câu về chuyến đi →
+  thẻ điều kiện AI hiểu (điểm đến, chủ đề, ngày, số khách, mức giá, kèm phòng) và danh sách tour do
+  máy chủ chọn trên dữ liệu thật, kèm ghi chú (ngày đã qua, tour kín chỗ).
+- **Kế hoạch chuyến đi** (`AiTripPlanScreen`): kể một câu về chuyến đi → lịch trình từng ngày dạng
+  timeline, nơi ở (cơ sở + phòng thật, bấm là mở trang đặt phòng đúng ngày), tour trong kế hoạch và
+  bảng chi phí (tiền phòng, tiền tour, mã giảm giá, tổng, mỗi người, so với ngân sách).
+- **Trợ lý của bạn** (`AiGuestAssistantScreen`): nút trên trang **Đơn của tôi**. Hỏi về chính đơn của
+  mình ("đơn sắp tới thế nào?", "còn mã giảm giá nào?"), trả lời kèm nút mở đúng đơn phòng / đơn tour /
+  tour được nhắc tới.
+- **Khách nói gì về cơ sở này** (`ReviewDigestCard`): thẻ trong trang chi tiết cơ sở — tóm tắt AI từ
+  đánh giá thật, điểm thường được khen / thường bị phàn nàn và phổ sao. Ít đánh giá thì thẻ tự ẩn.
+- **AI soạn nội dung tour**: trong biểu mẫu tour của quản lý, nhập tên tour rồi bấm một nút để AI điền
+  mô tả, phần bao gồm, lịch trình và điều khoản huỷ; đang có nội dung thì hỏi trước khi thay.
+- **Hỏi AI về số liệu** (`AiReportAskScreen`): nút ✨ trên trang báo cáo (cơ sở hoặc chuỗi). Hỏi bằng
+  câu bình thường, nhận câu trả lời kèm kỳ số liệu, số đáng chú ý và gợi ý.
+- **AI tư vấn giá phòng** (`AiPricingScreen`, menu Thêm của quản lý): mỗi loại phòng nên tăng/giữ/giảm
+  bao nhiêu phần trăm, giá cũ → giá đề xuất, lý do, kèm lấp phòng và ADR thực.
+- **Kiểm tra trang cơ sở** (`AiContentAuditScreen`, menu Thêm của quản lý): điểm 0–100, danh sách tiêu
+  chí đạt/chưa đạt và việc nên làm trước. Hiện cả khi chưa bật AI vì tiêu chí do máy chủ đếm.
+- **Khách nói gì về chuỗi** (`AiReviewThemesScreen`, menu Thêm của chủ chuỗi): chọn kỳ 30/90/180 ngày,
+  xem chủ đề khách nhắc nhiều kèm mức khen / lẫn lộn / phàn nàn, cơ sở bị nhắc và đánh giá theo cơ sở.
+
+Mọi lối vào AI dùng `AiEnabled`, nên tự ẩn khi máy chủ chưa bật AI — và không làm vỡ màn hình chứa nó
+khi chưa cấu hình DI (ví dụ trong test của màn khác).
 
 ## Thực đơn món ăn
 
