@@ -119,6 +119,20 @@ abstract final class AiModels {
         tourId: json.intOrNull('tourId'),
       );
 
+  static ReviewDigest reviewDigest(Json json) => ReviewDigest(
+        hotelId: json.integer('hotelId'),
+        available: json.flag('available'),
+        summary: json.strOrNull('summary'),
+        pros: json.strings('pros'),
+        cons: json.strings('cons'),
+        reviewCount: json.integer('reviewCount'),
+        averageRating: json.decimal('averageRating'),
+        ratingCounts: (json['ratingCounts'] as List<dynamic>? ?? const [])
+            .map((value) => (value as num?)?.toInt() ?? 0)
+            .toList(),
+        generatedAt: json.date('generatedAt'),
+      );
+
   static AiSuggestion suggestion(Json json) => AiSuggestion(
         content: json.str('content'),
         needsStaff: json.flag('needsStaff'),

@@ -604,6 +604,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i769.SearchToursWithAi(gh<_i444.AiRepository>()));
     gh.factory<_i769.PlanTripWithAi>(
         () => _i769.PlanTripWithAi(gh<_i444.AiRepository>()));
+    gh.factory<_i769.GetReviewDigest>(
+        () => _i769.GetReviewDigest(gh<_i444.AiRepository>()));
     gh.factory<_i769.SuggestChatReply>(
         () => _i769.SuggestChatReply(gh<_i444.AiRepository>()));
     gh.factory<_i769.GetAiBranchSettings>(

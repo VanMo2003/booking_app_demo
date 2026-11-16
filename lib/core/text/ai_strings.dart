@@ -82,6 +82,14 @@ abstract final class AiStrings {
   static String tripPerNight(String price) => '$price/đêm';
   static String tripBudget(String price) => 'Ngân sách $price';
 
+  // Tóm tắt đánh giá
+  static const digestTitle = 'Khách nói gì về cơ sở này';
+  static const digestPros = 'Thường được khen';
+  static const digestCons = 'Thường bị phàn nàn';
+  static String digestFrom(int n) => 'Tóm tắt từ $n đánh giá của khách';
+  static const digestNote = 'AI tóm tắt từ đánh giá thật của khách, không phải lời của khách sạn.';
+  static String digestStars(int stars) => '$stars★';
+
   // Trợ lý lễ tân trong chat
   static const suggest = 'Gợi ý trả lời bằng AI';
   static const suggestionNote = 'Bản nháp AI soạn từ dữ liệu của cơ sở — kiểm tra trước khi gửi.';

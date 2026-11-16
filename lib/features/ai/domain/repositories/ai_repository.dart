@@ -9,6 +9,8 @@ abstract interface class AiRepository {
 
   Future<AiTripPlan> planTrip(String query);
 
+  Future<ReviewDigest> reviewDigest(int hotelId);
+
   Future<AiSuggestion> suggestReply(int conversationId);
 
   Future<AiBranchSettings> settings(int hotelId);

@@ -50,6 +50,15 @@ class PlanTripWithAi {
 }
 
 @injectable
+class GetReviewDigest {
+  const GetReviewDigest(this._repository);
+
+  final AiRepository _repository;
+
+  Future<ReviewDigest> call(int hotelId) => _repository.reviewDigest(hotelId);
+}
+
+@injectable
 class SuggestChatReply {
   const SuggestChatReply(this._repository);
 

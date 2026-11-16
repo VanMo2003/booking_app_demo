@@ -295,6 +295,42 @@ class AiTripPlan extends Equatable {
       ];
 }
 
+/// Khách thường nói gì về một cơ sở, đọc ra từ chính đánh giá của cơ sở đó.
+class ReviewDigest extends Equatable {
+  const ReviewDigest({
+    required this.hotelId,
+    required this.available,
+    this.summary,
+    this.pros = const [],
+    this.cons = const [],
+    this.reviewCount = 0,
+    this.averageRating = 0,
+    this.ratingCounts = const [],
+    this.generatedAt,
+  });
+
+  final int hotelId;
+
+  /// Chưa đủ đánh giá, hoặc máy chủ chưa bật AI: app ẩn thẻ này đi.
+  final bool available;
+  final String? summary;
+  final List<String> pros;
+  final List<String> cons;
+  final int reviewCount;
+  final double averageRating;
+
+  /// Số đánh giá theo từng mức sao; phần tử đầu là 1 sao.
+  final List<int> ratingCounts;
+  final DateTime? generatedAt;
+
+  /// Số đánh giá nhiều nhất ở một mức sao — để vẽ thanh tỉ lệ.
+  int get busiestRating => ratingCounts.isEmpty ? 0 : ratingCounts.reduce((a, b) => a > b ? a : b);
+
+  @override
+  List<Object?> get props =>
+      [hotelId, available, summary, pros, cons, reviewCount, averageRating, ratingCounts, generatedAt];
+}
+
 /// Bản nháp trả lời khách do AI soạn — chưa gửi gì cho khách.
 class AiSuggestion extends Equatable {
   const AiSuggestion({

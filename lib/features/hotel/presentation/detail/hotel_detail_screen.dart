@@ -15,6 +15,7 @@ import '../../../../core/text/explore_strings.dart';
 import '../../../../core/utils/external_actions.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../auth/presentation/session/auth_gate.dart';
+import '../../../ai/presentation/review_digest_card.dart';
 import '../../../chat/presentation/chat_entry.dart';
 import '../../../dish/presentation/widgets/hotel_menu_preview.dart';
 import '../../../tour/presentation/widgets/hotel_tours_section.dart';
@@ -260,6 +261,7 @@ class _HotelBody extends StatelessWidget {
             checkout: state.checkout,
             onChanged: context.read<HotelDetailCubit>().changeDates,
           ),
+          ReviewDigestCard(hotelId: hotel.id),
           if (hotel.description.isNotEmpty) ...[
             const Gap(AppSpacing.xl),
             const SectionHeader(title: ExploreStrings.about),
