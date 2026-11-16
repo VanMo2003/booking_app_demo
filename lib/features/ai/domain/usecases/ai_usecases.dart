@@ -130,6 +130,16 @@ class GetChatSummary {
 }
 
 @injectable
+class GetReviewThemes {
+  const GetReviewThemes(this._repository);
+
+  final AiRepository _repository;
+
+  Future<ReviewThemes> call(int hotelChainId, {required DateTime from, required DateTime to}) =>
+      _repository.reviewThemes(hotelChainId, from: from, to: to);
+}
+
+@injectable
 class SuggestChatReply {
   const SuggestChatReply(this._repository);
 

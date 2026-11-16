@@ -548,6 +548,83 @@ class ChatSummary extends Equatable {
       ];
 }
 
+/// Khách đang khen hay phàn nàn về một chủ đề.
+enum ThemeSentiment {
+  good('GOOD'),
+  mixed('MIXED'),
+  bad('BAD');
+
+  const ThemeSentiment(this.value);
+
+  final String value;
+
+  static ThemeSentiment parse(String? raw) {
+    for (final sentiment in values) {
+      if (sentiment.value == raw) return sentiment;
+    }
+    return ThemeSentiment.mixed;
+  }
+}
+
+/// Một chủ đề khách nhắc nhiều trong đánh giá, kèm những cơ sở bị nhắc tới.
+class ReviewTheme extends Equatable {
+  const ReviewTheme({
+    required this.topic,
+    required this.sentiment,
+    required this.note,
+    this.branches = const [],
+  });
+
+  final String topic;
+  final ThemeSentiment sentiment;
+  final String note;
+  final List<String> branches;
+
+  @override
+  List<Object?> get props => [topic, sentiment, note, branches];
+}
+
+/// Số đánh giá và điểm trung bình của một cơ sở trong kỳ.
+class BranchReviews extends Equatable {
+  const BranchReviews({required this.hotelId, required this.hotelName, this.reviews = 0, this.averageRating});
+
+  final int hotelId;
+  final String hotelName;
+  final int reviews;
+  final double? averageRating;
+
+  @override
+  List<Object?> get props => [hotelId, hotelName, reviews, averageRating];
+}
+
+/// AI đọc đánh giá của cả chuỗi: khách nói nhiều về điều gì, cơ sở nào bị nhắc.
+class ReviewThemes extends Equatable {
+  const ReviewThemes({
+    required this.hotelChainId,
+    required this.from,
+    required this.to,
+    this.reviewCount = 0,
+    this.summary,
+    this.themes = const [],
+    this.actions = const [],
+    this.byBranch = const [],
+    this.notes = const [],
+  });
+
+  final int hotelChainId;
+  final DateTime from;
+  final DateTime to;
+  final int reviewCount;
+  final String? summary;
+  final List<ReviewTheme> themes;
+  final List<String> actions;
+  final List<BranchReviews> byBranch;
+  final List<String> notes;
+
+  @override
+  List<Object?> get props => [hotelChainId, from, to, reviewCount, summary, themes, actions, byBranch, notes];
+}
+
 /// Bản nháp trả lời khách do AI soạn — chưa gửi gì cho khách.
 class AiSuggestion extends Equatable {
   const AiSuggestion({

@@ -51,6 +51,8 @@ import 'package:booking_app_mobile/features/ai/presentation/ai_pricing_screen.da
     as _i715;
 import 'package:booking_app_mobile/features/ai/presentation/ai_report_ask_screen.dart'
     as _i201;
+import 'package:booking_app_mobile/features/ai/presentation/ai_review_themes_screen.dart'
+    as _i920;
 import 'package:booking_app_mobile/features/ai/presentation/ai_search_screen.dart'
     as _i1050;
 import 'package:booking_app_mobile/features/ai/presentation/ai_tour_search_screen.dart'
@@ -622,6 +624,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i769.AskGuestAssistant(gh<_i444.AiRepository>()));
     gh.factory<_i769.GetChatSummary>(
         () => _i769.GetChatSummary(gh<_i444.AiRepository>()));
+    gh.factory<_i769.GetReviewThemes>(
+        () => _i769.GetReviewThemes(gh<_i444.AiRepository>()));
     gh.factory<_i769.SuggestChatReply>(
         () => _i769.SuggestChatReply(gh<_i444.AiRepository>()));
     gh.factory<_i769.GetAiBranchSettings>(
@@ -877,6 +881,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i398.RegisterPushDevice(gh<_i129.NotificationRepository>()));
     gh.factory<_i398.UnregisterPushDevice>(
         () => _i398.UnregisterPushDevice(gh<_i129.NotificationRepository>()));
+    gh.factory<_i920.AiReviewThemesCubit>(
+        () => _i920.AiReviewThemesCubit(gh<_i769.GetReviewThemes>()));
     gh.lazySingleton<_i922.PendingOwnersCubit>(
         () => _i922.PendingOwnersCubit(gh<_i387.CountPendingOwners>()));
     gh.factory<_i238.AiTripPlanCubit>(

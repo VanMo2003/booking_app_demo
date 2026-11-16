@@ -200,6 +200,32 @@ abstract final class AiModels {
         messageCount: json.integer('messageCount'),
       );
 
+  static ReviewThemes reviewThemes(Json json) => ReviewThemes(
+        hotelChainId: json.integer('hotelChainId'),
+        from: json.date('from') ?? DateTime.now(),
+        to: json.date('to') ?? DateTime.now(),
+        reviewCount: json.integer('reviewCount'),
+        summary: json.strOrNull('summary'),
+        themes: json.listOf('themes', _reviewTheme),
+        actions: json.strings('actions'),
+        byBranch: json.listOf('byBranch', _branchReviews),
+        notes: json.strings('notes'),
+      );
+
+  static ReviewTheme _reviewTheme(Json json) => ReviewTheme(
+        topic: json.str('topic'),
+        sentiment: ThemeSentiment.parse(json.strOrNull('sentiment')),
+        note: json.str('note'),
+        branches: json.strings('branches'),
+      );
+
+  static BranchReviews _branchReviews(Json json) => BranchReviews(
+        hotelId: json.integer('hotelId'),
+        hotelName: json.str('hotelName'),
+        reviews: json.integer('reviews'),
+        averageRating: json['averageRating'] == null ? null : json.decimal('averageRating'),
+      );
+
   static AiSuggestion suggestion(Json json) => AiSuggestion(
         content: json.str('content'),
         needsStaff: json.flag('needsStaff'),

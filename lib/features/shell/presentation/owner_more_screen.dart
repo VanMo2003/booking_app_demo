@@ -8,8 +8,10 @@ import '../../../core/config/app_config.dart';
 import '../../../core/navigation/app_router.dart';
 import '../../../core/navigation/router_extensions.dart';
 import '../../../core/style/style.dart';
+import '../../../core/text/ai_strings.dart';
 import '../../../core/text/app_strings.dart';
 import '../../../core/text/management_strings.dart';
+import '../../ai/presentation/ai_widgets.dart';
 import '../../auth/presentation/session/session_cubit.dart';
 import '../../auth/presentation/session/session_navigator.dart';
 import '../../notification/presentation/notification_setup_screen.dart';
@@ -84,6 +86,15 @@ class OwnerMoreScreen extends StatelessWidget {
                 icon: Icons.local_offer_outlined,
                 title: VoucherStrings.title,
                 onTap: () => router.push(VouchersRoute(hotelChainId: chain.id, subtitle: chain.name)),
+              ),
+              AiEnabled(
+                child: MenuTile(
+                  icon: Icons.insights_outlined,
+                  title: AiStrings.themesMenu,
+                  onTap: () => router.push(
+                    AiReviewThemesRoute(hotelChainId: chain.id, subtitle: chain.name),
+                  ),
+                ),
               ),
               MenuTile(
                 icon: Icons.apartment_rounded,

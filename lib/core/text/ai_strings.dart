@@ -172,6 +172,22 @@ abstract final class AiStrings {
         ChatUrgency.low => 'Không gấp',
       };
 
+  // AI phân tích đánh giá của chuỗi
+  static const themesTitle = 'Khách nói gì về chuỗi';
+  static const themesMenu = 'AI phân tích đánh giá';
+  static const themesTopics = 'Chủ đề khách nhắc nhiều';
+  static const themesActions = 'Nên làm gì';
+  static const themesByBranch = 'Đánh giá theo cơ sở';
+  static const themesGood = 'Khen';
+  static const themesMixed = 'Lẫn lộn';
+  static const themesBad = 'Phàn nàn';
+  static const themesNoReview = 'Chưa có đánh giá';
+  static const themesNote =
+      'AI đọc đánh giá thật của khách trong kỳ; số đánh giá và điểm trung bình do hệ thống tính.';
+  static String themesWindow(int days) => '$days ngày';
+  static String themesFrom(String from, String to, int reviews) => '$from – $to · $reviews đánh giá có nội dung';
+  static String themesBranchValue(int reviews, String average) => '$reviews đánh giá · $average sao';
+
   // Trợ lý lễ tân trong chat
   static const suggest = 'Gợi ý trả lời bằng AI';
   static const suggestionNote = 'Bản nháp AI soạn từ dữ liệu của cơ sở — kiểm tra trước khi gửi.';

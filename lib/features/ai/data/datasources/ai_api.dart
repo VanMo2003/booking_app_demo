@@ -41,6 +41,13 @@ abstract class AiApi {
   @GET('/ai/conversations/{id}/summary')
   Future<ApiResponse> chatSummary(@Path('id') int conversationId);
 
+  @GET('/ai/chains/{hotelChainId}/review-themes')
+  Future<ApiResponse> reviewThemes(
+    @Path('hotelChainId') int hotelChainId,
+    @Query('from') String from,
+    @Query('to') String to,
+  );
+
   @POST('/ai/conversations/{id}/suggest-reply')
   Future<ApiResponse> suggestReply(@Path('id') int conversationId);
 

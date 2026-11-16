@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 
 import '../../../../core/network/json_reader.dart';
+import '../../../../core/utils/formatters.dart';
 import '../../domain/entities/ai.dart';
 import '../../domain/repositories/ai_repository.dart';
 import '../datasources/ai_api.dart';
@@ -50,6 +51,11 @@ class AiRepositoryImpl implements AiRepository {
   @override
   Future<ChatSummary> chatSummary(int conversationId) async =>
       (await _api.chatSummary(conversationId)).parse(AiModels.chatSummary);
+
+  @override
+  Future<ReviewThemes> reviewThemes(int hotelChainId, {required DateTime from, required DateTime to}) async =>
+      (await _api.reviewThemes(hotelChainId, Fmt.apiDate(from), Fmt.apiDate(to)))
+          .parse(AiModels.reviewThemes);
 
   @override
   Future<AiSuggestion> suggestReply(int conversationId) async =>

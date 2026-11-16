@@ -21,6 +21,8 @@ abstract interface class AiRepository {
 
   Future<ChatSummary> chatSummary(int conversationId);
 
+  Future<ReviewThemes> reviewThemes(int hotelChainId, {required DateTime from, required DateTime to});
+
   Future<AiSuggestion> suggestReply(int conversationId);
 
   Future<AiBranchSettings> settings(int hotelId);
