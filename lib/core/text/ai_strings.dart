@@ -101,6 +101,25 @@ abstract final class AiStrings {
       'Mô tả, phần bao gồm, lịch trình và điều khoản huỷ sẽ bị thay bằng bản AI soạn. Giá và ảnh giữ nguyên.';
   static const draftOverwriteConfirm = 'Thay';
 
+  // Hỏi AI về số liệu
+  static const askTitle = 'Hỏi AI về số liệu';
+  static const askTooltip = 'Hỏi AI về số liệu';
+  static const askIntro =
+      'Hỏi bằng câu bình thường. AI chỉ đọc đúng số liệu báo cáo của bạn trong kỳ được hỏi, không tự tính thêm.';
+  static const askHint = 'Ví dụ: doanh thu tháng này so với tháng trước thế nào?';
+  static const askAction = 'Hỏi';
+  static const askExamples = [
+    'Doanh thu tháng này so với tháng trước thế nào?',
+    'Tour nào bán tốt nhất trong 30 ngày qua?',
+    'Tỉ lệ huỷ đơn có cao không, nên làm gì?',
+  ];
+  static const askHighlights = 'Số đáng chú ý';
+  static const askSuggestions = 'Nên làm gì';
+  static const askPeriod = 'Kỳ số liệu';
+  static const copyAnswer = 'Sao chép câu trả lời';
+  static const answerCopied = 'Đã sao chép';
+  static const askNote = 'Câu trả lời dựa trên số liệu báo cáo của chính bạn — mở tab báo cáo để xem chi tiết.';
+
   // Trợ lý lễ tân trong chat
   static const suggest = 'Gợi ý trả lời bằng AI';
   static const suggestionNote = 'Bản nháp AI soạn từ dữ liệu của cơ sở — kiểm tra trước khi gửi.';

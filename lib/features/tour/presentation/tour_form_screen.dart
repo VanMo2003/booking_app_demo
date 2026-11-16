@@ -11,6 +11,7 @@ import '../../../core/text/app_strings.dart';
 import '../../../core/text/tour_strings.dart';
 import '../../../core/utils/validators.dart';
 import '../../ai/domain/usecases/ai_usecases.dart';
+import '../../ai/presentation/ai_widgets.dart';
 import '../../room/domain/entities/room.dart';
 import '../../room/domain/usecases/room_usecases.dart';
 import '../data/models/tour_models.dart';
@@ -294,24 +295,20 @@ class _TourFormScreenState extends State<TourFormScreen> {
               textInputAction: TextInputAction.next,
             ),
             const Gap(AppSpacing.sm),
-            ValueListenableBuilder<bool>(
-              valueListenable: getIt<AiAvailability>().enabled,
-              builder: (context, aiEnabled, _) {
-                if (!aiEnabled) return const SizedBox.shrink();
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    AppButton.tonal(
-                      label: AiStrings.draftTour,
-                      icon: Icons.auto_awesome_rounded,
-                      loading: _drafting,
-                      onPressed: _saving || _drafting ? null : _draft,
-                    ),
-                    const Gap(4),
-                    Text(AiStrings.draftTourHint, style: AppTextStyles.caption),
-                  ],
-                );
-              },
+            AiEnabled(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  AppButton.tonal(
+                    label: AiStrings.draftTour,
+                    icon: Icons.auto_awesome_rounded,
+                    loading: _drafting,
+                    onPressed: _saving || _drafting ? null : _draft,
+                  ),
+                  const Gap(4),
+                  Text(AiStrings.draftTourHint, style: AppTextStyles.caption),
+                ],
+              ),
             ),
             const Gap(AppSpacing.sm),
             AppTextField(

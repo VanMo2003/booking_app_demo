@@ -350,6 +350,34 @@ class TourDraft extends Equatable {
   List<Object?> get props => [description, includes, cancellationPolicy, itinerary];
 }
 
+/// Trả lời của AI về số liệu, kèm luôn KPI mà câu trả lời dựa vào để người đọc tự kiểm lại.
+class AiReportAnswer extends Equatable {
+  const AiReportAnswer({
+    required this.question,
+    required this.scope,
+    this.from,
+    this.to,
+    this.answer,
+    this.highlights = const [],
+    this.suggestions = const [],
+    this.notes = const [],
+  });
+
+  final String question;
+
+  /// 'branch' hoặc 'chain'.
+  final String scope;
+  final DateTime? from;
+  final DateTime? to;
+  final String? answer;
+  final List<String> highlights;
+  final List<String> suggestions;
+  final List<String> notes;
+
+  @override
+  List<Object?> get props => [question, scope, from, to, answer, highlights, suggestions, notes];
+}
+
 /// Bản nháp trả lời khách do AI soạn — chưa gửi gì cho khách.
 class AiSuggestion extends Equatable {
   const AiSuggestion({

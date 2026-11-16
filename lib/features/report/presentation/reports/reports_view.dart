@@ -12,12 +12,14 @@ import '../../../../core/enums/app_enums.dart';
 import '../../../../core/navigation/app_router.dart';
 import '../../../../core/navigation/router_extensions.dart';
 import '../../../../core/style/style.dart';
+import '../../../../core/text/ai_strings.dart';
 import '../../../../core/text/app_strings.dart';
 import '../../../../core/text/enum_labels.dart';
 import '../../../../core/text/report_strings.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../../core/utils/file_saver.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../ai/presentation/ai_widgets.dart';
 import '../../domain/entities/report_entities.dart';
 import '../../domain/entities/report_range.dart';
 import '../../domain/entities/report_views.dart';
@@ -43,14 +45,15 @@ class ReportsView extends StatelessWidget {
     return BlocProvider(
       key: ValueKey(scope),
       create: (_) => getIt<ReportsCubit>()..start(scope),
-      child: _ReportsBody(title: title, subtitle: subtitle),
+      child: _ReportsBody(scope: scope, title: title, subtitle: subtitle),
     );
   }
 }
 
 class _ReportsBody extends StatefulWidget {
-  const _ReportsBody({required this.title, this.subtitle});
+  const _ReportsBody({required this.scope, required this.title, this.subtitle});
 
+  final ReportScope scope;
   final String title;
   final String? subtitle;
 
@@ -122,6 +125,25 @@ class _ReportsBodyState extends State<_ReportsBody> with SingleTickerProviderSta
               tooltip: AppStrings.refresh,
               onPressed: cubit.refresh,
               icon: const Icon(Icons.refresh_rounded),
+            ),
+            AiEnabled(
+              child: IconButton(
+                tooltip: AiStrings.askTooltip,
+                onPressed: () => context.rootRouter.push(
+                  AiReportAskRoute(
+                    hotelId: switch (widget.scope) {
+                      BranchReportScope(:final hotelId) => hotelId,
+                      ChainReportScope() => null,
+                    },
+                    hotelChainId: switch (widget.scope) {
+                      ChainReportScope(:final hotelChainId) => hotelChainId,
+                      BranchReportScope() => null,
+                    },
+                    subtitle: widget.subtitle,
+                  ),
+                ),
+                icon: const Icon(Icons.auto_awesome_rounded),
+              ),
             ),
             IconButton(
               tooltip: AppStrings.exportExcel,

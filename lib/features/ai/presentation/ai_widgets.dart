@@ -15,52 +15,65 @@ import '../../auth/presentation/session/session_cubit.dart';
 import '../domain/entities/ai.dart';
 import '../domain/usecases/ai_usecases.dart';
 
+/// Chỉ dựng [child] khi máy chủ đã bật AI (có API key). Chưa đăng ký [AiAvailability] — ví dụ trong
+/// test của một màn khác — thì coi như AI tắt, nên một lối vào AI không bao giờ làm vỡ màn hình chứa nó.
+class AiEnabled extends StatelessWidget {
+  const AiEnabled({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!getIt.isRegistered<AiAvailability>()) return const SizedBox.shrink();
+    return ValueListenableBuilder<bool>(
+      valueListenable: getIt<AiAvailability>().enabled,
+      builder: (context, enabled, _) => enabled ? child : const SizedBox.shrink(),
+    );
+  }
+}
+
 /// Lối vào "Hỏi AI tìm phòng" dưới ô tìm kiếm ở trang Khám phá; ẩn khi máy chủ chưa bật AI.
 class AiSearchEntry extends StatelessWidget {
   const AiSearchEntry({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: getIt<AiAvailability>().enabled,
-      builder: (context, enabled, _) {
-        if (!enabled) return const SizedBox.shrink();
-        return Padding(
-          padding: const EdgeInsets.only(top: AppSpacing.xs),
-          child: Material(
-            color: AppColors.accentSoft,
+    return AiEnabled(
+      child: Padding(
+        padding: const EdgeInsets.only(top: AppSpacing.xs),
+        child: Material(
+          color: AppColors.accentSoft,
+          borderRadius: AppRadius.mdAll,
+          child: InkWell(
             borderRadius: AppRadius.mdAll,
-            child: InkWell(
-              borderRadius: AppRadius.mdAll,
-              onTap: () => context.rootRouter.push(AiSearchRoute()),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                child: Row(
-                  children: [
-                    const Icon(Icons.auto_awesome_rounded, color: AppColors.accent, size: 20),
-                    const Gap(AppSpacing.sm),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(AiStrings.searchEntry, style: AppTextStyles.bodyStrong),
-                          Text(
-                            AiStrings.searchEntryHint,
-                            style: AppTextStyles.caption,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
+            onTap: () => context.rootRouter.push(AiSearchRoute()),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Row(
+                children: [
+                  const Icon(Icons.auto_awesome_rounded, color: AppColors.accent, size: 20),
+                  const Gap(AppSpacing.sm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(AiStrings.searchEntry, style: AppTextStyles.bodyStrong),
+                        Text(
+                          AiStrings.searchEntryHint,
+                          style: AppTextStyles.caption,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
-                    const Icon(Icons.chevron_right_rounded, color: AppColors.inkTertiary),
-                  ],
-                ),
+                  ),
+                  const Icon(Icons.chevron_right_rounded, color: AppColors.inkTertiary),
+                ],
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
@@ -73,46 +86,42 @@ class AiTourSearchEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: getIt<AiAvailability>().enabled,
-      builder: (context, enabled, _) {
-        if (!enabled) return const SizedBox.shrink();
-        return Padding(
-          padding: padding,
-          child: Material(
-            color: AppColors.accentSoft,
+    return AiEnabled(
+      child: Padding(
+        padding: padding,
+        child: Material(
+          color: AppColors.accentSoft,
+          borderRadius: AppRadius.mdAll,
+          child: InkWell(
             borderRadius: AppRadius.mdAll,
-            child: InkWell(
-              borderRadius: AppRadius.mdAll,
-              onTap: () => context.rootRouter.push(AiTourSearchRoute()),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                child: Row(
-                  children: [
-                    const Icon(Icons.auto_awesome_rounded, color: AppColors.accent, size: 20),
-                    const Gap(AppSpacing.sm),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(AiStrings.tourEntry, style: AppTextStyles.bodyStrong),
-                          Text(
-                            AiStrings.tourEntryHint,
-                            style: AppTextStyles.caption,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
+            onTap: () => context.rootRouter.push(AiTourSearchRoute()),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Row(
+                children: [
+                  const Icon(Icons.auto_awesome_rounded, color: AppColors.accent, size: 20),
+                  const Gap(AppSpacing.sm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(AiStrings.tourEntry, style: AppTextStyles.bodyStrong),
+                        Text(
+                          AiStrings.tourEntryHint,
+                          style: AppTextStyles.caption,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
-                    const Icon(Icons.chevron_right_rounded, color: AppColors.inkTertiary),
-                  ],
-                ),
+                  ),
+                  const Icon(Icons.chevron_right_rounded, color: AppColors.inkTertiary),
+                ],
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
@@ -125,46 +134,42 @@ class AiTripPlanEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: getIt<AiAvailability>().enabled,
-      builder: (context, enabled, _) {
-        if (!enabled) return const SizedBox.shrink();
-        return Padding(
-          padding: padding,
-          child: Material(
-            color: AppColors.primarySoft,
+    return AiEnabled(
+      child: Padding(
+        padding: padding,
+        child: Material(
+          color: AppColors.primarySoft,
+          borderRadius: AppRadius.mdAll,
+          child: InkWell(
             borderRadius: AppRadius.mdAll,
-            child: InkWell(
-              borderRadius: AppRadius.mdAll,
-              onTap: () => context.rootRouter.push(AiTripPlanRoute()),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                child: Row(
-                  children: [
-                    const Icon(Icons.map_rounded, color: AppColors.primary, size: 20),
-                    const Gap(AppSpacing.sm),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(AiStrings.tripEntry, style: AppTextStyles.bodyStrong),
-                          Text(
-                            AiStrings.tripEntryHint,
-                            style: AppTextStyles.caption,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
+            onTap: () => context.rootRouter.push(AiTripPlanRoute()),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              child: Row(
+                children: [
+                  const Icon(Icons.map_rounded, color: AppColors.primary, size: 20),
+                  const Gap(AppSpacing.sm),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(AiStrings.tripEntry, style: AppTextStyles.bodyStrong),
+                        Text(
+                          AiStrings.tripEntryHint,
+                          style: AppTextStyles.caption,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
-                    const Icon(Icons.chevron_right_rounded, color: AppColors.inkTertiary),
-                  ],
-                ),
+                  ),
+                  const Icon(Icons.chevron_right_rounded, color: AppColors.inkTertiary),
+                ],
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

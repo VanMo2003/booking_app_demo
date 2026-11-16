@@ -140,6 +140,17 @@ abstract final class AiModels {
         itinerary: json.listOf('itinerary', TourModel.step),
       );
 
+  static AiReportAnswer reportAnswer(Json json) => AiReportAnswer(
+        question: json.str('question'),
+        scope: json.str('scope'),
+        from: json.date('from'),
+        to: json.date('to'),
+        answer: json.strOrNull('answer'),
+        highlights: json.strings('highlights'),
+        suggestions: json.strings('suggestions'),
+        notes: json.strings('notes'),
+      );
+
   static AiSuggestion suggestion(Json json) => AiSuggestion(
         content: json.str('content'),
         needsStaff: json.flag('needsStaff'),

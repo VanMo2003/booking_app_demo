@@ -35,7 +35,7 @@ class _ReviewDigestCardState extends State<ReviewDigestCard> {
   }
 
   Future<void> _load() async {
-    if (!getIt<AiAvailability>().enabled.value) return;
+    if (!getIt.isRegistered<AiAvailability>() || !getIt<AiAvailability>().enabled.value) return;
     try {
       final digest = await getIt<GetReviewDigest>()(widget.hotelId);
       if (mounted && digest.available) setState(() => _digest = digest);

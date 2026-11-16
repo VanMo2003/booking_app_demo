@@ -89,6 +89,20 @@ class DraftTourWithAi {
 }
 
 @injectable
+class AskReportsWithAi {
+  const AskReportsWithAi(this._repository);
+
+  final AiRepository _repository;
+
+  /// Đúng một trong hai: cơ sở (quản lý) hoặc chuỗi (chủ khách sạn).
+  Future<AiReportAnswer> call(String query, {int? hotelId, int? hotelChainId}) => _repository.askReports({
+        'query': query.trim(),
+        if (hotelId != null) 'hotelId': hotelId,
+        if (hotelChainId != null) 'hotelChainId': hotelChainId,
+      });
+}
+
+@injectable
 class SuggestChatReply {
   const SuggestChatReply(this._repository);
 

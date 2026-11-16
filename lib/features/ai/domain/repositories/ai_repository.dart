@@ -13,6 +13,8 @@ abstract interface class AiRepository {
 
   Future<TourDraft> draftTour(Map<String, dynamic> body);
 
+  Future<AiReportAnswer> askReports(Map<String, dynamic> body);
+
   Future<AiSuggestion> suggestReply(int conversationId);
 
   Future<AiBranchSettings> settings(int hotelId);
