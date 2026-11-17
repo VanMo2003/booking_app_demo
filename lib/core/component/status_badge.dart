@@ -112,7 +112,15 @@ class SoftTag extends StatelessWidget {
             Icon(icon, size: 13, color: colors.foreground),
             const SizedBox(width: 4),
           ],
-          Text(label, style: AppTextStyles.caption.colored(colors.foreground)),
+          // Nhãn dài hơn chỗ còn lại thì co lại và cắt bớt — một nhãn không được làm vỡ cả hàng.
+          Flexible(
+            child: Text(
+              label,
+              style: AppTextStyles.caption.colored(colors.foreground),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ],
       ),
     );

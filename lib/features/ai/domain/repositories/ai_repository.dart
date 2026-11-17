@@ -25,6 +25,8 @@ abstract interface class AiRepository {
 
   Future<ReviewReplyDraft> draftReviewReply(int feedbackId);
 
+  Future<PromotionAdvice> promotionAdvice(int hotelChainId);
+
   Future<HotelCompare> compareHotels(List<int> hotelIds);
 
   Future<HotelAnswer> askHotel(int hotelId, String question);

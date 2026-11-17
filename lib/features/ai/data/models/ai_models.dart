@@ -319,6 +319,31 @@ abstract final class AiModels {
         fitFor: json.strOrNull('fitFor'),
       );
 
+  static PromotionAdvice promotionAdvice(Json json) => PromotionAdvice(
+        hotelChainId: json.integer('hotelChainId'),
+        from: json.date('from'),
+        to: json.date('to'),
+        occupancyRate: json.decimalOrNull('occupancyRate'),
+        adr: json.decimalOrNull('adr'),
+        outlookOccupancy: json.decimalOrNull('outlookOccupancy'),
+        runningVouchers: json.strings('runningVouchers'),
+        campaigns: json.listOf('campaigns', _campaign),
+        notes: json.strings('notes'),
+      );
+
+  static PromotionCampaign _campaign(Json json) => PromotionCampaign(
+        title: json.str('title'),
+        discountPercent: json.intOrNull('discountPercent') ?? 0,
+        why: json.str('why'),
+        chainWide: json.strOrNull('scope') != 'BRANCH',
+        hotelId: json.intOrNull('hotelId'),
+        hotelName: json.strOrNull('hotelName'),
+        minOrderAmount: json.decimalOrNull('minOrderAmount'),
+        startsAt: json.date('startsAt'),
+        endsAt: json.date('endsAt'),
+        tours: json.strings('tours'),
+      );
+
   static AiSuggestion suggestion(Json json) => AiSuggestion(
         content: json.str('content'),
         needsStaff: json.flag('needsStaff'),

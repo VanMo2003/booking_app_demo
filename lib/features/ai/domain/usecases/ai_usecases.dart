@@ -149,6 +149,15 @@ class DraftReviewReply {
 }
 
 @injectable
+class GetPromotionAdvice {
+  const GetPromotionAdvice(this._repository);
+
+  final AiRepository _repository;
+
+  Future<PromotionAdvice> call(int hotelChainId) => _repository.promotionAdvice(hotelChainId);
+}
+
+@injectable
 class CompareHotelsWithAi {
   const CompareHotelsWithAi(this._repository);
 

@@ -488,6 +488,76 @@ class GuestAnswer extends Equatable {
   List<Object?> get props => [question, answer, suggestions, links, notes];
 }
 
+/// Một chương trình giảm giá AI đề xuất — chưa tạo mã nào, chủ chuỗi tự tạo voucher.
+class PromotionCampaign extends Equatable {
+  const PromotionCampaign({
+    required this.title,
+    required this.discountPercent,
+    required this.why,
+    this.chainWide = true,
+    this.hotelId,
+    this.hotelName,
+    this.minOrderAmount,
+    this.startsAt,
+    this.endsAt,
+    this.tours = const [],
+  });
+
+  final String title;
+
+  /// Phần trăm giảm, do máy chủ kẹp trong khoảng cho phép.
+  final int discountPercent;
+  final String why;
+
+  /// true là cả chuỗi, false là chỉ một cơ sở.
+  final bool chainWide;
+  final int? hotelId;
+  final String? hotelName;
+  final num? minOrderAmount;
+  final DateTime? startsAt;
+  final DateTime? endsAt;
+
+  /// Tour nên đẩy kèm; chỉ còn tour thật của chuỗi.
+  final List<String> tours;
+
+  @override
+  List<Object?> get props =>
+      [title, discountPercent, why, chainWide, hotelId, hotelName, minOrderAmount, startsAt, endsAt, tours];
+}
+
+/// Các chương trình giảm giá nên chạy, đọc từ số liệu thật của chuỗi.
+class PromotionAdvice extends Equatable {
+  const PromotionAdvice({
+    required this.hotelChainId,
+    this.from,
+    this.to,
+    this.occupancyRate,
+    this.adr,
+    this.outlookOccupancy,
+    this.runningVouchers = const [],
+    this.campaigns = const [],
+    this.notes = const [],
+  });
+
+  final int hotelChainId;
+  final DateTime? from;
+  final DateTime? to;
+  final double? occupancyRate;
+  final num? adr;
+
+  /// Lấp phòng đã đặt trước của kỳ tới — chỗ trống mà chương trình sẽ lấp.
+  final double? outlookOccupancy;
+
+  /// Mã đang chạy, để chủ chuỗi thấy đề xuất không trùng với mã đã có.
+  final List<String> runningVouchers;
+  final List<PromotionCampaign> campaigns;
+  final List<String> notes;
+
+  @override
+  List<Object?> get props =>
+      [hotelChainId, from, to, occupancyRate, adr, outlookOccupancy, runningVouchers, campaigns, notes];
+}
+
 /// Một dòng trong bảng so sánh cơ sở — mọi con số do máy chủ đếm.
 class CompareItem extends Equatable {
   const CompareItem({

@@ -50,6 +50,9 @@ abstract class AiApi {
   @GET('/ai/conversations/{id}/summary')
   Future<ApiResponse> chatSummary(@Path('id') int conversationId);
 
+  @GET('/ai/chains/{hotelChainId}/promotion-advice')
+  Future<ApiResponse> promotionAdvice(@Path('hotelChainId') int hotelChainId);
+
   @GET('/ai/chains/{hotelChainId}/review-themes')
   Future<ApiResponse> reviewThemes(
     @Path('hotelChainId') int hotelChainId,

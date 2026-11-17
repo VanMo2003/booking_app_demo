@@ -188,6 +188,24 @@ abstract final class AiStrings {
   static String themesFrom(String from, String to, int reviews) => '$from – $to · $reviews đánh giá có nội dung';
   static String themesBranchValue(int reviews, String average) => '$reviews đánh giá · $average sao';
 
+  // AI tư vấn chương trình giảm giá
+  static const promoTitle = 'Gợi ý giảm giá';
+  static const promoMenu = 'Gợi ý chương trình giảm giá';
+  static const promoCampaigns = 'Chương trình nên chạy';
+  static const promoRunning = 'Mã đang chạy';
+  static const promoChainWide = 'Cả chuỗi';
+  static const promoMinOrder = 'Đơn từ';
+  static const promoTours = 'Đẩy kèm tour';
+  static const promoCreate = 'Tạo mã giảm giá';
+  static const promoNote =
+      'Mọi con số ở đây do hệ thống đọc từ số liệu thật của chuỗi; AI chỉ chọn chỗ nên giảm. '
+      'Màn này không tạo mã nào — bạn tự tạo trong mục Mã giảm giá.';
+  static String promoPeriod(String from, String to) => 'Số liệu $from – $to';
+  static String promoOccupancy(String rate) => 'Lấp phòng $rate%';
+  static String promoOutlook(String rate) => 'Kỳ tới đã đặt $rate%';
+  static String promoAdr(String money) => 'ADR $money';
+  static String promoRun(String from, String to) => '$from – $to';
+
   // AI so sánh cơ sở
   static const compareTitle = 'So sánh cơ sở';
   static const compareAction = 'So sánh bằng AI';

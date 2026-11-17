@@ -89,6 +89,15 @@ class OwnerMoreScreen extends StatelessWidget {
               ),
               AiEnabled(
                 child: MenuTile(
+                  icon: Icons.sell_outlined,
+                  title: AiStrings.promoMenu,
+                  onTap: () => router.push(
+                    AiPromotionRoute(hotelChainId: chain.id, subtitle: chain.name),
+                  ),
+                ),
+              ),
+              AiEnabled(
+                child: MenuTile(
                   icon: Icons.insights_outlined,
                   title: AiStrings.themesMenu,
                   onTap: () => router.push(

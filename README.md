@@ -79,9 +79,9 @@ lib/
 
 Tính năng: `auth`, `splash`, `shell` (khung tab từng vai trò), `hotel`, `room`,
 `booking`, `payment`, `feedback`, `favorite`, `customer`, `amenity`, `service`,
-`dish` (thực đơn món ăn), `tour` (tour tham quan), `chat` (nhắn tin khách ↔ cơ sở), `ai` (16 tính năng AI: tìm phòng/tìm tour bằng câu nói, kế hoạch chuyến đi, trợ lý lễ tân, trợ lý của
+`dish` (thực đơn món ăn), `tour` (tour tham quan), `chat` (nhắn tin khách ↔ cơ sở), `ai` (17 tính năng AI: tìm phòng/tìm tour bằng câu nói, kế hoạch chuyến đi, trợ lý lễ tân, trợ lý của
 khách, tóm tắt hội thoại, tóm tắt & phân tích đánh giá, soạn nội dung tour, hỏi đáp số liệu, tư vấn giá
-phòng, kiểm tra trang cơ sở, bản tin việc hôm nay, hỏi nhanh về một cơ sở, soạn nháp trả lời đánh giá, so sánh cơ sở),
+phòng, kiểm tra trang cơ sở, bản tin việc hôm nay, hỏi nhanh về một cơ sở, soạn nháp trả lời đánh giá, so sánh cơ sở, gợi ý chương trình giảm giá),
 `employee`, `payroll`, `report`, `hotel_chain`, `partner` (đăng ký và xét duyệt chủ
 khách sạn), `notification` (hộp thông báo, push, deep link), `account`, `catalog`, `admin`.
 
@@ -165,6 +165,9 @@ của BE). Lúc mở app, `AiAvailability` hỏi `GET /ai/status`; máy chủ ch
   câu bình thường, nhận câu trả lời kèm kỳ số liệu, số đáng chú ý và gợi ý.
 - **AI tư vấn giá phòng** (`AiPricingScreen`, menu Thêm của quản lý): mỗi loại phòng nên tăng/giữ/giảm
   bao nhiêu phần trăm, giá cũ → giá đề xuất, lý do, kèm lấp phòng và ADR thực.
+- **Gợi ý giảm giá** (`AiPromotionScreen`, menu Thêm của chủ chuỗi): chỗ nào trong chuỗi đang trống thì nên
+  giảm bao nhiêu phần trăm, trong bao lâu, vì sao — kèm mã đang chạy để thấy đề xuất không trùng. Màn này
+  **không tạo mã nào**: mỗi chương trình có nút mở đúng trang *Mã giảm giá* để bạn tự tạo.
 - **So sánh cơ sở** (`AiHotelCompareScreen`, `showComparePicker`): trang **Đã lưu** có nút *So sánh bằng AI*
   khi đã lưu từ 2 cơ sở; bảng chọn cho tích 2–4 cơ sở (đủ 4 thì khoá các ô còn lại) rồi mở bảng so sánh —
   kết luận nên chọn cơ sở nào, các khác biệt thật sự, và số liệu từng cơ sở do máy chủ đếm.

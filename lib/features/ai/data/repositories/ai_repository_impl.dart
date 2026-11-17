@@ -62,6 +62,10 @@ class AiRepositoryImpl implements AiRepository {
       (await _api.draftReviewReply(feedbackId)).parse(AiModels.reviewReplyDraft);
 
   @override
+  Future<PromotionAdvice> promotionAdvice(int hotelChainId) async =>
+      (await _api.promotionAdvice(hotelChainId)).parse(AiModels.promotionAdvice);
+
+  @override
   Future<HotelCompare> compareHotels(List<int> hotelIds) async =>
       (await _api.compareHotels({'hotelIds': hotelIds})).parse(AiModels.hotelCompare);
 

@@ -55,6 +55,8 @@ import 'package:booking_app_mobile/features/ai/presentation/ai_hotel_compare_scr
     as _i319;
 import 'package:booking_app_mobile/features/ai/presentation/ai_pricing_screen.dart'
     as _i715;
+import 'package:booking_app_mobile/features/ai/presentation/ai_promotion_screen.dart'
+    as _i85;
 import 'package:booking_app_mobile/features/ai/presentation/ai_report_ask_screen.dart'
     as _i201;
 import 'package:booking_app_mobile/features/ai/presentation/ai_review_themes_screen.dart'
@@ -636,6 +638,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i769.GetReviewThemes(gh<_i444.AiRepository>()));
     gh.factory<_i769.DraftReviewReply>(
         () => _i769.DraftReviewReply(gh<_i444.AiRepository>()));
+    gh.factory<_i769.GetPromotionAdvice>(
+        () => _i769.GetPromotionAdvice(gh<_i444.AiRepository>()));
     gh.factory<_i769.CompareHotelsWithAi>(
         () => _i769.CompareHotelsWithAi(gh<_i444.AiRepository>()));
     gh.factory<_i769.AskAboutHotel>(
@@ -825,6 +829,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i785.RoomAdminCubit(gh<_i644.GetRoomDetail>()));
     gh.factory<_i852.AiContentAuditCubit>(
         () => _i852.AiContentAuditCubit(gh<_i769.GetContentAudit>()));
+    gh.factory<_i85.AiPromotionCubit>(
+        () => _i85.AiPromotionCubit(gh<_i769.GetPromotionAdvice>()));
     gh.factory<_i508.RoomsManageCubit>(
         () => _i508.RoomsManageCubit(gh<_i644.GetBranchRooms>()));
     gh.factory<_i489.ChainsPageCubit>(
