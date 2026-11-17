@@ -277,6 +277,15 @@ abstract final class AiModels {
         signalKey: json.strOrNull('signalKey'),
       );
 
+  static HotelAnswer hotelAnswer(Json json) => HotelAnswer(
+        hotelId: json.integer('hotelId'),
+        question: json.str('question'),
+        answered: json.flag('answered'),
+        answer: json.strOrNull('answer'),
+        links: json.listOf('links', _guestLink),
+        notes: json.strings('notes'),
+      );
+
   static AiSuggestion suggestion(Json json) => AiSuggestion(
         content: json.str('content'),
         needsStaff: json.flag('needsStaff'),

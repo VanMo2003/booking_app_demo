@@ -188,6 +188,16 @@ abstract final class AiStrings {
   static String themesFrom(String from, String to, int reviews) => '$from – $to · $reviews đánh giá có nội dung';
   static String themesBranchValue(int reviews, String average) => '$reviews đánh giá · $average sao';
 
+  // AI hỏi nhanh về một cơ sở
+  static const askHotelTitle = 'Hỏi nhanh về cơ sở này';
+  static const askHotelHint = 'Phòng nào cho 4 khách? Có tour buổi tối không?';
+  static const askHotelOpen = 'Hỏi AI về cơ sở này';
+  static const askHotelSend = 'Hỏi';
+  static const askHotelFrom = 'AI trả lời từ thông tin cơ sở đã công bố';
+  static const askHotelUnknown = 'Phần này cơ sở chưa công bố nên AI không trả lời được.';
+  static const askHotelChat = 'Nhắn cho cơ sở';
+  static const askHotelEmpty = 'Hãy nhập câu hỏi về cơ sở này.';
+
   // AI bản tin đầu ngày
   static const briefTitle = 'Việc hôm nay';
   static const briefMenu = 'Việc hôm nay';

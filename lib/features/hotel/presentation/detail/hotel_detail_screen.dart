@@ -15,6 +15,9 @@ import '../../../../core/text/explore_strings.dart';
 import '../../../../core/utils/external_actions.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../auth/presentation/session/auth_gate.dart';
+import '../../../../core/text/ai_strings.dart';
+import '../../../ai/presentation/ai_widgets.dart';
+import '../../../ai/presentation/hotel_ask_sheet.dart';
 import '../../../ai/presentation/review_digest_card.dart';
 import '../../../chat/presentation/chat_entry.dart';
 import '../../../dish/presentation/widgets/hotel_menu_preview.dart';
@@ -262,6 +265,19 @@ class _HotelBody extends StatelessWidget {
             onChanged: context.read<HotelDetailCubit>().changeDates,
           ),
           ReviewDigestCard(hotelId: hotel.id),
+          // Hỏi nhanh về chính cơ sở này — AI chỉ trả lời từ thông tin cơ sở đã công bố.
+          AiEnabled(
+            child: Padding(
+              padding: const EdgeInsets.only(top: AppSpacing.sm),
+              child: AppButton.secondary(
+                label: AiStrings.askHotelOpen,
+                size: AppButtonSize.small,
+                icon: Icons.auto_awesome_rounded,
+                expand: true,
+                onPressed: () => showHotelAsk(context, hotel.id),
+              ),
+            ),
+          ),
           if (hotel.description.isNotEmpty) ...[
             const Gap(AppSpacing.xl),
             const SectionHeader(title: ExploreStrings.about),

@@ -58,6 +58,10 @@ class AiRepositoryImpl implements AiRepository {
           .parse(AiModels.reviewThemes);
 
   @override
+  Future<HotelAnswer> askHotel(int hotelId, String question) async =>
+      (await _api.askHotel(hotelId, {'query': question})).parse(AiModels.hotelAnswer);
+
+  @override
   Future<DailyBrief> dailyBrief(int hotelId) async =>
       (await _api.dailyBrief(hotelId)).parse(AiModels.dailyBrief);
 

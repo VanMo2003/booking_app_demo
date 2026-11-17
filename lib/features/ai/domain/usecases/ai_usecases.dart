@@ -140,6 +140,15 @@ class GetReviewThemes {
 }
 
 @injectable
+class AskAboutHotel {
+  const AskAboutHotel(this._repository);
+
+  final AiRepository _repository;
+
+  Future<HotelAnswer> call(int hotelId, String question) => _repository.askHotel(hotelId, question);
+}
+
+@injectable
 class GetDailyBrief {
   const GetDailyBrief(this._repository);
 

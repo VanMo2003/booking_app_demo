@@ -23,6 +23,8 @@ abstract interface class AiRepository {
 
   Future<ReviewThemes> reviewThemes(int hotelChainId, {required DateTime from, required DateTime to});
 
+  Future<HotelAnswer> askHotel(int hotelId, String question);
+
   Future<DailyBrief> dailyBrief(int hotelId);
 
   Future<ContentAudit> contentAudit(int hotelId);

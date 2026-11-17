@@ -488,6 +488,32 @@ class GuestAnswer extends Equatable {
   List<Object?> get props => [question, answer, suggestions, links, notes];
 }
 
+/// Câu trả lời về một cơ sở, dựng từ chính hồ sơ cơ sở đó đã công bố.
+class HotelAnswer extends Equatable {
+  const HotelAnswer({
+    required this.hotelId,
+    required this.question,
+    required this.answered,
+    this.answer,
+    this.links = const [],
+    this.notes = const [],
+  });
+
+  final int hotelId;
+  final String question;
+
+  /// False khi hồ sơ cơ sở không có thông tin để trả lời — app mời khách nhắn cho cơ sở.
+  final bool answered;
+  final String? answer;
+
+  /// Chỉ trỏ tới tour của chính cơ sở đó.
+  final List<GuestLink> links;
+  final List<String> notes;
+
+  @override
+  List<Object?> get props => [hotelId, question, answered, answer, links, notes];
+}
+
 /// Mức gấp của một cuộc trò chuyện, do AI đọc ra từ nội dung.
 enum ChatUrgency {
   low('LOW'),

@@ -79,9 +79,9 @@ lib/
 
 Tính năng: `auth`, `splash`, `shell` (khung tab từng vai trò), `hotel`, `room`,
 `booking`, `payment`, `feedback`, `favorite`, `customer`, `amenity`, `service`,
-`dish` (thực đơn món ăn), `tour` (tour tham quan), `chat` (nhắn tin khách ↔ cơ sở), `ai` (13 tính năng AI: tìm phòng/tìm tour bằng câu nói, kế hoạch chuyến đi, trợ lý lễ tân, trợ lý của
+`dish` (thực đơn món ăn), `tour` (tour tham quan), `chat` (nhắn tin khách ↔ cơ sở), `ai` (14 tính năng AI: tìm phòng/tìm tour bằng câu nói, kế hoạch chuyến đi, trợ lý lễ tân, trợ lý của
 khách, tóm tắt hội thoại, tóm tắt & phân tích đánh giá, soạn nội dung tour, hỏi đáp số liệu, tư vấn giá
-phòng, kiểm tra trang cơ sở, bản tin việc hôm nay),
+phòng, kiểm tra trang cơ sở, bản tin việc hôm nay, hỏi nhanh về một cơ sở),
 `employee`, `payroll`, `report`, `hotel_chain`, `partner` (đăng ký và xét duyệt chủ
 khách sạn), `notification` (hộp thông báo, push, deep link), `account`, `catalog`, `admin`.
 
@@ -165,6 +165,10 @@ của BE). Lúc mở app, `AiAvailability` hỏi `GET /ai/status`; máy chủ ch
   câu bình thường, nhận câu trả lời kèm kỳ số liệu, số đáng chú ý và gợi ý.
 - **AI tư vấn giá phòng** (`AiPricingScreen`, menu Thêm của quản lý): mỗi loại phòng nên tăng/giữ/giảm
   bao nhiêu phần trăm, giá cũ → giá đề xuất, lý do, kèm lấp phòng và ADR thực.
+- **Hỏi nhanh về cơ sở này** (`showHotelAsk`, nút trong trang chi tiết cơ sở): khách chưa đăng nhập cũng
+  hỏi được một câu về cơ sở ("phòng nào cho 4 khách?", "có tour buổi tối không?"). AI chỉ trả lời từ thông
+  tin cơ sở đã công bố; phần cơ sở chưa công bố (giờ nhận phòng, chính sách huỷ) thì bảng nói thẳng và mở
+  nút **Nhắn cho cơ sở**.
 - **Việc hôm nay** (`AiDailyBriefScreen`, menu Thêm của quản lý): bản tin đầu ngày — khách nhận/trả phòng
   hôm nay, đơn còn chờ xác nhận, tour khởi hành hôm nay và ngày mai, tin nhắn khách chưa trả lời, đánh giá
   thấp mới, tiền chưa thu, phòng bảo trì và chỉ tiêu tháng. Việc nên làm trước nằm trên cùng, dòng không có
