@@ -188,6 +188,28 @@ abstract final class AiStrings {
   static String themesFrom(String from, String to, int reviews) => '$from – $to · $reviews đánh giá có nội dung';
   static String themesBranchValue(int reviews, String average) => '$reviews đánh giá · $average sao';
 
+  // AI so sánh cơ sở
+  static const compareTitle = 'So sánh cơ sở';
+  static const compareAction = 'So sánh bằng AI';
+  static const comparePick = 'Chọn 2–4 cơ sở để so sánh';
+  static const compareGo = 'So sánh';
+  static const compareDifferences = 'Khác nhau ở đâu';
+  static const compareVerdict = 'Nên chọn cơ sở nào';
+  static const compareTable = 'Số liệu từng cơ sở';
+  static const compareFit = 'Phù hợp với';
+  static const compareRowPrice = 'Giá phòng';
+  static const compareRowRooms = 'Phòng';
+  static const compareRowExtras = 'Kèm theo';
+  static const compareRowReviews = 'Đánh giá';
+  static const compareNoPrice = 'chưa có giá';
+  static const compareNoReview = 'chưa có đánh giá';
+  static const compareNote =
+      'Mọi con số trong bảng do hệ thống đếm trên dữ liệu thật của từng cơ sở; phần nhận xét do AI viết.';
+  static String compareRooms(int rooms, int capacity) => '$rooms phòng · phòng lớn nhất $capacity khách';
+  static String compareExtras(int amenities, int services, int tours) =>
+      '$amenities tiện ích · $services dịch vụ · $tours tour';
+  static String compareReviews(int reviews, String average) => '$reviews đánh giá · $average/5';
+
   // AI soạn nháp trả lời đánh giá
   static const replyDraftAction = 'AI soạn giúp';
   static const replyDraftTitle = 'Trả lời đánh giá';

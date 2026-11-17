@@ -51,6 +51,8 @@ import 'package:booking_app_mobile/features/ai/presentation/ai_daily_brief_scree
     as _i43;
 import 'package:booking_app_mobile/features/ai/presentation/ai_guest_assistant_screen.dart'
     as _i933;
+import 'package:booking_app_mobile/features/ai/presentation/ai_hotel_compare_screen.dart'
+    as _i319;
 import 'package:booking_app_mobile/features/ai/presentation/ai_pricing_screen.dart'
     as _i715;
 import 'package:booking_app_mobile/features/ai/presentation/ai_report_ask_screen.dart'
@@ -634,6 +636,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i769.GetReviewThemes(gh<_i444.AiRepository>()));
     gh.factory<_i769.DraftReviewReply>(
         () => _i769.DraftReviewReply(gh<_i444.AiRepository>()));
+    gh.factory<_i769.CompareHotelsWithAi>(
+        () => _i769.CompareHotelsWithAi(gh<_i444.AiRepository>()));
     gh.factory<_i769.AskAboutHotel>(
         () => _i769.AskAboutHotel(gh<_i444.AiRepository>()));
     gh.factory<_i769.GetDailyBrief>(
@@ -792,6 +796,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i406.ReplyToReview(gh<_i900.FeedbackRepository>()));
     gh.factory<_i406.IsBookingReviewed>(
         () => _i406.IsBookingReviewed(gh<_i900.FeedbackRepository>()));
+    gh.factory<_i319.AiHotelCompareCubit>(
+        () => _i319.AiHotelCompareCubit(gh<_i769.CompareHotelsWithAi>()));
     gh.factory<_i962.LoadSystemOverview>(() => _i962.LoadSystemOverview(
           gh<_i654.AccountRepository>(),
           gh<_i1057.HotelChainRepository>(),

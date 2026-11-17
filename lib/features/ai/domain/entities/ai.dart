@@ -488,6 +488,66 @@ class GuestAnswer extends Equatable {
   List<Object?> get props => [question, answer, suggestions, links, notes];
 }
 
+/// Một dòng trong bảng so sánh cơ sở — mọi con số do máy chủ đếm.
+class CompareItem extends Equatable {
+  const CompareItem({
+    required this.hotelId,
+    required this.name,
+    required this.rooms,
+    required this.maxCapacity,
+    required this.amenities,
+    required this.services,
+    required this.tours,
+    required this.reviews,
+    required this.averageRating,
+    this.category,
+    this.address,
+    this.priceFrom,
+    this.priceTo,
+    this.fitFor,
+  });
+
+  final int hotelId;
+  final String name;
+  final int rooms;
+  final int maxCapacity;
+  final int amenities;
+  final int services;
+  final int tours;
+  final int reviews;
+  final double averageRating;
+  final String? category;
+  final String? address;
+  final num? priceFrom;
+  final num? priceTo;
+
+  /// Cơ sở này phù hợp với ai — phần duy nhất do AI viết.
+  final String? fitFor;
+
+  @override
+  List<Object?> get props =>
+      [hotelId, name, rooms, maxCapacity, amenities, services, tours, reviews, averageRating, category, address,
+        priceFrom, priceTo, fitFor];
+}
+
+/// Bảng so sánh vài cơ sở khách đang cân nhắc.
+class HotelCompare extends Equatable {
+  const HotelCompare({
+    this.items = const [],
+    this.differences = const [],
+    this.verdict,
+    this.notes = const [],
+  });
+
+  final List<CompareItem> items;
+  final List<String> differences;
+  final String? verdict;
+  final List<String> notes;
+
+  @override
+  List<Object?> get props => [items, differences, verdict, notes];
+}
+
 /// Bản nháp trả lời một đánh giá, do AI soạn — chưa đăng gì.
 class ReviewReplyDraft extends Equatable {
   const ReviewReplyDraft({

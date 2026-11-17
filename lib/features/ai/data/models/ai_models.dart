@@ -295,6 +295,30 @@ abstract final class AiModels {
         notes: json.strings('notes'),
       );
 
+  static HotelCompare hotelCompare(Json json) => HotelCompare(
+        items: json.listOf('items', _compareItem),
+        differences: json.strings('differences'),
+        verdict: json.strOrNull('verdict'),
+        notes: json.strings('notes'),
+      );
+
+  static CompareItem _compareItem(Json json) => CompareItem(
+        hotelId: json.integer('hotelId'),
+        name: json.str('name'),
+        rooms: json.intOrNull('rooms') ?? 0,
+        maxCapacity: json.intOrNull('maxCapacity') ?? 0,
+        amenities: json.intOrNull('amenities') ?? 0,
+        services: json.intOrNull('services') ?? 0,
+        tours: json.intOrNull('tours') ?? 0,
+        reviews: json.intOrNull('reviews') ?? 0,
+        averageRating: json.decimal('averageRating'),
+        category: json.strOrNull('category'),
+        address: json.strOrNull('address'),
+        priceFrom: json.decimalOrNull('priceFrom'),
+        priceTo: json.decimalOrNull('priceTo'),
+        fitFor: json.strOrNull('fitFor'),
+      );
+
   static AiSuggestion suggestion(Json json) => AiSuggestion(
         content: json.str('content'),
         needsStaff: json.flag('needsStaff'),

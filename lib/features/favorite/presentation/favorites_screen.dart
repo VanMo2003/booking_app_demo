@@ -8,7 +8,10 @@ import '../../../core/navigation/router_extensions.dart';
 import '../../../core/style/style.dart';
 import '../../../core/text/auth_strings.dart';
 import '../../../core/text/booking_strings.dart';
+import '../../../core/text/ai_strings.dart';
 import '../../../core/text/explore_strings.dart';
+import '../../ai/presentation/ai_widgets.dart';
+import '../../ai/presentation/compare_picker_sheet.dart';
 import '../../auth/presentation/session/session_cubit.dart';
 import '../domain/entities/favorite_hotel.dart';
 import 'favorite_button.dart';
@@ -55,9 +58,12 @@ class FavoritesScreen extends StatelessWidget {
                   )
                 : ListView.separated(
                     padding: AppSpacing.page,
-                    itemCount: favorites.length,
+                    // Dòng cuối là nút so sánh, nên danh sách dài hơn số cơ sở một dòng khi đủ 2 cơ sở.
+                    itemCount: favorites.length + (favorites.length >= 2 ? 1 : 0),
                     separatorBuilder: (_, __) => const Gap(AppSpacing.sm),
-                    itemBuilder: (context, index) => _FavoriteTile(hotel: favorites[index]),
+                    itemBuilder: (context, index) => index == favorites.length
+                        ? AiEnabled(child: _CompareButton(favorites: favorites))
+                        : _FavoriteTile(hotel: favorites[index]),
                   ),
           ),
         );
@@ -108,6 +114,34 @@ class _FavoriteTile extends StatelessWidget {
           FavoriteButton(hotel: hotel, size: 36),
         ],
       ),
+    );
+  }
+}
+
+/// Lối vào so sánh: khách chọn 2–4 cơ sở trong danh sách đã lưu rồi mở bảng so sánh.
+class _CompareButton extends StatelessWidget {
+  const _CompareButton({required this.favorites});
+
+  final List<FavoriteHotel> favorites;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppButton.secondary(
+      label: AiStrings.compareAction,
+      size: AppButtonSize.small,
+      icon: Icons.compare_arrows_rounded,
+      expand: true,
+      onPressed: () async {
+        final picked = await showComparePicker(
+          context,
+          [
+            for (final hotel in favorites)
+              ComparableHotel(id: hotel.id, name: hotel.name, subtitle: hotel.address),
+          ],
+        );
+        if (picked == null || !context.mounted) return;
+        await context.router.push(AiHotelCompareRoute(hotelIds: picked));
+      },
     );
   }
 }
