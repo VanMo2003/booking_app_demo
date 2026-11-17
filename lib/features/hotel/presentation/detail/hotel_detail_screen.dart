@@ -270,12 +270,26 @@ class _HotelBody extends StatelessWidget {
           AiEnabled(
             child: Padding(
               padding: const EdgeInsets.only(top: AppSpacing.sm),
-              child: AppButton.secondary(
-                label: AiStrings.askHotelOpen,
-                size: AppButtonSize.small,
-                icon: Icons.auto_awesome_rounded,
-                expand: true,
-                onPressed: () => showHotelAsk(context, hotel.id),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: AppButton.secondary(
+                      label: AiStrings.askHotelOpen,
+                      size: AppButtonSize.small,
+                      icon: Icons.auto_awesome_rounded,
+                      expand: true,
+                      onPressed: () => showHotelAsk(context, hotel.id),
+                    ),
+                  ),
+                  const Gap(AppSpacing.xs),
+                  IconButton(
+                    tooltip: AiStrings.translateAction,
+                    icon: const Icon(Icons.translate_rounded),
+                    onPressed: () => context.router.push(
+                      AiTranslationRoute(hotelId: hotel.id, subtitle: hotel.name),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

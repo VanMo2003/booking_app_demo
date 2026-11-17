@@ -188,6 +188,19 @@ abstract final class AiStrings {
   static String themesFrom(String from, String to, int reviews) => '$from – $to · $reviews đánh giá có nội dung';
   static String themesBranchValue(int reviews, String average) => '$reviews đánh giá · $average sao';
 
+  // AI dịch trang cơ sở
+  static const translateAction = 'Đọc bằng ngôn ngữ khác';
+  static const translateTitle = 'Bản dịch trang cơ sở';
+  static const translatePick = 'Chọn ngôn ngữ';
+  static const translateDescription = 'Giới thiệu';
+  static const translateAmenities = 'Tiện ích';
+  static const translateServices = 'Dịch vụ';
+  static const translateDishes = 'Thực đơn';
+  static const translateTours = 'Tour';
+  static const translateOriginal = 'bản gốc';
+  static const translateNote =
+      'Bản dịch do AI dịch từ đúng nội dung cơ sở đã công bố, không thêm gì. Mục chưa dịch được vẫn hiện bản gốc.';
+
   // AI tư vấn chương trình giảm giá
   static const promoTitle = 'Gợi ý giảm giá';
   static const promoMenu = 'Gợi ý chương trình giảm giá';

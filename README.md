@@ -79,9 +79,9 @@ lib/
 
 Tính năng: `auth`, `splash`, `shell` (khung tab từng vai trò), `hotel`, `room`,
 `booking`, `payment`, `feedback`, `favorite`, `customer`, `amenity`, `service`,
-`dish` (thực đơn món ăn), `tour` (tour tham quan), `chat` (nhắn tin khách ↔ cơ sở), `ai` (17 tính năng AI: tìm phòng/tìm tour bằng câu nói, kế hoạch chuyến đi, trợ lý lễ tân, trợ lý của
+`dish` (thực đơn món ăn), `tour` (tour tham quan), `chat` (nhắn tin khách ↔ cơ sở), `ai` (18 tính năng AI: tìm phòng/tìm tour bằng câu nói, kế hoạch chuyến đi, trợ lý lễ tân, trợ lý của
 khách, tóm tắt hội thoại, tóm tắt & phân tích đánh giá, soạn nội dung tour, hỏi đáp số liệu, tư vấn giá
-phòng, kiểm tra trang cơ sở, bản tin việc hôm nay, hỏi nhanh về một cơ sở, soạn nháp trả lời đánh giá, so sánh cơ sở, gợi ý chương trình giảm giá),
+phòng, kiểm tra trang cơ sở, bản tin việc hôm nay, hỏi nhanh về một cơ sở, soạn nháp trả lời đánh giá, so sánh cơ sở, gợi ý chương trình giảm giá, dịch trang cơ sở),
 `employee`, `payroll`, `report`, `hotel_chain`, `partner` (đăng ký và xét duyệt chủ
 khách sạn), `notification` (hộp thông báo, push, deep link), `account`, `catalog`, `admin`.
 
@@ -165,6 +165,10 @@ của BE). Lúc mở app, `AiAvailability` hỏi `GET /ai/status`; máy chủ ch
   câu bình thường, nhận câu trả lời kèm kỳ số liệu, số đáng chú ý và gợi ý.
 - **AI tư vấn giá phòng** (`AiPricingScreen`, menu Thêm của quản lý): mỗi loại phòng nên tăng/giữ/giảm
   bao nhiêu phần trăm, giá cũ → giá đề xuất, lý do, kèm lấp phòng và ADR thực.
+- **Bản dịch trang cơ sở** (`AiTranslationScreen`): nút 🌐 cạnh nút hỏi AI trong trang chi tiết cơ sở. Chọn
+  tiếng Anh / Hàn / Nhật / Trung / Pháp / Nga, màn hiện nội dung cơ sở theo từng phần (giới thiệu, tiện ích,
+  dịch vụ, thực đơn, tour) với bản gốc ngay dưới bản dịch; mục chưa dịch được hiện bản gốc và đánh dấu
+  *bản gốc*.
 - **Gợi ý giảm giá** (`AiPromotionScreen`, menu Thêm của chủ chuỗi): chỗ nào trong chuỗi đang trống thì nên
   giảm bao nhiêu phần trăm, trong bao lâu, vì sao — kèm mã đang chạy để thấy đề xuất không trùng. Màn này
   **không tạo mã nào**: mỗi chương trình có nút mở đúng trang *Mã giảm giá* để bạn tự tạo.

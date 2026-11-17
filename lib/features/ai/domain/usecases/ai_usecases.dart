@@ -149,6 +149,15 @@ class DraftReviewReply {
 }
 
 @injectable
+class TranslateHotelPage {
+  const TranslateHotelPage(this._repository);
+
+  final AiRepository _repository;
+
+  Future<HotelTranslation> call(int hotelId, String lang) => _repository.translateHotel(hotelId, lang);
+}
+
+@injectable
 class GetPromotionAdvice {
   const GetPromotionAdvice(this._repository);
 

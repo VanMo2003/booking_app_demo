@@ -488,6 +488,58 @@ class GuestAnswer extends Equatable {
   List<Object?> get props => [question, answer, suggestions, links, notes];
 }
 
+/// Một mục nội dung của cơ sở kèm bản dịch, nếu dịch được.
+class TranslatedItem extends Equatable {
+  const TranslatedItem({
+    required this.key,
+    required this.section,
+    required this.original,
+    this.translated,
+  });
+
+  final String key;
+
+  /// DESCRIPTION, AMENITY, SERVICE, DISH hoặc TOUR — để nhóm theo từng phần của trang.
+  final String section;
+  final String original;
+
+  /// null khi chưa dịch được; lúc đó app hiện bản gốc.
+  final String? translated;
+
+  /// Chữ nên hiện: bản dịch nếu có, không thì bản gốc.
+  String get text => translated ?? original;
+
+  bool get untranslated => translated == null;
+
+  @override
+  List<Object?> get props => [key, section, original, translated];
+}
+
+/// Nội dung trang cơ sở đọc bằng một ngôn ngữ khác.
+class HotelTranslation extends Equatable {
+  const HotelTranslation({
+    required this.hotelId,
+    required this.lang,
+    this.language,
+    this.items = const [],
+    this.notes = const [],
+  });
+
+  final int hotelId;
+  final String lang;
+
+  /// Tên ngôn ngữ để hiện tiêu đề, ví dụ "English".
+  final String? language;
+  final List<TranslatedItem> items;
+  final List<String> notes;
+
+  List<TranslatedItem> section(String section) =>
+      items.where((item) => item.section == section).toList();
+
+  @override
+  List<Object?> get props => [hotelId, lang, language, items, notes];
+}
+
 /// Một chương trình giảm giá AI đề xuất — chưa tạo mã nào, chủ chuỗi tự tạo voucher.
 class PromotionCampaign extends Equatable {
   const PromotionCampaign({

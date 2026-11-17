@@ -344,6 +344,21 @@ abstract final class AiModels {
         tours: json.strings('tours'),
       );
 
+  static HotelTranslation hotelTranslation(Json json) => HotelTranslation(
+        hotelId: json.integer('hotelId'),
+        lang: json.str('lang'),
+        language: json.strOrNull('language'),
+        items: json.listOf('items', _translatedItem),
+        notes: json.strings('notes'),
+      );
+
+  static TranslatedItem _translatedItem(Json json) => TranslatedItem(
+        key: json.str('key'),
+        section: json.strOrNull('section') ?? 'DESCRIPTION',
+        original: json.str('original'),
+        translated: json.strOrNull('translated'),
+      );
+
   static AiSuggestion suggestion(Json json) => AiSuggestion(
         content: json.str('content'),
         needsStaff: json.flag('needsStaff'),

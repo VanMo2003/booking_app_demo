@@ -65,6 +65,8 @@ import 'package:booking_app_mobile/features/ai/presentation/ai_search_screen.dar
     as _i1050;
 import 'package:booking_app_mobile/features/ai/presentation/ai_tour_search_screen.dart'
     as _i151;
+import 'package:booking_app_mobile/features/ai/presentation/ai_translation_screen.dart'
+    as _i696;
 import 'package:booking_app_mobile/features/ai/presentation/ai_trip_plan_screen.dart'
     as _i238;
 import 'package:booking_app_mobile/features/amenity/data/datasources/amenity_api.dart'
@@ -638,6 +640,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i769.GetReviewThemes(gh<_i444.AiRepository>()));
     gh.factory<_i769.DraftReviewReply>(
         () => _i769.DraftReviewReply(gh<_i444.AiRepository>()));
+    gh.factory<_i769.TranslateHotelPage>(
+        () => _i769.TranslateHotelPage(gh<_i444.AiRepository>()));
     gh.factory<_i769.GetPromotionAdvice>(
         () => _i769.GetPromotionAdvice(gh<_i444.AiRepository>()));
     gh.factory<_i769.CompareHotelsWithAi>(
@@ -917,6 +921,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i398.RegisterPushDevice(gh<_i129.NotificationRepository>()));
     gh.factory<_i398.UnregisterPushDevice>(
         () => _i398.UnregisterPushDevice(gh<_i129.NotificationRepository>()));
+    gh.factory<_i696.AiTranslationCubit>(
+        () => _i696.AiTranslationCubit(gh<_i769.TranslateHotelPage>()));
     gh.factory<_i920.AiReviewThemesCubit>(
         () => _i920.AiReviewThemesCubit(gh<_i769.GetReviewThemes>()));
     gh.lazySingleton<_i922.PendingOwnersCubit>(

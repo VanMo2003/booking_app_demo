@@ -26,6 +26,9 @@ abstract class AiApi {
   @POST('/ai/feedbacks/{feedbackId}/reply-draft')
   Future<ApiResponse> draftReviewReply(@Path('feedbackId') int feedbackId);
 
+  @POST('/ai/hotels/{hotelId}/translate')
+  Future<ApiResponse> translateHotel(@Path('hotelId') int hotelId, @Body() Map<String, dynamic> body);
+
   @POST('/ai/hotels/compare')
   Future<ApiResponse> compareHotels(@Body() Map<String, dynamic> body);
 
