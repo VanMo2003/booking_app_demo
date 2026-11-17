@@ -68,6 +68,19 @@ class AiRepositoryImpl implements AiRepository {
       (await _api.draftReviewReply(feedbackId)).parse(AiModels.reviewReplyDraft);
 
   @override
+  Future<DescriptionDraft> draftDescription({
+    required DescribableKind kind,
+    required int id,
+    String? notes,
+  }) async =>
+      (await _api.draftDescription({
+        'kind': kind.value,
+        'id': id,
+        if (notes != null && notes.trim().isNotEmpty) 'notes': notes.trim(),
+      }))
+          .parse(AiModels.descriptionDraft);
+
+  @override
   Future<HotelTranslation> translateHotel(int hotelId, String lang) async =>
       (await _api.translateHotel(hotelId, {'lang': lang})).parse(AiModels.hotelTranslation);
 

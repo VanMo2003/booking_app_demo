@@ -26,6 +26,12 @@ abstract interface class AiRepository {
 
   Future<ReviewReplyDraft> draftReviewReply(int feedbackId);
 
+  Future<DescriptionDraft> draftDescription({
+    required DescribableKind kind,
+    required int id,
+    String? notes,
+  });
+
   Future<HotelTranslation> translateHotel(int hotelId, String lang);
 
   Future<PromotionAdvice> promotionAdvice(int hotelChainId);

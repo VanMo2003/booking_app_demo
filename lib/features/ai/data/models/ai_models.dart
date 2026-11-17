@@ -359,6 +359,13 @@ abstract final class AiModels {
         translated: json.strOrNull('translated'),
       );
 
+  static DescriptionDraft descriptionDraft(Json json) => DescriptionDraft(
+        description: json.str('description'),
+        highlights: json.strings('highlights'),
+        currentDescription: json.strOrNull('currentDescription'),
+        notes: json.strings('notes'),
+      );
+
   static AiSuggestion suggestion(Json json) => AiSuggestion(
         content: json.str('content'),
         needsStaff: json.flag('needsStaff'),

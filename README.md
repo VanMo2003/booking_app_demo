@@ -79,9 +79,9 @@ lib/
 
 Tính năng: `auth`, `splash`, `shell` (khung tab từng vai trò), `hotel`, `room`,
 `booking`, `payment`, `feedback`, `favorite`, `customer`, `amenity`, `service`,
-`dish` (thực đơn món ăn), `tour` (tour tham quan), `chat` (nhắn tin khách ↔ cơ sở), `ai` (18 tính năng AI: tìm phòng/tìm tour bằng câu nói, kế hoạch chuyến đi, trợ lý lễ tân, trợ lý của
+`dish` (thực đơn món ăn), `tour` (tour tham quan), `chat` (nhắn tin khách ↔ cơ sở), `ai` (19 tính năng AI: tìm phòng/tìm tour bằng câu nói, kế hoạch chuyến đi, trợ lý lễ tân, trợ lý của
 khách, tóm tắt hội thoại, tóm tắt & phân tích đánh giá, soạn nội dung tour, hỏi đáp số liệu, tư vấn giá
-phòng, kiểm tra trang cơ sở, bản tin việc hôm nay, hỏi nhanh về một cơ sở, soạn nháp trả lời đánh giá, so sánh cơ sở, gợi ý chương trình giảm giá, dịch trang cơ sở),
+phòng, kiểm tra trang cơ sở, bản tin việc hôm nay, hỏi nhanh về một cơ sở, soạn nháp trả lời đánh giá, so sánh cơ sở, gợi ý chương trình giảm giá, dịch trang cơ sở, soạn mô tả phòng/món/dịch vụ),
 `employee`, `payroll`, `report`, `hotel_chain`, `partner` (đăng ký và xét duyệt chủ
 khách sạn), `notification` (hộp thông báo, push, deep link), `account`, `catalog`, `admin`.
 
@@ -159,6 +159,10 @@ của BE). Lúc mở app, `AiAvailability` hỏi `GET /ai/status`; máy chủ ch
   tour được nhắc tới.
 - **Khách nói gì về cơ sở này** (`ReviewDigestCard`): thẻ trong trang chi tiết cơ sở — tóm tắt AI từ
   đánh giá thật, điểm thường được khen / thường bị phàn nàn và phổ sao. Ít đánh giá thì thẻ tự ẩn.
+- **AI soạn mô tả** (`AiDescribeButton`): nút dưới ô mô tả trong biểu mẫu **phòng**, **món ăn** và **dịch
+  vụ**. Mô tả được dựng từ chính dữ liệu dòng đó ở máy chủ, nên nút chỉ chạy khi mục đã lưu ít nhất một lần —
+  mục mới chưa lưu thì nút nói thẳng là lưu trước đã. Đang có mô tả thì hỏi trước khi thay; chữ chỉ được điền
+  vào ô nhập, bạn vẫn phải tự lưu.
 - **AI soạn nội dung tour**: trong biểu mẫu tour của quản lý, nhập tên tour rồi bấm một nút để AI điền
   mô tả, phần bao gồm, lịch trình và điều khoản huỷ; đang có nội dung thì hỏi trước khi thay.
 - **Hỏi AI về số liệu** (`AiReportAskScreen`): nút ✨ trên trang báo cáo (cơ sở hoặc chuỗi). Hỏi bằng

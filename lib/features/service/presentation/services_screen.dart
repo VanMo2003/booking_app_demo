@@ -1,3 +1,5 @@
+import 'package:booking_app_mobile/features/ai/presentation/describe_button.dart';
+import 'package:booking_app_mobile/features/ai/domain/entities/ai.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -266,6 +268,12 @@ class _ServiceFormState extends State<_ServiceForm> {
             label: WorkspaceStrings.description,
             minLines: 2,
             maxLines: 4,
+          ),
+          AiDescribeButton(
+            kind: DescribableKind.service,
+            id: widget.service?.id,
+            controller: _description,
+            enabled: !_saving,
           ),
           if (_error != null) ...[
             const Gap(AppSpacing.sm),

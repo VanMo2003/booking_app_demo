@@ -640,6 +640,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i769.GetReviewThemes(gh<_i444.AiRepository>()));
     gh.factory<_i769.DraftReviewReply>(
         () => _i769.DraftReviewReply(gh<_i444.AiRepository>()));
+    gh.factory<_i769.DraftDescription>(
+        () => _i769.DraftDescription(gh<_i444.AiRepository>()));
     gh.factory<_i769.TranslateHotelPage>(
         () => _i769.TranslateHotelPage(gh<_i444.AiRepository>()));
     gh.factory<_i769.GetPromotionAdvice>(

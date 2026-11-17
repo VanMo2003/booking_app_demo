@@ -488,6 +488,39 @@ class GuestAnswer extends Equatable {
   List<Object?> get props => [question, answer, suggestions, links, notes];
 }
 
+/// Mục có thể nhờ AI soạn mô tả.
+enum DescribableKind {
+  room('ROOM'),
+  dish('DISH'),
+  service('SERVICE');
+
+  const DescribableKind(this.value);
+
+  final String value;
+}
+
+/// Bản nháp mô tả cho một phòng, món ăn hoặc dịch vụ — chưa lưu gì.
+class DescriptionDraft extends Equatable {
+  const DescriptionDraft({
+    required this.description,
+    this.highlights = const [],
+    this.currentDescription,
+    this.notes = const [],
+  });
+
+  final String description;
+
+  /// Vài ý ngắn lấy từ đúng dữ liệu của dòng đó.
+  final List<String> highlights;
+
+  /// Mô tả dòng đó đang có, để app cảnh báo trước khi thay.
+  final String? currentDescription;
+  final List<String> notes;
+
+  @override
+  List<Object?> get props => [description, highlights, currentDescription, notes];
+}
+
 /// Một mục nội dung của cơ sở kèm bản dịch, nếu dịch được.
 class TranslatedItem extends Equatable {
   const TranslatedItem({

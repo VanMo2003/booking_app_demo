@@ -1,3 +1,5 @@
+import 'package:booking_app_mobile/features/ai/presentation/describe_button.dart';
+import 'package:booking_app_mobile/features/ai/domain/entities/ai.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -193,6 +195,12 @@ class _RoomFormScreenState extends State<RoomFormScreen> {
                   minLines: 3,
                   maxLines: 6,
                   textCapitalization: TextCapitalization.sentences,
+                ),
+                AiDescribeButton(
+                  kind: DescribableKind.room,
+                  id: widget.room?.id,
+                  controller: _description,
+                  enabled: !_saving,
                 ),
                 const Gap(AppSpacing.xl),
                 const SectionHeader(

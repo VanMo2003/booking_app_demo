@@ -38,6 +38,9 @@ abstract class AiApi {
   @GET('/ai/hotels/{hotelId}/review-digest')
   Future<ApiResponse> reviewDigest(@Path('hotelId') int hotelId);
 
+  @POST('/ai/descriptions/draft')
+  Future<ApiResponse> draftDescription(@Body() Map<String, dynamic> body);
+
   @POST('/ai/tours/draft')
   Future<ApiResponse> draftTour(@Body() Map<String, dynamic> body);
 

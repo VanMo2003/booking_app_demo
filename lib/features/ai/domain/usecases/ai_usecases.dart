@@ -154,6 +154,20 @@ class DraftReviewReply {
 }
 
 @injectable
+class DraftDescription {
+  const DraftDescription(this._repository);
+
+  final AiRepository _repository;
+
+  Future<DescriptionDraft> call({
+    required DescribableKind kind,
+    required int id,
+    String? notes,
+  }) =>
+      _repository.draftDescription(kind: kind, id: id, notes: notes);
+}
+
+@injectable
 class TranslateHotelPage {
   const TranslateHotelPage(this._repository);
 

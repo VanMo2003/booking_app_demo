@@ -1,3 +1,5 @@
+import 'package:booking_app_mobile/features/ai/presentation/describe_button.dart';
+import 'package:booking_app_mobile/features/ai/domain/entities/ai.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
@@ -123,6 +125,12 @@ class _DishFormScreenState extends State<DishFormScreen> {
               minLines: 2,
               maxLines: 5,
               textCapitalization: TextCapitalization.sentences,
+            ),
+            AiDescribeButton(
+              kind: DescribableKind.dish,
+              id: widget.dish?.id,
+              controller: _description,
+              enabled: !_saving,
             ),
             const Gap(AppSpacing.xs),
             SwitchListTile(
