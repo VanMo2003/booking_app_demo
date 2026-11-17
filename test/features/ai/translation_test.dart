@@ -2,6 +2,7 @@ import 'package:booking_app_mobile/core/di/injector.dart';
 import 'package:booking_app_mobile/core/text/ai_strings.dart';
 import 'package:booking_app_mobile/features/ai/data/models/ai_models.dart';
 import 'package:booking_app_mobile/features/ai/domain/entities/ai.dart';
+import 'package:booking_app_mobile/features/ai/domain/entities/ai_status.dart';
 import 'package:booking_app_mobile/features/ai/domain/repositories/ai_repository.dart';
 import 'package:booking_app_mobile/features/ai/domain/usecases/ai_usecases.dart';
 import 'package:booking_app_mobile/features/ai/presentation/ai_translation_screen.dart';
@@ -38,6 +39,9 @@ Map<String, dynamic> _translationJson(String lang) => {
 
 class _FakeAi implements AiRepository {
   final List<String> askedLangs = [];
+
+  @override
+  Future<AiStatus> status() async => const AiStatus(enabled: true, languages: {'en': 'English', 'ko': '한국어'});
 
   @override
   Future<HotelTranslation> translateHotel(int hotelId, String lang) async {
@@ -78,6 +82,9 @@ void main() {
     addTearDown(tester.view.reset);
     final ai = _FakeAi();
     getIt.registerFactory<AiTranslationCubit>(() => AiTranslationCubit(TranslateHotelPage(ai)));
+    // Danh sách ngôn ngữ đến từ /ai/status qua AiAvailability, nên màn cần nó để hiện quá tiếng Anh.
+    final availability = AiAvailability(ai)..languages.value = const {'en': 'English', 'ko': '한국어'};
+    getIt.registerSingleton<AiAvailability>(availability);
     addTearDown(getIt.reset);
 
     await tester.pumpWidget(

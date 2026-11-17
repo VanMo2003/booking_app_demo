@@ -14,9 +14,14 @@ class AiAvailability {
 
   final enabled = ValueNotifier(false);
 
+  /// Ngôn ngữ máy chủ dịch được; rỗng cho tới khi gọi được /ai/status.
+  final languages = ValueNotifier<Map<String, String>>(const {});
+
   Future<void> refresh() async {
     try {
-      enabled.value = await _repository.enabled();
+      final status = await _repository.status();
+      enabled.value = status.enabled;
+      if (status.languages.isNotEmpty) languages.value = status.languages;
     } catch (_) {
       // Mất mạng: giữ trạng thái cũ.
     }

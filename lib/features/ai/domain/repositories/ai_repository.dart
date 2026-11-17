@@ -1,7 +1,8 @@
 import '../entities/ai.dart';
+import '../entities/ai_status.dart';
 
 abstract interface class AiRepository {
-  Future<bool> enabled();
+  Future<AiStatus> status();
 
   Future<AiSearchResult> search(String query);
 

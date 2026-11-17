@@ -1,3 +1,4 @@
+import 'package:booking_app_mobile/features/ai/domain/entities/ai_status.dart';
 import 'package:booking_app_mobile/core/di/injector.dart';
 import 'package:booking_app_mobile/core/network/paged.dart';
 import 'package:booking_app_mobile/core/storage/app_preferences.dart';
@@ -72,7 +73,7 @@ class _FakeTours implements TourRepository {
 /// Máy chủ chưa bật AI: lối vào "Hỏi AI tìm tour" tự ẩn.
 class _FakeAi implements AiRepository {
   @override
-  Future<bool> enabled() async => false;
+  Future<AiStatus> status() async => const AiStatus(enabled: false);
 
   @override
   dynamic noSuchMethod(Invocation invocation) => throw UnimplementedError('${invocation.memberName}');

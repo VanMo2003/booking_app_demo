@@ -166,7 +166,8 @@ của BE). Lúc mở app, `AiAvailability` hỏi `GET /ai/status`; máy chủ ch
 - **AI tư vấn giá phòng** (`AiPricingScreen`, menu Thêm của quản lý): mỗi loại phòng nên tăng/giữ/giảm
   bao nhiêu phần trăm, giá cũ → giá đề xuất, lý do, kèm lấp phòng và ADR thực.
 - **Bản dịch trang cơ sở** (`AiTranslationScreen`): nút 🌐 cạnh nút hỏi AI trong trang chi tiết cơ sở. Chọn
-  tiếng Anh / Hàn / Nhật / Trung / Pháp / Nga, màn hiện nội dung cơ sở theo từng phần (giới thiệu, tiện ích,
+  một trong các ngôn ngữ **máy chủ báo về qua `/ai/status`** (app không giữ bản sao danh sách), màn hiện
+  nội dung cơ sở theo từng phần (giới thiệu, tiện ích,
   dịch vụ, thực đơn, tour) với bản gốc ngay dưới bản dịch; mục chưa dịch được hiện bản gốc và đánh dấu
   *bản gốc*.
 - **Gợi ý giảm giá** (`AiPromotionScreen`, menu Thêm của chủ chuỗi): chỗ nào trong chuỗi đang trống thì nên

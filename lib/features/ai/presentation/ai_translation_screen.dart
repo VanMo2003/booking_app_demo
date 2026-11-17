@@ -13,15 +13,13 @@ import '../../../core/text/ai_strings.dart';
 import '../domain/entities/ai.dart';
 import '../domain/usecases/ai_usecases.dart';
 
-/// Các ngôn ngữ máy chủ dịch được — giữ khớp với AiTranslator.LANGUAGES ở backend.
-const aiLanguages = <String, String>{
-  'en': 'English',
-  'ko': '한국어',
-  'ja': '日本語',
-  'zh': '中文',
-  'fr': 'Français',
-  'ru': 'Русский',
-};
+/// Ngôn ngữ dịch được lấy từ /ai/status qua [AiAvailability] — app không giữ bản sao nào.
+/// Chưa gọi được máy chủ thì chỉ hiện tiếng Anh, vì đó là ngôn ngữ chắc chắn có.
+Map<String, String> aiLanguages() {
+  if (!getIt.isRegistered<AiAvailability>()) return const {'en': 'English'};
+  final languages = getIt<AiAvailability>().languages.value;
+  return languages.isEmpty ? const {'en': 'English'} : languages;
+}
 
 @injectable
 class AiTranslationCubit extends LoadCubit<HotelTranslation> {
@@ -77,11 +75,16 @@ class AiTranslationScreen extends StatelessWidget {
             builder: (context, state) => Column(
               children: [
                 const Gap(AppSpacing.sm),
-                ChoiceChipBar<String>(
-                  options: aiLanguages.keys.toList(),
-                  selected: context.read<AiTranslationCubit>().lang,
-                  labelOf: (lang) => aiLanguages[lang] ?? lang,
-                  onSelected: context.read<AiTranslationCubit>().changeLanguage,
+                Builder(
+                  builder: (context) {
+                    final languages = aiLanguages();
+                    return ChoiceChipBar<String>(
+                      options: languages.keys.toList(),
+                      selected: context.read<AiTranslationCubit>().lang,
+                      labelOf: (lang) => languages[lang] ?? lang,
+                      onSelected: context.read<AiTranslationCubit>().changeLanguage,
+                    );
+                  },
                 ),
                 Expanded(
                   child: LoadStateView<HotelTranslation>(

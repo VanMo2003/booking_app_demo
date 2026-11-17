@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import '../../../../core/network/json_reader.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../domain/entities/ai.dart';
+import '../../domain/entities/ai_status.dart';
 import '../../domain/repositories/ai_repository.dart';
 import '../datasources/ai_api.dart';
 import '../models/ai_models.dart';
@@ -14,7 +15,12 @@ class AiRepositoryImpl implements AiRepository {
   final AiApi _api;
 
   @override
-  Future<bool> enabled() async => (await _api.status()).parse((json) => json.flag('enabled'));
+  Future<AiStatus> status() async => (await _api.status()).parse(
+        (json) => AiStatus(
+          enabled: json.flag('enabled'),
+          languages: json.stringMap('languages'),
+        ),
+      );
 
   @override
   Future<AiSearchResult> search(String query) async =>

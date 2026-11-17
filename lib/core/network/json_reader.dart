@@ -78,4 +78,19 @@ extension JsonReader on Json {
     if (value is! List) return const [];
     return value.where((e) => e != null).map((e) => e.toString()).toList();
   }
+
+  /// Một đối tượng JSON toàn chuỗi, ví dụ `{"en": "English"}` — khoá/giá trị rỗng thì bỏ.
+  Map<String, String> stringMap(String key) {
+    final value = this[key];
+    if (value is! Map) return const {};
+    final out = <String, String>{};
+    value.forEach((rawKey, rawValue) {
+      if (rawKey == null || rawValue == null) return;
+      final mapKey = rawKey.toString();
+      final mapValue = rawValue.toString();
+      if (mapKey.isEmpty || mapValue.isEmpty) return;
+      out[mapKey] = mapValue;
+    });
+    return out;
+  }
 }

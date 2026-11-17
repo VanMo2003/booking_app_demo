@@ -1,3 +1,4 @@
+import 'package:booking_app_mobile/features/ai/domain/entities/ai_status.dart';
 import 'package:booking_app_mobile/core/di/injector.dart';
 import 'package:booking_app_mobile/core/text/ai_strings.dart';
 import 'package:booking_app_mobile/features/ai/data/models/ai_models.dart';
@@ -28,7 +29,7 @@ class _FakeAi implements AiRepository {
   final bool fails;
 
   @override
-  Future<bool> enabled() async => true;
+  Future<AiStatus> status() async => const AiStatus(enabled: true);
 
   @override
   Future<ReviewDigest> reviewDigest(int hotelId) async {
