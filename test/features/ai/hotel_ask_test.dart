@@ -1,6 +1,5 @@
 import 'package:booking_app_mobile/core/text/ai_strings.dart';
 import 'package:booking_app_mobile/features/ai/data/models/ai_models.dart';
-import 'package:booking_app_mobile/features/ai/domain/entities/ai.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Map<String, dynamic> _answerJson({bool answered = true}) => {

@@ -286,6 +286,15 @@ abstract final class AiModels {
         notes: json.strings('notes'),
       );
 
+  static ReviewReplyDraft reviewReplyDraft(Json json) => ReviewReplyDraft(
+        feedbackId: json.integer('feedbackId'),
+        draft: json.str('draft'),
+        rating: json.intOrNull('rating'),
+        points: json.strings('points'),
+        currentReply: json.strOrNull('currentReply'),
+        notes: json.strings('notes'),
+      );
+
   static AiSuggestion suggestion(Json json) => AiSuggestion(
         content: json.str('content'),
         needsStaff: json.flag('needsStaff'),

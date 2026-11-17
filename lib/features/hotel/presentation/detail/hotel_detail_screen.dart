@@ -19,6 +19,7 @@ import '../../../../core/text/ai_strings.dart';
 import '../../../ai/presentation/ai_widgets.dart';
 import '../../../ai/presentation/hotel_ask_sheet.dart';
 import '../../../ai/presentation/review_digest_card.dart';
+import '../../../feedback/presentation/hotel_reviews_screen.dart';
 import '../../../chat/presentation/chat_entry.dart';
 import '../../../dish/presentation/widgets/hotel_menu_preview.dart';
 import '../../../tour/presentation/widgets/hotel_tours_section.dart';
@@ -278,6 +279,7 @@ class _HotelBody extends StatelessWidget {
               ),
             ),
           ),
+          HotelReviewsPreview(hotelId: hotel.id, hotelName: hotel.name),
           if (hotel.description.isNotEmpty) ...[
             const Gap(AppSpacing.xl),
             const SectionHeader(title: ExploreStrings.about),

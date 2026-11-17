@@ -175,6 +175,8 @@ import 'package:booking_app_mobile/features/feedback/domain/repositories/feedbac
     as _i900;
 import 'package:booking_app_mobile/features/feedback/domain/usecases/feedback_usecases.dart'
     as _i406;
+import 'package:booking_app_mobile/features/feedback/presentation/hotel_reviews_screen.dart'
+    as _i425;
 import 'package:booking_app_mobile/features/hotel/data/datasources/hotel_api.dart'
     as _i1009;
 import 'package:booking_app_mobile/features/hotel/data/repositories/hotel_repository_impl.dart'
@@ -630,6 +632,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i769.GetChatSummary(gh<_i444.AiRepository>()));
     gh.factory<_i769.GetReviewThemes>(
         () => _i769.GetReviewThemes(gh<_i444.AiRepository>()));
+    gh.factory<_i769.DraftReviewReply>(
+        () => _i769.DraftReviewReply(gh<_i444.AiRepository>()));
     gh.factory<_i769.AskAboutHotel>(
         () => _i769.AskAboutHotel(gh<_i444.AiRepository>()));
     gh.factory<_i769.GetDailyBrief>(
@@ -782,6 +786,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i644.UploadRoomImages(gh<_i77.RoomRepository>()));
     gh.factory<_i406.SubmitReview>(
         () => _i406.SubmitReview(gh<_i900.FeedbackRepository>()));
+    gh.factory<_i406.GetHotelReviews>(
+        () => _i406.GetHotelReviews(gh<_i900.FeedbackRepository>()));
+    gh.factory<_i406.ReplyToReview>(
+        () => _i406.ReplyToReview(gh<_i900.FeedbackRepository>()));
     gh.factory<_i406.IsBookingReviewed>(
         () => _i406.IsBookingReviewed(gh<_i900.FeedbackRepository>()));
     gh.factory<_i962.LoadSystemOverview>(() => _i962.LoadSystemOverview(
@@ -799,6 +807,8 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i654.AccountRepository>(),
           gh<_i232.ManagerRegistry>(),
         ));
+    gh.factory<_i425.HotelReviewsCubit>(
+        () => _i425.HotelReviewsCubit(gh<_i406.GetHotelReviews>()));
     gh.factory<_i210.WalkInGuestCubit>(() => _i210.WalkInGuestCubit(
           gh<_i57.FindCustomersByPhone>(),
           gh<_i57.CreateWalkInCustomer>(),

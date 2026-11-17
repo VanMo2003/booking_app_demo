@@ -488,6 +488,32 @@ class GuestAnswer extends Equatable {
   List<Object?> get props => [question, answer, suggestions, links, notes];
 }
 
+/// Bản nháp trả lời một đánh giá, do AI soạn — chưa đăng gì.
+class ReviewReplyDraft extends Equatable {
+  const ReviewReplyDraft({
+    required this.feedbackId,
+    required this.draft,
+    this.rating,
+    this.points = const [],
+    this.currentReply,
+    this.notes = const [],
+  });
+
+  final int feedbackId;
+  final String draft;
+  final int? rating;
+
+  /// Những điều khách thật sự nêu, theo cách AI đọc được.
+  final List<String> points;
+
+  /// Câu trả lời cơ sở đã đăng trước đó, nếu có — gửi câu mới sẽ thay câu này.
+  final String? currentReply;
+  final List<String> notes;
+
+  @override
+  List<Object?> get props => [feedbackId, draft, rating, points, currentReply, notes];
+}
+
 /// Câu trả lời về một cơ sở, dựng từ chính hồ sơ cơ sở đó đã công bố.
 class HotelAnswer extends Equatable {
   const HotelAnswer({

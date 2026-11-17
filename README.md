@@ -79,9 +79,9 @@ lib/
 
 Tính năng: `auth`, `splash`, `shell` (khung tab từng vai trò), `hotel`, `room`,
 `booking`, `payment`, `feedback`, `favorite`, `customer`, `amenity`, `service`,
-`dish` (thực đơn món ăn), `tour` (tour tham quan), `chat` (nhắn tin khách ↔ cơ sở), `ai` (14 tính năng AI: tìm phòng/tìm tour bằng câu nói, kế hoạch chuyến đi, trợ lý lễ tân, trợ lý của
+`dish` (thực đơn món ăn), `tour` (tour tham quan), `chat` (nhắn tin khách ↔ cơ sở), `ai` (15 tính năng AI: tìm phòng/tìm tour bằng câu nói, kế hoạch chuyến đi, trợ lý lễ tân, trợ lý của
 khách, tóm tắt hội thoại, tóm tắt & phân tích đánh giá, soạn nội dung tour, hỏi đáp số liệu, tư vấn giá
-phòng, kiểm tra trang cơ sở, bản tin việc hôm nay, hỏi nhanh về một cơ sở),
+phòng, kiểm tra trang cơ sở, bản tin việc hôm nay, hỏi nhanh về một cơ sở, soạn nháp trả lời đánh giá),
 `employee`, `payroll`, `report`, `hotel_chain`, `partner` (đăng ký và xét duyệt chủ
 khách sạn), `notification` (hộp thông báo, push, deep link), `account`, `catalog`, `admin`.
 
@@ -165,6 +165,13 @@ của BE). Lúc mở app, `AiAvailability` hỏi `GET /ai/status`; máy chủ ch
   câu bình thường, nhận câu trả lời kèm kỳ số liệu, số đáng chú ý và gợi ý.
 - **AI tư vấn giá phòng** (`AiPricingScreen`, menu Thêm của quản lý): mỗi loại phòng nên tăng/giữ/giảm
   bao nhiêu phần trăm, giá cũ → giá đề xuất, lý do, kèm lấp phòng và ADR thực.
+- **Đánh giá của khách** (`HotelReviewsScreen`, `HotelReviewsPreview`): trang chi tiết cơ sở hiện hai đánh
+  giá mới nhất kèm câu trả lời của cơ sở và lối sang danh sách đầy đủ (ai cũng xem được, có nút *Xem thêm*
+  nối trang chứ không thay trang). Menu Thêm của quản lý mở đúng màn đó với `canReply: true`, lúc này mỗi
+  đánh giá có nút **Trả lời**.
+- **AI soạn nháp trả lời đánh giá** (`showReviewReply`): bảng trả lời có nút **AI soạn giúp** chỉ điền sẵn ô
+  nhập — câu trả lời chỉ lên trang khi quản lý tự bấm đăng, nên không bao giờ có chữ nào của AI công khai mà
+  người chưa đọc. Bảng hiện cả những điều AI đọc được là khách đang nêu.
 - **Hỏi nhanh về cơ sở này** (`showHotelAsk`, nút trong trang chi tiết cơ sở): khách chưa đăng nhập cũng
   hỏi được một câu về cơ sở ("phòng nào cho 4 khách?", "có tour buổi tối không?"). AI chỉ trả lời từ thông
   tin cơ sở đã công bố; phần cơ sở chưa công bố (giờ nhận phòng, chính sách huỷ) thì bảng nói thẳng và mở

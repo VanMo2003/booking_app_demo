@@ -4,7 +4,10 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/network/json_reader.dart';
 import '../../../../core/storage/app_preferences.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../../core/network/paged.dart';
+import '../../domain/entities/review.dart';
 import '../../domain/repositories/feedback_repository.dart';
+import '../models/review_model.dart';
 import '../datasources/feedback_api.dart';
 
 @LazySingleton(as: FeedbackRepository)
@@ -35,6 +38,14 @@ class FeedbackRepositoryImpl implements FeedbackRepository {
     await _preferences.setStringList(_key(customerId), reviewed.toList());
     return id;
   }
+
+  @override
+  Future<Paged<Review>> byHotel({required int hotelId, int page = 0, int size = 20}) async =>
+      (await _api.byHotel(hotelId, page, size)).parsePage(ReviewModel.from);
+
+  @override
+  Future<Review> reply({required int reviewId, required String reply}) async =>
+      (await _api.reply(reviewId, {'reply': reply})).parse(ReviewModel.from);
 
   @override
   bool isReviewed({required int customerId, required int bookingId}) =>

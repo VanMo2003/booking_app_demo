@@ -12,6 +12,16 @@ abstract class FeedbackApi {
 
   @POST('/feedbacks')
   Future<ApiResponse> create(@Body() Map<String, dynamic> body);
+
+  @GET('/feedbacks/hotel/{hotelId}')
+  Future<ApiResponse> byHotel(
+    @Path('hotelId') int hotelId,
+    @Query('page') int page,
+    @Query('size') int size,
+  );
+
+  @PUT('/feedbacks/{id}/reply')
+  Future<ApiResponse> reply(@Path('id') int id, @Body() Map<String, dynamic> body);
 }
 
 @module

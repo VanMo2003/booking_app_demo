@@ -24,6 +24,7 @@ import '../../notification/presentation/notification_badge_cubit.dart';
 import '../../notification/presentation/notification_setup_screen.dart';
 import 'workspace_scope.dart';
 import '../../../core/text/discover_strings.dart';
+import '../../../core/text/review_strings.dart';
 
 @RoutePage()
 class WorkspaceMoreScreen extends StatelessWidget {
@@ -124,6 +125,13 @@ class WorkspaceMoreScreen extends StatelessWidget {
                     icon: Icons.today_outlined,
                     title: AiStrings.briefMenu,
                     onTap: () => router.push(AiDailyBriefRoute(hotelId: hotelId, subtitle: branchName)),
+                  ),
+                ),
+                MenuTile(
+                  icon: Icons.reviews_outlined,
+                  title: ReviewStrings.menu,
+                  onTap: () => router.push(
+                    HotelReviewsRoute(hotelId: hotelId, subtitle: branchName, canReply: true),
                   ),
                 ),
                 MenuTile(
