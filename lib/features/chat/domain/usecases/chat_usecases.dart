@@ -78,3 +78,13 @@ class GetChatUnreadCount {
 
   Future<int> call() => _repository.unreadCount();
 }
+
+/// Vé dùng một lần để mở WebSocket chat, thay cho access token trong URL.
+@injectable
+class GetChatSocketTicket {
+  const GetChatSocketTicket(this._repository);
+
+  final ChatRepository _repository;
+
+  Future<String> call() => _repository.wsTicket();
+}

@@ -33,6 +33,11 @@ class ChatSocket {
   /// Làm mới access token (qua một request REST có interceptor) trước khi nối.
   Future<void> Function()? refreshSession;
 
+  /// Lấy vé dùng một lần (`POST /ws/ticket`) để mở socket. URL của WebSocket bị ngrok và
+  /// ingress ghi lại, nên đưa access token vào đó là để lại token ở bên thứ ba; vé thì chỉ
+  /// sống 60 giây và mất ngay khi dùng. Lấy vé lỗi (BE cũ chưa có endpoint) thì quay về token.
+  Future<String> Function()? fetchTicket;
+
   WebSocketChannel? _channel;
   StreamSubscription<dynamic>? _subscription;
   Timer? _heartbeat;
@@ -45,12 +50,20 @@ class ChatSocket {
   bool get isOnline => connection.value == ChatConnection.online;
 
   /// `http://host/booking-app/api/v1` → `ws://host/booking-app/api/v1/ws/chat?token=…`
-  static Uri endpoint(String baseUrl, String token) {
+  ///
+  /// Chỉ còn dùng khi không lấy được vé — xem [ticketEndpoint].
+  static Uri endpoint(String baseUrl, String token) => _socketUri(baseUrl, {'token': token});
+
+  /// `http://host/booking-app/api/v1` → `ws://host/booking-app/api/v1/ws/chat?ticket=…`
+  static Uri ticketEndpoint(String baseUrl, String ticket) =>
+      _socketUri(baseUrl, {'ticket': ticket});
+
+  static Uri _socketUri(String baseUrl, Map<String, String> query) {
     final base = Uri.parse(baseUrl);
     return base.replace(
       scheme: base.scheme == 'https' ? 'wss' : 'ws',
       path: '${base.path}/ws/chat',
-      queryParameters: {'token': token},
+      queryParameters: query,
     );
   }
 
@@ -86,7 +99,17 @@ class ChatSocket {
       connection.value = ChatConnection.offline;
       return;
     }
-    final channel = WebSocketChannel.connect(endpoint(AppConfig.baseUrl, token));
+    String? ticket;
+    try {
+      ticket = await fetchTicket?.call();
+    } catch (_) {
+      ticket = null; // BE chưa có /ws/ticket hoặc mất mạng: nối bằng token như trước.
+    }
+    if (!_wanted) return;
+    final uri = ticket != null && ticket.isNotEmpty
+        ? ticketEndpoint(AppConfig.baseUrl, ticket)
+        : endpoint(AppConfig.baseUrl, token);
+    final channel = WebSocketChannel.connect(uri);
     _channel = channel;
     try {
       await channel.ready;

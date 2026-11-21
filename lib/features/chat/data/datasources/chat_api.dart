@@ -23,6 +23,10 @@ abstract class ChatApi {
     @Query('size') int size,
   );
 
+  /// Vé dùng một lần để mở WebSocket, lấy bằng header Authorization như mọi API khác.
+  @POST('/ws/ticket')
+  Future<ApiResponse> wsTicket();
+
   @GET('/conversations/unread-count')
   Future<ApiResponse> unreadCount(@Query('hotelId') int? hotelId);
 

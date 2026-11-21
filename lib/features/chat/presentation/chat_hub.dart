@@ -36,8 +36,9 @@ class ChatUnreadCubit extends Cubit<int> {
 /// - có tin mới khi đang ở màn khác: hiện toast và cập nhật số chưa đọc.
 @lazySingleton
 class ChatHub {
-  ChatHub(this._socket, this._unread) {
+  ChatHub(this._socket, this._unread, GetChatSocketTicket ticket) {
     _socket.refreshSession = _unread.refresh;
+    _socket.fetchTicket = ticket.call;
     _socket.events.listen(_onEvent);
   }
 

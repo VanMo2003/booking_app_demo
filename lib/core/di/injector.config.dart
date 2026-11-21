@@ -515,6 +515,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i209.MarkConversationRead(gh<_i702.ChatRepository>()));
     gh.factory<_i209.GetChatUnreadCount>(
         () => _i209.GetChatUnreadCount(gh<_i702.ChatRepository>()));
+    gh.factory<_i209.GetChatSocketTicket>(
+        () => _i209.GetChatSocketTicket(gh<_i702.ChatRepository>()));
     gh.factory<_i857.ResolveStaffBranch>(() => _i857.ResolveStaffBranch(
           gh<_i16.HotelRepository>(),
           gh<_i83.EmployeeRepository>(),
@@ -862,6 +864,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i493.ChatHub>(() => _i493.ChatHub(
           gh<_i485.ChatSocket>(),
           gh<_i493.ChatUnreadCubit>(),
+          gh<_i209.GetChatSocketTicket>(),
         ));
     gh.factory<_i98.SearchResultsCubit>(
         () => _i98.SearchResultsCubit(gh<_i672.SearchAvailableHotels>()));

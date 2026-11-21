@@ -88,6 +88,13 @@ void main() {
     );
   });
 
+  test('socket mở bằng vé dùng một lần, không đưa access token vào URL', () {
+    // URL của WebSocket bị ngrok và ingress ghi lại; vé chỉ sống 60 giây và mất khi dùng.
+    final uri = ChatSocket.ticketEndpoint('https://api.example.com/booking-app/api/v1', 'T-1_x');
+    expect(uri.toString(), 'wss://api.example.com/booking-app/api/v1/ws/chat?ticket=T-1_x');
+    expect(uri.queryParameters.containsKey('token'), isFalse);
+  });
+
   test('deep link bookingapp://chat/{id}', () {
     expect(AppLink.parse('bookingapp://chat/12'), const ChatLink(12));
     expect(AppLink.parse('bookingapp://chat/abc'), isNull);

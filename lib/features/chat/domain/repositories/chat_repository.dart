@@ -12,6 +12,9 @@ abstract interface class ChatRepository {
 
   Future<int> unreadCount({int? hotelId});
 
+  /// Vé dùng một lần (60 giây) để mở `/ws/chat?ticket=…`, thay cho access token trong URL.
+  Future<String> wsTicket();
+
   Future<Conversation> getById(int id);
 
   /// Mới nhất trước; truyền [beforeId] để tải tin cũ hơn.

@@ -30,6 +30,9 @@ class ChatRepositoryImpl implements ChatRepository {
       (await _api.unreadCount(hotelId)).parse((json) => json.integer('unread'));
 
   @override
+  Future<String> wsTicket() async => (await _api.wsTicket()).parse((json) => json.str('ticket'));
+
+  @override
   Future<Conversation> getById(int id) async =>
       (await _api.getById(id)).parse(ConversationModel.fromJson);
 
