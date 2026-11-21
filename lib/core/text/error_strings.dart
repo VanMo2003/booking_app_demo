@@ -13,6 +13,8 @@ abstract final class ErrorStrings {
   static const notFound = 'Không tìm thấy dữ liệu yêu cầu.';
   static const badRequest = 'Yêu cầu không hợp lệ.';
   static const server = 'Máy chủ gặp sự cố. Vui lòng thử lại sau.';
+  static const tooManyRequests =
+      'Bạn thao tác quá nhanh. Vui lòng thử lại sau ít phút.';
   static const badResponse = 'Dữ liệu máy chủ trả về không hợp lệ.';
   static const unknown = 'Đã có lỗi xảy ra. Vui lòng thử lại.';
   static const wrongCredentials = 'Sai tên đăng nhập hoặc mật khẩu.';
@@ -33,7 +35,10 @@ abstract final class ErrorStrings {
     ('Account existed with username', usernameTaken),
     ('Hotel owner account is not approved yet', ownerNotApproved),
     ('Admin can only view this data', adminReadOnly),
-    ('Registration is not waiting for review', 'Hồ sơ này đã được xử lý trước đó.'),
+    (
+      'Registration is not waiting for review',
+      'Hồ sơ này đã được xử lý trước đó.'
+    ),
     (
       'Registration has already been approved',
       'Hồ sơ đã được duyệt nên không cần gửi lại.'
@@ -46,7 +51,10 @@ abstract final class ErrorStrings {
     ('Account role cannot be changed', 'Không thể đổi vai trò của tài khoản.'),
     ('Only ADMIN can lock or unlock', forbidden),
     ('Only the account holder can change', forbidden),
-    ('Hotel chain not found for this account', 'Tài khoản chưa có hồ sơ khách sạn.'),
+    (
+      'Hotel chain not found for this account',
+      'Tài khoản chưa có hồ sơ khách sạn.'
+    ),
     ('Account already owns a hotel chain', 'Tài khoản đã có hồ sơ khách sạn.'),
     (
       'is already booked',
@@ -106,8 +114,19 @@ abstract final class ErrorStrings {
       'AI quota exceeded',
       'Đã hết lượt AI miễn phí (theo phút hoặc theo ngày). Thử lại sau.'
     ),
-    ('Too many AI requests', 'Bạn dùng AI hơi nhiều, thử lại sau vài phút nhé.'),
-    ("The guest hasn't written anything yet", 'Khách chưa gửi tin nào để trả lời.'),
+    (
+      'Too many AI requests',
+      'Bạn dùng AI hơi nhiều, thử lại sau vài phút nhé.'
+    ),
+    // BE khoá đăng nhập sau 5 lần sai mỗi tài khoản (hoặc 20 lần mỗi địa chỉ) trong 15 phút.
+    (
+      'Too many failed logins',
+      'Đăng nhập sai quá nhiều lần. Vui lòng thử lại sau 15 phút.'
+    ),
+    (
+      "The guest hasn't written anything yet",
+      'Khách chưa gửi tin nào để trả lời.'
+    ),
     ('Invalid signature', 'Kết quả thanh toán không hợp lệ.'),
     ('Upload failed', 'Tải ảnh lên thất bại. Vui lòng thử lại.'),
     ('File quá lớn', fileTooLarge),
@@ -178,6 +197,7 @@ abstract final class ErrorStrings {
     if (status == 403 || code == 1002) return forbidden;
     if (status == 404) return notFound;
     if (status == 413) return fileTooLarge;
+    if (status == 429) return tooManyRequests;
     if (status == 400) return badRequest;
     if ((status ?? 0) >= 500) return server;
     return unknown;
@@ -193,7 +213,8 @@ abstract final class ErrorStrings {
     if (detail.contains('must match') || detail.contains('invalid')) {
       return '$label không đúng định dạng.';
     }
-    if (detail.contains('greater than') || detail.contains('must be at least')) {
+    if (detail.contains('greater than') ||
+        detail.contains('must be at least')) {
       return '$label chưa đạt giá trị tối thiểu.';
     }
     if (detail.contains('less than') || detail.contains('must be at most')) {
@@ -202,8 +223,8 @@ abstract final class ErrorStrings {
     return '$label không hợp lệ.';
   }
 
-  static bool _hasVietnameseLetters(String text) =>
-      RegExp(r'[àáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ]',
-              caseSensitive: false)
-          .hasMatch(text);
+  static bool _hasVietnameseLetters(String text) => RegExp(
+          r'[àáảãạăằắẳẵặâầấẩẫậđèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵ]',
+          caseSensitive: false)
+      .hasMatch(text);
 }
