@@ -72,6 +72,12 @@ class AuthInterceptor extends Interceptor {
   ) async {
     final options = err.requestOptions;
     final sentToken = options.headers.containsKey('Authorization');
+    // Tài khoản bị quản trị viên khoá giữa phiên: mọi lời gọi sau đó đều 1026,
+    // nên đăng xuất luôn thay vì để từng màn báo lỗi.
+    if (sentToken && isAccountLocked(err.response)) {
+      await _expireSession();
+      return handler.next(err);
+    }
     final canRetry = err.response?.statusCode == 401 &&
         sentToken &&
         options.extra[_retried] != true &&
@@ -136,4 +142,13 @@ class AuthInterceptor extends Interceptor {
     await _tokens.clear();
     if (hadSession) _events.notifyExpired();
   }
+
+  /// BE trả 403 với `code` 1026 (`ACCOUNT_LOCKED`) cho tài khoản đã bị khoá.
+  static bool isAccountLocked(Response<dynamic>? response) {
+    if (response?.statusCode != 403) return false;
+    final body = response?.data;
+    return body is Map && body['code'] == accountLockedCode;
+  }
+
+  static const accountLockedCode = 1026;
 }
