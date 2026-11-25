@@ -61,8 +61,9 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
     try {
       final customer = await _link(phone.trim(), fullName.trim());
       final session = _session.session;
-      if (session != null)
+      if (session != null) {
         await _session.update(session.copyWith(customer: customer));
+      }
       emit(state.copyWith(busy: false, done: true));
     } catch (error) {
       final failure = AppException.from(error);
