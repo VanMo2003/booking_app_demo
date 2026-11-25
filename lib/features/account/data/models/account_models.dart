@@ -34,11 +34,18 @@ class AccountCreateRequest {
 
 /// Quản trị viên chỉ khoá/mở tài khoản — vai trò không đổi được.
 class AccountUpdateRequest {
-  const AccountUpdateRequest({this.active});
+  const AccountUpdateRequest(
+      {this.active, this.password, this.currentPassword});
 
   final bool? active;
 
+  /// Chỉ chủ tài khoản đổi được; BE đòi kèm [currentPassword].
+  final String? password;
+  final String? currentPassword;
+
   Map<String, dynamic> toJson() => {
         if (active != null) 'status': active,
+        if (password != null) 'password': password,
+        if (currentPassword != null) 'currentPassword': currentPassword,
       };
 }

@@ -20,6 +20,7 @@ import '../../../auth/presentation/session/session_navigator.dart';
 import '../../../notification/presentation/notification_setup_screen.dart';
 import '../../../shell/presentation/customer_shell_screen.dart';
 import '../../../../core/text/discover_strings.dart';
+import '../../../account/presentation/change_password_sheet.dart';
 
 /// Tab Tài khoản của khách.
 @RoutePage()
@@ -127,6 +128,7 @@ class AccountScreen extends StatelessWidget {
                     MenuGroup(
                       title: AppStrings.aboutApp,
                       children: [
+                        if (session != null) const ChangePasswordTile(),
                         const NotificationSetupTile(),
                         const MenuTile(
                           icon: Icons.info_outline_rounded,

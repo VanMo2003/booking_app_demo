@@ -7,6 +7,12 @@ abstract final class AuthStrings {
   static const username = 'Tên đăng nhập';
   static const password = 'Mật khẩu';
   static const confirmPassword = 'Nhập lại mật khẩu';
+  static const changePassword = 'Đổi mật khẩu';
+  static const changePasswordHint =
+      'Đổi xong, mọi thiết bị đang đăng nhập sẽ bị đăng xuất - đăng nhập lại bằng mật khẩu mới.';
+  static const currentPassword = 'Mật khẩu hiện tại';
+  static const newPassword = 'Mật khẩu mới';
+  static const passwordChanged = 'Đã đổi mật khẩu. Hãy đăng nhập lại.';
   static const loginAction = 'Đăng nhập';
   static const noAccount = 'Chưa có tài khoản?';
   static const createAccount = 'Tạo tài khoản';

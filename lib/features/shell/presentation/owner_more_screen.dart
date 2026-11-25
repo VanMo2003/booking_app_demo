@@ -16,6 +16,7 @@ import '../../auth/presentation/session/session_cubit.dart';
 import '../../auth/presentation/session/session_navigator.dart';
 import '../../notification/presentation/notification_setup_screen.dart';
 import '../../../core/text/discover_strings.dart';
+import '../../account/presentation/change_password_sheet.dart';
 
 /// Tab Thêm của chủ khách sạn.
 @RoutePage()
@@ -117,6 +118,7 @@ class OwnerMoreScreen extends StatelessWidget {
           MenuGroup(
             title: AppStrings.aboutApp,
             children: [
+              const ChangePasswordTile(),
               const NotificationSetupTile(),
               const MenuTile(
                 icon: Icons.info_outline_rounded,

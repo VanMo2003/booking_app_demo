@@ -25,6 +25,7 @@ import '../../notification/presentation/notification_setup_screen.dart';
 import 'workspace_scope.dart';
 import '../../../core/text/discover_strings.dart';
 import '../../../core/text/review_strings.dart';
+import '../../account/presentation/change_password_sheet.dart';
 
 @RoutePage()
 class WorkspaceMoreScreen extends StatelessWidget {
@@ -226,6 +227,7 @@ class WorkspaceMoreScreen extends StatelessWidget {
           MenuGroup(
             title: WorkspaceStrings.groupAccount,
             children: [
+              const ChangePasswordTile(),
               if (session.role == Role.hotelManager && session.hotels.length > 1)
                 MenuTile(
                   icon: Icons.swap_horiz_rounded,
