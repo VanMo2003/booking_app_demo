@@ -38,10 +38,19 @@ abstract final class Validators {
     return text.length < 6 ? ValidationStrings.usernameLength : null;
   }
 
+  /// Cùng quy tắc với BE (`PasswordPolicy`): ít nhất 8 ký tự và không nằm trong danh sách
+  /// mật khẩu bị đoán đầu tiên. "Không trùng tên đăng nhập" BE tự kiểm tra.
   static String? password(String? value) {
     if (value == null || value.isEmpty) return ValidationStrings.required;
-    return value.length < 6 ? ValidationStrings.passwordLength : null;
+    if (value.length < 8) return ValidationStrings.passwordLength;
+    if (_commonPasswords.contains(value.toLowerCase())) return ValidationStrings.passwordCommon;
+    return null;
   }
+
+  static const _commonPasswords = {
+    'admin123', 'admin', '123456', '12345678', '123456789', '1234567890', 'password',
+    'password1', 'qwerty123', '11111111', '00000000', 'abc12345', 'iloveyou',
+  };
 
   static FormFieldValidator<String> confirmPassword(
     TextEditingController password,

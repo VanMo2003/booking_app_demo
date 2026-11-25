@@ -4,6 +4,27 @@ import 'package:booking_app_mobile/core/utils/validators.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  group('Validators.password — cùng quy tắc với PasswordPolicy của BE', () {
+    test('dưới 8 ký tự bị từ chối', () {
+      expect(Validators.password('Ab3\$xyz'), ValidationStrings.passwordLength);
+    });
+
+    test('mật khẩu phổ biến bị từ chối, không phân biệt hoa thường', () {
+      expect(Validators.password('12345678'), ValidationStrings.passwordCommon);
+      expect(Validators.password('PASSWORD1'), ValidationStrings.passwordCommon);
+    });
+
+    test('mật khẩu dài bình thường được chấp nhận', () {
+      expect(Validators.password('Bk-Postman-2026!'), isNull);
+      expect(Validators.password('mùa thu hà nội'), isNull);
+    });
+
+    test('mật khẩu yếu bị BE từ chối (1024) hiện nguyên câu tiếng Việt', () {
+      const raw = 'Mật khẩu không được trùng tên đăng nhập.';
+      expect(ErrorStrings.translate(raw, code: 1024, status: 400), raw);
+    });
+  });
+
   group('ErrorStrings.translate — bảo vệ khi API lên Internet', () {
     test('khoá đăng nhập sau nhiều lần sai (1021)', () {
       expect(

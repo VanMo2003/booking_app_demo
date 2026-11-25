@@ -5,7 +5,8 @@ abstract final class ValidationStrings {
   static const email = 'Email không đúng định dạng';
   static const usernameLength = 'Tên đăng nhập tối thiểu 6 ký tự';
   static const usernameSpaces = 'Tên đăng nhập không được chứa dấu cách';
-  static const passwordLength = 'Mật khẩu tối thiểu 6 ký tự';
+  static const passwordLength = 'Mật khẩu tối thiểu 8 ký tự';
+  static const passwordCommon = 'Mật khẩu này quá phổ biến, dễ bị đoán. Hãy chọn mật khẩu khác.';
   static const passwordMismatch = 'Mật khẩu nhập lại không khớp';
   static const positiveNumber = 'Nhập số lớn hơn 0';
   static const wholeNumber = 'Nhập số nguyên dương';
