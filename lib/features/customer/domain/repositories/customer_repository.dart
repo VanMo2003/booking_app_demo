@@ -16,5 +16,5 @@ abstract interface class CustomerRepository {
 
   Future<List<Customer>> searchByPhone(String phoneNumber);
 
-  Future<Customer> linkByPhone(String phoneNumber);
+  Future<Customer> linkByPhone(String phoneNumber, String fullName);
 }

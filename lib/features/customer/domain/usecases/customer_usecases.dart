@@ -41,7 +41,9 @@ class LinkWalkInProfile {
 
   final CustomerRepository _repository;
 
-  Future<Customer> call(String phoneNumber) => _repository.linkByPhone(phoneNumber);
+  /// Số điện thoại và họ tên đã khai tại quầy - BE đòi cả hai khớp.
+  Future<Customer> call(String phoneNumber, String fullName) =>
+      _repository.linkByPhone(phoneNumber, fullName);
 }
 
 @injectable

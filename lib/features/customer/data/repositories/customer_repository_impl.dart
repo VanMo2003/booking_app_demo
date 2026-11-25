@@ -25,7 +25,8 @@ class CustomerRepositoryImpl implements CustomerRepository {
       (await _api.getById(id)).parse(CustomerModel.fromJson);
 
   @override
-  Future<Paged<Customer>> getAll({required int page, required int size}) async =>
+  Future<Paged<Customer>> getAll(
+          {required int page, required int size}) async =>
       (await _api.getAll(page, size)).parsePage(CustomerModel.fromJson);
 
   @override
@@ -37,7 +38,8 @@ class CustomerRepositoryImpl implements CustomerRepository {
       (await _api.searchByPhone(phoneNumber)).parseList(CustomerModel.fromJson);
 
   @override
-  Future<Customer> linkByPhone(String phoneNumber) async =>
-      (await _api.linkByPhone({'phoneNumber': phoneNumber}))
+  Future<Customer> linkByPhone(String phoneNumber, String fullName) async =>
+      (await _api
+              .linkByPhone({'phoneNumber': phoneNumber, 'fullName': fullName}))
           .parse(CustomerModel.fromJson);
 }

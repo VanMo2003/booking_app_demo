@@ -115,6 +115,15 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
             maxLength: 10,
             validator: Validators.phone,
           ),
+          const Gap(AppSpacing.sm),
+          // Cùng ô với form tạo mới: không tìm thấy thì tên đã gõ đi theo sang đó.
+          AppTextField(
+            controller: _fullName,
+            label: AuthStrings.setupLinkName,
+            prefixIcon: Icons.badge_outlined,
+            textCapitalization: TextCapitalization.words,
+            validator: Validators.required(),
+          ),
           const Gap(AppSpacing.md),
           AppButton(
             label: AuthStrings.setupLinkAction,
@@ -123,7 +132,7 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
             loading: state.busy,
             onPressed: () {
               if (_linkForm.currentState!.validate()) {
-                cubit.linkByPhone(_linkPhone.text);
+                cubit.linkByPhone(_linkPhone.text, _fullName.text);
               }
             },
           ),
@@ -218,7 +227,8 @@ class _ProfileSetupViewState extends State<_ProfileSetupView> {
               label: AppStrings.back,
               onPressed: state.busy
                   ? null
-                  : () => context.router.replaceAll([const CustomerShellRoute()]),
+                  : () =>
+                      context.router.replaceAll([const CustomerShellRoute()]),
             ),
           ],
         ],

@@ -38,7 +38,8 @@ abstract final class AuthStrings {
   static const setupTitle = 'Hoàn tất hồ sơ';
   static const setupLinkHeadline = 'Bạn từng đặt phòng trực tiếp tại quầy?';
   static const setupLinkSubtitle =
-      'Nhập số điện thoại đã dùng khi đặt tại quầy — hồ sơ và lịch sử đơn sẽ được gắn vào tài khoản này.';
+      'Nhập số điện thoại và họ tên đã khai khi đặt tại quầy — hồ sơ và lịch sử đơn sẽ được gắn vào tài khoản này.';
+  static const setupLinkName = 'Họ tên đã khai tại quầy';
   static const setupLinkAction = 'Tìm hồ sơ của tôi';
   static const setupLinked = 'Đã gắn hồ sơ khách hàng vào tài khoản';
   static const setupNotFound =

@@ -56,12 +56,13 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
 
   void showCreateForm() => emit(state.copyWith(step: ProfileSetupStep.create));
 
-  Future<void> linkByPhone(String phone) async {
+  Future<void> linkByPhone(String phone, String fullName) async {
     emit(state.copyWith(busy: true));
     try {
-      final customer = await _link(phone.trim());
+      final customer = await _link(phone.trim(), fullName.trim());
       final session = _session.session;
-      if (session != null) await _session.update(session.copyWith(customer: customer));
+      if (session != null)
+        await _session.update(session.copyWith(customer: customer));
       emit(state.copyWith(busy: false, done: true));
     } catch (error) {
       final failure = AppException.from(error);
@@ -99,7 +100,8 @@ class ProfileSetupCubit extends Cubit<ProfileSetupState> {
       await _session.update(session.copyWith(customer: customer));
       emit(state.copyWith(busy: false, done: true));
     } catch (error) {
-      emit(state.copyWith(busy: false, error: AppException.from(error).message));
+      emit(
+          state.copyWith(busy: false, error: AppException.from(error).message));
     }
   }
 }
