@@ -21,11 +21,18 @@ class ChangePasswordTile extends StatelessWidget {
     return MenuTile(
       icon: Icons.lock_reset_rounded,
       title: AuthStrings.changePassword,
-      onTap: () => AppDialogs.sheet<void>(
-        context,
-        title: AuthStrings.changePassword,
-        builder: (_) => const ChangePasswordForm(),
-      ),
+      onTap: () async {
+        final changed = await AppDialogs.sheet<bool>(
+          context,
+          title: AuthStrings.changePassword,
+          builder: (_) => const ChangePasswordForm(),
+        );
+        // Đăng xuất bằng context của mục menu: context của sheet đã bị gỡ khi sheet đóng.
+        if (changed == true && context.mounted) {
+          AppToast.success(context, AuthStrings.passwordChanged);
+          await SessionNavigator.logout(context);
+        }
+      },
     );
   }
 }
@@ -67,9 +74,7 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
             password: _next.text, currentPassword: _current.text),
       );
       if (!mounted) return;
-      AppToast.success(context, AuthStrings.passwordChanged);
-      Navigator.of(context).pop();
-      await SessionNavigator.logout(context);
+      Navigator.of(context).pop(true);
     } catch (error) {
       if (!mounted) return;
       setState(() => _busy = false);
