@@ -6,6 +6,7 @@ abstract final class ValidationStrings {
   static const usernameLength = 'Tên đăng nhập tối thiểu 6 ký tự';
   static const usernameSpaces = 'Tên đăng nhập không được chứa dấu cách';
   static const passwordLength = 'Mật khẩu tối thiểu 8 ký tự';
+  static const passwordTooLong = 'Mật khẩu quá dài (tối đa khoảng 72 chữ không dấu).';
   static const passwordCommon = 'Mật khẩu này quá phổ biến, dễ bị đoán. Hãy chọn mật khẩu khác.';
   static const passwordMismatch = 'Mật khẩu nhập lại không khớp';
   static const positiveNumber = 'Nhập số lớn hơn 0';

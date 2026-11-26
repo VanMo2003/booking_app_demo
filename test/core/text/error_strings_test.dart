@@ -120,4 +120,10 @@ void main() {
       'Tên không được để trống.',
     );
   });
+
+  test('a password past the 72 bcrypt bytes is refused before it reaches the server', () {
+    expect(Validators.password('a' * 72), isNull);
+    expect(Validators.password('a' * 73), ValidationStrings.passwordTooLong);
+    expect(Validators.password('ữ' * 25), ValidationStrings.passwordTooLong);
+  });
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/widgets.dart';
 
 import '../text/validation_strings.dart';
@@ -43,6 +45,8 @@ abstract final class Validators {
   static String? password(String? value) {
     if (value == null || value.isEmpty) return ValidationStrings.required;
     if (value.length < 8) return ValidationStrings.passwordLength;
+    // bcrypt chỉ băm 72 byte đầu và BE từ chối mật khẩu dài hơn; chữ có dấu chiếm 2-3 byte.
+    if (utf8.encode(value).length > 72) return ValidationStrings.passwordTooLong;
     if (_commonPasswords.contains(value.toLowerCase())) return ValidationStrings.passwordCommon;
     return null;
   }
