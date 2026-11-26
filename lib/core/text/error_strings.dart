@@ -134,6 +134,10 @@ abstract final class ErrorStrings {
   ];
 
   static const Map<String, String> _fieldLabels = {
+    'tourId': 'Tour',
+    'destination': 'Điểm đến',
+    'title': 'Tiêu đề',
+    'code': 'Mã',
     'pathImage': 'Ảnh',
     'quantity': 'Số lượng',
     'hometown': 'Quê quán',
