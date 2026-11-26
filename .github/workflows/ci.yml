@@ -1,0 +1,26 @@
+# Kiểm tra mỗi lần đẩy code: phân tích tĩnh và chạy toàn bộ test.
+# Trước đây app không có CI nào - lỗi chỉ lộ ra khi có người chạy tay trên máy.
+name: CI
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          # Cùng bản với máy phát triển (flutter --version).
+          flutter-version: 3.47.8
+          channel: stable
+          cache: true
+
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
