@@ -134,6 +134,13 @@ abstract final class ErrorStrings {
   ];
 
   static const Map<String, String> _fieldLabels = {
+    'pathImage': 'Ảnh',
+    'quantity': 'Số lượng',
+    'hometown': 'Quê quán',
+    'note': 'Ghi chú',
+    'comments': 'Nội dung đánh giá',
+    'currentPassword': 'Mật khẩu hiện tại',
+    'amount': 'Số tiền',
     'username': 'Tên đăng nhập',
     'password': 'Mật khẩu',
     'phoneNumber': 'Số điện thoại',
