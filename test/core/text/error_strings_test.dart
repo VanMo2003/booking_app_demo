@@ -104,4 +104,20 @@ void main() {
     expect(Validators.email('owner@'), ValidationStrings.email);
     expect(Validators.email('owner example.com'), ValidationStrings.email);
   });
+
+  test('a Vietnamese validation detail from the server is kept, with the field named', () {
+    expect(
+      ErrorStrings.translate('phoneNumber: phải có dạng 0xxxxxxxxx', code: 402, status: 400),
+      'Số điện thoại phải có dạng 0xxxxxxxxx.',
+    );
+    expect(
+      ErrorStrings.translate('name: không được để trống', code: 402, status: 400),
+      'Tên không được để trống.',
+    );
+    // Older servers still answer in English and are still translated.
+    expect(
+      ErrorStrings.translate('name: must not be blank', code: 402, status: 400),
+      'Tên không được để trống.',
+    );
+  });
 }

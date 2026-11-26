@@ -209,6 +209,9 @@ abstract final class ErrorStrings {
     final field = message.substring(0, separator).trim();
     final detail = message.substring(separator + 1).trim().toLowerCase();
     final label = _fieldLabels[field] ?? field;
+    // BE đã viết sẵn phần chi tiết bằng tiếng Việt ("phải có dạng 0xxxxxxxxx") thì giữ nguyên, chỉ thay tên trường.
+    final original = message.substring(separator + 1).trim();
+    if (_hasVietnameseLetters(original)) return '$label $original.';
     if (detail.contains('must not be')) return '$label không được để trống.';
     if (detail.contains('must match') || detail.contains('invalid')) {
       return '$label không đúng định dạng.';
