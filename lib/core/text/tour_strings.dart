@@ -70,6 +70,8 @@ abstract final class TourStrings {
 
 /// Đơn tour — khách theo dõi đơn của mình, đội ngũ cơ sở xác nhận / hoàn tất / huỷ.
 abstract final class TourBookingStrings {
+  static const cancelViaHotel =
+      'Đã đến ngày khởi hành — muốn huỷ, hãy nhắn tin hoặc gọi cho cơ sở.';
   static const myTitle = 'Đơn tour của tôi';
   static const branchTitle = 'Đơn tour';
   static const entry = 'Đơn tour';

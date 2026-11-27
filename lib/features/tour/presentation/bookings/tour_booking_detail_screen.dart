@@ -150,6 +150,10 @@ class _DetailView extends StatelessWidget {
           ),
           bottomBar: booking == null || !canAct || !booking.status.isOpen
               ? null
+              : forGuest && !booking.guestCanCancel
+              ? BottomActionBar(
+                  child: Text(TourBookingStrings.cancelViaHotel, style: AppTextStyles.bodySmall),
+                )
               : BottomActionBar(
                   child: Row(
                     children: [

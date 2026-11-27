@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/enums/app_enums.dart';
+import '../../../../core/utils/date_utils.dart';
 import 'tour.dart';
 
 /// Đơn tour của khách. Tên tour và giá được chốt lúc đặt; [tourId] `null` khi tour đã bị gỡ.
@@ -84,6 +85,9 @@ class TourBooking extends Equatable {
   final List<TourRoom> rooms;
 
   bool get withRooms => rooms.isNotEmpty;
+
+  /// Khách tự huỷ được trước ngày khởi hành; từ hôm đó phải liên hệ cơ sở (máy chủ từ chối).
+  bool get guestCanCancel => status.isOpen && DateOnly.today().isBefore(DateOnly.of(tourDate));
 
   String get roomNumbers => rooms.map((r) => r.roomNumber).join(', ');
 
