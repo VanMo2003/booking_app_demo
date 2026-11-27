@@ -257,7 +257,12 @@ class _BookingEditViewState extends State<_BookingEditView> {
                     const Gap(AppSpacing.lg),
                     const SectionHeader(title: BookingStrings.stepPayment),
                     const Gap(AppSpacing.sm),
-                    PaymentMethodPicker(selected: state.paymentMethod, onSelected: cubit.selectPayment),
+                    PaymentMethodPicker(
+                      selected: state.paymentMethod,
+                      onSelected: cubit.selectPayment,
+                      // Đơn đã thanh toán giữ nguyên phương thức (máy chủ từ chối đổi, mã 1019).
+                      methods: state.booking?.isPaid == true ? [state.paymentMethod] : PaymentMethod.values,
+                    ),
                     const Gap(AppSpacing.lg),
                     const SectionHeader(title: BookingStrings.stepNote),
                     const Gap(AppSpacing.sm),
