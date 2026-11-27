@@ -181,6 +181,8 @@ abstract final class WorkspaceStrings {
   // Bảng lương (bổ sung)
   static const payrollEmpty = 'Chưa có phiếu nào được tạo trong phiên này';
   static const payrollUpdated = 'Đã cập nhật phiếu lương';
+  static const payrollPaidLocked =
+      'Phiếu lương đã trả nên không đổi được trạng thái nữa.';
   static const noEmployees = 'Cơ sở chưa có nhân viên để tạo phiếu lương';
 
   // Tổng quan (bổ sung)

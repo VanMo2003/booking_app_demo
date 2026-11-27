@@ -155,6 +155,11 @@ class _PayrollViewState extends State<_PayrollView> {
   }
 
   Future<void> _changeStatus(PayrollEntry entry) async {
+    // Máy chủ không cho sửa phiếu đã trả (chi phí của tháng đã chốt).
+    if (entry.status == PayrollStatus.paid) {
+      AppToast.info(context, WorkspaceStrings.payrollPaidLocked);
+      return;
+    }
     final status = await AppDialogs.choose<PayrollStatus>(
       context,
       title: WorkspaceStrings.updatePayroll,
