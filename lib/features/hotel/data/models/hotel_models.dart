@@ -14,7 +14,8 @@ abstract final class HotelModel {
         phone: json.str('phone'),
         description: json.str('description'),
         category: json.str('category'),
-        rating: json.integer('rating'),
+        // Trung bình sao của khách (vd. 4.6), làm tròn thay vì cắt xuống 4.
+        rating: json.decimal('rating').round(),
         pathImage: json.strOrNull('pathImage'),
         active: json.flag('active', true),
         status: HotelStatus.tryParse(json.strOrNull('status')),
