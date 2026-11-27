@@ -30,7 +30,8 @@ class Hotel extends Equatable {
   final String phone;
   final String description;
   final String category;
-  final int rating;
+  /// Trung bình sao của khách (một chữ số thập phân), 0 khi chưa có đánh giá.
+  final double rating;
   final String? pathImage;
   final bool active;
 

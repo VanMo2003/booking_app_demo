@@ -4,6 +4,7 @@ import '../../../../core/color/app_colors.dart';
 import '../../../../core/color/status_colors.dart';
 import '../../../../core/component/component.dart';
 import '../../../../core/style/style.dart';
+import '../../../../core/utils/formatters.dart';
 import '../../../favorite/domain/entities/favorite_hotel.dart';
 import '../../../favorite/presentation/favorite_button.dart';
 import '../../domain/entities/hotel.dart';
@@ -13,7 +14,7 @@ FavoriteHotel favoriteOf(Hotel hotel) => FavoriteHotel(
       name: hotel.name,
       address: hotel.address,
       category: hotel.category,
-      rating: hotel.rating,
+      rating: hotel.rating.round(),
       pathImage: hotel.pathImage,
     );
 
@@ -96,7 +97,7 @@ class HotelCard extends StatelessWidget {
                         const Gap(AppSpacing.xs),
                         const Icon(Icons.star_rounded, size: 18, color: AppColors.accent),
                         const Gap(2),
-                        Text('${hotel.rating}', style: AppTextStyles.bodyStrong),
+                        Text(Fmt.decimal(hotel.rating), style: AppTextStyles.bodyStrong),
                       ],
                     ],
                   ),

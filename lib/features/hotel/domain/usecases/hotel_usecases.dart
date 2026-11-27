@@ -54,7 +54,7 @@ class SearchAvailableHotels {
       ..sort((a, b) {
         final rankA = a.acceptsBooking ? 0 : 1;
         final rankB = b.acceptsBooking ? 0 : 1;
-        return rankA != rankB ? rankA - rankB : b.rating - a.rating;
+        return rankA != rankB ? rankA - rankB : b.rating.compareTo(a.rating);
       });
   }
 }
