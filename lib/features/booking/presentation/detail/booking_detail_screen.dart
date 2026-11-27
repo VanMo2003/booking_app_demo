@@ -265,18 +265,24 @@ class _BookingDetailView extends StatelessWidget {
     }
 
     if (booking.status.isOpen) {
+      if (!booking.guestCanCancel && !booking.canPayOnline) {
+        return BottomActionBar(
+          child: Text(BookingStrings.cancelViaHotel, style: AppTextStyles.bodySmall),
+        );
+      }
       return BottomActionBar(
         child: Row(
           children: [
-            Expanded(
-              child: AppButton(
-                variant: AppButtonVariant.dangerOutline,
-                label: BookingStrings.cancelBooking,
-                onPressed: () => _cancel(context),
+            if (booking.guestCanCancel)
+              Expanded(
+                child: AppButton(
+                  variant: AppButtonVariant.dangerOutline,
+                  label: BookingStrings.cancelBooking,
+                  onPressed: () => _cancel(context),
+                ),
               ),
-            ),
             if (booking.canPayOnline) ...[
-              const Gap(AppSpacing.sm),
+              if (booking.guestCanCancel) const Gap(AppSpacing.sm),
               Expanded(
                 child: AppButton(
                   label: booking.paymentStatus == PaymentStatus.pending

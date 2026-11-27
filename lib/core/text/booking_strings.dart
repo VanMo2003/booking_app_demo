@@ -51,6 +51,8 @@ abstract final class BookingStrings {
 
   // Hành động trên đơn
   static const cancelBooking = 'Huỷ đơn';
+  static const cancelViaHotel =
+      'Đơn đã thanh toán hoặc đã tới ngày nhận phòng — muốn huỷ, hãy nhắn tin hoặc gọi cho cơ sở.';
   static const cancelTitle = 'Huỷ đơn đặt phòng?';
   static const cancelMessage =
       'Phòng sẽ được mở lại cho khách khác. Thao tác không thể hoàn tác.';

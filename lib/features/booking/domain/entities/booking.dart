@@ -52,6 +52,11 @@ class Booking extends Equatable {
   bool get canPayOnline =>
       paymentMethod == PaymentMethod.vnPay && !isPaid && status.isOpen;
 
+  /// Khách tự huỷ được khi đơn còn mở, chưa thanh toán và chưa tới ngày nhận phòng
+  /// (máy chủ từ chối các trường hợp còn lại — phải liên hệ cơ sở).
+  bool get guestCanCancel =>
+      status.isOpen && !isPaid && DateOnly.today().isBefore(DateOnly.of(checkinDate));
+
   /// Chưa trả tiền và đơn còn mở thì còn đổi được cách thanh toán.
   bool get canChangePaymentMethod => !isPaid && status.isOpen;
 
